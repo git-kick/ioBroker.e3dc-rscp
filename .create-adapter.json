@@ -1,0 +1,42 @@
+{
+	"cli": true,
+	"adapterName": "e3dc-rscp",
+	"title": "E3/DC RSCP",
+	"description": "Control E3/DC power station using RSCP protocol",
+	"keywords": [
+		"E3/DC",
+		"power station",
+		"energy",
+		"RSCP"
+	],
+	"expert": "yes",
+	"features": [
+		"adapter"
+	],
+	"adminFeatures": [
+		"tab"
+	],
+	"type": "energy",
+	"startMode": "daemon",
+	"connectionType": "local",
+	"dataSource": "poll",
+	"connectionIndicator": "no",
+	"language": "JavaScript",
+	"adminReact": "no",
+	"tools": [
+		"ESLint",
+		"type checking"
+	],
+	"indentation": "Tab",
+	"quotes": "double",
+	"es6class": "yes",
+	"authorName": "git-kick",
+	"authorGithub": "git-kick",
+	"authorEmail": "github@kick-web.de",
+	"gitRemoteProtocol": "HTTPS",
+	"gitCommit": "yes",
+	"license": "GNU GPLv3",
+	"ci": "gh-actions",
+	"dependabot": "no",
+	"creatorVersion": "1.31.0"
+}
