@@ -14,7 +14,7 @@
 
 ## e3dc-rscp adapter for ioBroker
 
-Control E3/DC power station using RSCP protocol HELLO
+Control E3/DC power station using RSCP protocol
 
 ## Developer manual
 This section is intended for the developer. It can be deleted later
