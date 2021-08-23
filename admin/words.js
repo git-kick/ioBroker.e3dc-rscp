@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 /*global systemDictionary:true */
 "use strict";
 
@@ -14,9 +15,9 @@ systemDictionary = {
 		"pl": "Ustawienia adaptera dla e3dc-rscp",
 		"zh-cn": "e3dc-rscp的适配器设置"
 	},
-	"option1": {
-		"en": "option1",
-		"de": "Option 1",
+	"e3dc-ip": {
+		"en": "E3/DC IP address",
+		"de": "E3/DC IP-Adresse",
 		"ru": "Опция 1",
 		"pt": "Opção 1",
 		"nl": "Optie 1",
@@ -26,9 +27,9 @@ systemDictionary = {
 		"pl": "opcja 1",
 		"zh-cn": "选项1"
 	},
-	"option2": {
-		"en": "option2",
-		"de": "Option 2",
+	"e3dc-port": {
+		"en": "E3/DC port",
+		"de": "E3/DC Port",
 		"ru": "option2",
 		"pt": "opção 2",
 		"nl": "Optie 2",

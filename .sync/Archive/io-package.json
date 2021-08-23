@@ -87,7 +87,7 @@
         "js-controller": ">=2.0.0"
       }
     ],
-    "installedFrom": "/home/uli/Transfer/viriob/iobroker.e3dc-rscp"
+    "installedFrom": "/home/uli/transfer/ioBroker.e3dc-rscp"
   },
   "native": {
     "E3DC-IP": "192.168.178.107",
