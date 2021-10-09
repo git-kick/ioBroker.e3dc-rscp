@@ -19,7 +19,9 @@
     "url": "https://github.com/git-kick/ioBroker.e3dc-rscp"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.4.0"
+    "@iobroker/adapter-core": "^2.4.0",
+    "crc-32": "^1.2.0",
+    "rijndael-js": "^2.0.0"
   },
   "devDependencies": {
     "@iobroker/testing": "^2.4.2",
@@ -35,6 +37,7 @@
     "chai": "^4.3.0",
     "chai-as-promised": "^7.1.1",
     "eslint": "^7.20.0",
+    "grunt": "^1.4.1",
     "gulp": "^4.0.2",
     "mocha": "^8.3.0",
     "proxyquire": "^2.1.3",
