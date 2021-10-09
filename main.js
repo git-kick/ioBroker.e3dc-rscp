@@ -64,13 +64,13 @@ class E3dcRscp extends utils.Adapter {
 
 		// TCP connection:
 		this.tcpConnection = Net.createConnection( this.config.e3dc_port, this.config.e3dc_ip, () => {
-			this.log.info("\n(1) tcpConnection is established!");
+			this.log.info("(1) tcpConnection is established!");
 			this.sendNextFrame();
 		});
 
 		this.tcpConnection.on("data", (data) => {
 			const receivedFrame = Buffer.from(this.cipher.decrypt(data, 256, this.decryptionIV));
-			this.log.info(`Received response - ${rscpTags[receivedFrame.readUInt32LE(18)].TagNameGlobal}`);
+			this.log.debug(`Received response - ${rscpTags[receivedFrame.readUInt32LE(18)].TagNameGlobal}`);
 			if( this.decryptionIV ) data.copy( this.decryptionIV, 0, data.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
 			//this.log.debug( printRscpFrame(receivedFrame) );
 			this.log.debug( dumpRscpFrame(receivedFrame) );
@@ -79,11 +79,11 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 		this.tcpConnection.on("end", () => {
-			this.log.info("(3) Disconnected from server");
+			this.log.info("(2) Disconnected from server");
 		});
 
 		this.tcpConnection.on("close", () => {
-			this.log.info("(4) Connection closed");
+			this.log.info("(3) Connection closed");
 		});
 	}
 
@@ -245,7 +245,7 @@ class E3dcRscp extends utils.Adapter {
 
 	sendNextFrame() {
 		if( this && (this.next < this.queue.length) ) {
-			this.log.info( `(2) Sending request #${this.next} - ${rscpTags[this.queue[this.next].readUInt32LE(18)].TagNameGlobal}` );
+			this.log.debug( `Sending request #${this.next} - ${rscpTags[this.queue[this.next].readUInt32LE(18)].TagNameGlobal}` );
 			// this.log.debug( printRscpFrame(this.queue[this.next]) );
 			// this.log.debug( dumpRscpFrame(this.queue[this.next]) );
 
@@ -260,7 +260,7 @@ class E3dcRscp extends utils.Adapter {
 			}
 			this.next++;
 		} else {
-			this.log.info( "Message queue is empty.");
+			this.log.debug( "Message queue is empty.");
 		}
 	}
 
@@ -380,7 +380,7 @@ class E3dcRscp extends utils.Adapter {
 	 */
 	async onReady() {
 		// Initialize your adapter here
-		this.log.debug( "config.*: (" + this.config.e3dc_ip + "," + this.config.e3dc_port + "," +  this.config.rscp_password + "," +  this.config.portal_user + "," +  this.config.portal_password + "," +  this.config.polling_interval + ")" );
+		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.rscp_password}, ${this.config.portal_user}, ${this.config.portal_password}, ${this.config.polling_interval})` );
 		this.getForeignObject("system.config", (err, obj) => {
 			if (obj && obj.native && obj.native.secret) {
 				this.config.rscp_password = this.decryptPassword(obj.native.secret,this.config.rscp_password);
@@ -748,7 +748,7 @@ class E3dcRscp extends utils.Adapter {
 			}
 		} else {
 			// The state was deleted
-			this.log.info(`state ${id} deleted`);
+			this.log.debug(`state ${id} deleted`);
 		}
 	}
 

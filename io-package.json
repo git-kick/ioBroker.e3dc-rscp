@@ -70,7 +70,7 @@
         "js-controller": ">=2.0.0"
       }
     ],
-    "installedFrom": "/opt/iobroker/dev/iobroker.e3dc-rscp"
+    "installedFrom": "git-kick/ioBroker.e3dc-rscp"
   },
   "native": {
     "e3dc_ip": "192.168.178.107",
