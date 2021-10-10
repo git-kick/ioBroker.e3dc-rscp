@@ -76,8 +76,8 @@ systemDictionary = {
 		"zh-cn": "选项5"
 	},
 	"polling_interval": {
-		"en": "Polling interval in milliseconds",
-		"de": "Abfrageintervall in Millisekunden",
+		"en": "Polling interval in seconds",
+		"de": "Abfrageintervall in Sekunden",
 		"ru": "option 6",
 		"pt": "opção 6",
 		"nl": "Optie 6",

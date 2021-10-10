@@ -390,7 +390,7 @@ class E3dcRscp extends utils.Adapter {
 					this.queueRequestEmsData();
 					this.queueRequestBatData();
 					this.sendNextFrame();
-				}, this.config.polling_interval);
+				}, this.config.polling_interval*1000 );
 			} else {
 				this.log.error( "Cannot initialize adapter because obj.native.secret is null." )
 			}
