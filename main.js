@@ -117,7 +117,7 @@ class E3dcRscp extends utils.Adapter {
 			case rscpConst.TYPE_RSCP_BITFIELD:
 			case rscpConst.TYPE_RSCP_BYTEARRAY:
 				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
-				this.frame = Buffer.concat( [this.frame, Buffer.from([value])] );
+				this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
 				break;
 			case rscpConst.TYPE_RSCP_BOOL:
 				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
