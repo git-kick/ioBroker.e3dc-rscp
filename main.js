@@ -658,7 +658,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.USED_DISCHARGE_LIMIT", {
 			type: "state",
 			common: {
-				name: "Verwendetes Entladelimit in W",
+				name: "Verwendetes Entladelimit in W (negativ)",
 				type: "number",
 				role: "value",
 				read: true,
@@ -669,7 +669,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.USER_DISCHARGE_LIMIT", {
 			type: "state",
 			common: {
-				name: "Anwender Entladelimit in W",
+				name: "Anwender Entladelimit in W (negativ)",
 				type: "number",
 				role: "value",
 				read: true,
@@ -702,7 +702,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.MAX_DISCHARGE_POWER", {
 			type: "state",
 			common: {
-				name: "Max. Entladeleistung in W",
+				name: "Max. Entladeleistung in W (positiv)",
 				type: "number",
 				role: "level",
 				read: true,
