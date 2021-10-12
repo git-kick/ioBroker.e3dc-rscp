@@ -250,13 +250,6 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>EMS</td>
-    <td>POWER_ADD</td>
-    <td>number</td>
-	<td>no</td>
-    <td>Power to/from  ADD in [W] - but: what is ADD?</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
     <td>POWER_GRID</td>
     <td>number</td>
 	<td>no</td>
@@ -285,13 +278,6 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>EMS</td>
-    <td>DCDC_CHARGE_LIMIT</td>
-    <td>number</td>
-	<td>no</td>
-    <td>DCDC charge limit in [W] - but what is DCDC?</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
     <td>USER_CHARGE_LIMIT</td>
     <td>number</td>
 	<td><b>yes</b></td>
@@ -303,13 +289,6 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>number</td>
 	<td>no</td>
     <td>Used discharge limit in [W]</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>DCDC_DISCHARGE_LIMIT</td>
-    <td>number</td>
-	<td>no</td>
-    <td>DCDC discharge limit in [W] - but what is DCDC?</td>
   </tr>
   <tr>
     <td>EMS</td>

@@ -198,13 +198,10 @@ class E3dcRscp extends utils.Adapter {
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_POWER_BAT, "" );
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_POWER_HOME, "" );
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_POWER_GRID, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_POWER_ADD, "" );
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_USED_CHARGE_LIMIT, "" );
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_BAT_CHARGE_LIMIT, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_DCDC_CHARGE_LIMIT, "" );
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_USER_CHARGE_LIMIT, "" );
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_USED_DISCHARGE_LIMIT, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT, "" );
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_USER_DISCHARGE_LIMIT, "" );
 		this.pushFrame();
 		this.clearFrame();
@@ -565,17 +562,6 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("EMS.POWER_ADD", {
-			type: "state",
-			common: {
-				name: "Leistung ADD in W",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
 		await this.setObjectNotExistsAsync("EMS.POWER_GRID", {
 			type: "state",
 			common: {
@@ -631,17 +617,6 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("EMS.DCDC_CHARGE_LIMIT", {
-			type: "state",
-			common: {
-				name: "DCDC Ladelimit in W",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
 		await this.setObjectNotExistsAsync("EMS.USER_CHARGE_LIMIT", {
 			type: "state",
 			common: {
@@ -657,17 +632,6 @@ class E3dcRscp extends utils.Adapter {
 			type: "state",
 			common: {
 				name: "Verwendetes Entladelimit in W",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.DCDC_DISCHARGE_LIMIT", {
-			type: "state",
-			common: {
-				name: "DCDC Entladelimit in W",
 				type: "number",
 				role: "value",
 				read: true,
@@ -754,8 +718,8 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-		this.subscribeStates("EMS.USER_CHARGE_LIMIT");
-		this.subscribeStates("EMS.USER_DISCHARGE_LIMIT");
+		this.subscribeStates("EMS.MAX_CHARGE_POWER");
+		this.subscribeStates("EMS.MAX_DISCHARGE_POWER");
 		this.subscribeStates("EMS.DISCHARGE_START_POWER");
 		this.subscribeStates("EMS.POWERSAVE_ENABLED");
 		this.subscribeStates("EMS.WEATHER_REGULATED_CHARGE_ENABLED");
