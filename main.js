@@ -238,12 +238,12 @@ class E3dcRscp extends utils.Adapter {
 		this.clearFrame();
 		const [adapter,instance,namespace,tag] = id.split('.');
 		switch( `${namespace}.${tag}` ) {
-			case 'EMS.USER_CHARGE_LIMIT':
+			case 'EMS.MAX_CHARGE_POWER':
 				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
 				this.addtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, value );
 				this.pushFrame();	
 				break;
-			case 'EMS.USER_DISCHARGE_LIMIT':
+			case 'EMS.MAX_DISCHARGE_POWER':
 				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
 				this.addtoFrame( rscpConst.TAG_EMS_MAX_DISCHARGE_POWER, value );
 				this.pushFrame();	
@@ -649,7 +649,7 @@ class E3dcRscp extends utils.Adapter {
 				type: "number",
 				role: "value",
 				read: true,
-				write: true,
+				write: false,
 			},
 			native: {},
 		});
@@ -682,7 +682,7 @@ class E3dcRscp extends utils.Adapter {
 				type: "number",
 				role: "value",
 				read: true,
-				write: true,
+				write: false,
 			},
 			native: {},
 		});
@@ -691,7 +691,7 @@ class E3dcRscp extends utils.Adapter {
 			common: {
 				name: "Minimale Batterie-Entladeleistung in W",
 				type: "number",
-				role: "value",
+				role: "level",
 				read: true,
 				write: true,
 			},
@@ -702,9 +702,9 @@ class E3dcRscp extends utils.Adapter {
 			common: {
 				name: "Max. Ladeleistung in W",
 				type: "number",
-				role: "value",
+				role: "level",
 				read: true,
-				write: false,
+				write: true,
 			},
 			native: {},
 		});
@@ -713,9 +713,9 @@ class E3dcRscp extends utils.Adapter {
 			common: {
 				name: "Max. Entladeleistung in W",
 				type: "number",
-				role: "value",
+				role: "level",
 				read: true,
-				write: false,
+				write: true,
 			},
 			native: {},
 		});
@@ -724,7 +724,7 @@ class E3dcRscp extends utils.Adapter {
 			common: {
 				name: "Powersave Modus aktiviert",
 				type: "boolean",
-				role: "value",
+				role: "switch",
 				read: true,
 				write: true,
 			},
@@ -735,9 +735,9 @@ class E3dcRscp extends utils.Adapter {
 			common: {
 				name: "Wettergesteuertes Laden aktiviert",
 				type: "boolean",
-				role: "value",
+				role: "switch",
 				read: true,
-				write: false,
+				write: true,
 			},
 			native: {},
 		});
@@ -746,7 +746,7 @@ class E3dcRscp extends utils.Adapter {
 			common: {
 				name: "Leistungs-Limits aktiviert",
 				type: "boolean",
-				role: "value",
+				role: "indicator",
 				read: true,
 				write: false,
 			},
