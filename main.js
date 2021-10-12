@@ -353,8 +353,8 @@ class E3dcRscp extends utils.Adapter {
 					this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(pos+7,pos+7+len) )}` );
 					value = null;
 			}
-			if( rscpTags[tag] ) {
-				if( rscpTags[tag].TagName.indexOf("RES_") == 0 ) {
+			if( rscpTags[tag] && rscpTags[tag].TagName.indexOf("UNDEFINED") < 0 ) {
+				if( rscpTags[tag].TagName.indexOf("RES_") == 0 ) {  // TODO: check if state exists
 					this.setState( `${rscpTags[tag].NameSpace}.${rscpTags[tag].TagName.substring(4)}`, value, true );
 				} else {
 					this.setState( `${rscpTags[tag].NameSpace}.${rscpTags[tag].TagName}`, value, true );
