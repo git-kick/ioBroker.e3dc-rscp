@@ -180,7 +180,7 @@ class E3dcRscp extends utils.Adapter {
 		}
 		const buf4 = Buffer.alloc(4);
 		buf4.writeInt32LE( CRC32.buf(this.frame) );
-		this.frame = Buffer.concat( [this.frame, buf4] );
+		this.frame = Buffer.concat( [this.frame, buf4] ); // concat returns a copy of this.frame, which therefore can be reused
 		this.queue.push(this.frame);
 	}
 
@@ -207,6 +207,9 @@ class E3dcRscp extends utils.Adapter {
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT, "" );
 		this.addtoFrame( rscpConst.TAG_EMS_REQ_USER_DISCHARGE_LIMIT, "" );
 		this.pushFrame();
+		this.clearFrame();
+		this.addtoFrame( rscpConst.TAG_EMS_REQ_GET_POWER_SETTINGS, "" );
+		this.pushFrame();
 	}
 
 	queueRequestBatData() {
@@ -220,7 +223,7 @@ class E3dcRscp extends utils.Adapter {
 		this.addtoFrame( rscpConst.TAG_BAT_REQ_CHARGE_CYCLES, "" );
 		this.addtoFrame( rscpConst.TAG_BAT_REQ_STATUS_CODE, "" );
 		this.addtoFrame( rscpConst.TAG_BAT_REQ_ERROR_CODE, "" );
-	this.pushFrame();
+		this.pushFrame();
 	}
 
 	queueCommandMaxChargePower( power ) {
@@ -234,13 +237,35 @@ class E3dcRscp extends utils.Adapter {
 		this.log.debug( `queueValue( ${id}, ${value} )`);
 		this.clearFrame();
 		const [adapter,instance,namespace,tag] = id.split('.');
-		if( namespace == 'EMS' && tag == 'USER_CHARGE_LIMIT' ) {
-			this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-			this.addtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, value );
-			this.pushFrame();
-		} else {
-			this.log.debug( `Don't know how to queue ${id}`);
-		}	
+		switch( `${namespace}.${tag}` ) {
+			case 'EMS.USER_CHARGE_LIMIT':
+				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, value );
+				this.pushFrame();	
+				break;
+			case 'EMS.USER_DISCHARGE_LIMIT':
+				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addtoFrame( rscpConst.TAG_EMS_MAX_DISCHARGE_POWER, value );
+				this.pushFrame();	
+				break;
+			case 'EMS.DISCHARGE_START_POWER':
+				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addtoFrame( rscpConst.TAG_EMS_DISCHARGE_START_POWER, value );
+				this.pushFrame();	
+				break;
+			case 'EMS.POWERSAVE_ENABLED':
+				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addtoFrame( rscpConst.TAG_EMS_POWERSAVE_ENABLED, value );
+				this.pushFrame();	
+				break;
+			case 'EMS.WEATHER_REGULATED_CHARGE_ENABLED':
+				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addtoFrame( rscpConst.TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED, value );
+				this.pushFrame();	
+				break;
+			default:
+				this.log.debug( `Don't know how to queue ${id}`);
+		}
 	}
 
 	sendNextFrame() {
@@ -657,15 +682,48 @@ class E3dcRscp extends utils.Adapter {
 				type: "number",
 				role: "value",
 				read: true,
+				write: true,
+			},
+			native: {},
+		});
+		await this.setObjectNotExistsAsync("EMS.DISCHARGE_START_POWER", {
+			type: "state",
+			common: {
+				name: "Minimale Batterie-Entladeleistung in W",
+				type: "number",
+				role: "value",
+				read: true,
+				write: true,
+			},
+			native: {},
+		});
+		await this.setObjectNotExistsAsync("EMS.POWERSAVE_ENABLED", {
+			type: "state",
+			common: {
+				name: "Powersave Modus aktiviert",
+				type: "boolean",
+				role: "value",
+				read: true,
+				write: true,
+			},
+			native: {},
+		});
+		await this.setObjectNotExistsAsync("EMS.WEATHER_REGULATED_CHARGE_ENABLED", {
+			type: "state",
+			common: {
+				name: "Wettergesteuertes Laden aktiviert",
+				type: "boolean",
+				role: "value",
+				read: true,
 				write: false,
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("EMS.RES_MAX_CHARGE_POWER", {
+		await this.setObjectNotExistsAsync("EMS.POWER_LIMITS_USED", {
 			type: "state",
 			common: {
-				name: "RES max. Ladeleistung in W",
-				type: "number",
+				name: "Leistungs-Limits aktiviert",
+				type: "boolean",
 				role: "value",
 				read: true,
 				write: false,
@@ -675,6 +733,10 @@ class E3dcRscp extends utils.Adapter {
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("EMS.USER_CHARGE_LIMIT");
+		this.subscribeStates("EMS.USER_DISCHARGE_LIMIT");
+		this.subscribeStates("EMS.DISCHARGE_START_POWER");
+		this.subscribeStates("EMS.POWERSAVE_ENABLED");
+		this.subscribeStates("EMS.WEATHER_REGULATED_CHARGE_ENABLED");
 		// You can also add a subscription for multiple states. The following line watches all states starting with 'lights.'
 		// this.subscribeStates('lights.*');
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
