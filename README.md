@@ -14,22 +14,312 @@
 
 ## e3dc-rscp adapter for ioBroker
 
-Control E3/DC power station using RSCP protocol
+Control E3/DC power station using the RSCP protocol which allows for reading state values and also set control parameters. The latter makes the difference to Modbus, which is only for reading values. If you have no need to write values, have a look at the [Modbus adapter](#https://github.com/ioBroker/ioBroker.modbus).
+
+The e3dc-rscp adapter was developed having a E3/DC S10 device on the other side. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
+
+## Table of Content
+1. [ Adapter configuration ](#toc)
+2. [ Coverage of interface messages ](#cov)
+3. [ Sample script ](#sam)
+4. [ Developer manual](#dev)
+
+<a name="toc"></a>
+## Adapter configuration
+Here is what to configure when creating a new instance of the adapter:
+ <table>
+  <tr>
+    <th>Input field</th>
+    <th>Meaning</th>
+  </tr>
+  <tr>
+    <td>E3/DC IP address</td>
+    <td>Address in your local network, like 192.168.178.33</td>
+  </tr>
+  <tr>
+    <td>E3/DC Port</td>
+    <td>RSCP port of your E3/DC, usually 5033</td>
+  </tr>
+  <tr>
+    <td>Polling interval in seconds</td>
+    <td>Defines how often ioBroker will request state updates from E3/DC.</td>
+  </tr>
+  <tr>
+    <td>E3/DC RSCP Password</td>
+    <td>RSCP password, as defined locally at your E3/DC station.</td>
+  </tr>
+  <tr>
+    <td>E3/DC Portal Username</td>
+    <td>Your username at the <a href="https://s10.e3dc.com/s10/">E3/DC portal</a>. E3/DC checks your credentials there before granting RSCP access.</td>
+  </tr>
+  <tr>
+    <td>E3/DC Portal Password</td>
+    <td>Your username at the <a href="https://s10.e3dc.com/s10/">E3/DC portal</a>.</td>
+  </tr>
+</table>
+
+<a name="toc"></a>
+
+## Coverage of interface messages
+### Supported RSCP namespaces
+The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. groups of tags). 
+ <table>
+  <tr>
+    <th>Namespace</th>
+    <th>Stands for</th>
+    <th>Supported by adapter</th>
+  </tr>
+  <tr>
+    <td>RSCP</td>
+    <td>Remote-Storage-Control-Protocol (i.e. protocol level tags)</td>
+    <td>partially</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>Energy Management System</td>
+    <td>partially</td>
+  </tr>
+  <tr>
+    <td>PVI</td>
+    <td>Photovoltaic Inverter</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>BAT</td>
+    <td>Battery</td>
+    <td>partially</td>
+  </tr>
+  <tr>
+    <td>DCDC</td>
+    <td>Battery DCDC</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>PM</td>
+    <td>Power Meter</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>DB</td>
+    <td>Database</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>FMS</td>
+    <td>(Fleet Mgmt System?)</td>
+    <td>no tags defined</td>
+  </tr>
+  <tr>
+    <td>SRV</td>
+    <td>Server online / user mgmt</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>HA</td>
+    <td>Home automation</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>INFO</td>
+    <td>Information</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>EP</td>
+    <td>Emergency Power</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>SYS</td>
+    <td>System reboot/start</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>UM</td>
+    <td>Update Management</td>
+    <td>not supported (yet)</td>
+  </tr>
+  <tr>
+    <td>WB</td>
+    <td>Wallbox</td>
+    <td>not supported (yet)</td>
+  </tr>
+</table> 
+
+### Supported RSCP tags
+ <table>
+  <tr>
+    <th>Namespace</th>
+    <th>Tag</th>
+    <th>Type</th>
+    <th>Content</th>
+  </tr>
+  <tr>
+    <td>RSCP</td>
+    <td>GENERAL_ERROR</td>
+    <td>number</td>
+    <td>Error code</td>
+  <tr>
+    <td>RSCP</td>
+    <td>AUTHENTICATION</td>
+    <td>number</td>
+    <td>Authentication level, usually will be 10 for "USER"</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>BAT</td>
+    <td>GENERAL_ERROR</td>
+    <td>number</td>
+    <td>Error code</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>BAT</td>
+    <td>INDEX</td>
+    <td>number</td>
+    <td>Index of the battery module, always 0.</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>BAT</td>
+    <td>RSOC</td>
+    <td>number</td>
+    <td>Calculated E3/DC battery state-of-charge in [%]</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>BAT</td>
+    <td>MODULE_VOLTAGE</td>
+    <td>number</td>
+    <td>Module voltage in [V]</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>BAT</td>
+    <td>CURRENT</td>
+    <td>number</td>
+    <td>Current in [A]</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>BAT</td>
+    <td>CHARGE_CYCLES</td>
+    <td>number</td>
+    <td>Charge cycles counted since installation.</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>BAT</td>
+    <td>STATUS_CODE</td>
+    <td>number</td>
+    <td>Battery status code; no documentation available.</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>BAT</td>
+    <td>ERROR_CODE</td>
+    <td>number</td>
+    <td>Battery error code; no documentation available.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>GENERAL_ERROR</td>
+    <td>number</td>
+    <td>Error code</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>POWER_HOME</td>
+    <td>number</td>
+    <td>Power to home in [W]</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>POWER_ADD</td>
+    <td>number</td>
+    <td>Power to/from  ADD in [W] - but: what is ADD?</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>POWER_GRID</td>
+    <td>number</td>
+    <td>Power from grid in [W]</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>POWER_BAT</td>
+    <td>number</td>
+    <td>Power to E3/DC battery in [W]</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>USED_CHARGE_LIMIT</td>
+    <td>number</td>
+    <td>Used charge limit in [W]</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>BAT_CHARGE_LIMIT</td>
+    <td>number</td>
+    <td>Battery charge limit in [W] - when is it different from USED_CHARGE_LIMIT?</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>DCDC_CHARGE_LIMIT</td>
+    <td>number</td>
+    <td>DCDC charge limit in [W] - but what is DCDC?</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>USER_CHARGE_LIMIT</td>
+    <td>number</td>
+    <td>User charge limit in [W] - when is it different from USED_CHARGE_LIMIT?</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>USED_DISCHARGE_LIMIT</td>
+    <td>number</td>
+    <td>Used discharge limit in [W]</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>DCDC_DISCHARGE_LIMIT</td>
+    <td>number</td>
+    <td>DCDC discharge limit in [W] - but what is DCDC?</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>USER_DISCHARGE_LIMIT</td>
+    <td>number</td>
+    <td>User discharge limit in [W] - when is it different from USED_DISCHARGE_LIMIT?</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>RES_MAX_CHARGE_POWER</td>
+    <td>number</td>
+    <td>Max. charge power in [W], as reported back from E3/DC</td>
+  </tr>
+</table> 
+
+For the currently unspupported RSCP namespaces, please refer to th official E3/DC tag list provided with the <a href="https://s10.e3dc.com/s10/module/download/get.php?id=280">sample application</a>.
+
+Note that RSCP defines ca. 680 tags (representing around 300 parameters), so we think it does not make sense to read all of them.
+Therefore, we will add tags to the adapter upon upcoming use-cases.
+
+<a name="sam"></a>
+
+## Sample script
+**TODO**: sample script for charge limit control
+
+<a name="dev"></a>
 
 ## Developer manual
-This section is intended for the developer. It can be deleted later
+This adapter is based on @iobroker/create-adapter v1.31.0
+It was developed looking at E3/DC's <a href="https://s10.e3dc.com/s10/module/download/get.php?id=280">sample application</a>.
 
-### Getting started
+The sample application package also contains the official tag lists, which are necessary to interpret RSCP frames semantically.
 
-You are almost done, only a few steps left:
-1. Create a new repository on GitHub with the name `ioBroker.e3dc-rscp`
-
-1. Push all files to the GitHub repo. The creator has already set up the local repository for you:  
-	```bash
-	git push origin master
-	```
-
-1. Head over to [main.js](main.js) and start programming!
+**The rest of this Developer manual will be modified/removed when processed and done, respectively.**
 
 ### Best Practices
 We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
@@ -89,6 +379,7 @@ For later updates, the above procedure is not necessary. Just do the following:
 * (git-kick) initial release
 
 ## License
+```
 					GNU GENERAL PUBLIC LICENSE
 					   Version 3, 29 June 2007
 
@@ -306,8 +597,8 @@ terms of section 4, provided that you also meet all of these conditions:
 	it, and giving a relevant date.
 
 	b) The work must carry prominent notices stating that it is
-	released under this License and any conditions added under section
-	7.  This requirement modifies the requirement in section 4 to
+	released under this License and any conditions added under section 7.
+	This requirement modifies the requirement in section 4 to
 	"keep intact all notices".
 
 	c) You must license the entire work, as a whole, under this
@@ -763,3 +1054,4 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
+```

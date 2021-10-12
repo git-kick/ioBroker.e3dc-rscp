@@ -78,7 +78,7 @@
     "rscp_password": "",
     "portal_user": "Ulrich.Kick@web.de",
     "portal_password": "",
-    "polling_interval": 3000
+    "polling_interval": 60
   },
   "objects": [],
   "instanceObjects": []
