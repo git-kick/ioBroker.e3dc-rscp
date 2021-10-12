@@ -24,7 +24,7 @@
     "jade": "^1.11.0",
     "pug": "^3.0.2",
     "rijndael-js": "^2.0.0",
-    "tests": "^0.4.2"
+    "testing": "^2.0.1"
   },
   "devDependencies": {
     "@iobroker/testing": "^2.4.2",
