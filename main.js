@@ -354,7 +354,11 @@ class E3dcRscp extends utils.Adapter {
 					value = null;
 			}
 			if( rscpTags[tag] ) {
-				this.setState( `${rscpTags[tag].NameSpace}.${rscpTags[tag].TagName}`, value, true );
+				if( rscpTags[tag].TagName.indexOf("RES_") == 0 ) {
+					this.setState( `${rscpTags[tag].NameSpace}.${rscpTags[tag].TagName.substring(4)}`, value, true );
+				} else {
+					this.setState( `${rscpTags[tag].NameSpace}.${rscpTags[tag].TagName}`, value, true );
+				}
 			} else {
 				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);
 			}
