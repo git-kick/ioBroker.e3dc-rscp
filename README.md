@@ -14,7 +14,7 @@
 
 ## e3dc-rscp adapter for ioBroker
 
-Control your E3/DC power station using the RSCP protocol which allows for reading state values and also set control parameters. The latter makes the difference compared to Modbus, which is only for reading values. If you have no need to write values, have a look at the (simpler) [Modbus adapter](https://github.com/ioBroker/ioBroker.modbus).
+Control your E3/DC power station using the proprietary RSCP protocol which allows for reading state values and also set control parameters, e.g. setting the charge power limit. This is the advantage of RSCP compared to the standard Modbus, which is only for reading values. If you have no need to write values, have a look at the (simpler) [Modbus adapter](https://github.com/ioBroker/ioBroker.modbus).
 
 The e3dc-rscp adapter was developed having a E3/DC S10 device on the other side. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
 
@@ -154,17 +154,20 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <th>Namespace</th>
     <th>Tag</th>
     <th>Type</th>
+	<th>Writable</th>
     <th>Content</th>
   </tr>
   <tr>
     <td>RSCP</td>
     <td>GENERAL_ERROR</td>
     <td>number</td>
+	<td>no</td>
     <td>Error code</td>
   <tr>
     <td>RSCP</td>
     <td>AUTHENTICATION</td>
     <td>number</td>
+	<td>no</td>
     <td>Authentication level, usually will be 10 for "USER"</td>
   </tr>
   </tr>
@@ -172,6 +175,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>BAT</td>
     <td>GENERAL_ERROR</td>
     <td>number</td>
+	<td>no</td>
     <td>Error code</td>
   </tr>
   </tr>
@@ -179,6 +183,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>BAT</td>
     <td>INDEX</td>
     <td>number</td>
+	<td>no</td>
     <td>Index of the battery module, always 0.</td>
   </tr>
   </tr>
@@ -186,6 +191,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>BAT</td>
     <td>RSOC</td>
     <td>number</td>
+	<td>no</td>
     <td>Calculated E3/DC battery state-of-charge in [%]</td>
   </tr>
   </tr>
@@ -193,6 +199,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>BAT</td>
     <td>MODULE_VOLTAGE</td>
     <td>number</td>
+	<td>no</td>
     <td>Module voltage in [V]</td>
   </tr>
   </tr>
@@ -200,6 +207,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>BAT</td>
     <td>CURRENT</td>
     <td>number</td>
+	<td>no</td>
     <td>Current in [A]</td>
   </tr>
   </tr>
@@ -207,6 +215,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>BAT</td>
     <td>CHARGE_CYCLES</td>
     <td>number</td>
+	<td>no</td>
     <td>Charge cycles counted since installation.</td>
   </tr>
   </tr>
@@ -214,6 +223,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>BAT</td>
     <td>STATUS_CODE</td>
     <td>number</td>
+	<td>no</td>
     <td>Battery status code; no documentation available.</td>
   </tr>
   </tr>
@@ -221,89 +231,124 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>BAT</td>
     <td>ERROR_CODE</td>
     <td>number</td>
+	<td>no</td>
     <td>Battery error code; no documentation available.</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>GENERAL_ERROR</td>
     <td>number</td>
+	<td>no</td>
     <td>Error code</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>POWER_HOME</td>
     <td>number</td>
+	<td>no</td>
     <td>Power to home in [W]</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>POWER_ADD</td>
     <td>number</td>
+	<td>no</td>
     <td>Power to/from  ADD in [W] - but: what is ADD?</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>POWER_GRID</td>
     <td>number</td>
+	<td>no</td>
     <td>Power from grid in [W]</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>POWER_BAT</td>
     <td>number</td>
+	<td>no</td>
     <td>Power to E3/DC battery in [W]</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>USED_CHARGE_LIMIT</td>
     <td>number</td>
+	<td>no</td>
     <td>Used charge limit in [W]</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>BAT_CHARGE_LIMIT</td>
     <td>number</td>
+	<td>no</td>
     <td>Battery charge limit in [W] - when is it different from USED_CHARGE_LIMIT?</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>DCDC_CHARGE_LIMIT</td>
     <td>number</td>
+	<td>no</td>
     <td>DCDC charge limit in [W] - but what is DCDC?</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>USER_CHARGE_LIMIT</td>
     <td>number</td>
+	<td><b>yes</b></td>
     <td>User charge limit in [W] - when is it different from USED_CHARGE_LIMIT?</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>USED_DISCHARGE_LIMIT</td>
     <td>number</td>
+	<td>no</td>
     <td>Used discharge limit in [W]</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>DCDC_DISCHARGE_LIMIT</td>
     <td>number</td>
+	<td>no</td>
     <td>DCDC discharge limit in [W] - but what is DCDC?</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>USER_DISCHARGE_LIMIT</td>
     <td>number</td>
+	<td>no</td>
     <td>User discharge limit in [W] - when is it different from USED_DISCHARGE_LIMIT?</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>RES_MAX_CHARGE_POWER</td>
     <td>number</td>
+ 	<td>no</td>
     <td>Max. charge power in [W], as reported back from E3/DC</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>DISCHARGE_START_POWER</td>
+    <td>number</td>
+ 	<td><b>yes</b></td>
+    <td>Minimal battery discharge power in [W]</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>POWERSAVE_ENABLED</td>
+    <td>boolean</td>
+ 	<td><b>yes</b></td>
+    <td>Powersave mode is enabled</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>WEATHER_REGULATED_CHARGE_ENABLED</td>
+    <td>boolean</td>
+ 	<td><b>yes</b></td>
+    <td>Weather regulated charging is enabled</td>
   </tr>
 </table> 
 
-For the currently unspupported RSCP namespaces, please refer to th official E3/DC tag list provided with the [sample application](https://s10.e3dc.com/s10/module/download/get.php?id=280) (only accessible after portal login).
+For the currently unspupported RSCP namespaces and tags, please refer to th official E3/DC tag list provided with the [sample application](https://s10.e3dc.com/s10/module/download/get.php?id=280) (only accessible after portal login).
 
 Note that RSCP defines ca. 680 tags (representing around 300 parameters), so we think it does not make sense to read all of them.
 Therefore, we will add tags to the adapter upon upcoming use-cases.
