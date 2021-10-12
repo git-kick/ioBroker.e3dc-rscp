@@ -696,6 +696,28 @@ class E3dcRscp extends utils.Adapter {
 				write: true,
 			},
 			native: {},
+		});		
+		await this.setObjectNotExistsAsync("EMS.MAX_CHARGE_POWER", {
+			type: "state",
+			common: {
+				name: "Max. Ladeleistung in W",
+				type: "number",
+				role: "value",
+				read: true,
+				write: false,
+			},
+			native: {},
+		});
+		await this.setObjectNotExistsAsync("EMS.MAX_DISCHARGE_POWER", {
+			type: "state",
+			common: {
+				name: "Max. Entladeleistung in W",
+				type: "number",
+				role: "value",
+				read: true,
+				write: false,
+			},
+			native: {},
 		});
 		await this.setObjectNotExistsAsync("EMS.POWERSAVE_ENABLED", {
 			type: "state",
