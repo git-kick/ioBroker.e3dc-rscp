@@ -93,6 +93,7 @@ class E3dcRscp extends utils.Adapter {
 
 	addtoFrame( tag, value ) {
 		const type = parseInt( rscpTags[tag].DataTypeHex, 16 );
+		const buf1 = Buffer.alloc(1);
 		const buf2 = Buffer.alloc(2);
 		const buf4 = Buffer.alloc(4);
 		//const buf6 = Buffer.alloc(6);
@@ -110,18 +111,23 @@ class E3dcRscp extends utils.Adapter {
 				}
 				this.openContainer = this.frame.length - 2;
 				break;
-			case rscpConst.TYPE_RSCP_ERROR:
 			case rscpConst.TYPE_RSCP_CSTRING:
-			case rscpConst.TYPE_RSCP_CHAR8:
-			case rscpConst.TYPE_RSCP_UCHAR8:
 			case rscpConst.TYPE_RSCP_BITFIELD:
 			case rscpConst.TYPE_RSCP_BYTEARRAY:
 				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
 				this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
 				break;
-			case rscpConst.TYPE_RSCP_BOOL:
+			case rscpConst.TYPE_RSCP_CHAR8:
+			case rscpConst.TYPE_RSCP_UCHAR8:
+			case rscpConst.TYPE_RSCP_ERROR:
 				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
-				this.frame = Buffer.concat( [this.frame, Buffer.from([value?1:0])] );
+				buf1.writeUInt8( value );
+				this.frame = Buffer.concat( [this.frame, buf1] );
+				break;
+			case rscpConst.TYPE_RSCP_BOOL: // bool is encoded as 0/1 byte
+				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
+				buf1.writeUInt8( value?1:0 );
+				this.frame = Buffer.concat( [this.frame, buf1] );
 				break;
 			case rscpConst.TYPE_RSCP_INT16:
 				this.frame.writeUInt16LE( 2, this.frame.length - 2 );
