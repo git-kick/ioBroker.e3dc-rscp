@@ -353,11 +353,17 @@ class E3dcRscp extends utils.Adapter {
 					this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(pos+7,pos+7+len) )}` );
 					value = null;
 			}
-			if( rscpTags[tag] && rscpTags[tag].TagName.indexOf("UNDEFINED") < 0 ) {
-				if( rscpTags[tag].TagName.indexOf("RES_") == 0 ) {  // TODO: check if state exists
-					this.setState( `${rscpTags[tag].NameSpace}.${rscpTags[tag].TagName.substring(4)}`, value, true );
+			if( rscpTags[tag] ) {
+				const tagname = rscpTags[tag].TagName;
+				const namespace = rscpTags[tag].NameSpace;
+				if( tagname.indexOf("UNDEFINED") < 0 ) {
+					if( tagname.indexOf("RES_") == 0 ) {  // TODO: check if state exists
+						this.setState( `${namespace}.${tagname.substring(4)}`, value, true );
+					} else {
+						this.setState( `${namespace}.${tagname}`, value, true );
+					}
 				} else {
-					this.setState( `${rscpTags[tag].NameSpace}.${rscpTags[tag].TagName}`, value, true );
+					this.log.debug(`Ignoring undefined tag: ${namespace}.${tagname}, value=${value}`);
 				}
 			} else {
 				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);
