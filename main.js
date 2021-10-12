@@ -1,7 +1,7 @@
 "use strict";
 
 // RSCP constants & lookup tables
-const rscpConst = require('./lib/RscpConstants');
+const rscpConst = require("./lib/RscpConstants");
 const rscpTags = require("./lib/RscpTags.json");
 const rscpTypes = require("./lib/RscpTypes.json");
 
@@ -88,14 +88,14 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	clearFrame() { // preset MAGIC and CTRL and reserve space for timestamp and length
-		this.frame = Buffer.from([0xE3, 0xDC, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]); 
+		this.frame = Buffer.from([0xE3, 0xDC, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 	}
 
 	addtoFrame( tag, value ) {
 		const type = parseInt( rscpTags[tag].DataTypeHex, 16 );
 		const buf2 = Buffer.alloc(2);
 		const buf4 = Buffer.alloc(4);
-		const buf6 = Buffer.alloc(6);
+		//const buf6 = Buffer.alloc(6);
 		const buf8 = Buffer.alloc(8);
 		buf4.writeInt32LE( tag );
 		this.frame = Buffer.concat( [this.frame, buf4] );
@@ -233,32 +233,32 @@ class E3dcRscp extends utils.Adapter {
 	queueValue( id, value ) {
 		this.log.debug( `queueValue( ${id}, ${value} )`);
 		this.clearFrame();
-		const [adapter,instance,namespace,tag] = id.split('.');
+		const [,,namespace,tag] = id.split(".");
 		switch( `${namespace}.${tag}` ) {
-			case 'EMS.MAX_CHARGE_POWER':
+			case "EMS.MAX_CHARGE_POWER":
 				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
 				this.addtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, value );
-				this.pushFrame();	
+				this.pushFrame();
 				break;
-			case 'EMS.MAX_DISCHARGE_POWER':
+			case "EMS.MAX_DISCHARGE_POWER":
 				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
 				this.addtoFrame( rscpConst.TAG_EMS_MAX_DISCHARGE_POWER, value );
-				this.pushFrame();	
+				this.pushFrame();
 				break;
-			case 'EMS.DISCHARGE_START_POWER':
+			case "EMS.DISCHARGE_START_POWER":
 				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
 				this.addtoFrame( rscpConst.TAG_EMS_DISCHARGE_START_POWER, value );
-				this.pushFrame();	
+				this.pushFrame();
 				break;
-			case 'EMS.POWERSAVE_ENABLED':
+			case "EMS.POWERSAVE_ENABLED":
 				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
 				this.addtoFrame( rscpConst.TAG_EMS_POWERSAVE_ENABLED, value );
-				this.pushFrame();	
+				this.pushFrame();
 				break;
-			case 'EMS.WEATHER_REGULATED_CHARGE_ENABLED':
+			case "EMS.WEATHER_REGULATED_CHARGE_ENABLED":
 				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
 				this.addtoFrame( rscpConst.TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED, value );
-				this.pushFrame();	
+				this.pushFrame();
 				break;
 			default:
 				this.log.debug( `Don't know how to queue ${id}`);
@@ -290,7 +290,7 @@ class E3dcRscp extends utils.Adapter {
 		const tag = buffer.readUInt32LE(pos);
 		const type = buffer.readUInt8(pos+4);
 		const len = buffer.readUInt16LE(pos+5);
-		var value;
+		let value;
 		if( type == rscpConst.TYPE_RSCP_CONTAINER ) {
 			return 7; // skip container header
 		} else {
@@ -347,19 +347,19 @@ class E3dcRscp extends utils.Adapter {
 			if( rscpTags[tag] ) {
 				this.setState( `${rscpTags[tag].NameSpace}.${rscpTags[tag].TagName}`, value, true );
 			} else {
-				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);				
+				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);
 			}
 			return 7+len;
 		}
 	}
-	
-	processFrame( buffer ) { 
+
+	processFrame( buffer ) {
 		const magic = buffer.toString("hex",0,2).toUpperCase();
 		if( magic != "E3DC" ) {
 			this.log.warn(`Received message with invalid MAGIC: >${magic}<`);
 		}
 		const ctrl = buffer.toString("hex",2,4).toUpperCase();
-		var hasCrc = false;
+		let hasCrc = false;
 		switch( ctrl ) {
 			case "0010":
 				hasCrc = false;
@@ -372,7 +372,7 @@ class E3dcRscp extends utils.Adapter {
 		}
 		// let seconds = buffer.readBigUInt64LE(4);
 		// let nseconds = buffer.readUInt32LE(12);
-		let dataLength = buffer.readUInt16LE(16);
+		const dataLength = buffer.readUInt16LE(16);
 		let i = this.processDataToken( buffer, 18 );
 		while( i < dataLength ) {
 			i += this.processDataToken( buffer, 18+i );
@@ -384,9 +384,9 @@ class E3dcRscp extends utils.Adapter {
 		}
 		if( hasCrc && (CRC32.buf(buffer.slice(0,18+dataLength)) != buffer.readInt32LE(18+i))  ) {
 			this.log.warn(`Received message with invalid CRC-32: 0x${CRC32.buf(buffer.slice(0,18+dataLength)).toString(16)} vs 0x${buffer.readUInt32LE(18+i).toString(16)} - dataLength = ${dataLength}`);
-			this.log.debug( dumpRscpFrame(buffer) );			
+			this.log.debug( dumpRscpFrame(buffer) );
 		}
-	}	
+	}
 
 	// ioBroker best practice for password encryption, using key native.secret
 	decryptPassword(key="", value="") {
@@ -395,7 +395,7 @@ class E3dcRscp extends utils.Adapter {
 			result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
 		}
 		return result;
-	}	
+	}
 
 	/**
 	 * Is called when databases are connected and adapter received configuration.
@@ -407,14 +407,14 @@ class E3dcRscp extends utils.Adapter {
 			if (obj && obj.native && obj.native.secret) {
 				this.config.rscp_password = this.decryptPassword(obj.native.secret,this.config.rscp_password);
 				this.config.portal_password = this.decryptPassword(obj.native.secret,this.config.portal_password);
-				this.initChannel();		
+				this.initChannel();
 				dataPollingTimer = setInterval(() => {
 					this.queueRequestEmsData();
 					this.queueRequestBatData();
 					this.sendNextFrame();
 				}, this.config.polling_interval*1000 );
 			} else {
-				this.log.error( "Cannot initialize adapter because obj.native.secret is null." )
+				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
 			}
 		});
 
@@ -422,6 +422,15 @@ class E3dcRscp extends utils.Adapter {
 		For every state in the system there has to be also an object of type state
 		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
 		*/
+		await this.setObjectNotExistsAsync("RSCP", {
+			type: "channel",
+			common: {
+				name: "RSCP",
+				role: "communication.protocol",
+				desc: "Dieser Channel repräsentiert den RSCP (Remote Strorage Control Protocol) Namespace gemäß Definition in den offiziellen E3/DC-Dokumenten."
+			},
+			native: {},
+		});
 		await this.setObjectNotExistsAsync("RSCP.GENERAL_ERROR", {
 			type: "state",
 			common: {
@@ -430,7 +439,7 @@ class E3dcRscp extends utils.Adapter {
 				role: "value",
 				read: true,
 				write: false,
-				states: { 1:'NOT_HANDLED', 2:'ACCESS_DENIED', 3:'FORMAT', 4:'AGAIN' },
+				states: { 1:"NOT_HANDLED", 2:"ACCESS_DENIED", 3:"FORMAT", 4:"AGAIN" },
 			},
 			native: {},
 		});
@@ -442,12 +451,21 @@ class E3dcRscp extends utils.Adapter {
 				role: "value",
 				read: true,
 				write: false,
-				states: { 0:'NO_AUTH', 10:'USER', 20:'INSTALLER', 30:'PARTNER', 40:'E3DC', 50:'E3DC_ADMIN', 60:'E3DC_ROOT' },
+				states: { 0:"NO_AUTH", 10:"USER", 20:"INSTALLER", 30:"PARTNER", 40:"E3DC", 50:"E3DC_ADMIN", 60:"E3DC_ROOT" },
 			},
 			native: {},
 		});
 
 
+		await this.setObjectNotExistsAsync("BAT", {
+			type: "channel",
+			common: {
+				name: "BAT",
+				role: "electricity.storage",
+				desc: "Dieser Channel repräsentiert den BAT (Battery) Namespace gemäß Definition in den offiziellen E3/DC-Dokumenten."
+			},
+			native: {},
+		});
 		await this.setObjectNotExistsAsync("BAT.GENERAL_ERROR", {
 			type: "state",
 			common: {
@@ -456,7 +474,7 @@ class E3dcRscp extends utils.Adapter {
 				role: "value",
 				read: true,
 				write: false,
-				states: { 1:'NOT_HANDLED', 2:'ACCESS_DENIED', 3:'FORMAT', 4:'AGAIN' },
+				states: { 1:"NOT_HANDLED", 2:"ACCESS_DENIED", 3:"FORMAT", 4:"AGAIN" },
 			},
 			native: {},
 		});
@@ -539,6 +557,15 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 
+		await this.setObjectNotExistsAsync("EMS", {
+			type: "channel",
+			common: {
+				name: "EMS",
+				role: "energy.management",
+				desc: "Dieser Channel repräsentiert den EMS (Energy Management System) Namespace gemäß Definition in den offiziellen E3/DC-Dokumenten."
+			},
+			native: {},
+		});
 		await this.setObjectNotExistsAsync("EMS.GENERAL_ERROR", {
 			type: "state",
 			common: {
@@ -547,7 +574,7 @@ class E3dcRscp extends utils.Adapter {
 				role: "value",
 				read: true,
 				write: false,
-				states: { 1:'NOT_HANDLED', 2:'ACCESS_DENIED', 3:'FORMAT', 4:'AGAIN' },
+				states: { 1:"NOT_HANDLED", 2:"ACCESS_DENIED", 3:"FORMAT", 4:"AGAIN" },
 			},
 			native: {},
 		});
@@ -660,7 +687,7 @@ class E3dcRscp extends utils.Adapter {
 				write: true,
 			},
 			native: {},
-		});		
+		});
 		await this.setObjectNotExistsAsync("EMS.MAX_CHARGE_POWER", {
 			type: "state",
 			common: {
@@ -750,7 +777,7 @@ class E3dcRscp extends utils.Adapter {
 		this.log.info("check group user admin group admin: " + result);
 		*/
 	}
-	
+
 	/**
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
 	 * @param {() => void} callback
@@ -758,7 +785,7 @@ class E3dcRscp extends utils.Adapter {
 	onUnload(callback) {
 		try {
 			// Here you must clear all timeouts or intervals that may still be active
-			clearInterval(dataPollingTimer); 
+			clearInterval(dataPollingTimer);
 			callback();
 		} catch (e) {
 			callback();
