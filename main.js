@@ -91,7 +91,7 @@ class E3dcRscp extends utils.Adapter {
 		this.frame = Buffer.from([0xE3, 0xDC, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 	}
 
-	addtoFrame( tag, value ) {
+	addTagtoFrame( tag, value ) {
 		const type = parseInt( rscpTags[tag].DataTypeHex, 16 );
 		const buf1 = Buffer.alloc(1);
 		const buf2 = Buffer.alloc(2);
@@ -120,12 +120,12 @@ class E3dcRscp extends utils.Adapter {
 			case rscpConst.TYPE_RSCP_CHAR8:
 			case rscpConst.TYPE_RSCP_UCHAR8:
 			case rscpConst.TYPE_RSCP_ERROR:
-				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
+				this.frame.writeUInt16LE( 1, this.frame.length - 2);
 				buf1.writeUInt8( value );
 				this.frame = Buffer.concat( [this.frame, buf1] );
 				break;
 			case rscpConst.TYPE_RSCP_BOOL: // bool is encoded as 0/1 byte
-				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
+				this.frame.writeUInt16LE( 1, this.frame.length - 2);
 				buf1.writeUInt8( value?1:0 );
 				this.frame = Buffer.concat( [this.frame, buf1] );
 				break;
@@ -195,47 +195,47 @@ class E3dcRscp extends utils.Adapter {
 
 	queueAuthentication( ) {
 		this.clearFrame();
-		this.addtoFrame( rscpConst.TAG_RSCP_REQ_AUTHENTICATION, "" ); // container, data follow
-		this.addtoFrame( rscpConst.TAG_RSCP_AUTHENTICATION_USER, this.config.portal_user );
-		this.addtoFrame( rscpConst.TAG_RSCP_AUTHENTICATION_PASSWORD, this.config.portal_password );
+		this.addTagtoFrame( rscpConst.TAG_RSCP_REQ_AUTHENTICATION, "" ); // container, data follow
+		this.addTagtoFrame( rscpConst.TAG_RSCP_AUTHENTICATION_USER, this.config.portal_user );
+		this.addTagtoFrame( rscpConst.TAG_RSCP_AUTHENTICATION_PASSWORD, this.config.portal_password );
 		this.pushFrame();
 	}
 
 	queueRequestEmsData() {
 		this.clearFrame();
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_POWER_PV, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_POWER_BAT, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_POWER_HOME, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_POWER_GRID, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_USED_CHARGE_LIMIT, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_BAT_CHARGE_LIMIT, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_USER_CHARGE_LIMIT, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_USED_DISCHARGE_LIMIT, "" );
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_USER_DISCHARGE_LIMIT, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_PV, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_BAT, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_HOME, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_GRID, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_USED_CHARGE_LIMIT, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_BAT_CHARGE_LIMIT, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_USER_CHARGE_LIMIT, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_USED_DISCHARGE_LIMIT, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_USER_DISCHARGE_LIMIT, "" );
 		this.pushFrame();
 		this.clearFrame();
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_GET_POWER_SETTINGS, "" );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_GET_POWER_SETTINGS, "" );
 		this.pushFrame();
 	}
 
 	queueRequestBatData() {
 		this.clearFrame();
-		this.addtoFrame( rscpConst.TAG_BAT_REQ_DATA, "" );
-		this.addtoFrame( rscpConst.TAG_BAT_INDEX, 0 );
+		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_DATA, "" );
+		this.addTagtoFrame( rscpConst.TAG_BAT_INDEX, 0 );
 		//this.addtoFrame( rscpConst.TAG_BAT_REQ_INFO, "" );
-		this.addtoFrame( rscpConst.TAG_BAT_REQ_RSOC, "" );
-		this.addtoFrame( rscpConst.TAG_BAT_REQ_MODULE_VOLTAGE, "" );
-		this.addtoFrame( rscpConst.TAG_BAT_REQ_CURRENT, "" );
-		this.addtoFrame( rscpConst.TAG_BAT_REQ_CHARGE_CYCLES, "" );
-		this.addtoFrame( rscpConst.TAG_BAT_REQ_STATUS_CODE, "" );
-		this.addtoFrame( rscpConst.TAG_BAT_REQ_ERROR_CODE, "" );
+		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_RSOC, "" );
+		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_MODULE_VOLTAGE, "" );
+		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_CURRENT, "" );
+		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_CHARGE_CYCLES, "" );
+		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_STATUS_CODE, "" );
+		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_ERROR_CODE, "" );
 		this.pushFrame();
 	}
 
 	queueCommandMaxChargePower( power ) {
 		this.clearFrame();
-		this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-		this.addtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, power );
+		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+		this.addTagtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, power );
 		this.pushFrame();
 	}
 
@@ -245,28 +245,28 @@ class E3dcRscp extends utils.Adapter {
 		const [,,namespace,tag] = id.split(".");
 		switch( `${namespace}.${tag}` ) {
 			case "EMS.MAX_CHARGE_POWER":
-				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, value );
+				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addTagtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, value );
 				this.pushFrame();
 				break;
 			case "EMS.MAX_DISCHARGE_POWER":
-				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addtoFrame( rscpConst.TAG_EMS_MAX_DISCHARGE_POWER, value );
+				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addTagtoFrame( rscpConst.TAG_EMS_MAX_DISCHARGE_POWER, value );
 				this.pushFrame();
 				break;
 			case "EMS.DISCHARGE_START_POWER":
-				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addtoFrame( rscpConst.TAG_EMS_DISCHARGE_START_POWER, value );
+				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addTagtoFrame( rscpConst.TAG_EMS_DISCHARGE_START_POWER, value );
 				this.pushFrame();
 				break;
 			case "EMS.POWERSAVE_ENABLED":
-				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addtoFrame( rscpConst.TAG_EMS_POWERSAVE_ENABLED, value );
+				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addTagtoFrame( rscpConst.TAG_EMS_POWERSAVE_ENABLED, value );
 				this.pushFrame();
 				break;
 			case "EMS.WEATHER_REGULATED_CHARGE_ENABLED":
-				this.addtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addtoFrame( rscpConst.TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED, value );
+				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
+				this.addTagtoFrame( rscpConst.TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED, value );
 				this.pushFrame();
 				break;
 			default:
@@ -358,7 +358,7 @@ class E3dcRscp extends utils.Adapter {
 				const namespace = rscpTags[tag].NameSpace;
 				if( tagname.indexOf("UNDEFINED") < 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
 					if( tagname.indexOf("RES_") == 0 ) { // check if we have an object without "RES_" prefix
-						this.getState( `${namespace}.${tagname.substring(4)}`, (err,obj) => {
+						this.getObject( `${namespace}.${tagname.substring(4)}`, (err,obj) => {
 							if( !err && obj ) tagname = tagname.substring(4);
 						});
 					}
