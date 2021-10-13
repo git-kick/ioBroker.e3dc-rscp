@@ -2,8 +2,9 @@
 
 // RSCP constants & lookup tables
 const rscpConst = require("./lib/RscpConstants");
-const rscpTags = require("./lib/RscpTags.json");
-const rscpTypes = require("./lib/RscpTypes.json");
+const rscpTag = require("./lib/RscpTags.json");
+const rscpType = require("./lib/RscpTypes.json");
+const rscpError = require("./lib/RscpErrors.json");
 
 // Encryption setup for E3/DC RSCP
 // NOTE: E3/DC uses 256 bit block-size, which ist _not_ covered by AES standard.
@@ -70,7 +71,7 @@ class E3dcRscp extends utils.Adapter {
 
 		this.tcpConnection.on("data", (data) => {
 			const receivedFrame = Buffer.from(this.cipher.decrypt(data, 256, this.decryptionIV));
-			this.log.debug(`Received response - ${rscpTags[receivedFrame.readUInt32LE(18)].TagNameGlobal}`);
+			this.log.debug(`Received response - ${rscpTag[receivedFrame.readUInt32LE(18)].TagNameGlobal}`);
 			if( this.decryptionIV ) data.copy( this.decryptionIV, 0, data.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
 			this.log.debug( printRscpFrame(receivedFrame) );
 			this.log.debug( dumpRscpFrame(receivedFrame) );
@@ -92,7 +93,7 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	addTagtoFrame( tag, value ) {
-		const type = parseInt( rscpTags[tag].DataTypeHex, 16 );
+		const type = parseInt( rscpTag[tag].DataTypeHex, 16 );
 		const buf1 = Buffer.alloc(1);
 		const buf2 = Buffer.alloc(2);
 		const buf4 = Buffer.alloc(4);
@@ -175,7 +176,7 @@ class E3dcRscp extends utils.Adapter {
 				this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array([0x00,0x00,0x00,0x00])] );
 				break;
 			default:
-				return ("CAUTION: appendData does not handle data type " + rscpTypes[type]);
+				return ("CAUTION: appendData does not handle data type " + rscpType[type]);
 		}
 		return "OK";
 	}
@@ -276,7 +277,7 @@ class E3dcRscp extends utils.Adapter {
 
 	sendNextFrame() {
 		if( this && (this.next < this.queue.length) ) {
-			this.log.debug( `Sending request #${this.next} - ${rscpTags[this.queue[this.next].readUInt32LE(18)].TagNameGlobal}` );
+			this.log.debug( `Sending request #${this.next} - ${rscpTag[this.queue[this.next].readUInt32LE(18)].TagNameGlobal}` );
 			this.log.debug( printRscpFrame(this.queue[this.next]) );
 			this.log.debug( dumpRscpFrame(this.queue[this.next]) );
 
@@ -302,6 +303,9 @@ class E3dcRscp extends utils.Adapter {
 		let value;
 		if( type == rscpConst.TYPE_RSCP_CONTAINER ) {
 			return 7; // skip container header
+		} else if( type == rscpConst.TYPE_RSCP_ERROR ) {
+			value = buffer.readUInt32LE(pos+7);
+			this.log.error( `Received data type ERROR with value ${rscpError[value]}`);
 		} else {
 			switch( type  ) {
 				case rscpConst.TYPE_RSCP_NONE:
@@ -337,9 +341,6 @@ class E3dcRscp extends utils.Adapter {
 				case rscpConst.TYPE_RSCP_UINT64:
 					value = buffer.readBigUInt64LE(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_ERROR:
-					value = buffer.readUInt32LE(pos+7);
-					break;
 				case rscpConst.TYPE_RSCP_DOUBLE64:
 					value = buffer.readDoubleLE(pos+7);
 					break;
@@ -353,9 +354,9 @@ class E3dcRscp extends utils.Adapter {
 					this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(pos+7,pos+7+len) )}` );
 					value = null;
 			}
-			if( rscpTags[tag] ) {
-				let tagname = rscpTags[tag].TagName;
-				const namespace = rscpTags[tag].NameSpace;
+			if( rscpTag[tag] ) {
+				let tagname = rscpTag[tag].TagName;
+				const namespace = rscpTag[tag].NameSpace;
 				if( tagname.indexOf("UNDEFINED") < 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
 					if( tagname.indexOf("RES_") == 0 ) { // check if we have an object without "RES_" prefix
 						this.getObject( `${namespace}.${tagname.substring(4)}`, (err,obj) => {
@@ -921,7 +922,7 @@ function parseRscpDataToken ( buffer, pos, text ) {
 	const tag = buffer.readUInt32LE(pos);
 	const type = buffer.readUInt8(pos+4);
 	const len = buffer.readUInt16LE(pos+5);
-	text.content += rscpTags[tag].TagNameGlobal + " - type: " + "0x" + type.toString(16).toUpperCase().padStart(2,"0") + "-" + rscpTypes[type] + " - length: " + len + " ";
+	text.content += rscpTag[tag].TagNameGlobal + " - type: " + "0x" + type.toString(16).toUpperCase().padStart(2,"0") + "-" + rscpType[type] + " - length: " + len + " ";
 	if( pos+7+len > buffer.length ) { // avoid out-of-range in unexpected cases
 		text.content += " - invalid tag, buffer is too short. ";
 		return buffer.length;
