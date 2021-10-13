@@ -306,6 +306,7 @@ class E3dcRscp extends utils.Adapter {
 		} else if( type == rscpConst.TYPE_RSCP_ERROR ) {
 			value = buffer.readUInt32LE(pos+7);
 			this.log.error( `Received data type ERROR with value ${rscpError[value]}`);
+			return 7+len;
 		} else {
 			switch( type  ) {
 				case rscpConst.TYPE_RSCP_NONE:
