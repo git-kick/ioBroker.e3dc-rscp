@@ -361,10 +361,10 @@ class E3dcRscp extends utils.Adapter {
 				if( tagname.indexOf("UNDEFINED") < 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
 					if( tagname.indexOf("RES_") == 0 ) { // check if we have assign to a state without "RES_" prefix
 						this.getObject( `${namespace}.${tagname.substring(4)}`, (err,obj) => {
-							this.log.debug( `RES_ case: getObject called back with err = ${err}, obj = ${obj}` );
+							this.log.silly( `RES_ case: getObject called back with err = ${err}, obj = ${obj}` );
 							if( !err && obj ) {
 								tagname = tagname.substring(4);
-								this.log.debug( `RES_ case: trimmed tagname = ${tagname}` );
+								this.log.silly( `RES_ case: trimmed tagname = ${tagname}` );
 							}
 						});
 					}
@@ -373,6 +373,7 @@ class E3dcRscp extends utils.Adapter {
 							if(obj && obj.common.type == "boolean") value = (value!=0);
 						});
 					}
+					this.log.silly(`this.setState( "${namespace}.${tagname}", ${value}, true )`);
 					this.setState( `${namespace}.${tagname}`, value, true );
 				} else {
 					this.log.debug(`Ignoring undefined tag: ${namespace}.${tagname}, value=${value}`);
