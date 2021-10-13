@@ -277,8 +277,8 @@ class E3dcRscp extends utils.Adapter {
 	sendNextFrame() {
 		if( this && (this.next < this.queue.length) ) {
 			this.log.debug( `Sending request #${this.next} - ${rscpTags[this.queue[this.next].readUInt32LE(18)].TagNameGlobal}` );
-			// this.log.debug( printRscpFrame(this.queue[this.next]) );
-			// this.log.debug( dumpRscpFrame(this.queue[this.next]) );
+			this.log.debug( printRscpFrame(this.queue[this.next]) );
+			this.log.debug( dumpRscpFrame(this.queue[this.next]) );
 
 			const encryptedFrame = Buffer.from( this.cipher.encrypt( this.queue[this.next], 256, this.encryptionIV ) );
 			// last encrypted block will be used as IV for next frame
