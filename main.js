@@ -354,14 +354,20 @@ class E3dcRscp extends utils.Adapter {
 					value = null;
 			}
 			if( rscpTags[tag] ) {
-				const tagname = rscpTags[tag].TagName;
+				let tagname = rscpTags[tag].TagName;
 				const namespace = rscpTags[tag].NameSpace;
 				if( tagname.indexOf("UNDEFINED") < 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
-					if( tagname.indexOf("RES_") == 0 ) {  // TODO: check if state without "RES_" prefix exists
-						this.setState( `${namespace}.${tagname.substring(4)}`, value, true );
-					} else {
-						this.setState( `${namespace}.${tagname}`, value, true );
+					if( tagname.indexOf("RES_") == 0 ) { // check if we have an object without "RES_" prefix
+						this.getState( `${namespace}.${tagname.substring(4)}`, (err,obj) => {
+							if( !err && obj ) tagname = tagname.substring(4);
+						});
 					}
+					if( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) { // RSCP is sloppy concerning boolean type; convert char to bool if necessary
+						this.getObject( `${namespace}.${tagname}`, (err,obj) => {
+							if(obj && obj.common.type == "boolean") value = (value!=0);
+						});
+					}
+					this.setState( `${namespace}.${tagname}`, value, true );
 				} else {
 					this.log.debug(`Ignoring undefined tag: ${namespace}.${tagname}, value=${value}`);
 				}
@@ -915,7 +921,7 @@ function parseRscpDataToken ( buffer, pos, text ) {
 	const tag = buffer.readUInt32LE(pos);
 	const type = buffer.readUInt8(pos+4);
 	const len = buffer.readUInt16LE(pos+5);
-	text.content += rscpTags[tag].TagNameGlobal + " - DATA TYPE: " + "0x" + type.toString(16).toUpperCase().padStart(2,"0") + "-" + rscpTypes[type] + " - DATA LENGTH: " + len + " ";
+	text.content += rscpTags[tag].TagNameGlobal + " - type: " + "0x" + type.toString(16).toUpperCase().padStart(2,"0") + "-" + rscpTypes[type] + " - length: " + len + " ";
 	if( pos+7+len > buffer.length ) { // avoid out-of-range in unexpected cases
 		text.content += " - invalid tag, buffer is too short. ";
 		return buffer.length;
@@ -928,46 +934,46 @@ function parseRscpDataToken ( buffer, pos, text ) {
 				text.content += "<Container content follows...> ";
 				return 7; // length of container header, not content
 			case rscpConst.TYPE_RSCP_CSTRING:
-				text.content += "DATA VALUE: " + buffer.toString("utf8",pos+7,pos+7+len) + " ";
+				text.content += "value: " + buffer.toString("utf8",pos+7,pos+7+len) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_CHAR8:
 			case rscpConst.TYPE_RSCP_UCHAR8:
 			case rscpConst.TYPE_RSCP_BOOL:
 				if( buffer.readUInt8(pos+7) > 31 && buffer.readUInt8(pos+7) < 127 && (type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8)  ) {
-					text.content += "DATA VALUE: " + buffer.toString("utf8",pos+7,pos+8) + " ";
+					text.content += "value: " + buffer.toString("utf8",pos+7,pos+8) + " ";
 				} else {
-					text.content += "DATA VALUE: 0x" + buffer.readUInt8(pos+7).toString(16).toUpperCase().padStart(2,"0") + " ";
+					text.content += "value: 0x" + buffer.readUInt8(pos+7).toString(16).toUpperCase().padStart(2,"0") + " ";
 				}
 				return 7+len;
 			case rscpConst.TYPE_RSCP_INT16:
-				text.content += "DATA VALUE: " + buffer.readInt16LE(pos+7) + " ";
+				text.content += "value: " + buffer.readInt16LE(pos+7) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_UINT16:
-				text.content += "DATA VALUE: " + buffer.readUInt16LE(pos+7) + " ";
+				text.content += "value: " + buffer.readUInt16LE(pos+7) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_INT32:
-				text.content += "DATA VALUE: " + buffer.readInt32LE(pos+7) + " ";
+				text.content += "value: " + buffer.readInt32LE(pos+7) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_UINT32:
-				text.content += "DATA VALUE: " + buffer.readUInt32LE(pos+7) + " ";
+				text.content += "value: " + buffer.readUInt32LE(pos+7) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_INT64:
-				text.content += "DATA VALUE: " + buffer.readBigInt64LE(pos+7) + " ";
+				text.content += "value: " + buffer.readBigInt64LE(pos+7) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_UINT64:
-				text.content += "DATA VALUE: " + buffer.readBigUInt64LE(pos+7) + " ";
+				text.content += "value: " + buffer.readBigUInt64LE(pos+7) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_ERROR:
-				text.content += "DATA VALUE: " + buffer.readUInt32LE(pos+7) + " ";
+				text.content += "value: " + buffer.readUInt32LE(pos+7) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_DOUBLE64:
-				text.content += "DATA VALUE: " + buffer.readDoubleLE(pos+7) + " ";
+				text.content += "value: " + buffer.readDoubleLE(pos+7) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_FLOAT32:
-				text.content += "DATA VALUE: " + buffer.readFloatLE(pos+7) + " ";
+				text.content += "value: " + buffer.readFloatLE(pos+7) + " ";
 				return 7+len;
 			case rscpConst.TYPE_RSCP_TIMESTAMP:
-				text.content += "SECONDS: "+buffer.readUInt64LE(pos+7)+" - NSECONDS: "+buffer.readUInt32LE(pos+7+8) + " ";
+				text.content += "seconds: "+buffer.readUInt64LE(pos+7)+" - nseconds: "+buffer.readUInt32LE(pos+7+8) + " ";
 				return 7+len;
 			default:
 				if( len > 0 ) text.content += dumpRscpFrame( buffer.slice(pos+7,pos+7+len) ) + " ";
@@ -980,22 +986,22 @@ function printRscpFrame( buffer ) {
 	const result = { content: "" };
 	const magic = buffer.toString("hex",0,2).toUpperCase();
 	if( magic == "E3DC" ) {
-		result.content += "MAGIC: >" + magic + "< is OK ";
+		result.content += "magic: >" + magic + "< is OK ";
 	} else {
-		result.content += "MAGIC: >" + magic + "< is WRONG ";
+		result.content += "magic: >" + magic + "< is WRONG ";
 	}
 	const ctrl = buffer.toString("hex",2,4).toUpperCase();
 	switch( ctrl ) {
 		case "0010":
-			result.content += " - CTRL: >" + ctrl + "< is OK - Version 1, no CRC ";
+			result.content += " - ctrl: >" + ctrl + "< is OK - Version 1, no CRC ";
 			break;
 		case "0011":
-			result.content += " - CTRL: >" + ctrl + "< is OK - Version 1, with CRC ";
+			result.content += " - ctrl: >" + ctrl + "< is OK - Version 1, with CRC ";
 			break;
 		default:
-			result.content += " - CTRL: >" + ctrl + "< is WRONG ";
+			result.content += " - ctrl: >" + ctrl + "< is WRONG ";
 	}
-	result.content += " - SECONDS: "+buffer.readUIntLE(4,6)+" - NSECONDS: "+buffer.readUInt32LE(12)+" - LENGTH: "+buffer.readUInt16LE(16) + " ";
+	result.content += " - seconds: "+buffer.readUIntLE(4,6)+" - nseconds: "+buffer.readUInt32LE(12)+" - length: "+buffer.readUInt16LE(16) + " ";
 	let i = parseRscpDataToken( buffer, 18, result );
 	while( i < buffer.readUInt16LE(16) ) {
 		if( buffer.length >= 18+i+7 ) { // avoid out-of-range in unexpected cases
