@@ -362,7 +362,10 @@ class E3dcRscp extends utils.Adapter {
 					if( tagname.indexOf("RES_") == 0 ) { // check if we have assign to a state without "RES_" prefix
 						this.getObject( `${namespace}.${tagname.substring(4)}`, (err,obj) => {
 							this.log.debug( `RES_ case: getObject called back with err = ${err}, obj = ${obj}` );
-							if( !err && obj ) tagname = tagname.substring(4);
+							if( !err && obj ) {
+								tagname = tagname.substring(4);
+								this.log.debug( `RES_ case: trimmed tagname = ${tagname}` );
+							}
 						});
 					}
 					if( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) { // RSCP is sloppy concerning boolean type; convert char to bool if necessary
