@@ -374,7 +374,7 @@ class E3dcRscp extends utils.Adapter {
 						});
 					}
 					this.log.silly(`this.setState( "${namespace}.${tagname}", ${value}, true )`);
-					this.setState( `${namespace}.${tagname}`, value, true );
+					await this.setStateAsync( `${namespace}.${tagname}`, value, true );
 				} else {
 					this.log.debug(`Ignoring undefined tag: ${namespace}.${tagname}, value=${value}`);
 				}
