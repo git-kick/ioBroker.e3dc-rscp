@@ -359,8 +359,9 @@ class E3dcRscp extends utils.Adapter {
 				let tagname = rscpTag[tag].TagName;
 				const namespace = rscpTag[tag].NameSpace;
 				if( tagname.indexOf("UNDEFINED") < 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
-					if( tagname.indexOf("RES_") == 0 ) { // check if we have an object without "RES_" prefix
+					if( tagname.indexOf("RES_") == 0 ) { // check if we have assign to a state without "RES_" prefix
 						this.getObject( `${namespace}.${tagname.substring(4)}`, (err,obj) => {
+							this.log.debug( `RES_ case: getObject called back with err = ${err}, obj = ${obj}` );
 							if( !err && obj ) tagname = tagname.substring(4);
 						});
 					}
