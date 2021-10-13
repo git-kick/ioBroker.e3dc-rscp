@@ -6,6 +6,11 @@ const rscpTag = require("./lib/RscpTags.json");
 const rscpType = require("./lib/RscpTypes.json");
 const rscpError = require("./lib/RscpErrors.json");
 
+// Mapping for exceptional response value handling:
+const rscpTagMap = {
+	"RES_POWERSAVE_ENABLED": { targetTag: "POWERSAVE_ENABLED", castToBoolean: "true" },
+};
+
 // Encryption setup for E3/DC RSCP
 // NOTE: E3/DC uses 256 bit block-size, which ist _not_ covered by AES standard.
 // It seems that Rijndael CBC with 256 bit block-size fits.
@@ -302,7 +307,7 @@ class E3dcRscp extends utils.Adapter {
 		const len = buffer.readUInt16LE(pos+5);
 		let value;
 		if( type == rscpConst.TYPE_RSCP_CONTAINER ) {
-			return 7; // skip container header
+			return 7; // just skip container header
 		} else if( type == rscpConst.TYPE_RSCP_ERROR ) {
 			value = buffer.readUInt32LE(pos+7);
 			this.log.error( `Received data type ERROR with value ${rscpError[value]}`);
@@ -355,31 +360,20 @@ class E3dcRscp extends utils.Adapter {
 					this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(pos+7,pos+7+len) )}` );
 					value = null;
 			}
-			if( rscpTag[tag] ) {
-				let tagname = rscpTag[tag].TagName;
-				const namespace = rscpTag[tag].NameSpace;
-				if( tagname.indexOf("UNDEFINED") < 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
-					if( tagname.indexOf("RES_") == 0 ) { // check if we have assign to a state without "RES_" prefix
-						this.getObject( `${namespace}.${tagname.substring(4)}`, (err,obj) => {
-							this.log.silly( `RES_ case: getObject called back with err = ${err}, obj = ${obj}` );
-							if( !err && obj ) {
-								tagname = tagname.substring(4);
-								this.log.silly( `RES_ case: trimmed tagname = ${tagname}` );
-							}
-						});
-					}
-					if( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) { // RSCP is sloppy concerning boolean type; convert char to bool if necessary
-						this.getObject( `${namespace}.${tagname}`, (err,obj) => {
-							if(obj && obj.common.type == "boolean") value = (value!=0);
-						});
-					}
-					this.log.silly(`this.setState( "${namespace}.${tagname}", ${value}, true )`);
-					await this.setStateAsync( `${namespace}.${tagname}`, value, true );
-				} else {
-					this.log.debug(`Ignoring undefined tag: ${namespace}.${tagname}, value=${value}`);
-				}
-			} else {
+			if( !rscpTag[tag] ) {
 				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);
+			} else {
+				let id = `${rscpTag[tag].NameSpace}.${rscpTag[tag].TagName}`;
+				if( rscpTagMap[tag] ) { // adjust tagname and cast to boolean, if neccessary
+					id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tag].targetTag}`;
+					if( rscpTagMap[tag].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+				}
+				if( id.indexOf("UNDEFINED") >= 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
+					this.log.debug(`Ignoring undefined tag: ${id}, value=${value}`);
+				} else {
+					this.log.silly(`this.setState( "${id}", ${value}, true )`);
+					this.setState( id, value, true );
+				}
 			}
 			return 7+len;
 		}
