@@ -915,60 +915,64 @@ function parseRscpDataToken ( buffer, pos, text ) {
 	const tag = buffer.readUInt32LE(pos);
 	const type = buffer.readUInt8(pos+4);
 	const len = buffer.readUInt16LE(pos+5);
-	// text.content += "TAG: " + rscpTags[tag].TagHex + "-" + rscpTags[tag].TagNameGlobal + " - DATA TYPE: " + "0x" + type.toString(16).toUpperCase().padStart(2,"0") + "-" + rscpTypes[type] + " - DATA LENGTH: " + len + " ";
 	text.content += rscpTags[tag].TagNameGlobal + " - DATA TYPE: " + "0x" + type.toString(16).toUpperCase().padStart(2,"0") + "-" + rscpTypes[type] + " - DATA LENGTH: " + len + " ";
-	switch( type ) {
-		case rscpConst.TYPE_RSCP_NONE:
-			if( len > 0 ) text.content += "CAUTION: length of data is " + len + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_CONTAINER:
-			text.content += "<Container content follows...> ";
-			return 7; // length of container header, not content
-		case rscpConst.TYPE_RSCP_CSTRING:
-			text.content += "DATA VALUE: " + buffer.toString("utf8",pos+7,pos+7+len) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_CHAR8:
-		case rscpConst.TYPE_RSCP_UCHAR8:
-		case rscpConst.TYPE_RSCP_BOOL:
-			if( buffer.readUInt8(pos+7) > 31 && buffer.readUInt8(pos+7) < 127 && (type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8)  ) {
-				text.content += "DATA VALUE: " + buffer.toString("utf8",pos+7,pos+8) + " ";
-			} else {
-				text.content += "DATA VALUE: 0x" + buffer.readUInt8(pos+7).toString(16).toUpperCase().padStart(2,"0") + " ";
-			}
-			return 7+len;
-		case rscpConst.TYPE_RSCP_INT16:
-			text.content += "DATA VALUE: " + buffer.readInt16LE(pos+7) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_UINT16:
-			text.content += "DATA VALUE: " + buffer.readUInt16LE(pos+7) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_INT32:
-			text.content += "DATA VALUE: " + buffer.readInt32LE(pos+7) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_UINT32:
-			text.content += "DATA VALUE: " + buffer.readUInt32LE(pos+7) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_INT64:
-			text.content += "DATA VALUE: " + buffer.readBigInt64LE(pos+7) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_UINT64:
-			text.content += "DATA VALUE: " + buffer.readBigUInt64LE(pos+7) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_ERROR:
-			text.content += "DATA VALUE: " + buffer.readUInt32LE(pos+7) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_DOUBLE64:
-			text.content += "DATA VALUE: " + buffer.readDoubleLE(pos+7) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_FLOAT32:
-			text.content += "DATA VALUE: " + buffer.readFloatLE(pos+7) + " ";
-			return 7+len;
-		case rscpConst.TYPE_RSCP_TIMESTAMP:
-			text.content += "SECONDS: "+buffer.readUInt64LE(pos+7)+" - NSECONDS: "+buffer.readUInt32LE(pos+7+8) + " ";
-			return 7+len;
-		default:
-			if( len > 0 ) text.content += dumpRscpFrame( buffer.slice(pos+7,pos+7+len) ) + " ";
-			return 7+len;
+	if( pos+7+len > buffer.length ) { // avoid out-of-range in unexpected cases
+		text.content += " - invalid tag, buffer is too short. ";
+		return buffer.length;
+	} else {
+		switch( type ) {
+			case rscpConst.TYPE_RSCP_NONE:
+				if( len > 0 ) text.content += "CAUTION: length of data is " + len + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_CONTAINER:
+				text.content += "<Container content follows...> ";
+				return 7; // length of container header, not content
+			case rscpConst.TYPE_RSCP_CSTRING:
+				text.content += "DATA VALUE: " + buffer.toString("utf8",pos+7,pos+7+len) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_CHAR8:
+			case rscpConst.TYPE_RSCP_UCHAR8:
+			case rscpConst.TYPE_RSCP_BOOL:
+				if( buffer.readUInt8(pos+7) > 31 && buffer.readUInt8(pos+7) < 127 && (type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8)  ) {
+					text.content += "DATA VALUE: " + buffer.toString("utf8",pos+7,pos+8) + " ";
+				} else {
+					text.content += "DATA VALUE: 0x" + buffer.readUInt8(pos+7).toString(16).toUpperCase().padStart(2,"0") + " ";
+				}
+				return 7+len;
+			case rscpConst.TYPE_RSCP_INT16:
+				text.content += "DATA VALUE: " + buffer.readInt16LE(pos+7) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_UINT16:
+				text.content += "DATA VALUE: " + buffer.readUInt16LE(pos+7) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_INT32:
+				text.content += "DATA VALUE: " + buffer.readInt32LE(pos+7) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_UINT32:
+				text.content += "DATA VALUE: " + buffer.readUInt32LE(pos+7) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_INT64:
+				text.content += "DATA VALUE: " + buffer.readBigInt64LE(pos+7) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_UINT64:
+				text.content += "DATA VALUE: " + buffer.readBigUInt64LE(pos+7) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_ERROR:
+				text.content += "DATA VALUE: " + buffer.readUInt32LE(pos+7) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_DOUBLE64:
+				text.content += "DATA VALUE: " + buffer.readDoubleLE(pos+7) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_FLOAT32:
+				text.content += "DATA VALUE: " + buffer.readFloatLE(pos+7) + " ";
+				return 7+len;
+			case rscpConst.TYPE_RSCP_TIMESTAMP:
+				text.content += "SECONDS: "+buffer.readUInt64LE(pos+7)+" - NSECONDS: "+buffer.readUInt32LE(pos+7+8) + " ";
+				return 7+len;
+			default:
+				if( len > 0 ) text.content += dumpRscpFrame( buffer.slice(pos+7,pos+7+len) ) + " ";
+				return 7+len;
+		}
 	}
 }
 
@@ -994,7 +998,9 @@ function printRscpFrame( buffer ) {
 	result.content += " - SECONDS: "+buffer.readUIntLE(4,6)+" - NSECONDS: "+buffer.readUInt32LE(12)+" - LENGTH: "+buffer.readUInt16LE(16) + " ";
 	let i = parseRscpDataToken( buffer, 18, result );
 	while( i < buffer.readUInt16LE(16) ) {
-		i += parseRscpDataToken( buffer, 18+i, result );
+		if( buffer.length >= 18+i+7 ) { // avoid out-of-range in unexpected cases
+			i += parseRscpDataToken( buffer, 18+i, result );
+		} else break;
 	}
 	if( buffer.length == 18+i+4 ) {
 		result.content += " - CRC32";
