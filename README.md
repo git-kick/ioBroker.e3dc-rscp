@@ -16,7 +16,7 @@
 
 Control your E3/DC power station using the proprietary RSCP protocol which allows for reading state values and also set control parameters, e.g. setting the charge power limit. This is the advantage of RSCP compared to the standard Modbus, which is only for reading values. If you have no need to write values, have a look at the (simpler) [Modbus adapter](https://github.com/ioBroker/ioBroker.modbus).
 
-The e3dc-rscp adapter was developed having a E3/DC S10 device on the other side. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
+The e3dc-rscp adapter was developed for the E3/DC *S10* device. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
 
 ## Table of Content
 1. [ Adapter configuration ](#toc)
@@ -47,8 +47,8 @@ Here is what to configure when creating a new instance of the adapter:
     <td>Defines how often ioBroker will request state updates from E3/DC.</td>
   </tr>
   <tr>
-    <td>E3/DC RSCP Password</td>
-    <td>RSCP password, as defined locally at your E3/DC station.</td>
+    <td>RSCP Password</td>
+    <td>Password, as entered locally at your E3/DC station.</td>
   </tr>
   <tr>
     <td>E3/DC Portal Username</td>
@@ -327,7 +327,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
 </table> 
 
-For the currently unspupported RSCP namespaces and tags, please refer to th official E3/DC tag list provided with the [sample application](https://s10.e3dc.com/s10/module/download/get.php?id=280) (only accessible after portal login).
+For the currently unspupported RSCP namespaces and tags, please refer to th official E3/DC tag list provided with the [sample application](http://s10.e3dc.com/dokumentation/RscpExample.zip).
 
 Note that RSCP defines ca. 680 tags (representing around 300 parameters), so we think it does not make sense to read all of them.
 Therefore, we will add tags to the adapter upon upcoming use-cases.
@@ -341,7 +341,7 @@ Therefore, we will add tags to the adapter upon upcoming use-cases.
 
 ## Developer manual
 This adapter is based on @iobroker/create-adapter v1.31.0
-It was developed looking at E3/DC's [sample application](https://s10.e3dc.com/s10/module/download/get.php?id=280) (only accessible after portal login).
+It was developed looking at E3/DC's [sample application](http://s10.e3dc.com/dokumentation/RscpExample.zip) which is written in C++.
 
 The sample application package also contains the official tag lists, which are necessary to interpret RSCP frames semantically.
 
