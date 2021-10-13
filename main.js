@@ -72,7 +72,7 @@ class E3dcRscp extends utils.Adapter {
 			const receivedFrame = Buffer.from(this.cipher.decrypt(data, 256, this.decryptionIV));
 			this.log.debug(`Received response - ${rscpTags[receivedFrame.readUInt32LE(18)].TagNameGlobal}`);
 			if( this.decryptionIV ) data.copy( this.decryptionIV, 0, data.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
-			//this.log.debug( printRscpFrame(receivedFrame) );
+			this.log.debug( printRscpFrame(receivedFrame) );
 			this.log.debug( dumpRscpFrame(receivedFrame) );
 			this.processFrame(receivedFrame);
 			this.sendNextFrame();
