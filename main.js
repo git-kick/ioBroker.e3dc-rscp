@@ -59,7 +59,7 @@ const specialState = {
 	"EMS.DISCHARGE_START_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, discard: false }, },
 	"EMS.USER_CHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_CHARGE_POWER", castToBoolean: false, negate: false, discard: false }, },
 	"EMS.USER_DISCHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_DISCHARGE_POWER", castToBoolean: false, negate: true, discard: false }, },
-	"EMS.UNDEFINED_POWER_SETTING": { "UInt32": { targetState: "EMS.UNDEFINED_POWER_SETTING", castToBoolean: false, negate: false, discard: true }, },
+	"EMS.UNDEFINED_POWER_SETTING": { "*": { targetState: "EMS.UNDEFINED_POWER_SETTING", castToBoolean: false, negate: false, discard: true }, },
 	"BAT.INDEX": { "UInt16": { targetState: "BAT.INDEX", castToBoolean: false, negate: false, discard: true }, },
 	"BAT.UNDEFINED": { "Float32": { targetState: "BAT.UNDEFINED", castToBoolean: false, negate: false, discard: true }, },
 };
