@@ -52,7 +52,7 @@ const rscpAuthLevel = {
 // "true" in negate means: store -value
 const rscpTagMap = {
 	"RES_POWERSAVE_ENABLED": { "*": { targetState: "POWERSAVE_ENABLED", castToBoolean: true, negate: false }, },
-	"RES_WEATHER_REGULATED_CHARGE_ENABLED": { "*": { targetState: "WEATHER_REGULATED_CHARGE_ENABLED", castToBoolean: true, negate: false }, },
+	"RES_WEATHER_REGULATED_CHARGE_ENABLED": { "Char8": { targetState: "RETURN_CODE", castToBoolean: false, negate: false }, },
 	"RES_MAX_CHARGE_POWER": { "Char8": { targetState: "RETURN_CODE", castToBoolean: false, negate: false }, },
 	"DISCHARGE_START_POWER": { "Char8": { targetState: "RETURN_CODE", castToBoolean: false, negate: false }, },
 	"USER_CHARGE_LIMIT": { "Int32": { targetState: "MAX_CHARGE_POWER", castToBoolean: false, negate: false }, },
@@ -424,7 +424,7 @@ class E3dcRscp extends utils.Adapter {
 						if( rscpTagMap[tagname]["*"].targetState == "RETURN_CODE" && value < 0 ) this.log.warn(`SET failed: ${tagname} = ${rscpReturnCode[value]}`);
 						id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname]["*"].targetState}`;
 						if( rscpTagMap[tagname]["*"].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
-						if( rscpTagMap[tagname][typename].negate ) value = -value;
+						if( rscpTagMap[tagname]["*"].negate ) value = -value;
 					}
 				}
 				if( id.indexOf("UNDEFINED") >= 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
@@ -712,61 +712,6 @@ class E3dcRscp extends utils.Adapter {
 			type: "state",
 			common: {
 				name: "Leistung von PV in W",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.USED_CHARGE_LIMIT", {
-			type: "state",
-			common: {
-				name: "Verwendetes Ladelimit in W",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.BAT_CHARGE_LIMIT", {
-			type: "state",
-			common: {
-				name: "Batterie Ladelimit in W",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.USER_CHARGE_LIMIT", {
-			type: "state",
-			common: {
-				name: "Anwender Ladelimit in W",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.USED_DISCHARGE_LIMIT", {
-			type: "state",
-			common: {
-				name: "Verwendetes Entladelimit in W (negativ)",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.USER_DISCHARGE_LIMIT", {
-			type: "state",
-			common: {
-				name: "Anwender Entladelimit in W (negativ)",
 				type: "number",
 				role: "value",
 				read: true,
