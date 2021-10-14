@@ -46,17 +46,22 @@ const rscpAuthLevel = {
 };
 
 // Mapping for response value handling:
-// "*" in the type field means: apply to all types
-// "RETURN_CODE" in targetState means: no state value, handle as SET return code
-// "true" in castToBoolean means: convert Char8 and Uchar8 values to boolean
-// "true" in negate means: store -value
-const rscpTagMap = {
-	"RES_POWERSAVE_ENABLED": { "*": { targetState: "POWERSAVE_ENABLED", castToBoolean: true, negate: false }, },
-	"RES_WEATHER_REGULATED_CHARGE_ENABLED": { "Char8": { targetState: "RETURN_CODE", castToBoolean: false, negate: false }, },
-	"RES_MAX_CHARGE_POWER": { "Char8": { targetState: "RETURN_CODE", castToBoolean: false, negate: false }, },
-	"DISCHARGE_START_POWER": { "Char8": { targetState: "RETURN_CODE", castToBoolean: false, negate: false }, },
-	"USER_CHARGE_LIMIT": { "Int32": { targetState: "MAX_CHARGE_POWER", castToBoolean: false, negate: false }, },
-	"USER_DISCHARGE_LIMIT": { "Int32": { targetState: "MAX_DISCHARGE_POWER", castToBoolean: false, negate: true }, },
+// type "*" means: apply to all types
+// targetState "RETURN_CODE"  means: no state value, handle as SET return code
+// castToBoolean means: convert Char8 and Uchar8 values to boolean
+// negate means: store -value instead of value
+// discard means: do not store value
+const specialState = {
+	"EMS.RES_POWERSAVE_ENABLED": { "*": { targetState: "EMS.POWERSAVE_ENABLED", castToBoolean: true, negate: false, ignore: false }, },
+	"EMS.RES_WEATHER_REGULATED_CHARGE_ENABLED": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, ignore: false }, },
+	"EMS.RES_MAX_CHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, ignore: false }, },
+	"EMS.RES_MAX_DISCHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, ignore: false }, },
+	"EMS.DISCHARGE_START_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, ignore: false }, },
+	"EMS.USER_CHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_CHARGE_POWER", castToBoolean: false, negate: false, ignore: false }, },
+	"EMS.USER_DISCHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_DISCHARGE_POWER", castToBoolean: false, negate: true, ignore: false }, },
+	"EMS.UNDEFINED_POWER_SETTING": { "UInt32": { targetState: "EMS.UNDEFINED_POWER_SETTINGNDEX", castToBoolean: false, negate: false, ignore: true }, },
+	"BAT.INDEX": { "UInt16": { targetState: "BAT.INDEX", castToBoolean: false, negate: false, ignore: true }, },
+	"BAT.UNDEFINED": { "Float32": { targetState: "BAT.UNDEFINED", castToBoolean: false, negate: false, ignore: true }, },
 };
 
 // Encryption setup for E3/DC RSCP
@@ -407,27 +412,24 @@ class E3dcRscp extends utils.Adapter {
 				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);
 			} else {
 				const typename = rscpType[type];
-				const tagname = rscpTag[tag].TagName;
-				let id = `${rscpTag[tag].NameSpace}.${tagname}`;
-				if( rscpTagMap[tagname] ) {
-					if( rscpTagMap[tagname][typename] ) {
-						if( rscpTagMap[tagname][typename].targetState == "RETURN_CODE" && value < 0 ) this.log.warn(`SET failed: ${tagname} = ${value}`);
-						id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname][typename].targetState}`;
-						if( rscpTagMap[tagname][typename].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
-						if( rscpTagMap[tagname][typename].negate ) value = -value;
-					} else if( rscpTagMap[tagname]["*"] ) {
-						if( rscpTagMap[tagname]["*"].targetState == "RETURN_CODE" && value < 0 ) this.log.warn(`SET failed: ${tagname} = ${rscpReturnCode[value]}`);
-						id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname]["*"].targetState}`;
-						if( rscpTagMap[tagname]["*"].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
-						if( rscpTagMap[tagname]["*"].negate ) value = -value;
+				let id = rscpTag[tag].TagNameGlobal;
+				if( specialState[id] ) {
+					let tp = null;
+					if( specialState[id]["*"] ) tp = "*";
+					if( specialState[id][typename] ) tp = typename;
+					if( tp ) {
+						if( specialState[id][tp].targetState == "RETURN_CODE" && value < 0 ) this.log.warn(`SET failed: ${id} = ${value}`);
+						if( specialState[id][tp].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+						if( specialState[id][tp].negate ) value = -value;
+						if( specialState[id][tp].discard ) {
+							this.log.debug(`Ignoring tag: ${id}, value=${value}`);
+							return 7+len;
+						}
+						id = specialState[id][tp].targetState;
 					}
 				}
-				if( id.indexOf("UNDEFINED") >= 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
-					this.log.debug(`Ignoring undefined tag: ${id}, value=${value}`);
-				} else {
-					this.log.silly(`this.setState( "${id}", ${value}, true )`);
-					this.setState( id, value, true );
-				}
+				this.log.silly(`this.setState( "${id}", ${value}, true )`);
+				this.setState( id, value, true );
 			}
 			return 7+len;
 		}
