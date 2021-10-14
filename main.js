@@ -6,9 +6,23 @@ const rscpTag = require("./lib/RscpTags.json");
 const rscpType = require("./lib/RscpTypes.json");
 const rscpError = require("./lib/RscpErrors.json");
 
-// Mapping for exceptional response value handling:
+// Mapping for response value handling:
+// "*" in the type field means: apply to all types
+// "RETURNCODE" in targetState means: no state value, handle as SET return code
+// "true" in castToBoolean means: convert Char8 and Uchar8 values to boolean
 const rscpTagMap = {
-	"RES_POWERSAVE_ENABLED": { targetTag: "POWERSAVE_ENABLED", castToBoolean: "true" },
+	"RES_POWERSAVE_ENABLED": { "*": { targetState: "POWERSAVE_ENABLED", castToBoolean: "true" }, },
+	"RES_WEATHER_REGULATED_CHARGE_ENABLED": { "*": { targetState: "WEATHER_REGULATED_CHARGE_ENABLED", castToBoolean: "true" }, },
+	"RES_MAX_CHARGE_POWER": { "Char8": { targetState: "RETURNCODE", castToBoolean: "false" }, },
+	"DISCHARGE_START_POWER": { "Char8": { targetState: "RETURNCODE", castToBoolean: "false" }, },
+	"USED_CHARGE_LIMIT": { "Int32": { targetState: "MAX_CHARGE_POWER", castToBoolean: "false" }, },
+	"USED_DISCHARGE_LIMIT": { "Int32": { targetState: "MAX_DISCHARGE_POWER", castToBoolean: "false" }, },
+};
+const rscpReturnCode = {
+	"-2": "could not set, try later",
+	"-1": "value out of range",
+	"0": "success",
+	"1": "success, but below recommendation",
 };
 
 // Encryption setup for E3/DC RSCP
@@ -363,11 +377,17 @@ class E3dcRscp extends utils.Adapter {
 			if( !rscpTag[tag] ) {
 				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);
 			} else {
+				const typename = rscpType[type];
 				const tagname = rscpTag[tag].TagName;
 				let id = `${rscpTag[tag].NameSpace}.${tagname}`;
-				if( rscpTagMap[tagname] ) { // adjust tagname and cast to boolean, if neccessary
-					id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname].targetTag}`;
-					if( rscpTagMap[tagname].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+				if( rscpTagMap[tagname][typename] ) {
+					if( rscpTagMap[tagname][typename].targetState == "RETURNCODE" && value != 0 ) this.log.warn(`SET failed: ${tagname} = ${value}`);
+					id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname][typename].targetState}`;
+					if( rscpTagMap[tagname][typename].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+				} else if( rscpTagMap[tagname]["*"] ) {
+					if( rscpTagMap[tagname]["*"].targetState == "RETURNCODE" && value < 0 ) this.log.warn(`SET failed: ${tagname} = ${rscpReturnCode[value]}`);
+					id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname]["*"].targetState}`;
+					if( rscpTagMap[tagname]["*"].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
 				}
 				if( id.indexOf("UNDEFINED") >= 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
 					this.log.debug(`Ignoring undefined tag: ${id}, value=${value}`);
@@ -914,7 +934,7 @@ function dumpRscpFrame( buffer ) {
 				result += String.fromCharCode(b);
 			}
 		}
-		result += "\n";
+		result += "\r\n";
 	}
 	return result;
 }
@@ -1003,18 +1023,18 @@ function printRscpFrame( buffer ) {
 		default:
 			result.content += " - ctrl: >" + ctrl + "< is WRONG ";
 	}
-	result.content += " - seconds: "+buffer.readUIntLE(4,6)+" - nseconds: "+buffer.readUInt32LE(12)+" - length: "+buffer.readUInt16LE(16) + "\n";
+	result.content += " - seconds: "+buffer.readUIntLE(4,6)+" - nseconds: "+buffer.readUInt32LE(12)+" - length: "+buffer.readUInt16LE(16) + "\r\n";
 	let i = parseRscpToken( buffer, 18, result );
 	while( i < buffer.readUInt16LE(16) ) {
 		if( buffer.length >= 18+i+7 ) { // avoid out-of-range in unexpected cases
-			result.content += "\n";
+			result.content += "\r\n";
 			i += parseRscpToken( buffer, 18+i, result );
 		} else break;
 	}
 	if( buffer.length == 18+i+4 ) {
-		result.content += "\nCRC32";
+		result.content += "\r\nCRC32";
 	} else {
-		result.content += "\nno CRC32";
+		result.content += "\r\nno CRC32";
 	}
 	return result.content;
 }
