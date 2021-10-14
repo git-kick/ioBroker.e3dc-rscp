@@ -52,16 +52,16 @@ const rscpAuthLevel = {
 // negate means: store -value instead of value
 // discard means: do not store value
 const specialState = {
-	"EMS.RES_POWERSAVE_ENABLED": { "*": { targetState: "EMS.POWERSAVE_ENABLED", castToBoolean: true, negate: false, ignore: false }, },
-	"EMS.RES_WEATHER_REGULATED_CHARGE_ENABLED": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, ignore: false }, },
-	"EMS.RES_MAX_CHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, ignore: false }, },
-	"EMS.RES_MAX_DISCHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, ignore: false }, },
-	"EMS.DISCHARGE_START_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, ignore: false }, },
-	"EMS.USER_CHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_CHARGE_POWER", castToBoolean: false, negate: false, ignore: false }, },
-	"EMS.USER_DISCHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_DISCHARGE_POWER", castToBoolean: false, negate: true, ignore: false }, },
-	"EMS.UNDEFINED_POWER_SETTING": { "UInt32": { targetState: "EMS.UNDEFINED_POWER_SETTINGNDEX", castToBoolean: false, negate: false, ignore: true }, },
-	"BAT.INDEX": { "UInt16": { targetState: "BAT.INDEX", castToBoolean: false, negate: false, ignore: true }, },
-	"BAT.UNDEFINED": { "Float32": { targetState: "BAT.UNDEFINED", castToBoolean: false, negate: false, ignore: true }, },
+	"EMS.RES_POWERSAVE_ENABLED": { "*": { targetState: "EMS.POWERSAVE_ENABLED", castToBoolean: true, negate: false, discard: false }, },
+	"EMS.RES_WEATHER_REGULATED_CHARGE_ENABLED": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, discard: false }, },
+	"EMS.RES_MAX_CHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, discard: false }, },
+	"EMS.RES_MAX_DISCHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, discard: false }, },
+	"EMS.DISCHARGE_START_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, discard: false }, },
+	"EMS.USER_CHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_CHARGE_POWER", castToBoolean: false, negate: false, discard: false }, },
+	"EMS.USER_DISCHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_DISCHARGE_POWER", castToBoolean: false, negate: true, discard: false }, },
+	"EMS.UNDEFINED_POWER_SETTING": { "UInt32": { targetState: "EMS.UNDEFINED_POWER_SETTING", castToBoolean: false, negate: false, discard: true }, },
+	"BAT.INDEX": { "UInt16": { targetState: "BAT.INDEX", castToBoolean: false, negate: false, discard: true }, },
+	"BAT.UNDEFINED": { "Float32": { targetState: "BAT.UNDEFINED", castToBoolean: false, negate: false, discard: true }, },
 };
 
 // Encryption setup for E3/DC RSCP
