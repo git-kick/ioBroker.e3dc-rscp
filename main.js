@@ -363,10 +363,11 @@ class E3dcRscp extends utils.Adapter {
 			if( !rscpTag[tag] ) {
 				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);
 			} else {
-				let id = `${rscpTag[tag].NameSpace}.${rscpTag[tag].TagName}`;
-				if( rscpTagMap[tag] ) { // adjust tagname and cast to boolean, if neccessary
-					id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tag].targetTag}`;
-					if( rscpTagMap[tag].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+				const tagname = rscpTag[tag].TagName;
+				let id = `${rscpTag[tag].NameSpace}.${tagname}`;
+				if( rscpTagMap[tagname] ) { // adjust tagname and cast to boolean, if neccessary
+					id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname].targetTag}`;
+					if( rscpTagMap[tagname].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
 				}
 				if( id.indexOf("UNDEFINED") >= 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
 					this.log.debug(`Ignoring undefined tag: ${id}, value=${value}`);
@@ -890,7 +891,7 @@ if (module.parent) {
 //
 function dumpRscpFrame( buffer ) {
 	const bpb = 8; // bytes per block
-	const bpl = 1; // blocks per line
+	const bpl = 4; // blocks per line
 	let line = 0;
 	let block = 0;
 	let i = 0;
@@ -904,7 +905,7 @@ function dumpRscpFrame( buffer ) {
 			}
 			result += "  ";
 		}
-		result += "\"";
+		result += " -- ";
 		// Loop 2: ASCII
 		for( block = 0; block < bpl && (line*bpl+block)*bpb < buffer.length; block++ ) {
 			for( i = 0; i < bpb && (line*bpl+block)*bpb+i < buffer.length; i++ ) {
@@ -913,7 +914,7 @@ function dumpRscpFrame( buffer ) {
 				result += String.fromCharCode(b);
 			}
 		}
-		result += "\" -- ";
+		result += "\n";
 	}
 	return result;
 }
@@ -1002,17 +1003,18 @@ function printRscpFrame( buffer ) {
 		default:
 			result.content += " - ctrl: >" + ctrl + "< is WRONG ";
 	}
-	result.content += " - seconds: "+buffer.readUIntLE(4,6)+" - nseconds: "+buffer.readUInt32LE(12)+" - length: "+buffer.readUInt16LE(16) + " ";
+	result.content += " - seconds: "+buffer.readUIntLE(4,6)+" - nseconds: "+buffer.readUInt32LE(12)+" - length: "+buffer.readUInt16LE(16) + "\n";
 	let i = parseRscpToken( buffer, 18, result );
 	while( i < buffer.readUInt16LE(16) ) {
 		if( buffer.length >= 18+i+7 ) { // avoid out-of-range in unexpected cases
+			result.content += "\n";
 			i += parseRscpToken( buffer, 18+i, result );
 		} else break;
 	}
 	if( buffer.length == 18+i+4 ) {
-		result.content += " - CRC32";
+		result.content += "\nCRC32";
 	} else {
-		result.content += " - no CRC32";
+		result.content += "\nno CRC32";
 	}
 	return result.content;
 }
