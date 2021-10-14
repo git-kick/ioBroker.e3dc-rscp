@@ -412,7 +412,7 @@ class E3dcRscp extends utils.Adapter {
 				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);
 			} else {
 				const typename = rscpType[type];
-				let id = rscpTag[tag].TagNameGlobal;
+				let id = `${rscpTag[tag].NameSpace}.${rscpTag[tag].TagName}`;
 				if( specialState[id] ) {
 					let tp = null;
 					if( specialState[id]["*"] ) tp = "*";
