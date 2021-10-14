@@ -51,17 +51,22 @@ const rscpAuthLevel = {
 // castToBoolean means: convert Char8 and Uchar8 values to boolean
 // negate means: store -value instead of value
 // discard means: do not store value
+// write means: send SET command to E3/DC
 const specialState = {
-	"EMS.RES_POWERSAVE_ENABLED": { "*": { targetState: "EMS.POWERSAVE_ENABLED", castToBoolean: true, negate: false, discard: false }, },
-	"EMS.RES_WEATHER_REGULATED_CHARGE_ENABLED": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, discard: false }, },
-	"EMS.RES_MAX_CHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, discard: false }, },
-	"EMS.RES_MAX_DISCHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, discard: false }, },
-	"EMS.DISCHARGE_START_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, discard: false }, },
-	"EMS.USER_CHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_CHARGE_POWER", castToBoolean: false, negate: false, discard: false }, },
-	"EMS.USER_DISCHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_DISCHARGE_POWER", castToBoolean: false, negate: true, discard: false }, },
-	"EMS.UNDEFINED_POWER_SETTING": { "*": { targetState: "EMS.UNDEFINED_POWER_SETTING", castToBoolean: false, negate: false, discard: true }, },
-	"BAT.INDEX": { "UInt16": { targetState: "BAT.INDEX", castToBoolean: false, negate: false, discard: true }, },
-	"BAT.UNDEFINED": { "Float32": { targetState: "BAT.UNDEFINED", castToBoolean: false, negate: false, discard: true }, },
+	"EMS.POWERSAVE_ENABLED": { "*": { targetState: "EMS.POWERSAVE_ENABLED", castToBoolean: true, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
+	"EMS.RES_POWERSAVE_ENABLED": { "*": { targetState: "EMS.POWERSAVE_ENABLED", castToBoolean: true, negate: false, setTag: null, discard: false }, },
+	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": { "*": { targetState: "EMS.WEATHER_REGULATED_CHARGE_ENABLED", castToBoolean: true, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
+	"EMS.RES_WEATHER_REGULATED_CHARGE_ENABLED": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, setTag: null, discard: false }, },
+	"EMS.RES_MAX_CHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
+	"EMS.MAX_CHARGE_POWER": { "Int32": { targetState: "EMS.MAX_CHARGE_POWER", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
+	"EMS.RES_MAX_DISCHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, setTag: null, discard: false }, },
+	"EMS.MAX_DISCHARGE_POWER": { "Int32": { targetState: "EMS.MAX_DISCHARGE_POWER", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
+	"EMS.DISCHARGE_START_POWER": { "Int32": { targetState: "EMS.DISCHARGE_START_POWER", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, setTag: null, discard: false }, },
+	"EMS.USER_CHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_CHARGE_POWER", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
+	"EMS.USER_DISCHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_DISCHARGE_POWER", castToBoolean: false, negate: true, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
+	"EMS.UNDEFINED_POWER_SETTING": { "*": { targetState: "EMS.UNDEFINED_POWER_SETTING", castToBoolean: false, negate: false, setTag: null, discard: true }, },
+	"BAT.INDEX": { "UInt16": { targetState: "BAT.INDEX", castToBoolean: false, negate: false, setTag: null, discard: true }, },
+	"BAT.UNDEFINED": { "Float32": { targetState: "BAT.UNDEFINED", castToBoolean: false, negate: false, setTag: null, discard: true }, },
 };
 
 // Encryption setup for E3/DC RSCP
@@ -254,7 +259,7 @@ class E3dcRscp extends utils.Adapter {
 
 	queueAuthentication( ) {
 		this.clearFrame();
-		this.addTagtoFrame( rscpConst.TAG_RSCP_REQ_AUTHENTICATION, "" ); // container, data follow
+		this.addTagtoFrame( rscpConst.TAG_RSCP_REQ_AUTHENTICATION, "" );
 		this.addTagtoFrame( rscpConst.TAG_RSCP_AUTHENTICATION_USER, this.config.portal_user );
 		this.addTagtoFrame( rscpConst.TAG_RSCP_AUTHENTICATION_PASSWORD, this.config.portal_password );
 		this.pushFrame();
@@ -276,55 +281,24 @@ class E3dcRscp extends utils.Adapter {
 		this.clearFrame();
 		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_DATA, "" );
 		this.addTagtoFrame( rscpConst.TAG_BAT_INDEX, 0 );
-		//this.addtoFrame( rscpConst.TAG_BAT_REQ_INFO, "" );
 		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_RSOC, "" );
 		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_MODULE_VOLTAGE, "" );
 		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_CURRENT, "" );
 		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_CHARGE_CYCLES, "" );
-		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_STATUS_CODE, "" );
-		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_ERROR_CODE, "" );
 		this.pushFrame();
 	}
 
-	queueCommandMaxChargePower( power ) {
-		this.clearFrame();
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-		this.addTagtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, power );
-		this.pushFrame();
-	}
-
-	queueValue( id, value ) {
-		this.log.debug( `queueValue( ${id}, ${value} )`);
-		this.clearFrame();
-		const [,,namespace,tag] = id.split(".");
-		switch( `${namespace}.${tag}` ) {
-			case "EMS.MAX_CHARGE_POWER":
-				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addTagtoFrame( rscpConst.TAG_EMS_MAX_CHARGE_POWER, value );
-				this.pushFrame();
-				break;
-			case "EMS.MAX_DISCHARGE_POWER":
-				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addTagtoFrame( rscpConst.TAG_EMS_MAX_DISCHARGE_POWER, value );
-				this.pushFrame();
-				break;
-			case "EMS.DISCHARGE_START_POWER":
-				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addTagtoFrame( rscpConst.TAG_EMS_DISCHARGE_START_POWER, value );
-				this.pushFrame();
-				break;
-			case "EMS.POWERSAVE_ENABLED":
-				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addTagtoFrame( rscpConst.TAG_EMS_POWERSAVE_ENABLED, value );
-				this.pushFrame();
-				break;
-			case "EMS.WEATHER_REGULATED_CHARGE_ENABLED":
-				this.addTagtoFrame( rscpConst.TAG_EMS_REQ_SET_POWER_SETTINGS, "" ); // container, data follow
-				this.addTagtoFrame( rscpConst.TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED, value );
-				this.pushFrame();
-				break;
-			default:
-				this.log.debug( `Don't know how to queue ${id}`);
+	queueValue( global_id, value ) {
+		this.log.debug( `queueValue( ${global_id}, ${value} )`);
+		const [,,namespace,tagname] = global_id.split(".");
+		const id = `${namespace}.${tagname}`;
+		if( specialState[id] && specialState[id].setTag ) {
+			this.clearFrame();
+			this.addTagtoFrame( encodeRscpTag(specialState[id].setTag), "" );
+			this.addTagtoFrame( encodeRscpTag(id), value );
+			this.pushFrame();
+		} else {
+			this.log.debug( `Don't know how to queue ${id}`);
 		}
 	}
 
@@ -1029,4 +1003,17 @@ function printRscpFrame( buffer ) {
 		result.content += "\r\nno CRC32";
 	}
 	return result.content;
+}
+
+// Find numerical RSCP tag code for a given string. Accepts
+// (1) full global tag, e.g. TAG_EMS_MAX_CHARGE_POWER
+// (2) global tag without TAG_ prefix, e.g. EMS_MAX_CHARGE_POWER
+// (3) object id, e.g. EMS.MAX_CHARGE_POWER
+function encodeRscpTag( name ) {
+	if( name.indexOf("TAG_") != 0 ) name = `TAG_${name}`;
+	name = name.replace(".","_");
+	for( const tag in rscpTag ) {
+		if( name == rscpTag[tag].TagNameGlobal ) return tag;
+	}
+	return 0;
 }
