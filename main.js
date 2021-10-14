@@ -78,8 +78,8 @@ class E3dcRscp extends utils.Adapter {
 			const receivedFrame = Buffer.from(this.cipher.decrypt(data, 256, this.decryptionIV));
 			this.log.debug(`Received response - ${rscpTag[receivedFrame.readUInt32LE(18)].TagNameGlobal}`);
 			if( this.decryptionIV ) data.copy( this.decryptionIV, 0, data.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
-			this.log.debug( printRscpFrame(receivedFrame) );
-			this.log.debug( dumpRscpFrame(receivedFrame) );
+			this.log.debug( `IN: ${printRscpFrame(receivedFrame)}` );
+			this.log.silly( dumpRscpFrame(receivedFrame) );
 			this.processFrame(receivedFrame);
 			this.sendNextFrame();
 		});
@@ -283,8 +283,8 @@ class E3dcRscp extends utils.Adapter {
 	sendNextFrame() {
 		if( this && (this.next < this.queue.length) ) {
 			this.log.debug( `Sending request #${this.next} - ${rscpTag[this.queue[this.next].readUInt32LE(18)].TagNameGlobal}` );
-			this.log.debug( printRscpFrame(this.queue[this.next]) );
-			this.log.debug( dumpRscpFrame(this.queue[this.next]) );
+			this.log.debug( `OUT: ${printRscpFrame(this.queue[this.next])}` );
+			this.log.silly( dumpRscpFrame(this.queue[this.next]) );
 
 			const encryptedFrame = Buffer.from( this.cipher.encrypt( this.queue[this.next], 256, this.encryptionIV ) );
 			// last encrypted block will be used as IV for next frame
@@ -405,12 +405,12 @@ class E3dcRscp extends utils.Adapter {
 		}
 		if( buffer.length < 18 + dataLength + (hasCrc ? 4 : 0) ) {
 			this.log.warn(`Received message with inconsistent length: ${buffer.length} vs ${18 + dataLength + (hasCrc ? 4 : 0)}`);
-			this.log.debug( printRscpFrame(buffer) );
-			this.log.debug( dumpRscpFrame(buffer) );
+			this.log.debug( `IN: ${printRscpFrame(buffer)}` );
+			this.log.silly( dumpRscpFrame(buffer) );
 		}
 		if( hasCrc && (CRC32.buf(buffer.slice(0,18+dataLength)) != buffer.readInt32LE(18+i))  ) {
 			this.log.warn(`Received message with invalid CRC-32: 0x${CRC32.buf(buffer.slice(0,18+dataLength)).toString(16)} vs 0x${buffer.readUInt32LE(18+i).toString(16)} - dataLength = ${dataLength}`);
-			this.log.debug( dumpRscpFrame(buffer) );
+			this.log.silly( dumpRscpFrame(buffer) );
 		}
 	}
 
@@ -918,7 +918,7 @@ function dumpRscpFrame( buffer ) {
 	return result;
 }
 
-function parseRscpDataToken ( buffer, pos, text ) {
+function parseRscpToken ( buffer, pos, text ) {
 	const tag = buffer.readUInt32LE(pos);
 	const type = buffer.readUInt8(pos+4);
 	const len = buffer.readUInt16LE(pos+5);
@@ -1003,10 +1003,10 @@ function printRscpFrame( buffer ) {
 			result.content += " - ctrl: >" + ctrl + "< is WRONG ";
 	}
 	result.content += " - seconds: "+buffer.readUIntLE(4,6)+" - nseconds: "+buffer.readUInt32LE(12)+" - length: "+buffer.readUInt16LE(16) + " ";
-	let i = parseRscpDataToken( buffer, 18, result );
+	let i = parseRscpToken( buffer, 18, result );
 	while( i < buffer.readUInt16LE(16) ) {
 		if( buffer.length >= 18+i+7 ) { // avoid out-of-range in unexpected cases
-			i += parseRscpDataToken( buffer, 18+i, result );
+			i += parseRscpToken( buffer, 18+i, result );
 		} else break;
 	}
 	if( buffer.length == 18+i+4 ) {
