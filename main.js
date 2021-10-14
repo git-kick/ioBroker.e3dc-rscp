@@ -380,14 +380,16 @@ class E3dcRscp extends utils.Adapter {
 				const typename = rscpType[type];
 				const tagname = rscpTag[tag].TagName;
 				let id = `${rscpTag[tag].NameSpace}.${tagname}`;
-				if( rscpTagMap[tagname][typename] ) {
-					if( rscpTagMap[tagname][typename].targetState == "RETURNCODE" && value != 0 ) this.log.warn(`SET failed: ${tagname} = ${value}`);
-					id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname][typename].targetState}`;
-					if( rscpTagMap[tagname][typename].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
-				} else if( rscpTagMap[tagname]["*"] ) {
-					if( rscpTagMap[tagname]["*"].targetState == "RETURNCODE" && value < 0 ) this.log.warn(`SET failed: ${tagname} = ${rscpReturnCode[value]}`);
-					id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname]["*"].targetState}`;
-					if( rscpTagMap[tagname]["*"].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+				if( rscpTagMap[tagname] ) {
+					if( rscpTagMap[tagname][typename] ) {
+						if( rscpTagMap[tagname][typename].targetState == "RETURNCODE" && value != 0 ) this.log.warn(`SET failed: ${tagname} = ${value}`);
+						id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname][typename].targetState}`;
+						if( rscpTagMap[tagname][typename].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+					} else if( rscpTagMap[tagname]["*"] ) {
+						if( rscpTagMap[tagname]["*"].targetState == "RETURNCODE" && value < 0 ) this.log.warn(`SET failed: ${tagname} = ${rscpReturnCode[value]}`);
+						id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname]["*"].targetState}`;
+						if( rscpTagMap[tagname]["*"].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+					}
 				}
 				if( id.indexOf("UNDEFINED") >= 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
 					this.log.debug(`Ignoring undefined tag: ${id}, value=${value}`);
