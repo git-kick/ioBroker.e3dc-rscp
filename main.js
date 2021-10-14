@@ -3,26 +3,60 @@
 // RSCP constants & lookup tables
 const rscpConst = require("./lib/RscpConstants");
 const rscpTag = require("./lib/RscpTags.json");
-const rscpType = require("./lib/RscpTypes.json");
-const rscpError = require("./lib/RscpErrors.json");
-
-// Mapping for response value handling:
-// "*" in the type field means: apply to all types
-// "RETURNCODE" in targetState means: no state value, handle as SET return code
-// "true" in castToBoolean means: convert Char8 and Uchar8 values to boolean
-const rscpTagMap = {
-	"RES_POWERSAVE_ENABLED": { "*": { targetState: "POWERSAVE_ENABLED", castToBoolean: "true" }, },
-	"RES_WEATHER_REGULATED_CHARGE_ENABLED": { "*": { targetState: "WEATHER_REGULATED_CHARGE_ENABLED", castToBoolean: "true" }, },
-	"RES_MAX_CHARGE_POWER": { "Char8": { targetState: "RETURNCODE", castToBoolean: "false" }, },
-	"DISCHARGE_START_POWER": { "Char8": { targetState: "RETURNCODE", castToBoolean: "false" }, },
-	"USED_CHARGE_LIMIT": { "Int32": { targetState: "MAX_CHARGE_POWER", castToBoolean: "false" }, },
-	"USED_DISCHARGE_LIMIT": { "Int32": { targetState: "MAX_DISCHARGE_POWER", castToBoolean: "false" }, },
+const rscpType = {
+	0: "None",
+	1: "Bool",
+	2: "Char8",
+	3: "UChar8",
+	4: "Int16",
+	5: "UInt16",
+	6: "Int32",
+	7: "UInt32",
+	8: "Int64",
+	9: "UInt64",
+	10: "Float32",
+	11: "Double64",
+	12: "Bitfield",
+	13: "CString",
+	14: "Container",
+	15: "Timestamp",
+	16: "ByteArray",
+	255: "Error"
 };
 const rscpReturnCode = {
 	"-2": "could not set, try later",
 	"-1": "value out of range",
 	"0": "success",
 	"1": "success, but below recommendation",
+};
+const rscpGeneralError = {
+	1: "NOT_HANDLED",
+	2: "ACCESS_DENIED",
+	3: "FORMAT",
+	4: "AGAIN",
+};
+const rscpAuthLevel = {
+	0: "NO_AUTH",
+	10: "USER",
+	20: "INSTALLER",
+	30: "PARTNER",
+	40: "E3DC",
+	50: "E3DC_ADMIN",
+	60: "E3DC_ROOT",
+};
+
+// Mapping for response value handling:
+// "*" in the type field means: apply to all types
+// "RETURN_CODE" in targetState means: no state value, handle as SET return code
+// "true" in castToBoolean means: convert Char8 and Uchar8 values to boolean
+// "true" in negate means: store -value
+const rscpTagMap = {
+	"RES_POWERSAVE_ENABLED": { "*": { targetState: "POWERSAVE_ENABLED", castToBoolean: true, negate: false }, },
+	"RES_WEATHER_REGULATED_CHARGE_ENABLED": { "*": { targetState: "WEATHER_REGULATED_CHARGE_ENABLED", castToBoolean: true, negate: false }, },
+	"RES_MAX_CHARGE_POWER": { "Char8": { targetState: "RETURN_CODE", castToBoolean: false, negate: false }, },
+	"DISCHARGE_START_POWER": { "Char8": { targetState: "RETURN_CODE", castToBoolean: false, negate: false }, },
+	"USER_CHARGE_LIMIT": { "Int32": { targetState: "MAX_CHARGE_POWER", castToBoolean: false, negate: false }, },
+	"USER_DISCHARGE_LIMIT": { "Int32": { targetState: "MAX_DISCHARGE_POWER", castToBoolean: false, negate: true }, },
 };
 
 // Encryption setup for E3/DC RSCP
@@ -324,7 +358,7 @@ class E3dcRscp extends utils.Adapter {
 			return 7; // just skip container header
 		} else if( type == rscpConst.TYPE_RSCP_ERROR ) {
 			value = buffer.readUInt32LE(pos+7);
-			this.log.error( `Received data type ERROR with value ${rscpError[value]}`);
+			this.log.error( `Received data type ERROR with value ${rscpGeneralError[value]}`);
 			return 7+len;
 		} else {
 			switch( type  ) {
@@ -382,13 +416,15 @@ class E3dcRscp extends utils.Adapter {
 				let id = `${rscpTag[tag].NameSpace}.${tagname}`;
 				if( rscpTagMap[tagname] ) {
 					if( rscpTagMap[tagname][typename] ) {
-						if( rscpTagMap[tagname][typename].targetState == "RETURNCODE" && value != 0 ) this.log.warn(`SET failed: ${tagname} = ${value}`);
+						if( rscpTagMap[tagname][typename].targetState == "RETURN_CODE" && value != 0 ) this.log.warn(`SET failed: ${tagname} = ${value}`);
 						id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname][typename].targetState}`;
 						if( rscpTagMap[tagname][typename].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+						if( rscpTagMap[tagname][typename].negate ) value = -value;
 					} else if( rscpTagMap[tagname]["*"] ) {
-						if( rscpTagMap[tagname]["*"].targetState == "RETURNCODE" && value < 0 ) this.log.warn(`SET failed: ${tagname} = ${rscpReturnCode[value]}`);
+						if( rscpTagMap[tagname]["*"].targetState == "RETURN_CODE" && value < 0 ) this.log.warn(`SET failed: ${tagname} = ${rscpReturnCode[value]}`);
 						id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname]["*"].targetState}`;
 						if( rscpTagMap[tagname]["*"].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
+						if( rscpTagMap[tagname][typename].negate ) value = -value;
 					}
 				}
 				if( id.indexOf("UNDEFINED") >= 0 ) { // convention: undocumented tags have "UNDEFINED" in their name
@@ -488,7 +524,7 @@ class E3dcRscp extends utils.Adapter {
 				role: "value",
 				read: true,
 				write: false,
-				states: { 1:"NOT_HANDLED", 2:"ACCESS_DENIED", 3:"FORMAT", 4:"AGAIN" },
+				states: rscpGeneralError,
 			},
 			native: {},
 		});
@@ -500,7 +536,7 @@ class E3dcRscp extends utils.Adapter {
 				role: "value",
 				read: true,
 				write: false,
-				states: { 0:"NO_AUTH", 10:"USER", 20:"INSTALLER", 30:"PARTNER", 40:"E3DC", 50:"E3DC_ADMIN", 60:"E3DC_ROOT" },
+				states: rscpAuthLevel,
 			},
 			native: {},
 		});
@@ -523,7 +559,7 @@ class E3dcRscp extends utils.Adapter {
 				role: "value",
 				read: true,
 				write: false,
-				states: { 1:"NOT_HANDLED", 2:"ACCESS_DENIED", 3:"FORMAT", 4:"AGAIN" },
+				states: rscpGeneralError,
 			},
 			native: {},
 		});
@@ -623,7 +659,19 @@ class E3dcRscp extends utils.Adapter {
 				role: "value",
 				read: true,
 				write: false,
-				states: { 1:"NOT_HANDLED", 2:"ACCESS_DENIED", 3:"FORMAT", 4:"AGAIN" },
+				states: rscpGeneralError,
+			},
+			native: {},
+		});
+		await this.setObjectNotExistsAsync("EMS.RETURN_CODE", {
+			type: "state",
+			common: {
+				name: "Rückgabewert",
+				type: "number",
+				role: "value",
+				read: true,
+				write: false,
+				states: rscpReturnCode,
 			},
 			native: {},
 		});
