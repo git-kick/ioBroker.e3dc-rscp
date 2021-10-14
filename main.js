@@ -261,11 +261,6 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_BAT, "" );
 		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_HOME, "" );
 		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_GRID, "" );
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_USED_CHARGE_LIMIT, "" );
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_BAT_CHARGE_LIMIT, "" );
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_USER_CHARGE_LIMIT, "" );
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_USED_DISCHARGE_LIMIT, "" );
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_USER_DISCHARGE_LIMIT, "" );
 		this.pushFrame();
 		this.clearFrame();
 		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_GET_POWER_SETTINGS, "" );
@@ -416,7 +411,7 @@ class E3dcRscp extends utils.Adapter {
 				let id = `${rscpTag[tag].NameSpace}.${tagname}`;
 				if( rscpTagMap[tagname] ) {
 					if( rscpTagMap[tagname][typename] ) {
-						if( rscpTagMap[tagname][typename].targetState == "RETURN_CODE" && value != 0 ) this.log.warn(`SET failed: ${tagname} = ${value}`);
+						if( rscpTagMap[tagname][typename].targetState == "RETURN_CODE" && value < 0 ) this.log.warn(`SET failed: ${tagname} = ${value}`);
 						id = `${rscpTag[tag].NameSpace}.${rscpTagMap[tagname][typename].targetState}`;
 						if( rscpTagMap[tagname][typename].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
 						if( rscpTagMap[tagname][typename].negate ) value = -value;
