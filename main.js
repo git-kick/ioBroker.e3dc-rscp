@@ -1,8 +1,10 @@
 "use strict";
 
 // RSCP constants & lookup tables
-const rscpConst = require("./lib/RscpConstants");
 const rscpTag = require("./lib/RscpTags.json");
+const rscpTagCode = {}; // maps string to code
+for( const i in rscpTag ) rscpTagCode[rscpTag[i].TagNameGlobal] = i;
+
 const rscpType = {
 	0: "None",
 	1: "Bool",
@@ -23,6 +25,9 @@ const rscpType = {
 	16: "ByteArray",
 	255: "Error"
 };
+const rscpTypeCode = {};  // maps string to code
+for( const i in rscpType ) rscpTypeCode[rscpType[i]] = i;
+
 const rscpReturnCode = {
 	"-2": "could not set, try later",
 	"-1": "value out of range",
@@ -47,27 +52,41 @@ const rscpAuthLevel = {
 
 // Mapping for response value handling:
 // type "*" means: apply to all types
-// targetState "RETURN_CODE"  means: no state value, handle as SET return code
-// castToBoolean means: convert Char8 and Uchar8 values to boolean
-// negate means: store -value instead of value
-// discard means: do not store value
-// write means: send SET command to E3/DC
-const specialState = {
-	"EMS.POWERSAVE_ENABLED": { "*": { targetState: "EMS.POWERSAVE_ENABLED", castToBoolean: true, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
-	"EMS.RES_POWERSAVE_ENABLED": { "*": { targetState: "EMS.POWERSAVE_ENABLED", castToBoolean: true, negate: false, setTag: null, discard: false }, },
-	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": { "*": { targetState: "EMS.WEATHER_REGULATED_CHARGE_ENABLED", castToBoolean: true, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
-	"EMS.RES_WEATHER_REGULATED_CHARGE_ENABLED": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, setTag: null, discard: false }, },
-	"EMS.RES_MAX_CHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
-	"EMS.MAX_CHARGE_POWER": { "Int32": { targetState: "EMS.MAX_CHARGE_POWER", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
-	"EMS.RES_MAX_DISCHARGE_POWER": { "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, setTag: null, discard: false }, },
-	"EMS.MAX_DISCHARGE_POWER": { "Int32": { targetState: "EMS.MAX_DISCHARGE_POWER", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
-	"EMS.DISCHARGE_START_POWER": { "Int32": { targetState: "EMS.DISCHARGE_START_POWER", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, "Char8": { targetState: "EMS.RETURN_CODE", castToBoolean: false, negate: false, setTag: null, discard: false }, },
-	"EMS.USER_CHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_CHARGE_POWER", castToBoolean: false, negate: false, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
-	"EMS.USER_DISCHARGE_LIMIT": { "Int32": { targetState: "EMS.MAX_DISCHARGE_POWER", castToBoolean: false, negate: true, setTag: "EMS.REQ_SET_POWER_SETTINGS", discard: false }, },
-	"EMS.UNDEFINED_POWER_SETTING": { "*": { targetState: "EMS.UNDEFINED_POWER_SETTING", castToBoolean: false, negate: false, setTag: null, discard: true }, },
-	"BAT.INDEX": { "UInt16": { targetState: "BAT.INDEX", castToBoolean: false, negate: false, setTag: null, discard: true }, },
-	"BAT.UNDEFINED": { "Float32": { targetState: "BAT.UNDEFINED", castToBoolean: false, negate: false, setTag: null, discard: true }, },
+const targetState = {
+	"EMS.RES_POWERSAVE_ENABLED": { "*": "EMS.POWERSAVE_ENABLED" },
+	"EMS.RES_WEATHER_REGULATED_CHARGE_ENABLED": { "*": "EMS.RETURN_CODE" },
+	"EMS.RES_MAX_CHARGE_POWER": { "*": "EMS.RETURN_CODE" },
+	"EMS.RES_MAX_DISCHARGE_POWER": { "*": "EMS.RETURN_CODE" },
+	"EMS.DISCHARGE_START_POWER": { "Int32": "EMS.DISCHARGE_START_POWER", "Char8": "EMS.RETURN_CODE" },
+	"EMS.USER_CHARGE_LIMIT": { "*": "EMS.MAX_CHARGE_POWER" },
+	"EMS.USER_DISCHARGE_LIMIT": { "*": "EMS.MAX_DISCHARGE_POWER" },
 };
+// How to send a SET to E3/DC
+const setTag = {
+	"EMS.POWERSAVE_ENABLED": "EMS.REQ_SET_POWER_SETTINGS",
+	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": "EMS.REQ_SET_POWER_SETTINGS",
+	"EMS.MAX_CHARGE_POWER": "EMS.REQ_SET_POWER_SETTINGS",
+	"EMS.MAX_DISCHARGE_POWER": "EMS.REQ_SET_POWER_SETTINGS",
+	"EMS.DISCHARGE_START_POWER": "EMS.REQ_SET_POWER_SETTINGS",
+	"EMS.USER_CHARGE_LIMIT": "EMS.REQ_SET_POWER_SETTINGS",
+	"EMS.USER_DISCHARGE_LIMIT": "EMS.REQ_SET_POWER_SETTINGS",
+};
+// RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
+const castToBoolean = [
+	"EMS.POWERSAVE_ENABLED",
+	"EMS.RES_POWERSAVE_ENABLED",
+	"EMS.WEATHER_REGULATED_CHARGE_ENABLED",
+];
+// Adjust algebraic sign: e.g. discharge limit is sometimes positive, sometimes negative
+const negateValue = [
+	"EMS.USER_DISCHARGE_LIMIT",
+];
+// Some of the return values we do not want to see as states:
+const discardValue = [
+	"EMS.UNDEFINED_POWER_SETTING",
+	"BAT.INDEX",
+	"BAT.UNDEFINED",
+];
 
 // Encryption setup for E3/DC RSCP
 // NOTE: E3/DC uses 256 bit block-size, which ist _not_ covered by AES standard.
@@ -155,91 +174,91 @@ class E3dcRscp extends utils.Adapter {
 		this.frame = Buffer.from([0xE3, 0xDC, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 	}
 
-	addTagtoFrame( tag, value ) {
-		const type = parseInt( rscpTag[tag].DataTypeHex, 16 );
+	addTagtoFrame( tagCode, value ) {
+		const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
 		const buf1 = Buffer.alloc(1);
 		const buf2 = Buffer.alloc(2);
 		const buf4 = Buffer.alloc(4);
 		//const buf6 = Buffer.alloc(6);
 		const buf8 = Buffer.alloc(8);
-		buf4.writeInt32LE( tag );
+		buf4.writeInt32LE( tagCode );
 		this.frame = Buffer.concat( [this.frame, buf4] );
-		this.frame = Buffer.concat( [this.frame, Buffer.from([type])] );
+		this.frame = Buffer.concat( [this.frame, Buffer.from([typeCode])] );
 		this.frame = Buffer.concat( [this.frame, Buffer.from([0x00, 0x00])] ); // reserve space for Length
-		switch( type ) {
-			case rscpConst.TYPE_RSCP_NONE:
+		switch( rscpType[typeCode] ) {
+			case "None":
 				break;
-			case rscpConst.TYPE_RSCP_CONTAINER:
+			case "Container":
 				if( this.openContainer > 0 ) {
 					this.frame.writeUInt16LE( this.frame.length - this.openContainer - 9, this.openContainer );
 				}
 				this.openContainer = this.frame.length - 2;
 				break;
-			case rscpConst.TYPE_RSCP_CSTRING:
-			case rscpConst.TYPE_RSCP_BITFIELD:
-			case rscpConst.TYPE_RSCP_BYTEARRAY:
+			case "CString":
+			case "Bitfield":
+			case "ByteArray":
 				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
 				this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
 				break;
-			case rscpConst.TYPE_RSCP_CHAR8:
-			case rscpConst.TYPE_RSCP_UCHAR8:
-			case rscpConst.TYPE_RSCP_ERROR:
+			case "Char8":
+			case "UChar8":
+			case "Error":
 				this.frame.writeUInt16LE( 1, this.frame.length - 2);
 				buf1.writeUInt8( value );
 				this.frame = Buffer.concat( [this.frame, buf1] );
 				break;
-			case rscpConst.TYPE_RSCP_BOOL: // bool is encoded as 0/1 byte
+			case "Bool": // bool is encoded as 0/1 byte
 				this.frame.writeUInt16LE( 1, this.frame.length - 2);
 				buf1.writeUInt8( value?1:0 );
 				this.frame = Buffer.concat( [this.frame, buf1] );
 				break;
-			case rscpConst.TYPE_RSCP_INT16:
+			case "Int16":
 				this.frame.writeUInt16LE( 2, this.frame.length - 2 );
 				buf2.writeInt16LE( value );
 				this.frame = Buffer.concat( [this.frame, buf2] );
 				break;
-			case rscpConst.TYPE_RSCP_UINT16:
+			case "UInt16":
 				this.frame.writeUInt16LE( 2, this.frame.length - 2 );
 				buf2.writeUInt16LE( value );
 				this.frame = Buffer.concat( [this.frame, buf2] );
 				break;
-			case rscpConst.TYPE_RSCP_INT32:
+			case "Int32":
 				this.frame.writeUInt16LE( 4, this.frame.length - 2 );
 				buf4.writeInt32LE( value );
 				this.frame = Buffer.concat( [this.frame, buf4] );
 				break;
-			case rscpConst.TYPE_RSCP_UINT32:
+			case "UInt32":
 				this.frame.writeUInt16LE( 4, this.frame.length - 2 );
 				buf4.writeUInt32LE( value );
 				this.frame = Buffer.concat( [this.frame, buf4] );
 				break;
-			case rscpConst.TYPE_RSCP_INT64:
+			case "Int64":
 				this.frame.writeUInt16LE( 8, this.frame.length - 2 );
 				buf8.writeBigInt64LE( value );
 				this.frame = Buffer.concat( [this.frame, buf8] );
 				break;
-			case rscpConst.TYPE_RSCP_UINT64:
+			case "UInt64":
 				this.frame.writeUInt16LE( 8, this.frame.length - 2 );
 				buf8.writeBigUInt64LE( value );
 				this.frame = Buffer.concat( [this.frame, buf8] );
 				break;
-			case rscpConst.TYPE_RSCP_FLOAT32:
+			case "Float32":
 				this.frame.writeUInt16LE( 4, this.frame.length - 2 );
 				buf4.writeFloatLE( value );
 				this.frame = Buffer.concat( [this.frame, buf4] );
 				break;
-			case rscpConst.TYPE_RSCP_DOUBLE64:
+			case "Double64":
 				this.frame.writeUInt16LE( 8, this.frame.length - 2 );
 				buf8.writeDoubleLE( value );
 				this.frame = Buffer.concat( [this.frame, buf8] );
 				break;
-			case rscpConst.TYPE_RSCP_TIMESTAMP: // CAUTION: treating value as seconds - setting nanoseconds to zero
+			case "Timestamp": // CAUTION: treating value as seconds - setting nanoseconds to zero
 				this.frame.writeUInt16LE( 12, this.frame.length - 2 );
 				buf8.writeUIntLE( value, 0, 8 );
 				this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array([0x00,0x00,0x00,0x00])] );
 				break;
 			default:
-				return ("CAUTION: appendData does not handle data type " + rscpType[type]);
+				return ("CAUTION: appendData does not handle data type " + rscpType[typeCode]);
 		}
 		return "OK";
 	}
@@ -259,32 +278,32 @@ class E3dcRscp extends utils.Adapter {
 
 	queueAuthentication( ) {
 		this.clearFrame();
-		this.addTagtoFrame( rscpConst.TAG_RSCP_REQ_AUTHENTICATION, "" );
-		this.addTagtoFrame( rscpConst.TAG_RSCP_AUTHENTICATION_USER, this.config.portal_user );
-		this.addTagtoFrame( rscpConst.TAG_RSCP_AUTHENTICATION_PASSWORD, this.config.portal_password );
+		this.addTagtoFrame( rscpTagCode["TAG_RSCP_REQ_AUTHENTICATION"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_RSCP_AUTHENTICATION_USER"], this.config.portal_user );
+		this.addTagtoFrame( rscpTagCode["TAG_RSCP_AUTHENTICATION_PASSWORD"], this.config.portal_password );
 		this.pushFrame();
 	}
 
 	queueRequestEmsData() {
 		this.clearFrame();
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_PV, "" );
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_BAT, "" );
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_HOME, "" );
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_POWER_GRID, "" );
+		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_POWER_PV"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_POWER_BAT"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_POWER_HOME"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_POWER_GRID"], "" );
 		this.pushFrame();
 		this.clearFrame();
-		this.addTagtoFrame( rscpConst.TAG_EMS_REQ_GET_POWER_SETTINGS, "" );
+		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_GET_POWER_SETTINGS"], "" );
 		this.pushFrame();
 	}
 
 	queueRequestBatData() {
 		this.clearFrame();
-		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_DATA, "" );
-		this.addTagtoFrame( rscpConst.TAG_BAT_INDEX, 0 );
-		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_RSOC, "" );
-		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_MODULE_VOLTAGE, "" );
-		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_CURRENT, "" );
-		this.addTagtoFrame( rscpConst.TAG_BAT_REQ_CHARGE_CYCLES, "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DATA"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_INDEX"], 0 );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RSOC"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MODULE_VOLTAGE"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_CURRENT"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_CHARGE_CYCLES"], "" );
 		this.pushFrame();
 	}
 
@@ -292,9 +311,9 @@ class E3dcRscp extends utils.Adapter {
 		this.log.debug( `queueValue( ${global_id}, ${value} )`);
 		const [,,namespace,tagname] = global_id.split(".");
 		const id = `${namespace}.${tagname}`;
-		if( specialState[id] && specialState[id].setTag ) {
+		if( setTag[id] ) {
 			this.clearFrame();
-			this.addTagtoFrame( encodeRscpTag(specialState[id].setTag), "" );
+			this.addTagtoFrame( encodeRscpTag(setTag[id]), "" );
 			this.addTagtoFrame( encodeRscpTag(id), value );
 			this.pushFrame();
 		} else {
@@ -324,84 +343,86 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	processDataToken( buffer, pos ) {
-		const tag = buffer.readUInt32LE(pos);
-		const type = buffer.readUInt8(pos+4);
+		const tagCode = buffer.readUInt32LE(pos);
+		const typeCode = buffer.readUInt8(pos+4);
 		const len = buffer.readUInt16LE(pos+5);
 		let value;
-		if( type == rscpConst.TYPE_RSCP_CONTAINER ) {
+		if( rscpType[typeCode] == "Container" ) {
 			return 7; // just skip container header
-		} else if( type == rscpConst.TYPE_RSCP_ERROR ) {
+		} else if( rscpType[typeCode] == "Error" ) {
 			value = buffer.readUInt32LE(pos+7);
 			this.log.error( `Received data type ERROR with value ${rscpGeneralError[value]}`);
 			return 7+len;
 		} else {
-			switch( type  ) {
-				case rscpConst.TYPE_RSCP_NONE:
+			switch( rscpType[typeCode]  ) {
+				case "None":
 					if( len > 0 ) this.log.warn( `Received data type NONE with length = ${len}` );
 					break;
-				case rscpConst.TYPE_RSCP_CSTRING:
+				case "CString":
+				case "BitField":
+				case "ByteArray":
 					value = buffer.toString("utf8",pos+7,pos+7+len);
 					break;
-				case rscpConst.TYPE_RSCP_CHAR8:
+				case "Char8":
 					value = buffer.readInt8(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_UCHAR8:
+				case "UChar8":
 					value = buffer.readUInt8(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_BOOL:
+				case "Bool":
 					value = (buffer.readUInt8(pos+7) != 0);
 					break;
-				case rscpConst.TYPE_RSCP_INT16:
+				case "Int16":
 					value = buffer.readInt16LE(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_UINT16:
+				case "UInt16":
 					value = buffer.readUInt16LE(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_INT32:
+				case "Int32":
 					value = buffer.readInt32LE(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_UINT32:
+				case "UInt32":
 					value = buffer.readUInt32LE(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_INT64:
+				case "Int64":
 					value = buffer.readBigInt64LE(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_UINT64:
+				case "UInt64":
 					value = buffer.readBigUInt64LE(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_DOUBLE64:
+				case "Double64":
 					value = buffer.readDoubleLE(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_FLOAT32:
+				case "Float32":
 					value = buffer.readFloatLE(pos+7);
 					break;
-				case rscpConst.TYPE_RSCP_TIMESTAMP: // CAUTION: setting time in seconds, not nanoseconds
+				case "Timestamp": // CAUTION: setting time in seconds, not nanoseconds
 					value = buffer.readBigUInt64LE(pos+7);
 					break;
 				default:
 					this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(pos+7,pos+7+len) )}` );
 					value = null;
 			}
-			if( !rscpTag[tag] ) {
-				this.log.warn(`Unknown tag: tag=0x${tag.toString(16)}, len=${len}, type=0x${type.toString(16)}, value=${value}`);
+			if( !rscpTag[tagCode] ) {
+				this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}, value=${value}`);
 			} else {
-				const typename = rscpType[type];
-				let id = `${rscpTag[tag].NameSpace}.${rscpTag[tag].TagName}`;
-				if( specialState[id] ) {
-					let tp = null;
-					if( specialState[id]["*"] ) tp = "*";
-					if( specialState[id][typename] ) tp = typename;
-					if( tp ) {
-						if( specialState[id][tp].targetState == "RETURN_CODE" && value < 0 ) this.log.warn(`SET failed: ${id} = ${value}`);
-						if( specialState[id][tp].castToBoolean && ( type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8 ) ) value = (value!=0);
-						if( specialState[id][tp].negate ) value = -value;
-						if( specialState[id][tp].discard ) {
-							this.log.debug(`Ignoring tag: ${id}, value=${value}`);
-							return 7+len;
-						}
-						id = specialState[id][tp].targetState;
+				const typeName = rscpType[typeCode];
+				let id = `${rscpTag[tagCode].NameSpace}.${rscpTag[tagCode].TagName}`;
+				let targetStateMatch = null;
+				if( targetState[id] ) {
+					if( targetState[id]["*"] ) targetStateMatch = "*";
+					if( targetState[id][typeName] ) targetStateMatch = typeName;
+					if( targetStateMatch && targetState[id][targetStateMatch].targetState == "RETURN_CODE" && value < 0 ) {
+						this.log.warn(`SET failed: ${id} = ${value}`);
 					}
 				}
+				if( castToBoolean[id] && ( typeName == "Char8" || typeName == "UChar8" ) ) value = (value!=0);
+				if( negateValue[id] ) value = -value;
+				if( discardValue[id] ) {
+					this.log.debug(`Ignoring tag: ${id}, value=${value}`);
+					return 7+len;
+				}
+				if( targetStateMatch ) id = targetState[id][targetStateMatch];
 				this.log.silly(`this.setState( "${id}", ${value}, true )`);
 				this.setState( id, value, true );
 			}
@@ -534,17 +555,6 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("BAT.INDEX", {
-			type: "state",
-			common: {
-				name: "Index",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
 		await this.setObjectNotExistsAsync("BAT.RSOC", {
 			type: "state",
 			common: {
@@ -589,29 +599,6 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("BAT.STATUS_CODE", {
-			type: "state",
-			common: {
-				name: "Status-Code",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("BAT.ERROR_CODE", {
-			type: "state",
-			common: {
-				name: "Fehler-Code",
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-
 
 		await this.setObjectNotExistsAsync("EMS", {
 			type: "channel",
@@ -906,61 +893,64 @@ function dumpRscpFrame( buffer ) {
 }
 
 function parseRscpToken ( buffer, pos, text ) {
-	const tag = buffer.readUInt32LE(pos);
-	const type = buffer.readUInt8(pos+4);
+	const tagCode = buffer.readUInt32LE(pos);
+	const typeCode = buffer.readUInt8(pos+4);
+	const typeName = rscpType[typeCode];
 	const len = buffer.readUInt16LE(pos+5);
-	text.content += rscpTag[tag].TagNameGlobal + " - type: " + "0x" + type.toString(16).toUpperCase().padStart(2,"0") + "-" + rscpType[type] + " - length: " + len + " ";
+	text.content += rscpTag[tagCode].TagNameGlobal + " - type: " + "0x" + typeCode.toString(16).toUpperCase().padStart(2,"0") + "-" + rscpType[typeCode] + " - length: " + len + " ";
 	if( pos+7+len > buffer.length ) { // avoid out-of-range in unexpected cases
 		text.content += " - invalid tag, buffer is too short. ";
 		return buffer.length;
 	} else {
-		switch( type ) {
-			case rscpConst.TYPE_RSCP_NONE:
+		switch( typeName ) {
+			case "None":
 				if( len > 0 ) text.content += "CAUTION: length of data is " + len + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_CONTAINER:
+			case "Container":
 				text.content += "<Container content follows...> ";
 				return 7; // length of container header, not content
-			case rscpConst.TYPE_RSCP_CSTRING:
+			case "CString":
+			case "Bitfield":
+			case "ByteArray":
 				text.content += "value: " + buffer.toString("utf8",pos+7,pos+7+len) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_CHAR8:
-			case rscpConst.TYPE_RSCP_UCHAR8:
-			case rscpConst.TYPE_RSCP_BOOL:
-				if( buffer.readUInt8(pos+7) > 31 && buffer.readUInt8(pos+7) < 127 && (type == rscpConst.TYPE_RSCP_CHAR8 || type == rscpConst.TYPE_RSCP_UCHAR8)  ) {
+			case "Char8":
+			case "UChar8":
+			case "Bool":
+				if( buffer.readUInt8(pos+7) > 31 && buffer.readUInt8(pos+7) < 127 && (typeName == "Char8" || typeName == "UChar8")  ) {
 					text.content += "value: " + buffer.toString("utf8",pos+7,pos+8) + " ";
 				} else {
 					text.content += "value: 0x" + buffer.readUInt8(pos+7).toString(16).toUpperCase().padStart(2,"0") + " ";
 				}
 				return 7+len;
-			case rscpConst.TYPE_RSCP_INT16:
+			case "Int16":
 				text.content += "value: " + buffer.readInt16LE(pos+7) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_UINT16:
+			case "UInt16":
 				text.content += "value: " + buffer.readUInt16LE(pos+7) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_INT32:
+			case "Int32":
 				text.content += "value: " + buffer.readInt32LE(pos+7) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_UINT32:
+			case "UInt32":
 				text.content += "value: " + buffer.readUInt32LE(pos+7) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_INT64:
+			case "Int64":
 				text.content += "value: " + buffer.readBigInt64LE(pos+7) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_UINT64:
+			case "UInt64":
 				text.content += "value: " + buffer.readBigUInt64LE(pos+7) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_ERROR:
+			case "Error":
 				text.content += "value: " + buffer.readUInt32LE(pos+7) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_DOUBLE64:
+			case "Double64":
 				text.content += "value: " + buffer.readDoubleLE(pos+7) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_FLOAT32:
+			case "Float32":
 				text.content += "value: " + buffer.readFloatLE(pos+7) + " ";
 				return 7+len;
-			case rscpConst.TYPE_RSCP_TIMESTAMP:
+			case "Timestamp":
 				text.content += "seconds: "+buffer.readUInt64LE(pos+7)+" - nseconds: "+buffer.readUInt32LE(pos+7+8) + " ";
 				return 7+len;
 			default:
@@ -1009,11 +999,9 @@ function printRscpFrame( buffer ) {
 // (1) full global tag, e.g. TAG_EMS_MAX_CHARGE_POWER
 // (2) global tag without TAG_ prefix, e.g. EMS_MAX_CHARGE_POWER
 // (3) object id, e.g. EMS.MAX_CHARGE_POWER
+// returns null if no match.
 function encodeRscpTag( name ) {
 	if( name.indexOf("TAG_") != 0 ) name = `TAG_${name}`;
 	name = name.replace(".","_");
-	for( const tag in rscpTag ) {
-		if( name == rscpTag[tag].TagNameGlobal ) return tag;
-	}
-	return 0;
+	return rscpTagCode[name];
 }
