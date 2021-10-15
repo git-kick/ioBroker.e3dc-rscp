@@ -416,9 +416,9 @@ class E3dcRscp extends utils.Adapter {
 						this.log.warn(`SET failed: ${id} = ${value}`);
 					}
 				}
-				if( castToBoolean[id] && ( typeName == "Char8" || typeName == "UChar8" ) ) value = (value!=0);
-				if( negateValue[id] ) value = -value;
-				if( discardValue[id] ) {
+				if( castToBoolean.includes(id) && ( typeName == "Char8" || typeName == "UChar8" ) ) value = (value!=0);
+				if( negateValue.includes(id) ) value = -value;
+				if( discardValue.includes(id) ) {
 					this.log.debug(`Ignoring tag: ${id}, value=${value}`);
 					return 7+len;
 				}
