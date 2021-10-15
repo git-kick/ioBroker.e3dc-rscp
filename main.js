@@ -168,6 +168,14 @@ class E3dcRscp extends utils.Adapter {
 		this.tcpConnection.on("close", () => {
 			this.log.info("(3) Connection closed");
 		});
+
+		this.tcpConnection.on("timeout", () => {
+			this.log.info("(T) Connection timeout");
+		});
+
+		this.tcpConnection.on("error", () => {
+			this.log.info("(!) Connection error");
+		});
 	}
 
 	clearFrame() { // preset MAGIC and CTRL and reserve space for timestamp and length
@@ -864,7 +872,7 @@ if (module.parent) {
 //
 function dumpRscpFrame( buffer ) {
 	const bpb = 8; // bytes per block
-	const bpl = 4; // blocks per line
+	const bpl = 2; // blocks per line
 	let line = 0;
 	let block = 0;
 	let i = 0;
