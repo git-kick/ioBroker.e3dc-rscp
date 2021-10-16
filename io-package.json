@@ -50,7 +50,7 @@
       "energy",
       "RSCP"
     ],
-    "license": "GPL-3.0",
+    "license": "GPL-3.0-only",
     "platform": "Javascript/Node.js",
     "main": "main.js",
     "icon": "e3dc-rscp.png",
@@ -69,8 +69,7 @@
       {
         "js-controller": ">=2.0.0"
       }
-    ],
-    "installedFrom": "git-kick/ioBroker.e3dc-rscp"
+    ]
   },
   "native": {
     "e3dc_ip": "192.168.178.107",
