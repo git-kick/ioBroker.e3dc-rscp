@@ -291,7 +291,21 @@ Therefore, we will add tags to the adapter upon upcoming use-cases.
 <a name="sam"></a>
 
 ## Sample script
-**TODO**: sample script for charge limit control
+Here is a small sample script for charge limit control - it is not meant for direct usage, only to show how E3/DC values can be used. Note that the script cares only about for decreasing charge power, not for increasing it again when appropriate.
+
+      // Heuristics: only charge as fast as needed to reach 100% SOC later in the afternoon,
+      // in order to avoid early 100% SOC with resulting PV cut-off
+
+      const targetHours = 15; // we want to reach 100% SOC around that time
+      const batCapacity = 10000; // in Wh
+      const h1 = 1.1; // hysteresis 1: intervene only when current power > h1 * desired power
+      const h2 = 0.9; // hysteresis 2: set power limit a bit below desired power to avoid frequent intervention
+
+      on( {   id: 'e3dc-rscp.0.EMS.POWER_BAT', valGe: h1 * batCapacity * (1-'e3dc-rscp.0.BAT.RSOC') / (targetHours-(new Date()).getHours())}, (obj) => {
+          console.log('Trigger: charging power is too high - setting new limit');
+          limit = h2 * batCapacity * (1-'e3dc-rscp.0.BAT.RSOC') / (targetHour-(new Date()).getHours());
+          setState('e3dc-rscp.0.EMS.MAX_CHARGE_POWER', limit);
+      });
 
 <a name="dev"></a>
 
@@ -359,7 +373,12 @@ For later updates, the above procedure is not necessary. Just do the following:
 
 ## Changelog
 
-### 0.0.1
+### 0.0.3-alpha
+* (git-kick) CI up and running (npm rub test:integration, github test-and-release.yml)
+### 0.0.2-alpha
+* (git-kick) five settable parameters
+* (git-kick) refactored rscpConst and specialTags (rules)
+### 0.0.1-alpha
 * (git-kick) initial release
 
 <a name="lic"></a>

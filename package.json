@@ -9,9 +9,13 @@
   "homepage": "https://github.com/git-kick/ioBroker.e3dc-rscp",
   "license": "GPL-3.0",
   "keywords": [
-    "key1 key2"
+    "E3/DC",
+    "S10",
+    "power station",
+    "energy",
+    "RSCP"
   ],
-  "repository": {
+    "repository": {
     "type": "git",
     "url": "https://github.com/git-kick/ioBroker.e3dc-rscp"
   },
