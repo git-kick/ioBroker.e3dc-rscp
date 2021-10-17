@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "e3dc-rscp",
-    "version": "0.0.3-alpha",
+    "version": "0.0.4-alpha",
     "news": {
-      "0.0.1": {
+      "0.0.4": {
         "en": "initial release",
         "de": "Erstveröffentlichung",
         "ru": "Начальная версия",
