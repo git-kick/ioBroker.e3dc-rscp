@@ -20,11 +20,10 @@ The e3dc-rscp adapter was developed for the E3/DC *S10* device. One may assume o
 
 ## Table of Content
 1. [ Adapter configuration ](#toc)
-2. [ Coverage of interface messages ](#cov)
-3. [ Sample script ](#sam)
-4. [ Developer manual](#dev)
-5. [ Changelog ](#log)
-6. [ License](#lic)
+1. [ Coverage of interface messages ](#cov)
+1. [ Sample script ](#sam)
+1. [ Changelog ](#log)
+1. [ License](#lic)
 
 <a name="toc"></a>
 ## Adapter configuration
@@ -293,88 +292,26 @@ Therefore, we will add tags to the adapter upon upcoming use-cases.
 ## Sample script
 Here is a small sample script for charge limit control - it is not meant for direct usage, only to show how E3/DC values can be used. Note that the script cares only about for decreasing charge power, not for increasing it again when appropriate.
 
-      // Heuristics: only charge as fast as needed to reach 100% SOC later in the afternoon,
-      // in order to avoid early 100% SOC with resulting PV cut-off
+    // Heuristics: only charge as fast as needed to reach 100% SOC later in the afternoon,
+    // in order to avoid early 100% SOC with resulting PV cut-off
 
-      const targetHours = 15; // we want to reach 100% SOC around that time
-      const batCapacity = 10000; // in Wh
-      const h1 = 1.1; // hysteresis 1: intervene only when current power > h1 * desired power
-      const h2 = 0.9; // hysteresis 2: set power limit a bit below desired power to avoid frequent intervention
+    const targetHours = 15; // we want to reach 100% SOC around that time
+    const batCapacity = 10000; // in Wh
+    const h1 = 1.1; // hysteresis 1: intervene only when current power > h1 * desired power
+    const h2 = 0.9; // hysteresis 2: set power limit a bit below desired power to avoid frequent intervention
 
-      on( {   id: 'e3dc-rscp.0.EMS.POWER_BAT', valGe: h1 * batCapacity * (1-'e3dc-rscp.0.BAT.RSOC') / (targetHours-(new Date()).getHours())}, (obj) => {
-          console.log('Trigger: charging power is too high - setting new limit');
-          limit = h2 * batCapacity * (1-'e3dc-rscp.0.BAT.RSOC') / (targetHour-(new Date()).getHours());
-          setState('e3dc-rscp.0.EMS.MAX_CHARGE_POWER', limit);
-      });
-
-<a name="dev"></a>
-
-## Developer manual
-This adapter is based on @iobroker/create-adapter v1.31.0
-It was developed looking at E3/DC's [sample application](http://s10.e3dc.com/dokumentation/RscpExample.zip) which is written in C++.
-
-The sample application package also contains the official tag lists, which are necessary to interpret RSCP frames semantically.
-
-**The rest of this Developer manual will be modified/removed when processed and done, respectively.**
-
-### Best Practices
-We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
-check them out. If you're already experienced, you should also take a look at them - you might learn something new :)
-
-### Scripts in `package.json`
-Several npm scripts are predefined for your convenience. You can run them using `npm run <scriptname>`
-| Script name | Description |
-|-------------|-------------|
-| `test:js` | Executes the tests you defined in `*.test.js` files. |
-| `test:package` | Ensures your `package.json` and `io-package.json` are valid. |
-| `test:unit` | Tests the adapter startup with unit tests (fast, but might require module mocks to work). |
-| `test:integration` | Tests the adapter startup with an actual instance of ioBroker. |
-| `test` | Performs a minimal test run on package files and your tests. |
-| `check` | Performs a type-check on your code (without compiling anything). |
-| `lint` | Runs `ESLint` to check your code for formatting errors and potential bugs. |
-
-### Writing tests
-When done right, testing code is invaluable, because it gives you the 
-confidence to change your code while knowing exactly if and when 
-something breaks. A good read on the topic of test-driven development 
-is https://hackernoon.com/introduction-to-test-driven-development-tdd-61a13bc92d92. 
-Although writing tests before the code might seem strange at first, but it has very 
-clear upsides.
-
-The template provides you with basic tests for the adapter startup and package files.
-It is recommended that you add your own tests into the mix.
-
-### Publishing the adapter
-Since you have chosen GitHub Actions as your CI service, you can 
-enable automatic releases on npm whenever you push a new git tag that matches the form 
-`v<major>.<minor>.<patch>`. The necessary steps are described in `.github/workflows/test-and-release.yml`.
-
-To get your adapter released in ioBroker, please refer to the documentation 
-of [ioBroker.repositories](https://github.com/ioBroker/ioBroker.repositories#requirements-for-adapter-to-get-added-to-the-latest-repository).
-
-### Test the adapter manually on a local ioBroker installation
-In order to install the adapter locally without publishing, the following steps are recommended:
-1. Create a tarball from your dev directory:  
-	```bash
-	npm pack
-	```
-1. Upload the resulting file to your ioBroker host
-1. Install it locally (The paths are different on Windows):
-	```bash
-	cd /opt/iobroker
-	npm i /path/to/tarball.tgz
-	```
-
-For later updates, the above procedure is not necessary. Just do the following:
-1. Overwrite the changed files in the adapter directory (`/opt/iobroker/node_modules/iobroker.e3dc-rscp`)
-1. Execute `iobroker upload e3dc-rscp` on the ioBroker host
+    on( { id: 'e3dc-rscp.0.EMS.POWER_BAT', valGe: h1 * batCapacity * (1-'e3dc-rscp.0.BAT.RSOC') / (targetHours-(new Date()).getHours())}, (obj) => {
+        console.log('Trigger: charging power is too high - setting new limit');
+        limit = h2 * batCapacity * (1-'e3dc-rscp.0.BAT.RSOC') / (targetHour-(new Date()).getHours());
+        setState('e3dc-rscp.0.EMS.MAX_CHARGE_POWER', limit);
+    });
 
 <a name="log"></a>
 
 ## Changelog
 
 ### 0.0.3-alpha
-* (git-kick) CI up and running (npm rub test:integration, github test-and-release.yml)
+* (git-kick) CI up and running (npm run test:integration, github test-and-release.yml)
 ### 0.0.2-alpha
 * (git-kick) five settable parameters
 * (git-kick) refactored rscpConst and specialTags (rules)
