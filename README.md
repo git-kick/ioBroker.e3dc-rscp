@@ -310,6 +310,9 @@ Here is a small sample script for charge limit control - it is not meant for dir
 
 ## Changelog
 
+### 0.0.4-alpha
+* (git-kick) Updated README and split off developer manual (README-dev)
+* (git-kick) enabled automatic npm releases
 ### 0.0.3-alpha
 * (git-kick) CI up and running (npm run test:integration, github test-and-release.yml)
 ### 0.0.2-alpha
