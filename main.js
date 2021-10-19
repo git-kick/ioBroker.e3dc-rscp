@@ -193,82 +193,87 @@ class E3dcRscp extends utils.Adapter {
 		this.frame = Buffer.concat( [this.frame, buf4] );
 		this.frame = Buffer.concat( [this.frame, Buffer.from([typeCode])] );
 		this.frame = Buffer.concat( [this.frame, Buffer.from([0x00, 0x00])] ); // reserve space for Length
-		switch( rscpType[typeCode] ) {
-			case "None":
-				break;
-			case "Container":
-				if( this.openContainer > 0 ) {
-					this.frame.writeUInt16LE( this.frame.length - this.openContainer - 9, this.openContainer );
-				}
-				this.openContainer = this.frame.length - 2;
-				break;
-			case "CString":
-			case "Bitfield":
-			case "ByteArray":
-				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
-				this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
-				break;
-			case "Char8":
-			case "UChar8":
-			case "Error":
-				this.frame.writeUInt16LE( 1, this.frame.length - 2);
-				buf1.writeUInt8( value );
-				this.frame = Buffer.concat( [this.frame, buf1] );
-				break;
-			case "Bool": // bool is encoded as 0/1 byte
-				this.frame.writeUInt16LE( 1, this.frame.length - 2);
-				buf1.writeUInt8( value?1:0 );
-				this.frame = Buffer.concat( [this.frame, buf1] );
-				break;
-			case "Int16":
-				this.frame.writeUInt16LE( 2, this.frame.length - 2 );
-				buf2.writeInt16LE( value );
-				this.frame = Buffer.concat( [this.frame, buf2] );
-				break;
-			case "UInt16":
-				this.frame.writeUInt16LE( 2, this.frame.length - 2 );
-				buf2.writeUInt16LE( value );
-				this.frame = Buffer.concat( [this.frame, buf2] );
-				break;
-			case "Int32":
-				this.frame.writeUInt16LE( 4, this.frame.length - 2 );
-				buf4.writeInt32LE( value );
-				this.frame = Buffer.concat( [this.frame, buf4] );
-				break;
-			case "UInt32":
-				this.frame.writeUInt16LE( 4, this.frame.length - 2 );
-				buf4.writeUInt32LE( value );
-				this.frame = Buffer.concat( [this.frame, buf4] );
-				break;
-			case "Int64":
-				this.frame.writeUInt16LE( 8, this.frame.length - 2 );
-				buf8.writeBigInt64LE( value );
-				this.frame = Buffer.concat( [this.frame, buf8] );
-				break;
-			case "UInt64":
-				this.frame.writeUInt16LE( 8, this.frame.length - 2 );
-				buf8.writeBigUInt64LE( value );
-				this.frame = Buffer.concat( [this.frame, buf8] );
-				break;
-			case "Float32":
-				this.frame.writeUInt16LE( 4, this.frame.length - 2 );
-				buf4.writeFloatLE( value );
-				this.frame = Buffer.concat( [this.frame, buf4] );
-				break;
-			case "Double64":
-				this.frame.writeUInt16LE( 8, this.frame.length - 2 );
-				buf8.writeDoubleLE( value );
-				this.frame = Buffer.concat( [this.frame, buf8] );
-				break;
-			case "Timestamp": // CAUTION: treating value as seconds - setting nanoseconds to zero
-				this.frame.writeUInt16LE( 12, this.frame.length - 2 );
-				buf8.writeUIntLE( value, 0, 8 );
-				this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array([0x00,0x00,0x00,0x00])] );
-				break;
-			default:
-				return ("CAUTION: appendData does not handle data type " + rscpType[typeCode]);
+		try{
+			switch( rscpType[typeCode] ) {
+				case "None":
+					break;
+				case "Container":
+					if( this.openContainer > 0 ) {
+						this.frame.writeUInt16LE( this.frame.length - this.openContainer - 9, this.openContainer );
+					}
+					this.openContainer = this.frame.length - 2;
+					break;
+				case "CString":
+				case "Bitfield":
+				case "ByteArray":
+					this.frame.writeUInt16LE(value.length, this.frame.length - 2);
+					this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
+					break;
+				case "Char8":
+				case "UChar8":
+				case "Error":
+					this.frame.writeUInt16LE( 1, this.frame.length - 2);
+					buf1.writeUInt8( value );
+					this.frame = Buffer.concat( [this.frame, buf1] );
+					break;
+				case "Bool": // bool is encoded as 0/1 byte
+					this.frame.writeUInt16LE( 1, this.frame.length - 2);
+					buf1.writeUInt8( value?1:0 );
+					this.frame = Buffer.concat( [this.frame, buf1] );
+					break;
+				case "Int16":
+					this.frame.writeUInt16LE( 2, this.frame.length - 2 );
+					buf2.writeInt16LE( value );
+					this.frame = Buffer.concat( [this.frame, buf2] );
+					break;
+				case "UInt16":
+					this.frame.writeUInt16LE( 2, this.frame.length - 2 );
+					buf2.writeUInt16LE( value );
+					this.frame = Buffer.concat( [this.frame, buf2] );
+					break;
+				case "Int32":
+					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
+					buf4.writeInt32LE( value );
+					this.frame = Buffer.concat( [this.frame, buf4] );
+					break;
+				case "UInt32":
+					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
+					buf4.writeUInt32LE( value );
+					this.frame = Buffer.concat( [this.frame, buf4] );
+					break;
+				case "Int64":
+					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
+					buf8.writeBigInt64LE( value );
+					this.frame = Buffer.concat( [this.frame, buf8] );
+					break;
+				case "UInt64":
+					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
+					buf8.writeBigUInt64LE( value );
+					this.frame = Buffer.concat( [this.frame, buf8] );
+					break;
+				case "Float32":
+					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
+					buf4.writeFloatLE( value );
+					this.frame = Buffer.concat( [this.frame, buf4] );
+					break;
+				case "Double64":
+					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
+					buf8.writeDoubleLE( value );
+					this.frame = Buffer.concat( [this.frame, buf8] );
+					break;
+				case "Timestamp": // CAUTION: treating value as seconds - setting nanoseconds to zero
+					this.frame.writeUInt16LE( 12, this.frame.length - 2 );
+					buf8.writeUIntLE( value, 0, 8 );
+					this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array([0x00,0x00,0x00,0x00])] );
+					break;
+				default:
+					this.log.warn(`addTagtoFrame does not know how to handle data type ${rscpType[typeCode]}`);
+			}
+		} catch (e) {
+			if( e instanceof TypeError || e instanceof RangeError ) {
+				this.log.warn(`addTagtoFrame failed with type ${rscpType[typeCode]}, value ${value} -  ${e}`);
+			}
 		}
-		return "OK";
 	}
 
 	pushFrame() { // finalize frame, then push it to the queue

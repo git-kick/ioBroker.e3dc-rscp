@@ -290,20 +290,51 @@ Therefore, we will add tags to the adapter upon upcoming use-cases.
 <a name="sam"></a>
 
 ## Sample script
-Here is a small sample script for charge limit control - it is not meant for direct usage, only to show how E3/DC values can be used. Note that the script cares only about for decreasing charge power, not for increasing it again when appropriate.
+Here is a sample script for charge limit control - it is not meant for as-is usage, only to demonstrate how E3/DC values can be used.
+    // Heuristics: only charge as fast as needed to reach 100% SOC in the afternoon,
+    // aiming to avoid early 100% SOC causing PV cut-off
+    // Exception 1: when already in cut-off situation, reset charge power limit to maximum
+    // Exception 2: when SOC is low, reset charge power limit to maximum
 
-    // Heuristics: only charge as fast as needed to reach 100% SOC later in the afternoon,
-    // in order to avoid early 100% SOC with resulting PV cut-off
+    const targetHour = 15; // [hrs] we want to reach 100% SOC by that time, not before
+    const batCapacity = 10000; // [Wh]
+    const minSoc = 20; // [%] as long as SOC is below, do not reduce charge power 
+    const h1 = 1.1; // hysteresis 1: intervene only when current power > h1 * should-be power
+    const h2 = 0.9; // hysteresis 2: set power limit a bit below (h2 * should-be power) to avoid frequent interventions
+    const peakPV = 7700; // [W] photovoltaic peak power
+    const cutOff = 68; // [%] PV power will be cut off at 70% of peak power; securely detect cut-off by setting a bit below
+    const maxChargePower = 3000; // [W] max. charge power given by the battery
 
-    const targetHours = 15; // we want to reach 100% SOC around that time
-    const batCapacity = 10000; // in Wh
-    const h1 = 1.1; // hysteresis 1: intervene only when current power > h1 * desired power
-    const h2 = 0.9; // hysteresis 2: set power limit a bit below desired power to avoid frequent intervention
+    function avgChargePower( ) {
+        let now = new Date();
+        let then = new Date(now); then.setHours( targetHour, 0, 0 );
+        const deltaHours = (then.getTime()-now.getTime())/1000/3600;
+        if( deltaHours > 0 ) {
+            const avgPower = batCapacity * ( 1 - getState('e3dc-rscp.0.BAT.RSOC').val/100 ) / deltaHours;
+            return Math.min( avgPower, maxChargePower );
+        } else {
+            return maxChargePower;
+        }
+    }
 
-    on( { id: 'e3dc-rscp.0.EMS.POWER_BAT', valGe: h1 * batCapacity * (1-'e3dc-rscp.0.BAT.RSOC') / (targetHours-(new Date()).getHours())}, (obj) => {
-        console.log('Trigger: charging power is too high - setting new limit');
-        limit = h2 * batCapacity * (1-'e3dc-rscp.0.BAT.RSOC') / (targetHour-(new Date()).getHours());
-        setState('e3dc-rscp.0.EMS.MAX_CHARGE_POWER', limit);
+    on( { id: 'e3dc-rscp.0.EMS.POWER_BAT', valGe: h1 * avgChargePower() }, (obj) => {
+        let limit;
+        if( -getState('e3dc-rscp.0.EMS.POWER_GRID').val > peakPV * cutOff/100 ) {
+            limit = maxChargePower;
+            console.log( `Cut-off detected - reset charge power limit to ${limit} W`);
+        } else if( getState('e3dc-rscp.0.BAT.RSOC').val < minSoc ) {
+            limit = maxChargePower;
+            console.log( `Low battery SOC - reset charge power limit to ${limit} W`);
+        } else {
+            limit = h2 * avgChargePower();
+            console.log( `Charge power is too high - setting limit to ${limit} W`)
+        }
+        setState( 'e3dc-rscp.0.EMS.MAX_CHARGE_POWER', limit );
+    });
+
+    // Daily reset after relevant timeframe:
+    schedule( {hour: targetHour, minute: 0}, () => {
+        setState( 'e3dc-rscp.0.EMS.MAX_CHARGE_POWER', maxChargePower );
     });
 
 <a name="log"></a>
