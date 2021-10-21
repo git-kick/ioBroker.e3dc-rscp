@@ -83,6 +83,7 @@ const negateValue = [
 ];
 // Some of the return values we do not want to see as states:
 const discardValue = [
+	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
 	"BAT.INDEX",
 	"BAT.UNDEFINED",
@@ -124,7 +125,9 @@ class E3dcRscp extends utils.Adapter {
 
 		// Message queue (outbound):
 		this.queue = [ ];
-		this.next = 0;
+
+		// TCP connection:
+		this.tcpConnection = new Net.Socket();
 	}
 
 	// Create channel to E3/DC: encapsulating TCP connection, encryption, message queuing
@@ -146,14 +149,15 @@ class E3dcRscp extends utils.Adapter {
 		this.queueAuthentication();
 
 		// TCP connection:
-		this.tcpConnection = Net.createConnection( this.config.e3dc_port, this.config.e3dc_ip, () => {
-			this.log.info("(1) tcpConnection is established!");
+		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
+			this.log.info("Connection to E3/DC is established!");
 			this.sendNextFrame();
 		});
 
 		this.tcpConnection.on("data", (data) => {
 			const receivedFrame = Buffer.from(this.cipher.decrypt(data, 256, this.decryptionIV));
-			this.log.debug(`Received response - ${rscpTag[receivedFrame.readUInt32LE(18)].TagNameGlobal}`);
+			this.log.debug("Received response");
+			if( rscpTag[receivedFrame.readUInt32LE(18)] ) this.log.silly(rscpTag[receivedFrame.readUInt32LE(18)].TagNameGlobal);
 			if( this.decryptionIV ) data.copy( this.decryptionIV, 0, data.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
 			this.log.debug( `IN: ${printRscpFrame(receivedFrame)}` );
 			this.log.silly( dumpRscpFrame(receivedFrame) );
@@ -162,20 +166,36 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 		this.tcpConnection.on("end", () => {
-			this.log.info("(2) Disconnected from server");
+			this.log.warn("Disconnected from E3/DC");
+			this.reconnectChannel();
 		});
 
 		this.tcpConnection.on("close", () => {
-			this.log.info("(3) Connection closed");
+			this.log.warn("E3/DC connection closed");
 		});
 
 		this.tcpConnection.on("timeout", () => {
-			this.log.info("(T) Connection timeout");
+			this.log.info("E3/DC connection timeout");
+			this.reconnectChannel();
 		});
 
 		this.tcpConnection.on("error", () => {
-			this.log.info("(!) Connection error");
+			this.log.error("E3/DC connection error");
+			this.reconnectChannel();
 		});
+	}
+
+	reconnectChannel() {
+		setTimeout(() => {
+			this.log.info("Reconnecting to E3/DC ...");
+			this.tcpConnection.removeAllListeners();
+			//this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
+			//	this.log.info("Successfully reconnected to E3/DC");
+			//	this.sendNextFrame();
+			//});
+			//this.tcpConnection = new Net.Socket(); // when reusing socket, E3/DC returns NO_ACCESS
+			this.initChannel();
+		}, 10000);
 	}
 
 	clearFrame() { // preset MAGIC and CTRL and reserve space for timestamp and length
@@ -335,23 +355,23 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	sendNextFrame() {
-		if( this && (this.next < this.queue.length) ) {
-			this.log.debug( `Sending request #${this.next} - ${rscpTag[this.queue[this.next].readUInt32LE(18)].TagNameGlobal}` );
-			this.log.debug( `OUT: ${printRscpFrame(this.queue[this.next])}` );
-			this.log.silly( dumpRscpFrame(this.queue[this.next]) );
+		if( this && this.queue[0] ) {
+			this.log.debug( `Sending request ${rscpTag[this.queue[0].readUInt32LE(18)].TagNameGlobal}` );
+			this.log.debug( `OUT: ${printRscpFrame(this.queue[0])}` );
+			this.log.silly( dumpRscpFrame(this.queue[0]) );
 
-			const encryptedFrame = Buffer.from( this.cipher.encrypt( this.queue[this.next], 256, this.encryptionIV ) );
+			const encryptedFrame = Buffer.from( this.cipher.encrypt( this.queue[0], 256, this.encryptionIV ) );
 			// last encrypted block will be used as IV for next frame
 			if( this.encryptionIV ) encryptedFrame.copy( this.encryptionIV, 0, encryptedFrame.length - BLOCK_SIZE );
 
 			if( this.tcpConnection && this.tcpConnection.write( encryptedFrame ) ) {
-				this.log.debug( `successfully written data to socket for request #${this.next}` );
+				this.log.debug( `Successfully written data to socket` );
+				this.queue.shift();
 			} else {
-				this.log.error( `Failed writing data to socket for request #${this.next}` );
+				this.log.error( `Failed writing data to socket` );
 			}
-			this.next++;
 		} else {
-			this.log.debug( "Message queue is empty.");
+			this.log.debug( "Message queue is empty");
 		}
 	}
 
@@ -364,12 +384,12 @@ class E3dcRscp extends utils.Adapter {
 			return 7; // just skip container header
 		} else if( rscpType[typeCode] == "Error" ) {
 			value = buffer.readUInt32LE(pos+7);
-			this.log.error( `Received data type ERROR with value ${rscpGeneralError[value]}`);
+			this.log.error( `Received data type ERROR with value ${rscpGeneralError[value]} - tag ${rscpTag[tagCode].TagName}` );
 			return 7+len;
 		} else {
 			switch( rscpType[typeCode]  ) {
 				case "None":
-					if( len > 0 ) this.log.warn( `Received data type NONE with length = ${len}` );
+					if( len > 0 ) this.log.warn( `Received data type NONE with data length = ${len} - tag ${rscpTag[tagCode].TagName}` );
 					break;
 				case "CString":
 				case "BitField":
@@ -460,8 +480,6 @@ class E3dcRscp extends utils.Adapter {
 			default:
 				this.log.warn(`Received message with invalid CTRL: >${ctrl}<`);
 		}
-		// let seconds = buffer.readBigUInt64LE(4);
-		// let nseconds = buffer.readUInt32LE(12);
 		const dataLength = buffer.readUInt16LE(16);
 		let i = this.processDataToken( buffer, 18 );
 		while( i < dataLength ) {
@@ -758,6 +776,7 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
+		this.subscribeStates("RSCP.AUTHENTICATION");
 		this.subscribeStates("EMS.MAX_CHARGE_POWER");
 		this.subscribeStates("EMS.MAX_DISCHARGE_POWER");
 		this.subscribeStates("EMS.DISCHARGE_START_POWER");
@@ -833,6 +852,8 @@ class E3dcRscp extends utils.Adapter {
 			this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
 			if( !state.ack ) {
 				this.queueValue( id, state.val );
+			} else if( id.endsWith("RSCP.AUTHENTICATION") && state.val == 0 ) {
+				this.log.warn( `E3/DC authentication failed`);
 			}
 		} else {
 			// The state was deleted
@@ -906,70 +927,73 @@ function dumpRscpFrame( buffer ) {
 }
 
 function parseRscpToken ( buffer, pos, text ) {
+	if( buffer.length < pos+7 ) {
+		text.content += " - invalid tag, buffer is too short.";
+		return buffer.length;
+	}
 	const tagCode = buffer.readUInt32LE(pos);
 	const typeCode = buffer.readUInt8(pos+4);
 	const typeName = rscpType[typeCode];
 	const len = buffer.readUInt16LE(pos+5);
-	text.content += rscpTag[tagCode].TagNameGlobal + " - type: " + "0x" + typeCode.toString(16).toUpperCase().padStart(2,"0") + "-" + rscpType[typeCode] + " - length: " + len + " ";
-	if( pos+7+len > buffer.length ) { // avoid out-of-range in unexpected cases
-		text.content += " - invalid tag, buffer is too short. ";
+	if( !rscpTag[tagCode] || buffer.length < pos+7+len ) {
+		text.content += ` - invalid tag: 0x${tagCode.toString(16).toUpperCase().padStart(2,"0")}`;
 		return buffer.length;
-	} else {
-		switch( typeName ) {
-			case "None":
-				if( len > 0 ) text.content += "CAUTION: length of data is " + len + " ";
-				return 7+len;
-			case "Container":
-				text.content += "<Container content follows...> ";
-				return 7; // length of container header, not content
-			case "CString":
-			case "Bitfield":
-			case "ByteArray":
-				text.content += "value: " + buffer.toString("utf8",pos+7,pos+7+len) + " ";
-				return 7+len;
-			case "Char8":
-			case "UChar8":
-			case "Bool":
-				if( buffer.readUInt8(pos+7) > 31 && buffer.readUInt8(pos+7) < 127 && (typeName == "Char8" || typeName == "UChar8")  ) {
-					text.content += "value: " + buffer.toString("utf8",pos+7,pos+8) + " ";
-				} else {
-					text.content += "value: 0x" + buffer.readUInt8(pos+7).toString(16).toUpperCase().padStart(2,"0") + " ";
-				}
-				return 7+len;
-			case "Int16":
-				text.content += "value: " + buffer.readInt16LE(pos+7) + " ";
-				return 7+len;
-			case "UInt16":
-				text.content += "value: " + buffer.readUInt16LE(pos+7) + " ";
-				return 7+len;
-			case "Int32":
-				text.content += "value: " + buffer.readInt32LE(pos+7) + " ";
-				return 7+len;
-			case "UInt32":
-				text.content += "value: " + buffer.readUInt32LE(pos+7) + " ";
-				return 7+len;
-			case "Int64":
-				text.content += "value: " + buffer.readBigInt64LE(pos+7) + " ";
-				return 7+len;
-			case "UInt64":
-				text.content += "value: " + buffer.readBigUInt64LE(pos+7) + " ";
-				return 7+len;
-			case "Error":
-				text.content += "value: " + buffer.readUInt32LE(pos+7) + " ";
-				return 7+len;
-			case "Double64":
-				text.content += "value: " + buffer.readDoubleLE(pos+7) + " ";
-				return 7+len;
-			case "Float32":
-				text.content += "value: " + buffer.readFloatLE(pos+7) + " ";
-				return 7+len;
-			case "Timestamp":
-				text.content += "seconds: "+buffer.readUInt64LE(pos+7)+" - nseconds: "+buffer.readUInt32LE(pos+7+8) + " ";
-				return 7+len;
-			default:
-				if( len > 0 ) text.content += dumpRscpFrame( buffer.slice(pos+7,pos+7+len) ) + " ";
-				return 7+len;
-		}
+	}
+	text.content += `${rscpTag[tagCode].TagNameGlobal} - type: 0x${typeCode.toString(16).toUpperCase().padStart(2,"0")} - ${rscpType[typeCode]} - length: ${len} `;
+	switch( typeName ) {
+		case "None":
+			if( len > 0 ) text.content += `CAUTION: length of data is ${len} `;
+			return 7+len;
+		case "Container":
+			text.content += "<Container content follows...> ";
+			return 7; // length of container header, not content
+		case "CString":
+		case "Bitfield":
+		case "ByteArray":
+			text.content += `value: ${buffer.toString("utf8",pos+7,pos+7+len)} `;
+			return 7+len;
+		case "Char8":
+		case "UChar8":
+		case "Bool":
+			if( buffer.readUInt8(pos+7) > 31 && buffer.readUInt8(pos+7) < 127 && (typeName == "Char8" || typeName == "UChar8")  ) {
+				text.content += `value: ${buffer.toString("utf8",pos+7,pos+8)} `;
+			} else {
+				text.content += `value: 0x${buffer.readUInt8(pos+7).toString(16).toUpperCase().padStart(2,"0")} `;
+			}
+			return 7+len;
+		case "Int16":
+			text.content += `value: 0x${buffer.readInt16LE(pos+7)} `;
+			return 7+len;
+		case "UInt16":
+			text.content += `value: 0x${buffer.readUInt16LE(pos+7)} `;
+			return 7+len;
+		case "Int32":
+			text.content += `value: 0x${buffer.readInt32LE(pos+7)} `;
+			return 7+len;
+		case "UInt32":
+			text.content += `value: 0x${buffer.readUInt32LE(pos+7)} `;
+			return 7+len;
+		case "Int64":
+			text.content += `value: 0x${buffer.readBigInt64LE(pos+7)} `;
+			return 7+len;
+		case "UInt64":
+			text.content += `value: 0x${buffer.readBigUInt64LE(pos+7)} `;
+			return 7+len;
+		case "Error":
+			text.content += `value: 0x${buffer.readUInt32LE(pos+7)} `;
+			return 7+len;
+		case "Double64":
+			text.content += `value: 0x${buffer.readDoubleLE(pos+7)} `;
+			return 7+len;
+		case "Float32":
+			text.content += `value: 0x${buffer.readFloatLE(pos+7)} `;
+			return 7+len;
+		case "Timestamp":
+			text.content += `seconds: 0x${buffer.readUInt64LE(pos+7)} - nseconds: ${buffer.readUInt32LE(pos+7+8)} `;
+			return 7+len;
+		default:
+			if( len > 0 ) text.content += `${dumpRscpFrame(buffer.slice(pos+7,pos+7+len))} `;
+			return 7+len;
 	}
 }
 
@@ -977,25 +1001,25 @@ function printRscpFrame( buffer ) {
 	const result = { content: "" };
 	const magic = buffer.toString("hex",0,2).toUpperCase();
 	if( magic == "E3DC" ) {
-		result.content += "magic: >" + magic + "< is OK ";
+		result.content += `magic: >${magic}< is OK `;
 	} else {
-		result.content += "magic: >" + magic + "< is WRONG ";
+		result.content += `magic: >${magic}< is WRONG `;
 	}
 	const ctrl = buffer.toString("hex",2,4).toUpperCase();
 	switch( ctrl ) {
 		case "0010":
-			result.content += " - ctrl: >" + ctrl + "< is OK - Version 1, no CRC ";
+			result.content += ` - ctrl: >${ctrl}< is OK - Version 1, no CRC `;
 			break;
 		case "0011":
-			result.content += " - ctrl: >" + ctrl + "< is OK - Version 1, with CRC ";
+			result.content += ` - ctrl: >${ctrl}< is OK - Version 1, with CRC `;
 			break;
 		default:
-			result.content += " - ctrl: >" + ctrl + "< is WRONG ";
+			result.content += ` - ctrl: >${ctrl}< is WRONG `;
 	}
-	result.content += " - seconds: "+buffer.readUIntLE(4,6)+" - nseconds: "+buffer.readUInt32LE(12)+" - length: "+buffer.readUInt16LE(16) + "\r\n";
+	result.content += ` - seconds: ${buffer.readUIntLE(4,6)} - nseconds: ${buffer.readUInt32LE(12)} - length: ${buffer.readUInt16LE(16)}\r\n`;
 	let i = parseRscpToken( buffer, 18, result );
 	while( i < buffer.readUInt16LE(16) ) {
-		if( buffer.length >= 18+i+7 ) { // avoid out-of-range in unexpected cases
+		if( buffer.length >= 18+i+7 ) {
 			result.content += "\r\n";
 			i += parseRscpToken( buffer, 18+i, result );
 		} else break;
