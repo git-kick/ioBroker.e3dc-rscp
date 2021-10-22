@@ -15,7 +15,7 @@
     "energy",
     "RSCP"
   ],
-    "repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/git-kick/ioBroker.e3dc-rscp"
   },
