@@ -18,6 +18,8 @@ Control your E3/DC power station using the proprietary RSCP protocol which allow
 
 The e3dc-rscp adapter was developed for the E3/DC *S10* device. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
 
+This adapter was tested with node-v12 and node-v14, not with node-v10. (This is due to dependencies coming with the generated adapter template, which I was not able to resolve for node-v10.)
+
 ## Table of Content
 1. [ Adapter configuration ](#toc)
 1. [ Coverage of interface messages ](#cov)
@@ -291,23 +293,25 @@ Therefore, we will add tags to the adapter upon upcoming use-cases.
 
 ## Sample script
 Here is a sample script for charge limit control - it is not meant for as-is usage, only to demonstrate how E3/DC values can be used.
+
     // Heuristics: only charge as fast as needed to reach 100% SOC in the afternoon,
     // aiming to avoid early 100% SOC causing PV cut-off
     // Exception 1: when already in cut-off situation, reset charge power limit to maximum
     // Exception 2: when SOC is low, reset charge power limit to maximum
 
     const targetHour = 15; // [hrs] we want to reach 100% SOC by that time, not before
+    const scheduleHours = [];
+    for( let i=7; i<=targetHour; i++ ) scheduleHours.push(i);
+    const scheduleMinutes = [0, 15, 30, 45];
     const batCapacity = 10000; // [Wh]
     const minSoc = 20; // [%] as long as SOC is below, do not reduce charge power 
-    const h1 = 1.1; // hysteresis 1: intervene only when current power > h1 * should-be power
-    const h2 = 0.9; // hysteresis 2: set power limit a bit below (h2 * should-be power) to avoid frequent interventions
-    const peakPV = 7700; // [W] photovoltaic peak power
-    const cutOff = 68; // [%] PV power will be cut off at 70% of peak power; securely detect cut-off by setting a bit below
+    const peakPV = 10000; // [W] photovoltaic peak power
+    const cutOff = 70; // [%] PV power will be cut off at 70% of peak power
     const maxChargePower = 3000; // [W] max. charge power given by the battery
 
     function avgChargePower( ) {
         let now = new Date();
-        let then = new Date(now); then.setHours( targetHour, 0, 0 );
+        let then = new Date(now); then.setHours( targetHour-1, 30, 0 ); // half an hour earlier, then phase-out
         const deltaHours = (then.getTime()-now.getTime())/1000/3600;
         if( deltaHours > 0 ) {
             const avgPower = batCapacity * ( 1 - getState('e3dc-rscp.0.BAT.RSOC').val/100 ) / deltaHours;
@@ -317,40 +321,47 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
         }
     }
 
-    on( { id: 'e3dc-rscp.0.EMS.POWER_BAT', valGe: h1 * avgChargePower() }, (obj) => {
+    schedule( {hour: scheduleHours, minute: scheduleMinutes}, () => {
         let limit;
-        if( -getState('e3dc-rscp.0.EMS.POWER_GRID').val > peakPV * cutOff/100 ) {
+        if( -getState('e3dc-rscp.0.EMS.POWER_GRID').val > peakPV * cutOff/100 * 0.95 ) {
             limit = maxChargePower;
-            console.log( `Cut-off detected - reset charge power limit to ${limit} W`);
+            if( getState('e3dc-rscp.0.EMS.MAX_CHARGE_POWER').val != limit ) console.log( `Cut-off detected - reset charge power limit to ${limit} W`);
         } else if( getState('e3dc-rscp.0.BAT.RSOC').val < minSoc ) {
             limit = maxChargePower;
-            console.log( `Low battery SOC - reset charge power limit to ${limit} W`);
+            if( getState('e3dc-rscp.0.EMS.MAX_CHARGE_POWER').val != limit ) console.log( `Low battery SOC - reset charge power limit to ${limit} W`);
         } else {
-            limit = h2 * avgChargePower();
+            limit = avgChargePower();
             console.log( `Charge power is too high - setting limit to ${limit} W`)
         }
         setState( 'e3dc-rscp.0.EMS.MAX_CHARGE_POWER', limit );
-    });
-
-    // Daily reset after relevant timeframe:
-    schedule( {hour: targetHour, minute: 0}, () => {
-        setState( 'e3dc-rscp.0.EMS.MAX_CHARGE_POWER', maxChargePower );
     });
 
 <a name="log"></a>
 
 ## Changelog
 
+### 0.0.5-beta
+(git-kick) 
+* Ready for public testing
+* I18N for admin and statenames
+* Catch type/range exceptions when writing values
+* Reconnect after end of TCP connection
+* Fixed message queue memory leak
+* Reworked sample code
 ### 0.0.4-alpha
-* (git-kick) Updated README and split off developer manual (README-dev)
-* (git-kick) enabled automatic npm releases
+(git-kick) 
+* Updated README and split off developer manual (README-dev)
+* enabled automatic npm releases
 ### 0.0.3-alpha
+(git-kick) 
 * (git-kick) CI up and running (npm run test:integration, github test-and-release.yml)
 ### 0.0.2-alpha
-* (git-kick) five settable parameters
-* (git-kick) refactored rscpConst and specialTags (rules)
+(git-kick) 
+* five settable parameters
+* refactored rscpConst and specialTags (rules)
 ### 0.0.1-alpha
-* (git-kick) initial release
+(git-kick) 
+* initial release
 
 <a name="lic"></a>
 ## License
