@@ -1,5 +1,11 @@
 "use strict";
 
+// System dictionary
+const fs = require("fs");
+// eslint-disable-next-line prefer-const
+let systemDictionary = {};
+eval(fs.readFileSync("./admin/words.js").toString());
+
 // RSCP constants & lookup tables
 const rscpTag = require("./lib/RscpTags.json");
 const rscpTagCode = {}; // maps string to code
@@ -150,7 +156,7 @@ class E3dcRscp extends utils.Adapter {
 
 		// TCP connection:
 		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
-			this.log.info("Connection to E3/DC is established!");
+			this.log.info("Connection to E3/DC is established");
 			this.sendNextFrame();
 		});
 
@@ -384,12 +390,12 @@ class E3dcRscp extends utils.Adapter {
 			return 7; // just skip container header
 		} else if( rscpType[typeCode] == "Error" ) {
 			value = buffer.readUInt32LE(pos+7);
-			this.log.error( `Received data type ERROR with value ${rscpGeneralError[value]} - tag ${rscpTag[tagCode].TagName}` );
+			this.log.warn( `Received data type ERROR with value ${rscpGeneralError[value]} - tag ${rscpTag[tagCode].TagName}` );
 			return 7+len;
 		} else {
 			switch( rscpType[typeCode]  ) {
 				case "None":
-					if( len > 0 ) this.log.warn( `Received data type NONE with data length = ${len} - tag ${rscpTag[tagCode].TagName}` );
+					if( len > 0 ) this.log.warn( `Received data type NONE with data length = ${len} - tagCode 0x${tagCode.toString(16)}` );
 					break;
 				case "CString":
 				case "BitField":
@@ -530,19 +536,23 @@ class E3dcRscp extends utils.Adapter {
 		For every state in the system there has to be also an object of type state
 		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
 		*/
+		let language = "en";
+		this.getForeignObject("system.config", (err, systemConfig) => {
+			if( systemConfig ) language = systemConfig.common.language;
+		});
 		await this.setObjectNotExistsAsync("RSCP", {
 			type: "channel",
 			common: {
-				name: "RSCP",
+				name: systemDictionary["RSCP"][language],
 				role: "communication.protocol",
-				desc: "Dieser Channel repräsentiert den RSCP (Remote Strorage Control Protocol) Namespace gemäß Definition in den offiziellen E3/DC-Dokumenten."
+				desc: systemDictionary["RSCP_DESC"][language],
 			},
 			native: {},
 		});
 		await this.setObjectNotExistsAsync("RSCP.GENERAL_ERROR", {
 			type: "state",
 			common: {
-				name: "Allgemeiner Fehler",
+				name: systemDictionary["GENERAL_ERROR"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -554,7 +564,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("RSCP.AUTHENTICATION", {
 			type: "state",
 			common: {
-				name: "Authentisierung",
+				name: systemDictionary["AUTHENTICATION"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -568,16 +578,16 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("BAT", {
 			type: "channel",
 			common: {
-				name: "BAT",
+				name: systemDictionary["BAT"][language],
 				role: "electricity.storage",
-				desc: "Dieser Channel repräsentiert den BAT (Battery) Namespace gemäß Definition in den offiziellen E3/DC-Dokumenten."
+				desc: systemDictionary["BAT_DESC"][language],
 			},
 			native: {},
 		});
 		await this.setObjectNotExistsAsync("BAT.GENERAL_ERROR", {
 			type: "state",
 			common: {
-				name: "Allgemeiner Fehler",
+				name: systemDictionary["GENERAL_ERROR"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -589,7 +599,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("BAT.RSOC", {
 			type: "state",
 			common: {
-				name: "Errechneter SOC in %",
+				name: systemDictionary["RSOC"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -600,7 +610,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("BAT.MODULE_VOLTAGE", {
 			type: "state",
 			common: {
-				name: "Modulspannung in V",
+				name: systemDictionary["MODULE_VOLTAGE"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -611,7 +621,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("BAT.CURRENT", {
 			type: "state",
 			common: {
-				name: "Strom in A",
+				name: systemDictionary["CURRENT"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -622,7 +632,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("BAT.CHARGE_CYCLES", {
 			type: "state",
 			common: {
-				name: "Ladezyklen",
+				name: systemDictionary["CHARGE_CYCLES"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -634,16 +644,16 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS", {
 			type: "channel",
 			common: {
-				name: "EMS",
+				name: systemDictionary["EMS"][language],
 				role: "energy.management",
-				desc: "Dieser Channel repräsentiert den EMS (Energy Management System) Namespace gemäß Definition in den offiziellen E3/DC-Dokumenten."
+				desc: systemDictionary["EMS_DESC"][language],
 			},
 			native: {},
 		});
 		await this.setObjectNotExistsAsync("EMS.GENERAL_ERROR", {
 			type: "state",
 			common: {
-				name: "Allgemeiner Fehler",
+				name: systemDictionary["GENERAL_ERROR"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -655,7 +665,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.RETURN_CODE", {
 			type: "state",
 			common: {
-				name: "Rückgabewert",
+				name: systemDictionary["RETURN_CODE"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -667,7 +677,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.POWER_HOME", {
 			type: "state",
 			common: {
-				name: "Leistung an Haus in W",
+				name: systemDictionary["POWER_HOME"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -678,7 +688,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.POWER_GRID", {
 			type: "state",
 			common: {
-				name: "Leistung vom Netz in W",
+				name: systemDictionary["POWER_GRID"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -689,7 +699,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.POWER_BAT", {
 			type: "state",
 			common: {
-				name: "Leistung an Batterie in W",
+				name: systemDictionary["POWER_BAT"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -700,7 +710,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.POWER_PV", {
 			type: "state",
 			common: {
-				name: "Leistung von PV in W",
+				name: systemDictionary["POWER_PV"][language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -711,7 +721,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.DISCHARGE_START_POWER", {
 			type: "state",
 			common: {
-				name: "Minimale Batterie-Entladeleistung in W",
+				name: systemDictionary["DISCHARGE_START_POWER"][language],
 				type: "number",
 				role: "level",
 				read: true,
@@ -722,7 +732,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.MAX_CHARGE_POWER", {
 			type: "state",
 			common: {
-				name: "Max. Ladeleistung in W",
+				name: systemDictionary["MAX_CHARGE_POWER"][language],
 				type: "number",
 				role: "level",
 				read: true,
@@ -733,7 +743,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.MAX_DISCHARGE_POWER", {
 			type: "state",
 			common: {
-				name: "Max. Entladeleistung in W (positiv)",
+				name: systemDictionary["MAX_DISCHARGE_POWER"][language],
 				type: "number",
 				role: "level",
 				read: true,
@@ -744,7 +754,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.POWERSAVE_ENABLED", {
 			type: "state",
 			common: {
-				name: "Powersave Modus aktiviert",
+				name: systemDictionary["POWERSAVE_ENABLED"][language],
 				type: "boolean",
 				role: "switch",
 				read: true,
@@ -755,7 +765,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.WEATHER_REGULATED_CHARGE_ENABLED", {
 			type: "state",
 			common: {
-				name: "Wettergesteuertes Laden aktiviert",
+				name: systemDictionary["WEATHER_REGULATED_CHARGE_ENABLED"][language],
 				type: "boolean",
 				role: "switch",
 				read: true,
@@ -766,7 +776,7 @@ class E3dcRscp extends utils.Adapter {
 		await this.setObjectNotExistsAsync("EMS.POWER_LIMITS_USED", {
 			type: "state",
 			common: {
-				name: "Leistungs-Limits aktiviert",
+				name: systemDictionary["POWER_LIMITS_USED"][language],
 				type: "boolean",
 				role: "indicator",
 				read: true,

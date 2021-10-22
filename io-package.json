@@ -1,84 +1,84 @@
 {
-  "common": {
-    "name": "e3dc-rscp",
-    "version": "0.0.4-alpha",
-    "news": {
-      "0.0.4": {
-        "en": "initial release",
-        "de": "Erstveröffentlichung",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "zh-cn": "首次出版"
-      }
+    "common": {
+        "name": "e3dc-rscp",
+        "version": "0.0.4-alpha",
+        "news": {
+            "0.0.4": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "E3/DC RSCP",
+        "titleLang": {
+            "en": "E3/DC RSCP",
+            "de": "E3/DC RSCP",
+            "ru": "E3/DC RSCP",
+            "pt": "E3/DC RSCP",
+            "nl": "E3/DC RSCP",
+            "fr": "E3/DC RSCP",
+            "it": "E3/DC RSCP",
+            "es": "E3/DC RSCP",
+            "pl": "E3/DC RSCP",
+            "zh-cn": "E3/DC RSCP"
+        },
+        "desc": {
+            "en": "Control E3/DC power station using RSCP protocol",
+            "de": "Steuern Sie das E3/DC-Kraftwerk mithilfe des RSCP-Protokolls",
+            "ru": "Управление электростанцией E3/DC по протоколу RSCP",
+            "pt": "Controle da estação de energia E3/DC usando o protocolo RSCP",
+            "nl": "Bedien de E3/DC-krachtcentrale met behulp van het RSCP-protocol",
+            "fr": "Contrôlez la centrale électrique E3/DC en utilisant le protocole RSCP",
+            "it": "Controllare la centrale E3/DC utilizzando il protocollo RSCP",
+            "es": "Control de la central eléctrica E3/DC mediante protocolo RSCP",
+            "pl": "Sterowanie elektrownią E3/DC za pomocą protokołu RSCP",
+            "zh-cn": "使用RSCP协议控制E3/DC电站"
+        },
+        "authors": [
+            "git-kick <github@kick-web.de>"
+        ],
+        "keywords": [
+            "E3/DC",
+            "power station",
+            "energy",
+            "RSCP"
+        ],
+        "license": "GPL-3.0-only",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "e3dc-rscp.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/git-kick/ioBroker.e3dc-rscp/master/admin/e3dc-rscp.png",
+        "readme": "https://github.com/git-kick/ioBroker.e3dc-rscp/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "energy",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "materialize": true,
+        "materializeTab": true,
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ]
     },
-    "title": "E3/DC RSCP",
-    "titleLang": {
-      "en": "E3/DC RSCP",
-      "de": "E3/DC RSCP",
-      "ru": "E3/DC RSCP",
-      "pt": "E3/DC RSCP",
-      "nl": "E3/DC RSCP",
-      "fr": "E3/DC RSCP",
-      "it": "E3/DC RSCP",
-      "es": "E3/DC RSCP",
-      "pl": "E3/DC RSCP",
-      "zh-cn": "E3/DC RSCP"
+    "native": {
+        "e3dc_ip": "192.168.178.1",
+        "e3dc_port": 5033,
+        "rscp_password": "",
+        "portal_user": "",
+        "portal_password": "",
+        "polling_interval": 60
     },
-    "desc": {
-      "en": "Control E3/DC power station using RSCP protocol",
-      "de": "Steuern Sie das E3/DC-Kraftwerk mithilfe des RSCP-Protokolls",
-      "ru": "Управление электростанцией E3/DC по протоколу RSCP",
-      "pt": "Controle da estação de energia E3/DC usando o protocolo RSCP",
-      "nl": "Bedien de E3/DC-krachtcentrale met behulp van het RSCP-protocol",
-      "fr": "Contrôlez la centrale électrique E3/DC en utilisant le protocole RSCP",
-      "it": "Controllare la centrale E3/DC utilizzando il protocollo RSCP",
-      "es": "Control de la central eléctrica E3/DC mediante protocolo RSCP",
-      "pl": "Sterowanie elektrownią E3/DC za pomocą protokołu RSCP",
-      "zh-cn": "使用RSCP协议控制E3/DC电站"
-    },
-    "authors": [
-      "git-kick <github@kick-web.de>"
-    ],
-    "keywords": [
-      "E3/DC",
-      "power station",
-      "energy",
-      "RSCP"
-    ],
-    "license": "GPL-3.0-only",
-    "platform": "Javascript/Node.js",
-    "main": "main.js",
-    "icon": "e3dc-rscp.png",
-    "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/git-kick/ioBroker.e3dc-rscp/master/admin/e3dc-rscp.png",
-    "readme": "https://github.com/git-kick/ioBroker.e3dc-rscp/blob/master/README.md",
-    "loglevel": "info",
-    "mode": "daemon",
-    "type": "energy",
-    "compact": true,
-    "connectionType": "local",
-    "dataSource": "poll",
-    "materialize": true,
-    "materializeTab": true,
-    "dependencies": [
-      {
-        "js-controller": ">=2.0.0"
-      }
-    ]
-  },
-  "native": {
-    "e3dc_ip": "192.168.178.107",
-    "e3dc_port": 5033,
-    "rscp_password": "",
-    "portal_user": "Ulrich.Kick@web.de",
-    "portal_password": "",
-    "polling_interval": 60
-  },
-  "objects": [],
-  "instanceObjects": []
+    "objects": [],
+    "instanceObjects": []
 }
