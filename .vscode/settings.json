@@ -7,5 +7,6 @@
 			],
 			"url": "https://json.schemastore.org/io-package"
 		}
-	]
+	],
+	"json.maxItemsComputed": 10000
 }
