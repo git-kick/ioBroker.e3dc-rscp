@@ -12,28 +12,49 @@ const rscpTagCode = {}; // maps string to code
 for( const i in rscpTag ) rscpTagCode[rscpTag[i].TagNameGlobal] = i;
 
 const rscpType = {
-	0: "None",
-	1: "Bool",
-	2: "Char8",
-	3: "UChar8",
-	4: "Int16",
-	5: "UInt16",
-	6: "Int32",
-	7: "UInt32",
-	8: "Int64",
-	9: "UInt64",
-	10: "Float32",
-	11: "Double64",
-	12: "Bitfield",
-	13: "CString",
-	14: "Container",
-	15: "Timestamp",
-	16: "ByteArray",
-	255: "Error"
+	0x00: "None",
+	0x01: "Bool",
+	0x02: "Char8",
+	0x03: "UChar8",
+	0x04: "Int16",
+	0x05: "UInt16",
+	0x06: "Int32",
+	0x07: "UInt32",
+	0x08: "Int64",
+	0x09: "UInt64",
+	0x0A: "Float32",
+	0x0B: "Double64",
+	0x0C: "Bitfield",
+	0x0D: "CString",
+	0x0E: "Container",
+	0x0F: "Timestamp",
+	0x10: "ByteArray",
+	0xFF: "Error"
 };
 const rscpTypeCode = {};  // maps string to code
 for( const i in rscpType ) rscpTypeCode[rscpType[i]] = i;
 
+// Mapping RSCP tag data type to state.common.type
+const rscpTypeMap = {
+	"None": "undefined",
+	"Bool": "boolean",
+	"Char8": "number",
+	"UChar8": "number",
+	"Int16": "number",
+	"UInt16": "number",
+	"Int32": "number",
+	"UInt32": "number",
+	"Int64": "number",
+	"UInt64": "number",
+	"Float32": "number",
+	"Double64": "number",
+	"Bitfield": "string",
+	"CString": "string",
+	"Container": "undefined",
+	"Timestamp": "number",
+	"ByteArray": "string",
+	"Error": "number",
+};
 const rscpReturnCode = {
 	"-2": "could not set, try later",
 	"-1": "value out of range",
@@ -55,8 +76,121 @@ const rscpAuthLevel = {
 	50: "E3DC_ADMIN",
 	60: "E3DC_ROOT",
 };
+const rscpBatTrainingMode = {
+	0: "Not training",
+	1: "Training, discharging",
+	2: "Training, charging",
+};
+/* RSCP enumerations for later use:
+const rscpPmType = {
+	0: "UNDEFINED",
+	1: "ROOT",
+	2: "ADDITIONAL",
+	3: "ADDITIONAL_PRODUCTION",
+	4: "ADDITIONAL_CONSUMPTION",
+	5: "FARM",
+	6: "UNUSED",
+	7: "WALLBOX",
+	8: "FARM_ADDITIONAL",
+};
+const rscpPmMode = {
+	0: "ACTIVE",
+	1: "PASSIVE",
+	2: "DIAGNOSE",
+	3: "ERROR_ACTIVE",
+	4: "ERROR_PASSIVE",
+};
+const rscpPmActivePhases = {
+	1: "PHASE_100",
+	2: "PHASE_010",
+	3: "PHASE_110",
+	4: "PHASE_001",
+	5: "PHASE_101",
+	6: "PHASE_011",
+	7: "PHASE_111",
+};
+const rscpPviType = {
+	1: "SOLU",
+	2: "KACO",
+	3: "E3DC_E",
+};
+const rscpPviSystemMode = {
+	0: "IDLE",
+	1: "NORMAL",
+	2: "GRIDCHARGE",
+	3: "BACKUPPOWER",
+};
+const rscpPviPowerMode = {
+	0: "OFF",
+	1: "ON",
+	100: "OFF_FORCE",
+	101: "ON_FORCE",
+};
+const rscpEmsGeneratorState = {
+	0x00: "IDLE",
+	0x01: "HEATUP",
+	0x02: "HEATUPDONE",
+	0x03: "STARTING",
+	0x04: "STARTINGPAUSE",
+	0x05: "RUNNING",
+	0x06: "STOPPING",
+	0x07: "STOPPED",
+	0x10: "RELAISCONTROLMODE",
+	0xFF: "NO_GENERATOR",
+};
+const rscpEmsCouplingMode = {
+	0: "DC",
+	1: "DC_MULTIWR",
+	2: "AC",
+	3: "HYBRID",
+	4: "ISLAND",
+};
+const rscpEmsSetPowerMode = {
+	0: "NORMAL",
+	1: "IDLE",
+	2: "ENTLADEN",
+	3: "LADEN",
+	4: "NETZLADEN",
+};
+const rscpEmsEmergencyPowerStatus = {
+	0: "NOT_POSSIBLE",
+	1: "ACTIVE",
+	2: "NOT_ACTIVE",
+	3: "NOT_AVAILABLE",
+	4: "SWITCH_IN_ISLAND_STATE",
+};
+const rscpEmsSetEmergencyPower = {
+	0: "NORMAL_GRID_MODE",
+	1: "EMERGENCY_MODE",
+	2: "ISLAND_NO_POWER_MODE",
+};
+const rscpWbMode = {
+	0: "NONE",
+	128: "LOADING",
+	144: "NOT_LOADING",
+};
+const rscpWbType = {
+	1: "E3DC",
+	2: "EASYCONNECT",
+};
+const rscpUmUpdateStatus = {
+	0: "IDLE",
+	1: "UPDATE_CHECK_RUNNING",
+	2: "UPDATING_MODULES_AND_FILES",
+	3: "UPDATING_HARDWARE",
+};
+*/
 
-// Mapping for response value handling:
+// Assign enumerations to states:
+const commonStates = {
+	"RSCP.GENERAL_ERROR": { "states": rscpGeneralError },
+	"RSCP.AUTHENTICATION": { "states": rscpAuthLevel },
+	"BAT.GENERAL_ERROR": { "states": rscpGeneralError },
+	"BAT.TRAINING_MODE": { "states": rscpBatTrainingMode },
+	"EMS.GENERAL_ERROR": { "states": rscpGeneralError },
+	"EMS.RETURN_CODE": { "states": rscpReturnCode },
+};
+// List of all writable states, with Mapping for response value handling.
 // type "*" means: apply to all types
 const targetState = {
 	"EMS.RES_POWERSAVE_ENABLED": { "*": "EMS.POWERSAVE_ENABLED" },
@@ -67,7 +201,7 @@ const targetState = {
 	"EMS.USER_CHARGE_LIMIT": { "*": "EMS.MAX_CHARGE_POWER" },
 	"EMS.USER_DISCHARGE_LIMIT": { "*": "EMS.MAX_DISCHARGE_POWER" },
 };
-// How to send a SET to E3/DC
+// For each writable state, define how to send a SET to E3/DC
 const setTag = {
 	"EMS.POWERSAVE_ENABLED": "EMS.REQ_SET_POWER_SETTINGS",
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": "EMS.REQ_SET_POWER_SETTINGS",
@@ -83,16 +217,33 @@ const castToBoolean = [
 	"EMS.RES_POWERSAVE_ENABLED",
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED",
 ];
+// RSCP is sloppy concerning Timestamp - some UInt64 values must be converted:
+const castToTimestamp = [
+	"BAT.DCB_LAST_MESSAGE_TIMESTAMP",
+];
 // Adjust algebraic sign: e.g. discharge limit is sometimes positive, sometimes negative
 const negateValue = [
 	"EMS.USER_DISCHARGE_LIMIT",
 ];
-// Some of the return values we do not want to see as states:
+// For multiple values within one frame, a subchannel will be generated
+const multipleValue = [
+	"BAT.DCB_CELL_TEMPERATURE",
+	"BAT.DCB_CELL_VOLTAGE",
+];
+// Some of the return values we do not want to see as (missing) states:
+// "INDEX" and "..._INDEX" tags are automatically treated as subchannels, no need to list them here.
 const discardValue = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
-	"BAT.INDEX",
 	"BAT.UNDEFINED",
+	"BAT.INTERNAL_CURRENT_AVG30",
+	"BAT.INTERNAL_MTV_AVG30",
+	"BAT.INTERNAL_MAX_CHARGE_CURRENT",
+	"BAT.INTERNAL_MAX_DISCHARGE_CURRENT",
+	"BAT.INTERNAL_MAX_CHARGE_CURR_PER_DCB",
+	"BAT.INTERNAL_MAX_DISCHARGE_CURR_PER_DCB",
+	"BAT.INTERNAL_MAX_CHARGE_CURR_DATA_LOG",
+	"BAT.INTERNAL_MAX_DISCHARGE_CURR_DATA_LOG",
 ];
 
 // Encryption setup for E3/DC RSCP
@@ -100,6 +251,7 @@ const discardValue = [
 // It seems that Rijndael CBC with 256 bit block-size fits.
 const Net = require("net");
 const CRC32 = require("crc-32");
+// @ts-ignore
 const Rijndael = require("rijndael-js");
 const BLOCK_SIZE = 32;
 const KEY_SIZE = 32;
@@ -125,19 +277,29 @@ class E3dcRscp extends utils.Adapter {
 		// this.on('message', this.onMessage.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 
-		// Buffer for preparing next frame:
+		// For preparing and processing next frame:
 		this.frame = null;
 		this.openContainer = 0;
+		this.index1; // for INDEX tags
+		this.index2; // for ..._INDEX tags
+		this.index3; // for multiple values, e.g. DCB_CELL_TEMPERATURE
 
 		// Message queue (outbound):
 		this.queue = [ ];
 
 		// TCP connection:
 		this.tcpConnection = new Net.Socket();
+		this.inBuffer = null;
 	}
 
 	// Create channel to E3/DC: encapsulating TCP connection, encryption, message queuing
 	initChannel( ) {
+		this.language = "en";
+		// @ts-ignore
+		this.getForeignObject("system.config", (err, systemConfig) => {
+			if( systemConfig ) this.language = systemConfig.common.language;
+		});
+
 		if( ! this.config.portal_user ) this.config.portal_user = "";
 		if( ! this.config.portal_password ) this.config.portal_password = "";
 
@@ -161,14 +323,25 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 		this.tcpConnection.on("data", (data) => {
-			const receivedFrame = Buffer.from(this.cipher.decrypt(data, 256, this.decryptionIV));
-			this.log.debug("Received response");
-			if( rscpTag[receivedFrame.readUInt32LE(18)] ) this.log.silly(rscpTag[receivedFrame.readUInt32LE(18)].TagNameGlobal);
-			if( this.decryptionIV ) data.copy( this.decryptionIV, 0, data.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
-			this.log.debug( `IN: ${printRscpFrame(receivedFrame)}` );
-			this.log.silly( dumpRscpFrame(receivedFrame) );
-			this.processFrame(receivedFrame);
-			this.sendNextFrame();
+			// Use inBuffer to handle TCP fragmentation:
+			if( this.inBuffer ) {
+				this.inBuffer = Buffer.concat( [this.inBuffer, data] );
+			} else {
+				this.inBuffer = Buffer.from( data );
+			}
+			if( this.inBuffer && this.inBuffer.length % 32 == 0 ) {
+				const receivedFrame = Buffer.from(this.cipher.decrypt(this.inBuffer, 256, this.decryptionIV));
+				this.log.debug("Received response");
+				if( rscpTag[receivedFrame.readUInt32LE(18)] ) this.log.silly(rscpTag[receivedFrame.readUInt32LE(18)].TagNameGlobal);
+				if( this.decryptionIV ) this.inBuffer.copy( this.decryptionIV, 0, this.inBuffer.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
+				this.log.debug( `IN: ${printRscpFrame(receivedFrame)}` );
+				this.log.silly( dumpRscpFrame(receivedFrame) );
+				this.processFrame(receivedFrame);
+				this.sendNextFrame();
+				this.inBuffer = null;
+			} else {
+				this.log.debug(`inBuffer has length ${this.inBuffer.length} which is not a multiple of 256bit - waiting for next chunk...`);
+			}
 		});
 
 		this.tcpConnection.on("end", () => {
@@ -337,12 +510,45 @@ class E3dcRscp extends utils.Adapter {
 
 	queueRequestBatData() {
 		this.clearFrame();
+
+		// RSCP doc says: BAT index is always 0 - therefore, no index handling on battery level
 		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DATA"], "" );
 		this.addTagtoFrame( rscpTagCode["TAG_BAT_INDEX"], 0 );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RSOC"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MODULE_VOLTAGE"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_CURRENT"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_USABLE_CAPACITY"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_USABLE_REMAINING_CAPACITY"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_ASOC"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RSOC_REAL"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_BAT_VOLTAGE"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_CHARGE_CURRENT"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_EOD_VOLTAGE"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_DISCHARGE_CURRENT"], "" );
 		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_CHARGE_CYCLES"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TERMINAL_VOLTAGE"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_READY_FOR_SHUTDOWN"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TRAINING_MODE"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_FCC"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RC"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INFO"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_COUNT"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DEVICE_NAME"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DEVICE_STATE"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_SPECIFICATION"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INTERNALS"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_USE_TIME"], "" );
+		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_DISCHARGE_TIME"], "" );
+		let dcbCount = 1;
+		this.getState("BAT.DCB_COUNT", (error,state) => {
+			if( !error && state ) {
+				dcbCount = Number(state.val);
+			}
+		});
+		for( let dcbIndex=0; dcbIndex <= dcbCount; dcbIndex++ ) {
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES"], dcbIndex );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES"], dcbIndex );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_INFO"], dcbIndex );
+		}
 		this.pushFrame();
 	}
 
@@ -424,19 +630,19 @@ class E3dcRscp extends utils.Adapter {
 					value = buffer.readUInt32LE(pos+7);
 					break;
 				case "Int64":
-					value = buffer.readBigInt64LE(pos+7);
+					value = buffer.readBigInt64LE(pos+7).toString(); // setState does not accept BigInt, so use string representation
 					break;
 				case "UInt64":
-					value = buffer.readBigUInt64LE(pos+7);
+					value = buffer.readBigUInt64LE(pos+7).toString(); // setState does not accept BigInt, so use string representation
 					break;
 				case "Double64":
-					value = buffer.readDoubleLE(pos+7);
+					value = roundForReadability( buffer.readDoubleLE(pos+7) );
 					break;
 				case "Float32":
-					value = buffer.readFloatLE(pos+7);
+					value = roundForReadability( buffer.readFloatLE(pos+7) );
 					break;
-				case "Timestamp": // CAUTION: setting time in seconds, not nanoseconds
-					value = buffer.readBigUInt64LE(pos+7);
+				case "Timestamp":
+					value = Math.round(buffer.readBigUInt64LE(pos+7)/1000); // setState does not accept BigInt, so convert to seconds
 					break;
 				default:
 					this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(pos+7,pos+7+len) )}` );
@@ -445,8 +651,27 @@ class E3dcRscp extends utils.Adapter {
 			if( !rscpTag[tagCode] ) {
 				this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}, value=${value}`);
 			} else {
-				const typeName = rscpType[typeCode];
+				let typeName = rscpType[typeCode];
 				let id = `${rscpTag[tagCode].NameSpace}.${rscpTag[tagCode].TagName}`;
+				if( rscpTag[tagCode].TagName == "INDEX" ) {
+					if( rscpTag[tagCode].NameSpace == "BAT" ) {
+						this.index1 = ""; // BAT index is always 0; do not add a channel
+					} else {
+						this.index1 = `${rscpTag[tagCode].NameSpace}#${value}`;
+					}
+					this.index2 = "";
+					this.index3 = -1;
+					return 7+len;
+				}
+				if( rscpTag[tagCode].TagName.endsWith("_INDEX") ) {
+					this.index2 = `${rscpTag[tagCode].TagName.replace("_INDEX","")}#${value}`;
+					this.index3 = -1;
+					return 7+len;
+				}
+				if( multipleValue.includes(id) ) {
+					// @ts-ignore
+					this.index3++;
+				}
 				let targetStateMatch = null;
 				if( targetState[id] ) {
 					if( targetState[id]["*"] ) targetStateMatch = "*";
@@ -455,21 +680,63 @@ class E3dcRscp extends utils.Adapter {
 						this.log.warn(`SET failed: ${id} = ${value}`);
 					}
 				}
-				if( castToBoolean.includes(id) && ( typeName == "Char8" || typeName == "UChar8" ) ) value = (value!=0);
+				if( castToBoolean.includes(id) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
+					value = (value!=0);
+					typeName = "Bool";
+				}
+				if( castToTimestamp.includes(id) && typeName == "UInt64" ) {
+					value = Math.round(value/1000); // setState does not accept BigInt, so convert to seconds
+					typeName = "Timestamp";
+				}
 				if( negateValue.includes(id) ) value = -value;
 				if( discardValue.includes(id) ) {
 					this.log.debug(`Ignoring tag: ${id}, value=${value}`);
 					return 7+len;
 				}
 				if( targetStateMatch ) id = targetState[id][targetStateMatch];
-				this.log.silly(`this.setState( "${id}", ${value}, true )`);
-				this.setState( id, value, true );
+				// Insert indexes into id path (if so)
+				const arr = id.split(".");
+				id = arr[0];
+				if( this.index1 != "" ) id += `.${this.index1}`;
+				if( this.index2 != "" ) id += `.${this.index2}`;
+				id += `.${arr[1]}`;
+				// @ts-ignore
+				if( this.index3 >= 0 ) id += `.${this.index3.toString().padStart(2,"0")}`;
+				// Create state object dynamically (unless already done earlier)
+				const oKey = `${rscpTag[tagCode].NameSpace}.${rscpTag[tagCode].TagName}`;
+				const oWrite = oKey in setTag;
+				let oRole = "";
+				if( typeName == "Bool") {
+					oRole = oWrite?"switch":"indicator";
+				} else {
+					oRole = oWrite?"level":"value";
+				}
+				const oName = systemDictionary[rscpTag[tagCode].TagName] ? systemDictionary[rscpTag[tagCode].TagName][this.language] : "***UNDEFINED***";
+				//this.log.silly(`oName=${oName}, oRole=${oRole}, oWrite=${oWrite}`);
+				this.setObjectNotExists( id, {
+					type: "state",
+					common: {
+						name: oName,
+						type: rscpTypeMap[typeName],
+						role: oRole,
+						read: true,
+						write: oWrite,
+						states: (commonStates[oKey] ? commonStates[oKey].states : ""),
+					},
+					native: {},
+				}, () => {
+					this.log.silly(`this.setState( "${id}", ${value}, true )`);
+					this.setState( id, value, true );
+				});
+				return 7+len;
 			}
-			return 7+len;
 		}
 	}
 
 	processFrame( buffer ) {
+		this.index1 = ""; // reset "INDEX" tag
+		this.index2 = ""; // reset "..._INDEX" tag
+		this.index3 = -1; // reset multiple value counter
 		const magic = buffer.toString("hex",0,2).toUpperCase();
 		if( magic != "E3DC" ) {
 			this.log.warn(`Received message with invalid MAGIC: >${magic}<`);
@@ -517,6 +784,7 @@ class E3dcRscp extends utils.Adapter {
 	async onReady() {
 		// Initialize your adapter here
 		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.rscp_password}, ${this.config.portal_user}, ${this.config.portal_password}, ${this.config.polling_interval})` );
+		// @ts-ignore
 		this.getForeignObject("system.config", (err, obj) => {
 			if (obj && obj.native && obj.native.secret) {
 				this.config.rscp_password = this.decryptPassword(obj.native.secret,this.config.rscp_password);
@@ -536,262 +804,64 @@ class E3dcRscp extends utils.Adapter {
 		For every state in the system there has to be also an object of type state
 		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
 		*/
-		let language = "en";
-		this.getForeignObject("system.config", (err, systemConfig) => {
-			if( systemConfig ) language = systemConfig.common.language;
-		});
+		// Statically, we define only one device per supported RSCP namespace - rest of the object tree is defined dynamically.
+		/*
 		await this.setObjectNotExistsAsync("RSCP", {
 			type: "channel",
 			common: {
-				name: systemDictionary["RSCP"][language],
+				name: systemDictionary["RSCP"][this.language],
 				role: "communication.protocol",
-				desc: systemDictionary["RSCP_DESC"][language],
+				desc: systemDictionary["RSCP_DESC"][this.language],
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("RSCP.GENERAL_ERROR", {
-			type: "state",
-			common: {
-				name: systemDictionary["GENERAL_ERROR"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-				states: rscpGeneralError,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("RSCP.AUTHENTICATION", {
-			type: "state",
-			common: {
-				name: systemDictionary["AUTHENTICATION"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-				states: rscpAuthLevel,
-			},
-			native: {},
-		});
-
-
 		await this.setObjectNotExistsAsync("BAT", {
 			type: "channel",
 			common: {
-				name: systemDictionary["BAT"][language],
+				name: systemDictionary["BAT"][this.language],
 				role: "electricity.storage",
-				desc: systemDictionary["BAT_DESC"][language],
+				desc: systemDictionary["BAT_DESC"][this.language],
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("BAT.GENERAL_ERROR", {
-			type: "state",
-			common: {
-				name: systemDictionary["GENERAL_ERROR"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-				states: rscpGeneralError,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("BAT.RSOC", {
-			type: "state",
-			common: {
-				name: systemDictionary["RSOC"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("BAT.MODULE_VOLTAGE", {
-			type: "state",
-			common: {
-				name: systemDictionary["MODULE_VOLTAGE"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("BAT.CURRENT", {
-			type: "state",
-			common: {
-				name: systemDictionary["CURRENT"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("BAT.CHARGE_CYCLES", {
-			type: "state",
-			common: {
-				name: systemDictionary["CHARGE_CYCLES"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-
 		await this.setObjectNotExistsAsync("EMS", {
 			type: "channel",
 			common: {
-				name: systemDictionary["EMS"][language],
+				name: systemDictionary["EMS"][this.language],
 				role: "energy.management",
-				desc: systemDictionary["EMS_DESC"][language],
+				desc: systemDictionary["EMS_DESC"][this.language],
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("EMS.GENERAL_ERROR", {
-			type: "state",
+		*/
+		await this.setObjectNotExistsAsync("RSCP", {
+			type: "device",
 			common: {
-				name: systemDictionary["GENERAL_ERROR"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-				states: rscpGeneralError,
+				name: systemDictionary["RSCP"][this.language],
+				role: "communication.protocol",
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("EMS.RETURN_CODE", {
-			type: "state",
+		await this.setObjectNotExistsAsync("BAT", {
+			type: "device",
 			common: {
-				name: systemDictionary["RETURN_CODE"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-				states: rscpReturnCode,
+				name: systemDictionary["BAT"][this.language],
+				role: "battery.storage",
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("EMS.POWER_HOME", {
-			type: "state",
+		await this.setObjectNotExistsAsync("EMS", {
+			type: "device",
 			common: {
-				name: systemDictionary["POWER_HOME"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.POWER_GRID", {
-			type: "state",
-			common: {
-				name: systemDictionary["POWER_GRID"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.POWER_BAT", {
-			type: "state",
-			common: {
-				name: systemDictionary["POWER_BAT"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.POWER_PV", {
-			type: "state",
-			common: {
-				name: systemDictionary["POWER_PV"][language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.DISCHARGE_START_POWER", {
-			type: "state",
-			common: {
-				name: systemDictionary["DISCHARGE_START_POWER"][language],
-				type: "number",
-				role: "level",
-				read: true,
-				write: true,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.MAX_CHARGE_POWER", {
-			type: "state",
-			common: {
-				name: systemDictionary["MAX_CHARGE_POWER"][language],
-				type: "number",
-				role: "level",
-				read: true,
-				write: true,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.MAX_DISCHARGE_POWER", {
-			type: "state",
-			common: {
-				name: systemDictionary["MAX_DISCHARGE_POWER"][language],
-				type: "number",
-				role: "level",
-				read: true,
-				write: true,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.POWERSAVE_ENABLED", {
-			type: "state",
-			common: {
-				name: systemDictionary["POWERSAVE_ENABLED"][language],
-				type: "boolean",
-				role: "switch",
-				read: true,
-				write: true,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.WEATHER_REGULATED_CHARGE_ENABLED", {
-			type: "state",
-			common: {
-				name: systemDictionary["WEATHER_REGULATED_CHARGE_ENABLED"][language],
-				type: "boolean",
-				role: "switch",
-				read: true,
-				write: true,
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS.POWER_LIMITS_USED", {
-			type: "state",
-			common: {
-				name: systemDictionary["POWER_LIMITS_USED"][language],
-				type: "boolean",
-				role: "indicator",
-				read: true,
-				write: false,
+				name: systemDictionary["EMS"][this.language],
+				role: "energy.management",
 			},
 			native: {},
 		});
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("RSCP.AUTHENTICATION");
-		this.subscribeStates("EMS.MAX_CHARGE_POWER");
-		this.subscribeStates("EMS.MAX_DISCHARGE_POWER");
-		this.subscribeStates("EMS.DISCHARGE_START_POWER");
-		this.subscribeStates("EMS.POWERSAVE_ENABLED");
-		this.subscribeStates("EMS.WEATHER_REGULATED_CHARGE_ENABLED");
+		for( const s in targetState ) this.subscribeStates(s);
 		// You can also add a subscription for multiple states. The following line watches all states starting with 'lights.'
 		// this.subscribeStates('lights.*');
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -972,34 +1042,34 @@ function parseRscpToken ( buffer, pos, text ) {
 			}
 			return 7+len;
 		case "Int16":
-			text.content += `value: 0x${buffer.readInt16LE(pos+7)} `;
+			text.content += `value: ${buffer.readInt16LE(pos+7)} `;
 			return 7+len;
 		case "UInt16":
-			text.content += `value: 0x${buffer.readUInt16LE(pos+7)} `;
+			text.content += `value: ${buffer.readUInt16LE(pos+7)} `;
 			return 7+len;
 		case "Int32":
-			text.content += `value: 0x${buffer.readInt32LE(pos+7)} `;
+			text.content += `value: ${buffer.readInt32LE(pos+7)} `;
 			return 7+len;
 		case "UInt32":
-			text.content += `value: 0x${buffer.readUInt32LE(pos+7)} `;
+			text.content += `value: ${buffer.readUInt32LE(pos+7)} `;
 			return 7+len;
 		case "Int64":
-			text.content += `value: 0x${buffer.readBigInt64LE(pos+7)} `;
+			text.content += `value: ${buffer.readBigInt64LE(pos+7)} `;
 			return 7+len;
 		case "UInt64":
-			text.content += `value: 0x${buffer.readBigUInt64LE(pos+7)} `;
+			text.content += `value: ${buffer.readBigUInt64LE(pos+7)} `;
 			return 7+len;
 		case "Error":
-			text.content += `value: 0x${buffer.readUInt32LE(pos+7)} `;
+			text.content += `value: ${buffer.readUInt32LE(pos+7)} `;
 			return 7+len;
 		case "Double64":
-			text.content += `value: 0x${buffer.readDoubleLE(pos+7)} `;
+			text.content += `value: ${buffer.readDoubleLE(pos+7)} `;
 			return 7+len;
 		case "Float32":
-			text.content += `value: 0x${buffer.readFloatLE(pos+7)} `;
+			text.content += `value: ${buffer.readFloatLE(pos+7)} `;
 			return 7+len;
 		case "Timestamp":
-			text.content += `seconds: 0x${buffer.readUInt64LE(pos+7)} - nseconds: ${buffer.readUInt32LE(pos+7+8)} `;
+			text.content += `seconds: ${buffer.readUInt64LE(pos+7)} - nseconds: ${buffer.readUInt32LE(pos+7+8)} `;
 			return 7+len;
 		default:
 			if( len > 0 ) text.content += `${dumpRscpFrame(buffer.slice(pos+7,pos+7+len))} `;
@@ -1051,4 +1121,18 @@ function encodeRscpTag( name ) {
 	if( name.indexOf("TAG_") != 0 ) name = `TAG_${name}`;
 	name = name.replace(".","_");
 	return rscpTagCode[name];
+}
+
+// Round numerical values for better readability
+// If the integer part is has more digits than <s>, then round to integer.
+// Otherwise, round so that the result has <s> digits in total: <int-digits> + <fraction-digits> = <s>.
+function roundForReadability( n ) {
+	const s = 4; // number of significant digits
+	const d = Math.abs(Math.round(n)).toString().length;
+	if( d >= s ) {
+		return Math.round(n);
+	} else {
+		const p = Math.pow(10,s-d);
+		return Math.round(n*p)/p;
+	}
 }

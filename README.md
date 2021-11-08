@@ -90,7 +90,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   <tr>
     <td>BAT</td>
     <td>Battery</td>
-    <td>partially</td>
+    <td>complete</td>
   </tr>
   <tr>
     <td>DCDC</td>
@@ -149,137 +149,42 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
 </table> 
 
-### Supported RSCP tags
+### Writeable RSCP tags
  <table>
   <tr>
     <th>Namespace</th>
     <th>Tag</th>
     <th>Type</th>
-	  <th>Writable</th>
     <th>Content</th>
-  </tr>
-  <tr>
-    <td>RSCP</td>
-    <td>GENERAL_ERROR</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Error code</td>
-  <tr>
-    <td>RSCP</td>
-    <td>AUTHENTICATION</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Authentication level, usually will be 10 for "USER"</td>
-  </tr>
-  </tr>
-    <tr>
-    <td>BAT</td>
-    <td>GENERAL_ERROR</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Error code</td>
-  </tr>
-  </tr>
-    <tr>
-    <td>BAT</td>
-    <td>RSOC</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Calculated E3/DC battery state-of-charge in [%]</td>
-  </tr>
-  </tr>
-    <tr>
-    <td>BAT</td>
-    <td>MODULE_VOLTAGE</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Module voltage in [V]</td>
-  </tr>
-  </tr>
-    <tr>
-    <td>BAT</td>
-    <td>CURRENT</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Current in [A]</td>
-  </tr>
-  </tr>
-    <tr>
-    <td>BAT</td>
-    <td>CHARGE_CYCLES</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Charge cycles counted since installation.</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>GENERAL_ERROR</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Error code</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>POWER_HOME</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Power to home in [W]</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>POWER_GRID</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Power from grid in [W]</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>POWER_BAT</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Power to E3/DC battery in [W]</td>
-  </tr>
-  <tr>
-  <tr>
-    <td>EMS</td>
-    <td>POWER_PV</td>
-    <td>number</td>
-	  <td>no</td>
-    <td>Power from PV in [W]</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>MAX_CHARGE_POWER</td>
     <td>number</td>
- 	  <td><b>yes</b></td>
     <td>Charge limit in [W]</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>MAX_DISCHARGE_POWER</td>
     <td>number</td>
- 	  <td><b>yes</b></td>
     <td>Discharge limit in [W]</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>DISCHARGE_START_POWER</td>
     <td>number</td>
- 	  <td><b>yes</b></td>
     <td>Minimal battery discharge power in [W]</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>POWERSAVE_ENABLED</td>
     <td>boolean</td>
- 	  <td><b>yes</b></td>
     <td>Powersave mode is enabled</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>WEATHER_REGULATED_CHARGE_ENABLED</td>
     <td>boolean</td>
-  	<td><b>yes</b></td>
     <td>Weather regulated charging is enabled</td>
   </tr>
 </table> 
@@ -340,6 +245,12 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.6-beta
+(git-kick) 
+* Complete coverage of BAT namespace, including multiple DCBs and voltage/temperature lists
+* Dynamic state creation for support of INDEXed tags
+* Extended RSCP tag list using rxhan/RscpGUI
+* Handle TCP fragmentation
 ### 0.0.5-beta
 (git-kick) 
 * Ready for public testing
