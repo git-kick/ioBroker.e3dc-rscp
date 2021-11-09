@@ -3,9 +3,9 @@
         "name": "e3dc-rscp",
         "version": "0.0.6-beta",
         "news": {
-            "0.0.4": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
+            "0.0.6-beta": {
+                "en": "BAT name space completely covered",
+                "de": "BAT Namespace komplett abgedeckt",
                 "ru": "Начальная версия",
                 "pt": "lançamento inicial",
                 "nl": "Eerste uitgave",
