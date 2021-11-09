@@ -290,6 +290,9 @@ class E3dcRscp extends utils.Adapter {
 		// TCP connection:
 		this.tcpConnection = new Net.Socket();
 		this.inBuffer = null;
+
+		// For collecting observed max. indexes, e.g. BAT.INDEX, DCB_COUNT etc.:
+		this.maxIndex = {};
 	}
 
 	// Create channel to E3/DC: encapsulating TCP connection, encryption, message queuing
@@ -315,6 +318,11 @@ class E3dcRscp extends utils.Adapter {
 
 		// Initial authentication frame:
 		this.queueAuthentication();
+
+		// Find out number of BAT units:
+		const batProbes = 4;
+		this.log.warn(`Probing for BAT count - up to ${batProbes} messages about received ERROR may occur (just ignore them).`);
+		this.queueBatProbe(batProbes);
 
 		// TCP connection:
 		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
@@ -386,7 +394,6 @@ class E3dcRscp extends utils.Adapter {
 		const buf1 = Buffer.alloc(1);
 		const buf2 = Buffer.alloc(2);
 		const buf4 = Buffer.alloc(4);
-		//const buf6 = Buffer.alloc(6);
 		const buf8 = Buffer.alloc(8);
 		buf4.writeInt32LE( tagCode );
 		this.frame = Buffer.concat( [this.frame, buf4] );
@@ -496,6 +503,54 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
+	queueBatProbe( probes ) {
+		for( let batIndex = 0; batIndex < probes; batIndex++ ) {
+			this.clearFrame();
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DATA"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_INDEX"], batIndex );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_ASOC"], "" );
+			this.pushFrame();
+		}
+	}
+
+	queueRequestBatData() {
+		for( let batIndex = 0; batIndex <= this.maxIndex["BAT"]; batIndex++ ) {
+			this.clearFrame();
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DATA"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_INDEX"], batIndex );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_USABLE_CAPACITY"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_USABLE_REMAINING_CAPACITY"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_ASOC"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RSOC_REAL"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_BAT_VOLTAGE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_CHARGE_CURRENT"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_EOD_VOLTAGE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_DISCHARGE_CURRENT"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_CHARGE_CYCLES"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TERMINAL_VOLTAGE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_READY_FOR_SHUTDOWN"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TRAINING_MODE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_FCC"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RC"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INFO"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_COUNT"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DEVICE_NAME"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DEVICE_STATE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_SPECIFICATION"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INTERNALS"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_USE_TIME"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_DISCHARGE_TIME"], "" );
+			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT#${batIndex}`]; dcbIndex++ ) {
+				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES"], dcbIndex );
+				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES"], dcbIndex );
+				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_INFO"], dcbIndex );
+			}
+			this.pushFrame();
+		}
+	}
+
 	queueRequestEmsData() {
 		this.clearFrame();
 		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_POWER_PV"], "" );
@@ -505,50 +560,6 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 		this.clearFrame();
 		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_GET_POWER_SETTINGS"], "" );
-		this.pushFrame();
-	}
-
-	queueRequestBatData() {
-		this.clearFrame();
-
-		// RSCP doc says: BAT index is always 0 - therefore, no index handling on battery level
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DATA"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_INDEX"], 0 );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_USABLE_CAPACITY"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_USABLE_REMAINING_CAPACITY"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_ASOC"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RSOC_REAL"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_BAT_VOLTAGE"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_CHARGE_CURRENT"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_EOD_VOLTAGE"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_DISCHARGE_CURRENT"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_CHARGE_CYCLES"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TERMINAL_VOLTAGE"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_READY_FOR_SHUTDOWN"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TRAINING_MODE"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_FCC"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RC"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INFO"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_COUNT"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DEVICE_NAME"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DEVICE_STATE"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_SPECIFICATION"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INTERNALS"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_USE_TIME"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_DISCHARGE_TIME"], "" );
-		let dcbCount = 1;
-		this.getState("BAT.DCB_COUNT", (error,state) => {
-			if( !error && state ) {
-				dcbCount = Number(state.val);
-			}
-		});
-		for( let dcbIndex=0; dcbIndex <= dcbCount; dcbIndex++ ) {
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES"], dcbIndex );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES"], dcbIndex );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_INFO"], dcbIndex );
-		}
 		this.pushFrame();
 	}
 
@@ -596,7 +607,7 @@ class E3dcRscp extends utils.Adapter {
 			return 7; // just skip container header
 		} else if( rscpType[typeCode] == "Error" ) {
 			value = buffer.readUInt32LE(pos+7);
-			this.log.warn( `Received data type ERROR with value ${rscpGeneralError[value]} - tag ${rscpTag[tagCode].TagName}` );
+			this.log.warn( `Received data type ERROR with value ${value} - tag ${rscpTag[tagCode].TagName}` );
 			return 7+len;
 		} else {
 			switch( rscpType[typeCode]  ) {
@@ -651,22 +662,25 @@ class E3dcRscp extends utils.Adapter {
 			if( !rscpTag[tagCode] ) {
 				this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}, value=${value}`);
 			} else {
+				const nameSpace = rscpTag[tagCode].NameSpace;
+				const tagName = rscpTag[tagCode].TagName;
 				let typeName = rscpType[typeCode];
-				let id = `${rscpTag[tagCode].NameSpace}.${rscpTag[tagCode].TagName}`;
-				if( rscpTag[tagCode].TagName == "INDEX" ) {
-					if( rscpTag[tagCode].NameSpace == "BAT" ) {
-						this.index1 = ""; // BAT index is always 0; do not add a channel
-					} else {
-						this.index1 = `${rscpTag[tagCode].NameSpace}#${value}`;
-					}
+				let id = `${nameSpace}.${tagName}`;
+				if( tagName == "INDEX" ) {
+					this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], value ) : value;
+					this.index1 = `${nameSpace}#${value}`;
 					this.index2 = "";
 					this.index3 = -1;
 					return 7+len;
 				}
-				if( rscpTag[tagCode].TagName.endsWith("_INDEX") ) {
-					this.index2 = `${rscpTag[tagCode].TagName.replace("_INDEX","")}#${value}`;
+				if( tagName.endsWith("_INDEX") ) {
+					this.maxIndex[this.index1] = this.maxIndex[this.index1] ? Math.max( this.maxIndex[this.index1], value) : value;
+					this.index2 = `${tagName.replace("_INDEX","")}#${value}`;
 					this.index3 = -1;
 					return 7+len;
+				}
+				if( tagName == "DCB_COUNT" ) {
+					this.maxIndex[this.index1] = value-1;
 				}
 				if( multipleValue.includes(id) ) {
 					// @ts-ignore
@@ -703,7 +717,7 @@ class E3dcRscp extends utils.Adapter {
 				// @ts-ignore
 				if( this.index3 >= 0 ) id += `.${this.index3.toString().padStart(2,"0")}`;
 				// Create state object dynamically (unless already done earlier)
-				const oKey = `${rscpTag[tagCode].NameSpace}.${rscpTag[tagCode].TagName}`;
+				const oKey = `${nameSpace}.${tagName}`;
 				const oWrite = oKey in setTag;
 				let oRole = "";
 				if( typeName == "Bool") {
@@ -711,7 +725,7 @@ class E3dcRscp extends utils.Adapter {
 				} else {
 					oRole = oWrite?"level":"value";
 				}
-				const oName = systemDictionary[rscpTag[tagCode].TagName] ? systemDictionary[rscpTag[tagCode].TagName][this.language] : "***UNDEFINED***";
+				const oName = systemDictionary[tagName] ? systemDictionary[tagName][this.language] : "***UNDEFINED***";
 				//this.log.silly(`oName=${oName}, oRole=${oRole}, oWrite=${oWrite}`);
 				this.setObjectNotExists( id, {
 					type: "state",
@@ -805,35 +819,6 @@ class E3dcRscp extends utils.Adapter {
 		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
 		*/
 		// Statically, we define only one device per supported RSCP namespace - rest of the object tree is defined dynamically.
-		/*
-		await this.setObjectNotExistsAsync("RSCP", {
-			type: "channel",
-			common: {
-				name: systemDictionary["RSCP"][this.language],
-				role: "communication.protocol",
-				desc: systemDictionary["RSCP_DESC"][this.language],
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("BAT", {
-			type: "channel",
-			common: {
-				name: systemDictionary["BAT"][this.language],
-				role: "electricity.storage",
-				desc: systemDictionary["BAT_DESC"][this.language],
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS", {
-			type: "channel",
-			common: {
-				name: systemDictionary["EMS"][this.language],
-				role: "energy.management",
-				desc: systemDictionary["EMS_DESC"][this.language],
-			},
-			native: {},
-		});
-		*/
 		await this.setObjectNotExistsAsync("RSCP", {
 			type: "device",
 			common: {
@@ -1124,7 +1109,7 @@ function encodeRscpTag( name ) {
 }
 
 // Round numerical values for better readability
-// If the integer part is has more digits than <s>, then round to integer.
+// If the integer part is has more digits than <s>, then just round to integer.
 // Otherwise, round so that the result has <s> digits in total: <int-digits> + <fraction-digits> = <s>.
 function roundForReadability( n ) {
 	const s = 4; // number of significant digits
