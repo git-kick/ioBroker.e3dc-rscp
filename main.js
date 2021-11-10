@@ -577,7 +577,7 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INTERNALS"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_USE_TIME"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_DISCHARGE_TIME"], "" );
-			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT#${batIndex}.DCB_COUNT`]; dcbIndex++ ) {
+			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT#${batIndex}.DCB`]; dcbIndex++ ) {
 				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES"], dcbIndex );
 				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES"], dcbIndex );
 				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_INFO"], dcbIndex );
@@ -620,17 +620,17 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_MIN_TEMPERATURE"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_AC_MAX_APPARENTPOWER"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_DEVICE_STATE"], "" );
-			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI#${pviIndex}.AC_MAX_PHASE_COUNT`]; phaseIndex++) {
+			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI#${pviIndex}.AC_MAX_PHASE`]; phaseIndex++) {
 				for( const tag of phaseTags ) {
 					this.addTagtoFrame( rscpTagCode[`TAG_PVI_REQ_${tag}`], phaseIndex );
 				}
 			}
-			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI#${pviIndex}.DC_MAX_STRING_COUNT`]; stringIndex++) {
+			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI#${pviIndex}.DC_MAX_STRING`]; stringIndex++) {
 				for( const tag of stringTags ) {
 					this.addTagtoFrame( rscpTagCode[`TAG_PVI_REQ_${tag}`], stringIndex );
 				}
 			}
-			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI#${pviIndex}.TEMPERATURE_COUNT`]; tempIndex++) {
+			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI#${pviIndex}.TEMPERATURE`]; tempIndex++) {
 				this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_TEMPERATURE"], tempIndex );
 			}
 			this.pushFrame();
@@ -693,8 +693,14 @@ class E3dcRscp extends utils.Adapter {
 			this.currentContainer.push({tag: rscpTag[tagCode].TagName, end: pos+7+len});
 			return 7;
 		} else if( rscpType[typeCode] == "Error" ) {
-			value = buffer.readUInt32LE(pos+7);
-			this.log.warn( `Received data type ERROR with value ${value} - tag ${rscpTag[tagCode].TagName}` );
+			// PVI probe with out of range index results in ERROR response - adjust maxIndex:
+			if( tagCode == rscpTagCode["TAG_PVI_REQ_DATA"] && this.level1 ) {
+				const i = Number(this.level1.replace("PVI#",""));
+				this.maxIndex["PVI"] = this.maxIndex["PVI"] ? Math.max( this.maxIndex["PVI"], i-1) : i-1;
+			} else {
+				value = buffer.readUInt32LE(pos+7);
+				this.log.warn( `Received data type ERROR with value ${value} - tag ${rscpTag[tagCode].TagName}` );
+			}
 			return 7+len;
 		} else {
 			switch( rscpType[typeCode]  ) {
@@ -762,23 +768,26 @@ class E3dcRscp extends utils.Adapter {
 					} else if ( this.currentContainer.length > 0 && this.currentContainer.slice(-1)[0].tag == "TEMPERATURE" ) {
 						this.level2 = "";
 						this.level3 = value;
-					} else {
+					} else if ( this.currentContainer.length > 0 ){
 						this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], value ) : value;
 						this.level1 = `${nameSpace}#${value}`;
 						this.level2 = "";
 						this.level3 = -1;
+					} else {
+						this.log.warn( `Ignoring INDEX ${value}: no container` );
 					}
 					return 7+len;
 				}
-				if( tagName.endsWith("_INDEX") ) {
-					this.maxIndex[this.level1] = this.maxIndex[this.level1] ? Math.max( this.maxIndex[this.level1], value) : value;
+				if( tagName.endsWith("_INDEX") ) { // e.g. TAG_BAT_DCB_INDEX
+					const i = `${nameSpace}.${tagName.replace("_INDEX","")}`;
+					this.maxIndex[i] = this.maxIndex[i] ? Math.max( this.maxIndex[i], value) : value;
 					this.level2 = `${tagName.replace("_INDEX","")}#${value}`;
 					this.level3 = -1;
 					return 7+len;
 				}
 				// Take note of maximum index for creating complete request frames:
 				if( tagName.endsWith("_COUNT") ) {
-					this.maxIndex[`${this.level1}.${tagName}`] = value - 1;
+					this.maxIndex[`${this.level1}.${tagName.replace("_COUNT","")}`] = value - 1;
 				}
 				// Multiple values within one container are listed in a substructure (level3):
 				if( multipleValue.includes(id) ) {
