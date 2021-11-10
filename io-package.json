@@ -1,11 +1,11 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.6-beta",
+        "version": "0.0.7-beta",
         "news": {
-            "0.0.6-beta": {
-                "en": "BAT name space completely covered",
-                "de": "BAT Namespace komplett abgedeckt",
+            "0.0.7-beta": {
+                "en": "PVI name space completely covered",
+                "de": "PVI Namespace komplett abgedeckt",
                 "ru": "Начальная версия",
                 "pt": "lançamento inicial",
                 "nl": "Eerste uitgave",
@@ -69,7 +69,12 @@
             {
                 "js-controller": ">=2.0.0"
             }
-        ]
+        ],
+        "plugins": {
+            "sentry": {
+                "dsn": "https://cc70dc76ca0d4bc89be51866648d109c@o1065834.ingest.sentry.io/6058026"
+            }
+        }
     },
     "native": {
         "e3dc_ip": "192.168.178.1",

@@ -1,5 +1,27 @@
 "use strict";
 
+const Sentry = require("@sentry/node");
+// or use es6 import statements
+// import * as Sentry from '@sentry/node';
+
+// const Tracing = require("@sentry/tracing");
+// or use es6 import statements
+// import * as Tracing from '@sentry/tracing';
+
+Sentry.init({
+	dsn: "https://cc70dc76ca0d4bc89be51866648d109c@o1065834.ingest.sentry.io/6058026",
+
+	// Set tracesSampleRate to 1.0 to capture 100%
+	// of transactions for performance monitoring.
+	// We recommend adjusting this value in production
+	tracesSampleRate: 1.0,
+});
+
+const transaction = Sentry.startTransaction({
+	op: "test",
+	name: "My First Test Transaction",
+});
+
 // System dictionary
 const fs = require("fs");
 // eslint-disable-next-line prefer-const
@@ -81,6 +103,23 @@ const rscpBatTrainingMode = {
 	1: "Training, discharging",
 	2: "Training, charging",
 };
+const rscpPviType = {
+	1: "SOLU",
+	2: "KACO",
+	3: "E3DC_E",
+};
+const rscpPviSystemMode = {
+	0: "IDLE",
+	1: "NORMAL",
+	2: "GRIDCHARGE",
+	3: "BACKUPPOWER",
+};
+const rscpPviPowerMode = {
+	0: "OFF",
+	1: "ON",
+	100: "OFF_FORCE",
+	101: "ON_FORCE",
+};
 /* RSCP enumerations for later use:
 const rscpPmType = {
 	0: "UNDEFINED",
@@ -108,23 +147,6 @@ const rscpPmActivePhases = {
 	5: "PHASE_101",
 	6: "PHASE_011",
 	7: "PHASE_111",
-};
-const rscpPviType = {
-	1: "SOLU",
-	2: "KACO",
-	3: "E3DC_E",
-};
-const rscpPviSystemMode = {
-	0: "IDLE",
-	1: "NORMAL",
-	2: "GRIDCHARGE",
-	3: "BACKUPPOWER",
-};
-const rscpPviPowerMode = {
-	0: "OFF",
-	1: "ON",
-	100: "OFF_FORCE",
-	101: "ON_FORCE",
 };
 const rscpEmsGeneratorState = {
 	0x00: "IDLE",
@@ -187,6 +209,9 @@ const commonStates = {
 	"RSCP.AUTHENTICATION": { "states": rscpAuthLevel },
 	"BAT.GENERAL_ERROR": { "states": rscpGeneralError },
 	"BAT.TRAINING_MODE": { "states": rscpBatTrainingMode },
+	"PVI.TYPE": { "states": rscpPviType },
+	"PVI.SYSTEM_MODE": { "states": rscpPviSystemMode },
+	"PVI.POWER_MODE": { "states": rscpPviPowerMode },
 	"EMS.GENERAL_ERROR": { "states": rscpGeneralError },
 	"EMS.RETURN_CODE": { "states": rscpReturnCode },
 };
@@ -229,6 +254,23 @@ const negateValue = [
 const multipleValue = [
 	"BAT.DCB_CELL_TEMPERATURE",
 	"BAT.DCB_CELL_VOLTAGE",
+	"PVI.RELEASE",
+];
+// Some indexed tags are grouped within a channel
+const phaseTags = [
+	"AC_POWER",
+	"AC_VOLTAGE",
+	"AC_CURRENT",
+	"AC_APPARENTPOWER",
+	"AC_REACTIVEPOWER",
+	"AC_ENERGY_ALL",
+	"AC_ENERGY_GRID_CONSUMPTION",
+];
+const stringTags = [
+	"DC_POWER",
+	"DC_VOLTAGE",
+	"DC_CURRENT",
+	"DC_STRING_ENERGY_ALL",
 ];
 // Some of the return values we do not want to see as (missing) states:
 // "INDEX" and "..._INDEX" tags are automatically treated as subchannels, no need to list them here.
@@ -277,22 +319,21 @@ class E3dcRscp extends utils.Adapter {
 		// this.on('message', this.onMessage.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 
-		// For preparing and processing next frame:
-		this.frame = null;
-		this.openContainer = 0;
-		this.index1; // for INDEX tags
-		this.index2; // for ..._INDEX tags
-		this.index3; // for multiple values, e.g. DCB_CELL_TEMPERATURE
+		// For preparing & buffering outbound frames:
+		this.frame = null; // buffer for generating frames
+		this.openContainer = 0; // start pos of open container when generating frame
+		this.queue = []; // outbound message queue
 
-		// Message queue (outbound):
-		this.queue = [ ];
+		// For processing inbound frames:
+		this.currentContainer = []; // array of (TagName, endPos), for (possibly nested) containers
+		this.level1; // level below namespace, for INDEX tags
+		this.level2; // level below namespace/device, for ..._INDEX tags
+		this.level3; // level below namespace/device{/channel}, for multiple values, e.g. DCB_CELL_TEMPERATURE
+		this.maxIndex = {}; // observed max. indexes, e.g. BAT.INDEX, DCB_COUNT etc.
 
 		// TCP connection:
 		this.tcpConnection = new Net.Socket();
 		this.inBuffer = null;
-
-		// For collecting observed max. indexes, e.g. BAT.INDEX, DCB_COUNT etc.:
-		this.maxIndex = {};
 	}
 
 	// Create channel to E3/DC: encapsulating TCP connection, encryption, message queuing
@@ -302,10 +343,8 @@ class E3dcRscp extends utils.Adapter {
 		this.getForeignObject("system.config", (err, systemConfig) => {
 			if( systemConfig ) this.language = systemConfig.common.language;
 		});
-
 		if( ! this.config.portal_user ) this.config.portal_user = "";
 		if( ! this.config.portal_password ) this.config.portal_password = "";
-
 		// Encryption required by E3/DC:
 		this.aesKey = Buffer.alloc( KEY_SIZE, 0xFF );
 		this.encryptionIV = Buffer.alloc( BLOCK_SIZE, 0xFF );
@@ -315,16 +354,17 @@ class E3dcRscp extends utils.Adapter {
 		// log.debug( "decryptionIV: " + this.decryptionIV.toString("hex") );
 		// log.debug( "aesKey:       " + this.aesKey.toString("hex") );
 		this.cipher = new Rijndael(this.aesKey, "cbc");
-
 		// Initial authentication frame:
 		this.queueAuthentication();
-
 		// Find out number of BAT units:
 		const batProbes = 4;
-		this.log.warn(`Probing for BAT count - up to ${batProbes} messages about received ERROR may occur (just ignore them).`);
+		this.log.warn(`Probing for BAT units - up to ${batProbes} messages about received ERROR may follow (just ignore them).`);
 		this.queueBatProbe(batProbes);
+		// Find out number of PVI units and sensors:
+		const pviProbes = 3;
+		this.log.warn(`Probing for PVI units - up to ${pviProbes} messages about received ERROR may follow (just ignore them).`);
+		this.queuePviProbe(pviProbes);
 
-		// TCP connection:
 		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
 			this.log.info("Connection to E3/DC is established");
 			this.sendNextFrame();
@@ -376,11 +416,6 @@ class E3dcRscp extends utils.Adapter {
 		setTimeout(() => {
 			this.log.info("Reconnecting to E3/DC ...");
 			this.tcpConnection.removeAllListeners();
-			//this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
-			//	this.log.info("Successfully reconnected to E3/DC");
-			//	this.sendNextFrame();
-			//});
-			//this.tcpConnection = new Net.Socket(); // when reusing socket, E3/DC returns NO_ACCESS
 			this.initChannel();
 		}, 10000);
 	}
@@ -542,10 +577,61 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INTERNALS"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_USE_TIME"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_DISCHARGE_TIME"], "" );
-			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT#${batIndex}`]; dcbIndex++ ) {
+			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT#${batIndex}.DCB_COUNT`]; dcbIndex++ ) {
 				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES"], dcbIndex );
 				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES"], dcbIndex );
 				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_INFO"], dcbIndex );
+			}
+			this.pushFrame();
+		}
+	}
+
+	queuePviProbe( probes ) {
+		for( let pviIndex = 0; pviIndex < probes; pviIndex++ ) {
+			this.clearFrame();
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_DATA"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_INDEX"], pviIndex );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_AC_MAX_PHASE_COUNT"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_TEMPERATURE_COUNT"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_DC_MAX_STRING_COUNT"], "" );
+			this.pushFrame();
+		}
+	}
+
+	queueRequestPviData() {
+		for( let pviIndex = 0; pviIndex <= this.maxIndex["PVI"]; pviIndex++ ) {
+			this.clearFrame();
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_DATA"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_INDEX"], pviIndex );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_TEMPERATURE_COUNT"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_TYPE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_SERIAL_NUMBER"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_VERSION"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_ON_GRID"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_STATE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_LAST_ERROR"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_COS_PHI"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_VOLTAGE_MONITORING"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_POWER_MODE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_SYSTEM_MODE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_FREQUENCY_UNDER_OVER"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_AC_MAX_PHASE_COUNT"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_MAX_TEMPERATURE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_MIN_TEMPERATURE"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_AC_MAX_APPARENTPOWER"], "" );
+			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_DEVICE_STATE"], "" );
+			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI#${pviIndex}.AC_MAX_PHASE_COUNT`]; phaseIndex++) {
+				for( const tag of phaseTags ) {
+					this.addTagtoFrame( rscpTagCode[`TAG_PVI_REQ_${tag}`], phaseIndex );
+				}
+			}
+			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI#${pviIndex}.DC_MAX_STRING_COUNT`]; stringIndex++) {
+				for( const tag of stringTags ) {
+					this.addTagtoFrame( rscpTagCode[`TAG_PVI_REQ_${tag}`], stringIndex );
+				}
+			}
+			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI#${pviIndex}.TEMPERATURE_COUNT`]; tempIndex++) {
+				this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_TEMPERATURE"], tempIndex );
 			}
 			this.pushFrame();
 		}
@@ -604,7 +690,8 @@ class E3dcRscp extends utils.Adapter {
 		const len = buffer.readUInt16LE(pos+5);
 		let value;
 		if( rscpType[typeCode] == "Container" ) {
-			return 7; // just skip container header
+			this.currentContainer.push({tag: rscpTag[tagCode].TagName, end: pos+7+len});
+			return 7;
 		} else if( rscpType[typeCode] == "Error" ) {
 			value = buffer.readUInt32LE(pos+7);
 			this.log.warn( `Received data type ERROR with value ${value} - tag ${rscpTag[tagCode].TagName}` );
@@ -663,29 +750,47 @@ class E3dcRscp extends utils.Adapter {
 				this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}, value=${value}`);
 			} else {
 				const nameSpace = rscpTag[tagCode].NameSpace;
-				const tagName = rscpTag[tagCode].TagName;
+				let tagName = rscpTag[tagCode].TagName;
 				let typeName = rscpType[typeCode];
 				let id = `${nameSpace}.${tagName}`;
+				// Store INDEX value for later use in object path:
 				if( tagName == "INDEX" ) {
-					this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], value ) : value;
-					this.index1 = `${nameSpace}#${value}`;
-					this.index2 = "";
-					this.index3 = -1;
+					if( this.currentContainer.length > 0 && phaseTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+						this.level2 = `Phase#${value}`;
+					} else if( this.currentContainer.length > 0 && stringTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+						this.level2 = `String#${value}`;
+					} else if ( this.currentContainer.length > 0 && this.currentContainer.slice(-1)[0].tag == "TEMPERATURE" ) {
+						this.level2 = "";
+						this.level3 = value;
+					} else {
+						this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], value ) : value;
+						this.level1 = `${nameSpace}#${value}`;
+						this.level2 = "";
+						this.level3 = -1;
+					}
 					return 7+len;
 				}
 				if( tagName.endsWith("_INDEX") ) {
-					this.maxIndex[this.index1] = this.maxIndex[this.index1] ? Math.max( this.maxIndex[this.index1], value) : value;
-					this.index2 = `${tagName.replace("_INDEX","")}#${value}`;
-					this.index3 = -1;
+					this.maxIndex[this.level1] = this.maxIndex[this.level1] ? Math.max( this.maxIndex[this.level1], value) : value;
+					this.level2 = `${tagName.replace("_INDEX","")}#${value}`;
+					this.level3 = -1;
 					return 7+len;
 				}
-				if( tagName == "DCB_COUNT" ) {
-					this.maxIndex[this.index1] = value-1;
+				// Take note of maximum index for creating complete request frames:
+				if( tagName.endsWith("_COUNT") ) {
+					this.maxIndex[`${this.level1}.${tagName}`] = value - 1;
 				}
+				// Multiple values within one container are listed in a substructure (level3):
 				if( multipleValue.includes(id) ) {
 					// @ts-ignore
-					this.index3++;
+					this.level3++;
 				}
+				// Container=(INDEX, VAULE) - use container name vor value:
+				if( tagName == "VALUE" && this.currentContainer.length > 0 ) {
+					tagName  = `${this.currentContainer.slice(-1)[0].tag}`;
+					id = `${nameSpace}.${tagName}`;
+				}
+				// Handling mapping between "read" tag names and "write" tag names:
 				let targetStateMatch = null;
 				if( targetState[id] ) {
 					if( targetState[id]["*"] ) targetStateMatch = "*";
@@ -694,29 +799,32 @@ class E3dcRscp extends utils.Adapter {
 						this.log.warn(`SET failed: ${id} = ${value}`);
 					}
 				}
+				// RSCP is sloppy concerning Bool type - cast where neccessary:
 				if( castToBoolean.includes(id) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
 					value = (value!=0);
 					typeName = "Bool";
 				}
+				// RSCP is sloppy concerning Timestamp type - cast where neccessary:
 				if( castToTimestamp.includes(id) && typeName == "UInt64" ) {
 					value = Math.round(value/1000); // setState does not accept BigInt, so convert to seconds
 					typeName = "Timestamp";
 				}
+				// Adjust sign where semantically similar values come sometimes positive and sometimes negative:
 				if( negateValue.includes(id) ) value = -value;
 				if( discardValue.includes(id) ) {
 					this.log.debug(`Ignoring tag: ${id}, value=${value}`);
 					return 7+len;
 				}
 				if( targetStateMatch ) id = targetState[id][targetStateMatch];
-				// Insert indexes into id path (if so)
+				// Insert device/channel levels into id path (if so):
 				const arr = id.split(".");
 				id = arr[0];
-				if( this.index1 != "" ) id += `.${this.index1}`;
-				if( this.index2 != "" ) id += `.${this.index2}`;
+				if( this.level1 != "" ) id += `.${this.level1}`;
+				if( this.level2 != "" ) id += `.${this.level2}`;
 				id += `.${arr[1]}`;
 				// @ts-ignore
-				if( this.index3 >= 0 ) id += `.${this.index3.toString().padStart(2,"0")}`;
-				// Create state object dynamically (unless already done earlier)
+				if( this.level3 >= 0 ) id += `.${this.level3.toString().padStart(2,"0")}`;
+				// Create state object dynamically (unless already done earlier), and write value to state DB:
 				const oKey = `${nameSpace}.${tagName}`;
 				const oWrite = oKey in setTag;
 				let oRole = "";
@@ -725,8 +833,11 @@ class E3dcRscp extends utils.Adapter {
 				} else {
 					oRole = oWrite?"level":"value";
 				}
-				const oName = systemDictionary[tagName] ? systemDictionary[tagName][this.language] : "***UNDEFINED***";
-				//this.log.silly(`oName=${oName}, oRole=${oRole}, oWrite=${oWrite}`);
+				if( tagName == "VALUE" && this.currentContainer.length > 0 ) {
+					tagName = this.currentContainer.slice(-1)[0].tag;
+					id = `${nameSpace}.${tagName}`;
+				}
+				const oName = systemDictionary[tagName] ? systemDictionary[tagName][this.language] : "***UNDEFINED_NAME***";
 				this.setObjectNotExists( id, {
 					type: "state",
 					common: {
@@ -748,9 +859,10 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	processFrame( buffer ) {
-		this.index1 = ""; // reset "INDEX" tag
-		this.index2 = ""; // reset "..._INDEX" tag
-		this.index3 = -1; // reset multiple value counter
+		this.currentContainer = [];
+		this.level1 = ""; // reset "INDEX" tag
+		this.level2 = ""; // reset "..._INDEX" tag
+		this.level3 = -1; // reset multiple value counter
 		const magic = buffer.toString("hex",0,2).toUpperCase();
 		if( magic != "E3DC" ) {
 			this.log.warn(`Received message with invalid MAGIC: >${magic}<`);
@@ -771,6 +883,9 @@ class E3dcRscp extends utils.Adapter {
 		let i = this.processDataToken( buffer, 18 );
 		while( i < dataLength ) {
 			i += this.processDataToken( buffer, 18+i );
+			if( this.currentContainer.length > 0 && i >= this.currentContainer.slice(-1)[0].end ) {
+				this.currentContainer.pop();
+			}
 		}
 		if( buffer.length < 18 + dataLength + (hasCrc ? 4 : 0) ) {
 			this.log.warn(`Received message with inconsistent length: ${buffer.length} vs ${18 + dataLength + (hasCrc ? 4 : 0)}`);
@@ -807,17 +922,13 @@ class E3dcRscp extends utils.Adapter {
 				dataPollingTimer = setInterval(() => {
 					this.queueRequestEmsData();
 					this.queueRequestBatData();
+					this.queueRequestPviData();
 					this.sendNextFrame();
 				}, this.config.polling_interval*1000 );
 			} else {
 				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
 			}
 		});
-
-		/*
-		For every state in the system there has to be also an object of type state
-		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-		*/
 		// Statically, we define only one device per supported RSCP namespace - rest of the object tree is defined dynamically.
 		await this.setObjectNotExistsAsync("RSCP", {
 			type: "device",
@@ -835,6 +946,14 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
+		await this.setObjectNotExistsAsync("PVI", {
+			type: "device",
+			common: {
+				name: systemDictionary["PVI"][this.language],
+				role: "photovoltaic.inverter",
+			},
+			native: {},
+		});
 		await this.setObjectNotExistsAsync("EMS", {
 			type: "device",
 			common: {
@@ -846,33 +965,11 @@ class E3dcRscp extends utils.Adapter {
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("RSCP.AUTHENTICATION");
-		for( const s in targetState ) this.subscribeStates(s);
+		for( const s in setTag ) this.subscribeStates(s);
 		// You can also add a subscription for multiple states. The following line watches all states starting with 'lights.'
 		// this.subscribeStates('lights.*');
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
 		// this.subscribeStates('*');
-
-		/*
-			setState examples
-			you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-
-		// the variable testVariable is set to true as command (ack=false)
-		await this.setStateAsync("testVariable", true);
-
-		// same thing, but the value is flagged 'ack'
-		// ack should be always set to true if the value is received from or acknowledged from the target system
-		await this.setStateAsync("testVariable", { val: true, ack: true });
-
-		// same thing, but the state is deleted after 30s (getState will return null afterwards)
-		await this.setStateAsync("testVariable", { val: true, ack: true, expire: 30 });
-
-		// examples for the checkPassword/checkGroup functions
-		let result = await this.checkPasswordAsync("admin", "iobroker");
-		this.log.info("check user admin pw iobroker: " + result);
-
-		result = await this.checkGroupAsync("admin", "admin");
-		this.log.info("check group user admin group admin: " + result);
-		*/
 	}
 
 	/**
@@ -888,23 +985,6 @@ class E3dcRscp extends utils.Adapter {
 			callback();
 		}
 	}
-
-	// If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-	// You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-	// /**
-	//  * Is called if a subscribed object changes
-	//  * @param {string} id
-	//  * @param {ioBroker.Object | null | undefined} obj
-	//  */
-	// onObjectChange(id, obj) {
-	// 	if (obj) {
-	// 		// The object was changed
-	// 		this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-	// 	} else {
-	// 		// The object was deleted
-	// 		this.log.info(`object ${id} deleted`);
-	// 	}
-	// }
 
 	/**
 	 * Is called if a subscribed state change
@@ -926,24 +1006,6 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	// If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-	// /**
-	//  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-	//  * Using this method requires 'common.messagebox' property to be set to true in io-package.json
-	//  * @param {ioBroker.Message} obj
-	//  */
-	// onMessage(obj) {
-	// 	if (typeof obj === 'object' && obj.message) {
-	// 		if (obj.command === 'send') {
-	// 			// e.g. send email or pushover or whatever
-	// 			this.log.info('send command');
-
-	// 			// Send response in callback if required
-	// 			if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-	// 		}
-	// 	}
-	// }
-
 }
 
 // @ts-ignore parent is a valid property on module
@@ -955,7 +1017,16 @@ if (module.parent) {
 	module.exports = (options) => new E3dcRscp(options);
 } else {
 	// otherwise start the instance directly
-	new E3dcRscp();
+	const ad = new E3dcRscp();
+	setTimeout(() => {
+		try {
+			ad.sendNextFrame();
+		} catch (e) {
+			Sentry.captureException(e);
+		} finally {
+			transaction.finish();
+		}
+	}, 99);
 }
 
 //
