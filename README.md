@@ -85,7 +85,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   <tr>
     <td>PVI</td>
     <td>Photovoltaic Inverter</td>
-    <td>not supported (yet)</td>
+    <td>complete</td>
   </tr>
   <tr>
     <td>BAT</td>
@@ -245,6 +245,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.7-beta
+(git-kick) 
+* Complete coverage of INV namespace, including multiple strings and phases
+* started Sentry integration
 ### 0.0.6-beta
 (git-kick) 
 * Complete coverage of BAT namespace, including multiple DCBs and voltage/temperature lists
