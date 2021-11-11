@@ -1,5 +1,5 @@
 {
-    "AC_APPARENT_POWER": "AC Scheinleistung [VA]",
+    "AC_APPARENTPOWER": "AC Scheinleistung [VA]",
     "AC_CURRENT": "AC Wechselstrom [A]",
     "AC_ENERGY_ALL": "AC Energie gesamt [Wh]",
     "AC_ENERGY_GRID_CONSUMPTION": "AC Energieverbrauch vom Netz [Wh]",
