@@ -274,7 +274,7 @@ const stringTags = [
 ];
 // Some of the return values we do not want to see as (missing) states:
 // "INDEX" and "..._INDEX" tags are automatically treated as subchannels, no need to list them here.
-const discardValue = [
+const ignoreTags = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
 	"BAT.UNDEFINED",
@@ -286,6 +286,14 @@ const discardValue = [
 	"BAT.INTERNAL_MAX_DISCHARGE_CURR_PER_DCB",
 	"BAT.INTERNAL_MAX_CHARGE_CURR_DATA_LOG",
 	"BAT.INTERNAL_MAX_DISCHARGE_CURR_DATA_LOG",
+	"PVI.REQ_COS_PHI", // always retures ERROR
+];
+// Some of the INDEX values are redundant and can be safely ignored:
+// Listed here are containers which contain redundant INDEX tags.
+const ignoreIndexTags = [
+	"AC_MAX_APPARENTPOWER",
+	"MIN_TEMPERATURE",
+	"MAX_TEMPERATURE",
 ];
 
 // Encryption setup for E3/DC RSCP
@@ -686,12 +694,18 @@ class E3dcRscp extends utils.Adapter {
 
 	processDataToken( buffer, pos ) {
 		const tagCode = buffer.readUInt32LE(pos);
+		const nameSpace = rscpTag[tagCode].NameSpace;
+		let tagName = rscpTag[tagCode].TagName;
 		const typeCode = buffer.readUInt8(pos+4);
+		let typeName = rscpType[typeCode];
 		const len = buffer.readUInt16LE(pos+5);
 		let value;
 		if( rscpType[typeCode] == "Container" ) {
 			this.currentContainer.push({tag: rscpTag[tagCode].TagName, end: pos+7+len});
 			return 7;
+		} else if( ignoreTags.includes(`${nameSpace}.${tagName}`) ) {
+			this.log.silly(`Ignoring tag: ${nameSpace}.${tagName}`);
+			return 7+len;
 		} else if( rscpType[typeCode] == "Error" ) {
 			// PVI probe with out of range index results in ERROR response - adjust maxIndex:
 			if( tagCode == rscpTagCode["TAG_PVI_REQ_DATA"] && this.level1 ) {
@@ -755,26 +769,24 @@ class E3dcRscp extends utils.Adapter {
 			if( !rscpTag[tagCode] ) {
 				this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}, value=${value}`);
 			} else {
-				const nameSpace = rscpTag[tagCode].NameSpace;
-				let tagName = rscpTag[tagCode].TagName;
-				let typeName = rscpType[typeCode];
-				let id = `${nameSpace}.${tagName}`;
 				// Store INDEX value for later use in object path:
 				if( tagName == "INDEX" ) {
-					if( this.currentContainer.length > 0 && phaseTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+					if( phaseTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
 						this.level2 = `Phase#${value}`;
-					} else if( this.currentContainer.length > 0 && stringTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+					} else if( stringTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
 						this.level2 = `String#${value}`;
-					} else if ( this.currentContainer.length > 0 && this.currentContainer.slice(-1)[0].tag == "TEMPERATURE" ) {
+					} else if ( this.currentContainer.slice(-1)[0].tag == "TEMPERATURE" ) {
 						this.level2 = "";
 						this.level3 = value;
-					} else if ( this.currentContainer.length > 0 ){
+					} else if ( this.currentContainer.length == 2 ){
 						this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], value ) : value;
 						this.level1 = `${nameSpace}#${value}`;
 						this.level2 = "";
 						this.level3 = -1;
+					} else if( ignoreIndexTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+						return 7+len;
 					} else {
-						this.log.warn( `Ignoring INDEX ${value}: no container` );
+						this.log.warn( `Ignoring INDEX=${value} in container ${this.currentContainer.slice(-1)[0].tag}` );
 					}
 					return 7+len;
 				}
@@ -790,50 +802,48 @@ class E3dcRscp extends utils.Adapter {
 					this.maxIndex[`${this.level1}.${tagName.replace("_COUNT","")}`] = value - 1;
 				}
 				// Multiple values within one container are listed in a substructure (level3):
-				if( multipleValue.includes(id) ) {
+				if( multipleValue.includes(`${nameSpace}.${tagName}`) ) {
 					// @ts-ignore
 					this.level3++;
 				}
 				// Container=(INDEX, VAULE) - use container name vor value:
-				if( tagName == "VALUE" && this.currentContainer.length > 0 ) {
+				if( tagName == "VALUE" && this.currentContainer.length > 1 ) {
 					tagName  = `${this.currentContainer.slice(-1)[0].tag}`;
-					id = `${nameSpace}.${tagName}`;
 				}
 				// Handling mapping between "read" tag names and "write" tag names:
+				const i = `${nameSpace}.${tagName}`;
 				let targetStateMatch = null;
-				if( targetState[id] ) {
-					if( targetState[id]["*"] ) targetStateMatch = "*";
-					if( targetState[id][typeName] ) targetStateMatch = typeName;
-					if( targetStateMatch && targetState[id][targetStateMatch].targetState == "RETURN_CODE" && value < 0 ) {
-						this.log.warn(`SET failed: ${id} = ${value}`);
+				if( targetState[i] ) {
+					if( targetState[i]["*"] ) targetStateMatch = "*";
+					if( targetState[i][typeName] ) targetStateMatch = typeName;
+					if( targetStateMatch && targetState[i][targetStateMatch].targetState == "RETURN_CODE" && value < 0 ) {
+						this.log.warn(`SET failed: ${i} = ${value}`);
 					}
 				}
+				if( targetStateMatch ) tagName = targetState[i][targetStateMatch].split(".")[1];
 				// RSCP is sloppy concerning Bool type - cast where neccessary:
-				if( castToBoolean.includes(id) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
+				if( castToBoolean.includes(i) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
 					value = (value!=0);
 					typeName = "Bool";
 				}
 				// RSCP is sloppy concerning Timestamp type - cast where neccessary:
-				if( castToTimestamp.includes(id) && typeName == "UInt64" ) {
+				if( castToTimestamp.includes(i) && typeName == "UInt64" ) {
 					value = Math.round(value/1000); // setState does not accept BigInt, so convert to seconds
 					typeName = "Timestamp";
 				}
 				// Adjust sign where semantically similar values come sometimes positive and sometimes negative:
-				if( negateValue.includes(id) ) value = -value;
-				if( discardValue.includes(id) ) {
-					this.log.debug(`Ignoring tag: ${id}, value=${value}`);
-					return 7+len;
+				if( negateValue.includes(i) ) {
+					value = -value;
 				}
-				if( targetStateMatch ) id = targetState[id][targetStateMatch];
-				// Insert device/channel levels into id path (if so):
-				const arr = id.split(".");
-				id = arr[0];
+				// Concatenate target object id, inserting device/channel levels into path (if so):
+				let id = nameSpace;
 				if( this.level1 != "" ) id += `.${this.level1}`;
 				if( this.level2 != "" ) id += `.${this.level2}`;
-				id += `.${arr[1]}`;
+				id += `.${tagName}`;
 				// @ts-ignore
 				if( this.level3 >= 0 ) id += `.${this.level3.toString().padStart(2,"0")}`;
-				// Create state object dynamically (unless already done earlier), and write value to state DB:
+				// Write state to object DB:
+				this.log.silly(`setState( "${id}", ${value}, true )`);
 				const oKey = `${nameSpace}.${tagName}`;
 				const oWrite = oKey in setTag;
 				let oRole = "";
@@ -841,10 +851,6 @@ class E3dcRscp extends utils.Adapter {
 					oRole = oWrite?"switch":"indicator";
 				} else {
 					oRole = oWrite?"level":"value";
-				}
-				if( tagName == "VALUE" && this.currentContainer.length > 0 ) {
-					tagName = this.currentContainer.slice(-1)[0].tag;
-					id = `${nameSpace}.${tagName}`;
 				}
 				const oName = systemDictionary[tagName] ? systemDictionary[tagName][this.language] : "***UNDEFINED_NAME***";
 				this.setObjectNotExists( id, {
@@ -859,7 +865,6 @@ class E3dcRscp extends utils.Adapter {
 					},
 					native: {},
 				}, () => {
-					this.log.silly(`this.setState( "${id}", ${value}, true )`);
 					this.setState( id, value, true );
 				});
 				return 7+len;
@@ -868,7 +873,7 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	processFrame( buffer ) {
-		this.currentContainer = [];
+		this.currentContainer = [{tag: "NO_CONTAINER", end: buffer.length}];
 		this.level1 = ""; // reset "INDEX" tag
 		this.level2 = ""; // reset "..._INDEX" tag
 		this.level3 = -1; // reset multiple value counter
@@ -892,7 +897,7 @@ class E3dcRscp extends utils.Adapter {
 		let i = this.processDataToken( buffer, 18 );
 		while( i < dataLength ) {
 			i += this.processDataToken( buffer, 18+i );
-			if( this.currentContainer.length > 0 && i >= this.currentContainer.slice(-1)[0].end ) {
+			if( i >= this.currentContainer.slice(-1)[0].end ) {
 				this.currentContainer.pop();
 			}
 		}
