@@ -1,5 +1,5 @@
 {
-    "AC_APPARENT_POWER": "Puissance apparente CA [VA]",
+    "AC_APPARENTPOWER": "Puissance apparente CA [VA]",
     "AC_CURRENT": "Courant alternatif [A]",
     "AC_ENERGY_ALL": "Énergie CA tout [kWh]",
     "AC_ENERGY_GRID_CONSUMPTION": "Consommation du réseau d'énergie CA [kWh]",

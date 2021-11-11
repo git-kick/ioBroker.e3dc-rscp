@@ -1,5 +1,5 @@
 {
-    "AC_APPARENT_POWER": "AC apparent power [VA]",
+    "AC_APPARENTPOWER": "AC apparent power [VA]",
     "AC_CURRENT": "AC current [A]",
     "AC_ENERGY_ALL": "AC energy all [Wh]",
     "AC_ENERGY_GRID_CONSUMPTION": "AC energy grid consumption [Wh]",

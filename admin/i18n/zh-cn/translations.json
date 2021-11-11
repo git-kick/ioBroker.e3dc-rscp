@@ -1,5 +1,5 @@
 {
-    "AC_APPARENT_POWER": "交流视在功率[VA]",
+    "AC_APPARENTPOWER": "交流视在功率[VA]",
     "AC_CURRENT": "交流电流[A]",
     "AC_ENERGY_ALL": "交流电源全部[千瓦时]",
     "AC_ENERGY_GRID_CONSUMPTION": "交流电网消耗[千瓦时]",

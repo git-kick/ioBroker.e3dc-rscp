@@ -769,6 +769,9 @@ class E3dcRscp extends utils.Adapter {
 			if( !rscpTag[tagCode] ) {
 				this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}, value=${value}`);
 			} else {
+				const nameSpace = rscpTag[tagCode].NameSpace;
+				let tagName = rscpTag[tagCode].TagName;
+				let typeName = rscpType[typeCode];
 				// Store INDEX value for later use in object path:
 				if( tagName == "INDEX" ) {
 					if( phaseTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
@@ -834,6 +837,10 @@ class E3dcRscp extends utils.Adapter {
 				// Adjust sign where semantically similar values come sometimes positive and sometimes negative:
 				if( negateValue.includes(i) ) {
 					value = -value;
+				}
+				if( discardValue.includes(i) ) {
+					this.log.silly(`Ignoring tag: ${i}, value=${value}`);
+					return 7+len;
 				}
 				// Concatenate target object id, inserting device/channel levels into path (if so):
 				let id = nameSpace;
