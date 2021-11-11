@@ -1,5 +1,5 @@
 {
-    "AC_APPARENT_POWER": "Potenza apparente AC [VA]",
+    "AC_APPARENTPOWER": "Potenza apparente AC [VA]",
     "AC_CURRENT": "Corrente alternata [A]",
     "AC_ENERGY_ALL": "Energia CA tutti [kWh]",
     "AC_ENERGY_GRID_CONSUMPTION": "Consumo di rete AC [kWh]",

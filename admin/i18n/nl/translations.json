@@ -1,5 +1,5 @@
 {
-    "AC_APPARENT_POWER": "Schijnbaar WISSELSTROOMVERMOGEN [VA]",
+    "AC_APPARENTPOWER": "Schijnbaar WISSELSTROOMVERMOGEN [VA]",
     "AC_CURRENT": "Wisselstroom [A]",
     "AC_ENERGY_ALL": "AC energie alle [kWh]",
     "AC_ENERGY_GRID_CONSUMPTION": "Verbruik van het wisselstroomnet [kWh]",

@@ -1,5 +1,5 @@
 {
-    "AC_APPARENT_POWER": "Moc pozorna AC [VA]",
+    "AC_APPARENTPOWER": "Moc pozorna AC [VA]",
     "AC_CURRENT": "Prąd przemienny [A]",
     "AC_ENERGY_ALL": "Energia prądu przemiennego wszystkie [kWh]",
     "AC_ENERGY_GRID_CONSUMPTION": "Zużycie sieci energetycznej prądu przemiennego [kWh]",
