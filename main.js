@@ -217,7 +217,7 @@ const commonStates = {
 };
 // List of all writable states, with Mapping for response value handling.
 // type "*" means: apply to all types
-const targetState = {
+const targetStates = {
 	"EMS.RES_POWERSAVE_ENABLED": { "*": "EMS.POWERSAVE_ENABLED" },
 	"EMS.RES_WEATHER_REGULATED_CHARGE_ENABLED": { "*": "EMS.RETURN_CODE" },
 	"EMS.RES_MAX_CHARGE_POWER": { "*": "EMS.RETURN_CODE" },
@@ -227,7 +227,7 @@ const targetState = {
 	"EMS.USER_DISCHARGE_LIMIT": { "*": "EMS.MAX_DISCHARGE_POWER" },
 };
 // For each writable state, define how to send a SET to E3/DC
-const setTag = {
+const setTags = {
 	"EMS.POWERSAVE_ENABLED": "EMS.REQ_SET_POWER_SETTINGS",
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": "EMS.REQ_SET_POWER_SETTINGS",
 	"EMS.MAX_CHARGE_POWER": "EMS.REQ_SET_POWER_SETTINGS",
@@ -286,7 +286,6 @@ const ignoreTags = [
 	"BAT.INTERNAL_MAX_DISCHARGE_CURR_PER_DCB",
 	"BAT.INTERNAL_MAX_CHARGE_CURR_DATA_LOG",
 	"BAT.INTERNAL_MAX_DISCHARGE_CURR_DATA_LOG",
-	"PVI.REQ_COS_PHI", // always retures ERROR
 ];
 // Some of the INDEX values are redundant and can be safely ignored:
 // Listed here are containers which contain redundant INDEX tags.
@@ -618,7 +617,7 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_ON_GRID"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_STATE"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_LAST_ERROR"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_COS_PHI"], "" );
+			// this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_COS_PHI"], "" ); // always returns data type ERROR
 			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_VOLTAGE_MONITORING"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_POWER_MODE"], "" );
 			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_SYSTEM_MODE"], "" );
@@ -661,9 +660,9 @@ class E3dcRscp extends utils.Adapter {
 		this.log.debug( `queueValue( ${global_id}, ${value} )`);
 		const [,,namespace,tagname] = global_id.split(".");
 		const id = `${namespace}.${tagname}`;
-		if( setTag[id] ) {
+		if( setTags[id] ) {
 			this.clearFrame();
-			this.addTagtoFrame( encodeRscpTag(setTag[id]), "" );
+			this.addTagtoFrame( encodeRscpTag(setTags[id]), "" );
 			this.addTagtoFrame( encodeRscpTag(id), value );
 			this.pushFrame();
 		} else {
@@ -694,189 +693,178 @@ class E3dcRscp extends utils.Adapter {
 
 	processDataToken( buffer, pos ) {
 		const tagCode = buffer.readUInt32LE(pos);
-		const nameSpace = rscpTag[tagCode].NameSpace;
-		let tagName = rscpTag[tagCode].TagName;
 		const typeCode = buffer.readUInt8(pos+4);
-		let typeName = rscpType[typeCode];
 		const len = buffer.readUInt16LE(pos+5);
+		const typeName = rscpType[typeCode];
+		let typeNameNew = typeName; // type name will be changed under certain conditions; see below
 		let value;
-		if( rscpType[typeCode] == "Container" ) {
-			this.currentContainer.push({tag: rscpTag[tagCode].TagName, end: pos+7+len});
-			return 7;
-		} else if( ignoreTags.includes(`${nameSpace}.${tagName}`) ) {
-			this.log.silly(`Ignoring tag: ${nameSpace}.${tagName}`);
-			return 7+len;
-		} else if( rscpType[typeCode] == "Error" ) {
-			// PVI probe with out of range index results in ERROR response - adjust maxIndex:
-			if( tagCode == rscpTagCode["TAG_PVI_REQ_DATA"] && this.level1 ) {
-				const i = Number(this.level1.replace("PVI#",""));
-				this.maxIndex["PVI"] = this.maxIndex["PVI"] ? Math.max( this.maxIndex["PVI"], i-1) : i-1;
-			} else {
+		switch( typeName  ) {
+			case "Container":
+				this.currentContainer.push({tag: rscpTag[tagCode].TagName, end: pos+7+len});
+				return 7;
+			case "CString":
+			case "BitField":
+			case "ByteArray":
+				value = buffer.toString("utf8",pos+7,pos+7+len);
+				break;
+			case "Char8":
+				value = buffer.readInt8(pos+7);
+				break;
+			case "UChar8":
+				value = buffer.readUInt8(pos+7);
+				break;
+			case "Bool":
+				value = (buffer.readUInt8(pos+7) != 0);
+				break;
+			case "Int16":
+				value = buffer.readInt16LE(pos+7);
+				break;
+			case "UInt16":
+				value = buffer.readUInt16LE(pos+7);
+				break;
+			case "Int32":
+				value = buffer.readInt32LE(pos+7);
+				break;
+			case "UInt32":
 				value = buffer.readUInt32LE(pos+7);
-				this.log.warn( `Received data type ERROR with value ${value} - tag ${rscpTag[tagCode].TagName}` );
-			}
-			return 7+len;
-		} else {
-			switch( rscpType[typeCode]  ) {
-				case "None":
-					if( len > 0 ) this.log.warn( `Received data type NONE with data length = ${len} - tagCode 0x${tagCode.toString(16)}` );
-					break;
-				case "CString":
-				case "BitField":
-				case "ByteArray":
-					value = buffer.toString("utf8",pos+7,pos+7+len);
-					break;
-				case "Char8":
-					value = buffer.readInt8(pos+7);
-					break;
-				case "UChar8":
-					value = buffer.readUInt8(pos+7);
-					break;
-				case "Bool":
-					value = (buffer.readUInt8(pos+7) != 0);
-					break;
-				case "Int16":
-					value = buffer.readInt16LE(pos+7);
-					break;
-				case "UInt16":
-					value = buffer.readUInt16LE(pos+7);
-					break;
-				case "Int32":
-					value = buffer.readInt32LE(pos+7);
-					break;
-				case "UInt32":
-					value = buffer.readUInt32LE(pos+7);
-					break;
-				case "Int64":
-					value = buffer.readBigInt64LE(pos+7).toString(); // setState does not accept BigInt, so use string representation
-					break;
-				case "UInt64":
-					value = buffer.readBigUInt64LE(pos+7).toString(); // setState does not accept BigInt, so use string representation
-					break;
-				case "Double64":
-					value = roundForReadability( buffer.readDoubleLE(pos+7) );
-					break;
-				case "Float32":
-					value = roundForReadability( buffer.readFloatLE(pos+7) );
-					break;
-				case "Timestamp":
-					value = Math.round(buffer.readBigUInt64LE(pos+7)/1000); // setState does not accept BigInt, so convert to seconds
-					break;
-				default:
-					this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(pos+7,pos+7+len) )}` );
-					value = null;
-			}
-			if( !rscpTag[tagCode] ) {
-				this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}, value=${value}`);
-			} else {
-				const nameSpace = rscpTag[tagCode].NameSpace;
-				let tagName = rscpTag[tagCode].TagName;
-				let typeName = rscpType[typeCode];
-				// Store INDEX value for later use in object path:
-				if( tagName == "INDEX" ) {
-					if( phaseTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
-						this.level2 = `Phase#${value}`;
-					} else if( stringTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
-						this.level2 = `String#${value}`;
-					} else if ( this.currentContainer.slice(-1)[0].tag == "TEMPERATURE" ) {
-						this.level2 = "";
-						this.level3 = value;
-					} else if ( this.currentContainer.length == 2 ){
-						this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], value ) : value;
-						this.level1 = `${nameSpace}#${value}`;
-						this.level2 = "";
-						this.level3 = -1;
-					} else if( ignoreIndexTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
-						return 7+len;
-					} else {
-						this.log.warn( `Ignoring INDEX=${value} in container ${this.currentContainer.slice(-1)[0].tag}` );
-					}
-					return 7+len;
-				}
-				if( tagName.endsWith("_INDEX") ) { // e.g. TAG_BAT_DCB_INDEX
-					const i = `${nameSpace}.${tagName.replace("_INDEX","")}`;
-					this.maxIndex[i] = this.maxIndex[i] ? Math.max( this.maxIndex[i], value) : value;
-					this.level2 = `${tagName.replace("_INDEX","")}#${value}`;
-					this.level3 = -1;
-					return 7+len;
-				}
-				// Take note of maximum index for creating complete request frames:
-				if( tagName.endsWith("_COUNT") ) {
-					this.maxIndex[`${this.level1}.${tagName.replace("_COUNT","")}`] = value - 1;
-				}
-				// Multiple values within one container are listed in a substructure (level3):
-				if( multipleValue.includes(`${nameSpace}.${tagName}`) ) {
-					// @ts-ignore
-					this.level3++;
-				}
-				// Container=(INDEX, VAULE) - use container name vor value:
-				if( tagName == "VALUE" && this.currentContainer.length > 1 ) {
-					tagName  = `${this.currentContainer.slice(-1)[0].tag}`;
-				}
-				// Handling mapping between "read" tag names and "write" tag names:
-				const i = `${nameSpace}.${tagName}`;
-				let targetStateMatch = null;
-				if( targetState[i] ) {
-					if( targetState[i]["*"] ) targetStateMatch = "*";
-					if( targetState[i][typeName] ) targetStateMatch = typeName;
-					if( targetStateMatch && targetState[i][targetStateMatch].targetState == "RETURN_CODE" && value < 0 ) {
-						this.log.warn(`SET failed: ${i} = ${value}`);
-					}
-				}
-				if( targetStateMatch ) tagName = targetState[i][targetStateMatch].split(".")[1];
-				// RSCP is sloppy concerning Bool type - cast where neccessary:
-				if( castToBoolean.includes(i) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
-					value = (value!=0);
-					typeName = "Bool";
-				}
-				// RSCP is sloppy concerning Timestamp type - cast where neccessary:
-				if( castToTimestamp.includes(i) && typeName == "UInt64" ) {
-					value = Math.round(value/1000); // setState does not accept BigInt, so convert to seconds
-					typeName = "Timestamp";
-				}
-				// Adjust sign where semantically similar values come sometimes positive and sometimes negative:
-				if( negateValue.includes(i) ) {
-					value = -value;
-				}
-				if( discardValue.includes(i) ) {
-					this.log.silly(`Ignoring tag: ${i}, value=${value}`);
-					return 7+len;
-				}
-				// Concatenate target object id, inserting device/channel levels into path (if so):
-				let id = nameSpace;
-				if( this.level1 != "" ) id += `.${this.level1}`;
-				if( this.level2 != "" ) id += `.${this.level2}`;
-				id += `.${tagName}`;
-				// @ts-ignore
-				if( this.level3 >= 0 ) id += `.${this.level3.toString().padStart(2,"0")}`;
-				// Write state to object DB:
-				this.log.silly(`setState( "${id}", ${value}, true )`);
-				const oKey = `${nameSpace}.${tagName}`;
-				const oWrite = oKey in setTag;
-				let oRole = "";
-				if( typeName == "Bool") {
-					oRole = oWrite?"switch":"indicator";
+				break;
+			case "Int64":
+				value = buffer.readBigInt64LE(pos+7).toString(); // setState does not accept BigInt, so use string representation
+				break;
+			case "UInt64":
+				value = buffer.readBigUInt64LE(pos+7).toString(); // setState does not accept BigInt, so use string representation
+				break;
+			case "Double64":
+				value = roundForReadability( buffer.readDoubleLE(pos+7) );
+				break;
+			case "Float32":
+				value = roundForReadability( buffer.readFloatLE(pos+7) );
+				break;
+			case "Timestamp":
+				value = Math.round(buffer.readBigUInt64LE(pos+7)/1000); // setState does not accept BigInt, so convert to seconds
+				break;
+			case "Error":
+				// special case: PVI probe with out of range index results in ERROR response - adjust maxIndex
+				if( tagCode == rscpTagCode["TAG_PVI_REQ_DATA"] && this.level1 ) {
+					const i = Number(this.level1.replace("PVI#",""));
+					this.maxIndex["PVI"] = this.maxIndex["PVI"] ? Math.max( this.maxIndex["PVI"], i-1) : i-1;
 				} else {
-					oRole = oWrite?"level":"value";
+					value = buffer.readUInt32LE(pos+7);
+					this.log.warn( `Received data type ERROR with value ${value} - tag ${rscpTag[tagCode].TagName}` );
 				}
-				const oName = systemDictionary[tagName] ? systemDictionary[tagName][this.language] : "***UNDEFINED_NAME***";
-				this.setObjectNotExists( id, {
-					type: "state",
-					common: {
-						name: oName,
-						type: rscpTypeMap[typeName],
-						role: oRole,
-						read: true,
-						write: oWrite,
-						states: (commonStates[oKey] ? commonStates[oKey].states : ""),
-					},
-					native: {},
-				}, () => {
-					this.setState( id, value, true );
-				});
 				return 7+len;
-			}
+			case "None":
+				if( len > 0 ) this.log.warn( `Received data type NONE with data length = ${len} - tagCode 0x${tagCode.toString(16)}` );
+				return 7+len;
+			default:
+				this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(pos+7,pos+7+len) )}` );
+				value = null;
+				return 7+len;
 		}
+		if( !rscpTag[tagCode] ) {
+			this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}`);
+			return 7+len;
+		}
+		const nameSpace = rscpTag[tagCode].NameSpace;
+		const tagName = rscpTag[tagCode].TagName;
+		let tagNameNew = tagName; // tag name will be changed under certain conditions; see below
+		if( ignoreTags.includes(`${nameSpace}.${tagName}`) ) {
+			this.log.silly(`Ignoring tag: ${nameSpace}.${tagName}`);
+		} else if( tagName == "INDEX" ) {
+			// Use INDEX for object path, level1-3:
+			if( phaseTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+				this.level2 = `Phase#${value}`;
+			} else if( stringTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+				this.level2 = `String#${value}`;
+			} else if ( this.currentContainer.slice(-1)[0].tag == "TEMPERATURE" ) {
+				this.level2 = "";
+				this.level3 = value;
+			} else if ( this.currentContainer.length == 2 ){
+				this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], value ) : value;
+				this.level1 = `${nameSpace}#${value}`;
+				this.level2 = "";
+				this.level3 = -1;
+			} else if( !ignoreIndexTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+				this.log.warn( `Ignoring unexpected INDEX=${value} in container ${this.currentContainer.slice(-1)[0].tag}` );
+			}
+		} else if( tagName.endsWith("_INDEX") ) {
+			// Use _INDEX for object path level2, e.g. TAG_BAT_DCB_INDEX
+			const i = `${nameSpace}.${tagName.replace("_INDEX","")}`;
+			this.maxIndex[i] = this.maxIndex[i] ? Math.max( this.maxIndex[i], value) : value;
+			this.level2 = `${tagName.replace("_INDEX","")}#${value}`;
+			this.level3 = -1;
+		} else {
+			// Take note of explicit maximum index for creating complete request frames:
+			if( tagName.endsWith("_COUNT") ) {
+				this.maxIndex[`${this.level1}.${tagName.replace("_COUNT","")}`] = value - 1;
+			}
+			// Multiple values within one container are listed in a substructure (level3):
+			if( multipleValue.includes(`${nameSpace}.${tagName}`) ) {
+				// @ts-ignore
+				this.level3++;
+			}
+			// Container=(INDEX, VAULE) - use container name for value:
+			if( tagName == "VALUE" && this.currentContainer.length > 1 ) {
+				tagNameNew  = `${this.currentContainer.slice(-1)[0].tag}`;
+			}
+			// Handle mapping between "read" tag names and "write" tag names:
+			const i = `${nameSpace}.${tagName}`;
+			let targetStateMatch = null;
+			if( targetStates[i] ) {
+				if( targetStates[i]["*"] ) targetStateMatch = "*";
+				if( targetStates[i][typeName] ) targetStateMatch = typeName;
+				if( targetStateMatch && targetStates[i][targetStateMatch].targetState == "RETURN_CODE" && value < 0 ) {
+					this.log.warn(`SET failed: ${i} = ${value}`);
+				}
+			}
+			if( targetStateMatch ) tagNameNew = targetStates[i][targetStateMatch].split(".")[1];
+			// RSCP is sloppy concerning Bool type - cast where neccessary:
+			if( castToBoolean.includes(i) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
+				value = (value!=0);
+				typeNameNew = "Bool";
+			}
+			// RSCP is sloppy concerning Timestamp type - cast where neccessary:
+			if( castToTimestamp.includes(i) && typeName == "UInt64" ) {
+				value = Math.round(value/1000); // setState does not accept BigInt, so convert to seconds
+				typeNameNew = "Timestamp";
+			}
+			// Adjust sign where semantically similar values come sometimes positive and sometimes negative:
+			if( negateValue.includes(i) ) {
+				value = -value;
+			}
+			// Concatenate target object id, inserting device/channel levels into path (if so):
+			let id = nameSpace;
+			id += (this.level1 != "") ? `.${this.level1}` : "";
+			id += (this.level2 != "") ? `.${this.level2}` : "";
+			id += `.${tagNameNew}`;
+			id += (this.level3 >= 0) ? `.${this.level3.toString().padStart(2,"0")}` : "";
+			// Write state to object DB:
+			this.log.silly(`setState( "${id}", ${value}, true )`);
+			const oKey = `${nameSpace}.${tagNameNew}`;
+			const oWrite = oKey in setTags;
+			let oRole = "";
+			if( typeNameNew == "Bool") {
+				oRole = oWrite?"switch":"indicator";
+			} else {
+				oRole = oWrite?"level":"value";
+			}
+			const oName = systemDictionary[tagNameNew] ? systemDictionary[tagNameNew][this.language] : "***UNDEFINED_NAME***";
+			this.setObjectNotExists( id, {
+				type: "state",
+				common: {
+					name: oName,
+					type: rscpTypeMap[typeNameNew],
+					role: oRole,
+					read: true,
+					write: oWrite,
+					states: (commonStates[oKey] ? commonStates[oKey].states : ""),
+				},
+				native: {},
+			}, () => {
+				this.setState( id, value, true );
+			});
+		}
+		return 7+len;
 	}
 
 	processFrame( buffer ) {
@@ -986,7 +974,7 @@ class E3dcRscp extends utils.Adapter {
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("RSCP.AUTHENTICATION");
-		for( const s in setTag ) this.subscribeStates(s);
+		for( const s in setTags ) this.subscribeStates(s);
 		// You can also add a subscription for multiple states. The following line watches all states starting with 'lights.'
 		// this.subscribeStates('lights.*');
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:

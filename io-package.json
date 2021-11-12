@@ -1,19 +1,19 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.7-beta",
+        "version": "0.0.8-beta",
         "news": {
             "0.0.7-beta": {
-                "en": "PVI name space completely covered",
-                "de": "PVI Namespace komplett abgedeckt",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "zh-cn": "首次出版"
+                "en": "Index handling revised",
+                "de": "Index-Behandlung überarbeitet",
+                "ru": "Пересмотрена обработка индексов",
+                "pt": "Tratamento revisto do Índice",
+                "nl": "Indexafhandeling herzien",
+                "fr": "Gestion des indices révisée",
+                "it": "Gestione degli indici rivista",
+                "es": "Manejo del índice revisado",
+                "pl": "Poprawiono obsługę indeksów",
+                "zh-cn": "指数处理修订"
             }
         },
         "title": "E3/DC RSCP",

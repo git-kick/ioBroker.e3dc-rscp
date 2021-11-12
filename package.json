@@ -1,6 +1,6 @@
 {
   "name": "iobroker.e3dc-rscp",
-  "version": "0.0.7-beta",
+  "version": "0.0.8-beta",
   "description": "short",
   "author": {
     "name": "git-kick",
@@ -25,7 +25,6 @@
     "@sentry/tracing": "^6.14.1",
     "@types/html-to-text": "^8.0.1",
     "crc-32": "^1.2.0",
-    "discovery": "^1.1.0",
     "html-to-text": "^8.0.0",
     "net": "^1.0.2",
     "rijndael-js": "^2.0.0"
