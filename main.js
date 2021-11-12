@@ -28,6 +28,16 @@ const fs = require("fs");
 let systemDictionary = {};
 eval(fs.readFileSync("./admin/words.js").toString());
 
+const dayOfWeek = [
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday",
+	"Sunday",
+];
+
 // RSCP constants & lookup tables
 const rscpTag = require("./lib/RscpTags.json");
 const rscpTagCode = {}; // maps string to code
@@ -120,7 +130,49 @@ const rscpPviPowerMode = {
 	100: "OFF_FORCE",
 	101: "ON_FORCE",
 };
+const rscpEmsCouplingMode = {
+	0: "DC",
+	1: "DC_MULTIWR",
+	2: "AC",
+	3: "HYBRID",
+	4: "ISLAND",
+};
+const rscpEmsEmergencyPowerStatus = {
+	0: "NOT_POSSIBLE",
+	1: "ACTIVE",
+	2: "NOT_ACTIVE",
+	3: "NOT_AVAILABLE",
+	4: "SWITCH_IN_ISLAND_STATE",
+};
+const rscpEmsIdlePeriodType = {
+	0: "IDLE_CHARGE",
+	1: "IDLE_DISCHARGE",
+};
 /* RSCP enumerations for later use:
+const rscpEmsSetEmergencyPower = {
+	0: "NORMAL_GRID_MODE",
+	1: "EMERGENCY_MODE",
+	2: "ISLAND_NO_POWER_MODE",
+};
+const rscpEmsSetPowerMode = {
+	0: "NORMAL",
+	1: "IDLE",
+	2: "ENTLADEN",
+	3: "LADEN",
+	4: "NETZLADEN",
+};
+const rscpEmsGeneratorState = {
+	0x00: "IDLE",
+	0x01: "HEATUP",
+	0x02: "HEATUPDONE",
+	0x03: "STARTING",
+	0x04: "STARTINGPAUSE",
+	0x05: "RUNNING",
+	0x06: "STOPPING",
+	0x07: "STOPPED",
+	0x10: "RELAISCONTROLMODE",
+	0xFF: "NO_GENERATOR",
+};
 const rscpPmType = {
 	0: "UNDEFINED",
 	1: "ROOT",
@@ -148,44 +200,6 @@ const rscpPmActivePhases = {
 	6: "PHASE_011",
 	7: "PHASE_111",
 };
-const rscpEmsGeneratorState = {
-	0x00: "IDLE",
-	0x01: "HEATUP",
-	0x02: "HEATUPDONE",
-	0x03: "STARTING",
-	0x04: "STARTINGPAUSE",
-	0x05: "RUNNING",
-	0x06: "STOPPING",
-	0x07: "STOPPED",
-	0x10: "RELAISCONTROLMODE",
-	0xFF: "NO_GENERATOR",
-};
-const rscpEmsCouplingMode = {
-	0: "DC",
-	1: "DC_MULTIWR",
-	2: "AC",
-	3: "HYBRID",
-	4: "ISLAND",
-};
-const rscpEmsSetPowerMode = {
-	0: "NORMAL",
-	1: "IDLE",
-	2: "ENTLADEN",
-	3: "LADEN",
-	4: "NETZLADEN",
-};
-const rscpEmsEmergencyPowerStatus = {
-	0: "NOT_POSSIBLE",
-	1: "ACTIVE",
-	2: "NOT_ACTIVE",
-	3: "NOT_AVAILABLE",
-	4: "SWITCH_IN_ISLAND_STATE",
-};
-const rscpEmsSetEmergencyPower = {
-	0: "NORMAL_GRID_MODE",
-	1: "EMERGENCY_MODE",
-	2: "ISLAND_NO_POWER_MODE",
-};
 const rscpWbMode = {
 	0: "NONE",
 	128: "LOADING",
@@ -203,17 +217,21 @@ const rscpUmUpdateStatus = {
 };
 */
 
+
 // Assign enumerations to states:
 const commonStates = {
-	"RSCP.GENERAL_ERROR": { "states": rscpGeneralError },
-	"RSCP.AUTHENTICATION": { "states": rscpAuthLevel },
-	"BAT.GENERAL_ERROR": { "states": rscpGeneralError },
-	"BAT.TRAINING_MODE": { "states": rscpBatTrainingMode },
-	"PVI.TYPE": { "states": rscpPviType },
-	"PVI.SYSTEM_MODE": { "states": rscpPviSystemMode },
-	"PVI.POWER_MODE": { "states": rscpPviPowerMode },
-	"EMS.GENERAL_ERROR": { "states": rscpGeneralError },
-	"EMS.RETURN_CODE": { "states": rscpReturnCode },
+	"RSCP.GENERAL_ERROR": rscpGeneralError,
+	"RSCP.AUTHENTICATION": rscpAuthLevel,
+	"BAT.GENERAL_ERROR": rscpGeneralError,
+	"BAT.TRAINING_MODE": rscpBatTrainingMode,
+	"PVI.TYPE": rscpPviType,
+	"PVI.SYSTEM_MODE": rscpPviSystemMode,
+	"PVI.POWER_MODE": rscpPviPowerMode,
+	"EMS.GENERAL_ERROR": rscpGeneralError,
+	"EMS.RETURN_CODE": rscpReturnCode,
+	"EMS.COUPLING_MODE": rscpEmsCouplingMode,
+	"EMS.EMERGENCY_POWER_STATUS": rscpEmsEmergencyPowerStatus,
+	"EMS.IDLE_PERIOD_TYPE": rscpEmsIdlePeriodType,
 };
 // List of all writable states, with Mapping for response value handling.
 // type "*" means: apply to all types
@@ -241,6 +259,10 @@ const castToBoolean = [
 	"EMS.POWERSAVE_ENABLED",
 	"EMS.RES_POWERSAVE_ENABLED",
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED",
+	"EMS.hybridModeSupported",
+	"EMS.BATTERY_BEFORE_CAR_MODE",
+	"EMS.BATTERY_TO_CAR_MODE",
+	"EMS.EXT_SRC_AVAILABLE",
 ];
 // RSCP is sloppy concerning Timestamp - some UInt64 values must be converted:
 const castToTimestamp = [
@@ -249,6 +271,10 @@ const castToTimestamp = [
 // Adjust algebraic sign: e.g. discharge limit is sometimes positive, sometimes negative
 const negateValue = [
 	"EMS.USER_DISCHARGE_LIMIT",
+];
+// Adjust to percent (divide by 100):
+const percentValue = [
+	"EMS.DERATE_AT_PERCENT_VALUE",
 ];
 // For multiple values within one frame, a subchannel will be generated
 const multipleValue = [
@@ -277,6 +303,7 @@ const stringTags = [
 const ignoreTags = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
+	"EMS.SYS_SPEC_INDEX",
 	"BAT.UNDEFINED",
 	"BAT.INTERNAL_CURRENT_AVG30",
 	"BAT.INTERNAL_MTV_AVG30",
@@ -333,6 +360,8 @@ class E3dcRscp extends utils.Adapter {
 
 		// For processing inbound frames:
 		this.currentContainer = []; // array of (TagName, endPos), for (possibly nested) containers
+		this.sysSpecName = ""; // value name recorded for next value tag
+		this.idlePeriodType = 0; // recorded for following values
 		this.level1; // level below namespace, for INDEX tags
 		this.level2; // level below namespace/device, for ..._INDEX tags
 		this.level3; // level below namespace/device{/channel}, for multiple values, e.g. DCB_CELL_TEMPERATURE
@@ -431,7 +460,11 @@ class E3dcRscp extends utils.Adapter {
 		this.frame = Buffer.from([0xE3, 0xDC, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 	}
 
-	addTagtoFrame( tagCode, value ) {
+	addTagtoFrame( globalTagName, value = Object(0) ) {
+		if( !rscpTagCode[globalTagName] ) {
+			this.log.warn(`Unknown tag ${globalTagName} - ignored.`);
+		}
+		const tagCode = rscpTagCode[globalTagName];
 		const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
 		const buf1 = Buffer.alloc(1);
 		const buf2 = Buffer.alloc(2);
@@ -539,18 +572,18 @@ class E3dcRscp extends utils.Adapter {
 
 	queueAuthentication( ) {
 		this.clearFrame();
-		this.addTagtoFrame( rscpTagCode["TAG_RSCP_REQ_AUTHENTICATION"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_RSCP_AUTHENTICATION_USER"], this.config.portal_user );
-		this.addTagtoFrame( rscpTagCode["TAG_RSCP_AUTHENTICATION_PASSWORD"], this.config.portal_password );
+		this.addTagtoFrame( "TAG_RSCP_REQ_AUTHENTICATION" );
+		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_USER", this.config.portal_user );
+		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_PASSWORD", this.config.portal_password );
 		this.pushFrame();
 	}
 
 	queueBatProbe( probes ) {
 		for( let batIndex = 0; batIndex < probes; batIndex++ ) {
 			this.clearFrame();
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DATA"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_INDEX"], batIndex );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_ASOC"], "" );
+			this.addTagtoFrame( "TAG_BAT_REQ_DATA" );
+			this.addTagtoFrame( "TAG_BAT_INDEX", batIndex );
+			this.addTagtoFrame( "TAG_BAT_REQ_ASOC" );
 			this.pushFrame();
 		}
 	}
@@ -558,36 +591,36 @@ class E3dcRscp extends utils.Adapter {
 	queueRequestBatData() {
 		for( let batIndex = 0; batIndex <= this.maxIndex["BAT"]; batIndex++ ) {
 			this.clearFrame();
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DATA"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_INDEX"], batIndex );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_USABLE_CAPACITY"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_USABLE_REMAINING_CAPACITY"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_ASOC"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RSOC_REAL"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_BAT_VOLTAGE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_CHARGE_CURRENT"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_EOD_VOLTAGE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_DISCHARGE_CURRENT"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_CHARGE_CYCLES"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TERMINAL_VOLTAGE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_READY_FOR_SHUTDOWN"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TRAINING_MODE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_FCC"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_RC"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INFO"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_COUNT"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DEVICE_NAME"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DEVICE_STATE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_SPECIFICATION"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_INTERNALS"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_USE_TIME"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_TOTAL_DISCHARGE_TIME"], "" );
+			this.addTagtoFrame( "TAG_BAT_REQ_DATA" );
+			this.addTagtoFrame( "TAG_BAT_INDEX", batIndex );
+			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_CAPACITY" );
+			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY" );
+			this.addTagtoFrame( "TAG_BAT_REQ_ASOC" );
+			this.addTagtoFrame( "TAG_BAT_REQ_RSOC_REAL" );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_BAT_VOLTAGE" );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_CHARGE_CURRENT" );
+			this.addTagtoFrame( "TAG_BAT_REQ_EOD_VOLTAGE" );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT" );
+			this.addTagtoFrame( "TAG_BAT_REQ_CHARGE_CYCLES" );
+			this.addTagtoFrame( "TAG_BAT_REQ_TERMINAL_VOLTAGE" );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE" );
+			this.addTagtoFrame( "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE" );
+			this.addTagtoFrame( "TAG_BAT_REQ_READY_FOR_SHUTDOWN" );
+			this.addTagtoFrame( "TAG_BAT_REQ_TRAINING_MODE" );
+			this.addTagtoFrame( "TAG_BAT_REQ_FCC" );
+			this.addTagtoFrame( "TAG_BAT_REQ_RC" );
+			this.addTagtoFrame( "TAG_BAT_REQ_INFO" );
+			this.addTagtoFrame( "TAG_BAT_REQ_DCB_COUNT" );
+			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_NAME" );
+			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_STATE" );
+			this.addTagtoFrame( "TAG_BAT_REQ_SPECIFICATION" );
+			this.addTagtoFrame( "TAG_BAT_REQ_INTERNALS" );
+			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_USE_TIME" );
+			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME" );
 			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT#${batIndex}.DCB`]; dcbIndex++ ) {
-				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES"], dcbIndex );
-				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES"], dcbIndex );
-				this.addTagtoFrame( rscpTagCode["TAG_BAT_REQ_DCB_INFO"], dcbIndex );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES", dcbIndex );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", dcbIndex );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", dcbIndex );
 			}
 			this.pushFrame();
 		}
@@ -596,11 +629,11 @@ class E3dcRscp extends utils.Adapter {
 	queuePviProbe( probes ) {
 		for( let pviIndex = 0; pviIndex < probes; pviIndex++ ) {
 			this.clearFrame();
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_DATA"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_INDEX"], pviIndex );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_AC_MAX_PHASE_COUNT"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_TEMPERATURE_COUNT"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_DC_MAX_STRING_COUNT"], "" );
+			this.addTagtoFrame( "TAG_PVI_REQ_DATA" );
+			this.addTagtoFrame( "TAG_PVI_INDEX", pviIndex );
+			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT" );
+			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT" );
+			this.addTagtoFrame( "TAG_PVI_REQ_DC_MAX_STRING_COUNT" );
 			this.pushFrame();
 		}
 	}
@@ -608,37 +641,37 @@ class E3dcRscp extends utils.Adapter {
 	queueRequestPviData() {
 		for( let pviIndex = 0; pviIndex <= this.maxIndex["PVI"]; pviIndex++ ) {
 			this.clearFrame();
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_DATA"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_INDEX"], pviIndex );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_TEMPERATURE_COUNT"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_TYPE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_SERIAL_NUMBER"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_VERSION"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_ON_GRID"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_STATE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_LAST_ERROR"], "" );
-			// this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_COS_PHI"], "" ); // always returns data type ERROR
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_VOLTAGE_MONITORING"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_POWER_MODE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_SYSTEM_MODE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_FREQUENCY_UNDER_OVER"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_AC_MAX_PHASE_COUNT"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_MAX_TEMPERATURE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_MIN_TEMPERATURE"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_AC_MAX_APPARENTPOWER"], "" );
-			this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_DEVICE_STATE"], "" );
+			this.addTagtoFrame( "TAG_PVI_REQ_DATA" );
+			this.addTagtoFrame( "TAG_PVI_INDEX", pviIndex );
+			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT" );
+			this.addTagtoFrame( "TAG_PVI_REQ_TYPE" );
+			this.addTagtoFrame( "TAG_PVI_REQ_SERIAL_NUMBER" );
+			this.addTagtoFrame( "TAG_PVI_REQ_VERSION" );
+			this.addTagtoFrame( "TAG_PVI_REQ_ON_GRID" );
+			this.addTagtoFrame( "TAG_PVI_REQ_STATE" );
+			this.addTagtoFrame( "TAG_PVI_REQ_LAST_ERROR" );
+			// this.addTagtoFrame( "TAG_PVI_REQ_COS_PHI" ); // always returns data type ERROR
+			this.addTagtoFrame( "TAG_PVI_REQ_VOLTAGE_MONITORING" );
+			this.addTagtoFrame( "TAG_PVI_REQ_POWER_MODE" );
+			this.addTagtoFrame( "TAG_PVI_REQ_SYSTEM_MODE" );
+			this.addTagtoFrame( "TAG_PVI_REQ_FREQUENCY_UNDER_OVER" );
+			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT" );
+			this.addTagtoFrame( "TAG_PVI_REQ_MAX_TEMPERATURE" );
+			this.addTagtoFrame( "TAG_PVI_REQ_MIN_TEMPERATURE" );
+			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_APPARENTPOWER" );
+			this.addTagtoFrame( "TAG_PVI_REQ_DEVICE_STATE" );
 			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI#${pviIndex}.AC_MAX_PHASE`]; phaseIndex++) {
 				for( const tag of phaseTags ) {
-					this.addTagtoFrame( rscpTagCode[`TAG_PVI_REQ_${tag}`], phaseIndex );
+					this.addTagtoFrame( `TAG_PVI_REQ_${tag}`, phaseIndex );
 				}
 			}
 			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI#${pviIndex}.DC_MAX_STRING`]; stringIndex++) {
 				for( const tag of stringTags ) {
-					this.addTagtoFrame( rscpTagCode[`TAG_PVI_REQ_${tag}`], stringIndex );
+					this.addTagtoFrame( `TAG_PVI_REQ_${tag}`, stringIndex );
 				}
 			}
 			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI#${pviIndex}.TEMPERATURE`]; tempIndex++) {
-				this.addTagtoFrame( rscpTagCode["TAG_PVI_REQ_TEMPERATURE"], tempIndex );
+				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", tempIndex );
 			}
 			this.pushFrame();
 		}
@@ -646,13 +679,56 @@ class E3dcRscp extends utils.Adapter {
 
 	queueRequestEmsData() {
 		this.clearFrame();
-		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_POWER_PV"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_POWER_BAT"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_POWER_HOME"], "" );
-		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_POWER_GRID"], "" );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS" );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_POWER_SETTINGS" );
+		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE" );
+		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_TO_CAR_MODE" );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_PV" );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_BAT" );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_HOME" );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_GRID" );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_ADD" );
+		this.addTagtoFrame( "TAG_EMS_REQ_BAT_SOC" );
+		this.addTagtoFrame( "TAG_EMS_REQ_AUTARKY" );
+		this.addTagtoFrame( "TAG_EMS_REQ_SELF_CONSUMPTION" );
+		this.addTagtoFrame( "TAG_EMS_REQ_COUPLING_MODE" );
+		this.addTagtoFrame( "TAG_EMS_REQ_BALANCED_PHASES" );
+		this.addTagtoFrame( "TAG_EMS_REQ_INSTALLED_PEAK_POWER" );
+		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE" );
+		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_POWER_VALUE" );
+		this.addTagtoFrame( "TAG_EMS_REQ_USED_CHARGE_LIMIT" );
+		this.addTagtoFrame( "TAG_EMS_REQ_USER_CHARGE_LIMIT" );
+		this.addTagtoFrame( "TAG_EMS_REQ_BAT_CHARGE_LIMIT" );
+		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_CHARGE_LIMIT" );
+		this.addTagtoFrame( "TAG_EMS_REQ_USED_DISCHARGE_LIMIT" );
+		this.addTagtoFrame( "TAG_EMS_REQ_USER_DISCHARGE_LIMIT" );
+		this.addTagtoFrame( "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT" );
+		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT" );
+		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER" );
+		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER" );
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS" );
+		this.addTagtoFrame( "TAG_EMS_REQ_MODE" );
+		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE" );
+		// this.addTagtoFrame( "TAG_EMS_REQ_GET_GENERATOR_STATE" ); // always returns ERROR data type
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS" );
+		this.addTagtoFrame( "TAG_EMS_REQ_STORED_ERRORS" );
+		// this.addTagtoFrame( "TAG_EMS_REQ_ERROR_BUZZER_ENABLED" ); // always returns ERROR data type
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_ALL" );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_SOLAR" );
+		this.addTagtoFrame( "TAG_EMS_REQ_ALIVE" );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_MANUAL_CHARGE" );
+		this.addTagtoFrame( "TAG_EMS_REQ_STATUS" );
 		this.pushFrame();
+	}
+
+	queueRequestEpData() {
 		this.clearFrame();
-		this.addTagtoFrame( rscpTagCode["TAG_EMS_REQ_GET_POWER_SETTINGS"], "" );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH" );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_GRID_CONNECTED" );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_ISLAND_GRID" );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_POSSIBLE" );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_INVALID_STATE" );
 		this.pushFrame();
 	}
 
@@ -662,7 +738,7 @@ class E3dcRscp extends utils.Adapter {
 		const id = `${namespace}.${tagname}`;
 		if( setTags[id] ) {
 			this.clearFrame();
-			this.addTagtoFrame( encodeRscpTag(setTags[id]), "" );
+			this.addTagtoFrame( encodeRscpTag(setTags[id]) );
 			this.addTagtoFrame( encodeRscpTag(id), value );
 			this.pushFrame();
 		} else {
@@ -695,12 +771,18 @@ class E3dcRscp extends utils.Adapter {
 		const tagCode = buffer.readUInt32LE(pos);
 		const typeCode = buffer.readUInt8(pos+4);
 		const len = buffer.readUInt16LE(pos+5);
+		if( !rscpTag[tagCode] ) {
+			this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}`);
+			return 7+len;
+		}
+		const nameSpace = rscpTag[tagCode].NameSpace;
+		const tagName = rscpTag[tagCode].TagName;
 		const typeName = rscpType[typeCode];
 		let typeNameNew = typeName; // type name will be changed under certain conditions; see below
 		let value;
 		switch( typeName  ) {
 			case "Container":
-				this.currentContainer.push({tag: rscpTag[tagCode].TagName, end: pos+7+len});
+				this.currentContainer.push({tag: tagName, end: pos+7+len});
 				return 7;
 			case "CString":
 			case "BitField":
@@ -741,16 +823,16 @@ class E3dcRscp extends utils.Adapter {
 				value = roundForReadability( buffer.readFloatLE(pos+7) );
 				break;
 			case "Timestamp":
-				value = Math.round(buffer.readBigUInt64LE(pos+7)/1000); // setState does not accept BigInt, so convert to seconds
+				value = Math.round(Number(buffer.readBigUInt64LE(pos+7))/1000); // setState does not accept BigInt, so convert to seconds
 				break;
 			case "Error":
 				// special case: PVI probe with out of range index results in ERROR response - adjust maxIndex
 				if( tagCode == rscpTagCode["TAG_PVI_REQ_DATA"] && this.level1 ) {
 					const i = Number(this.level1.replace("PVI#",""));
 					this.maxIndex["PVI"] = this.maxIndex["PVI"] ? Math.max( this.maxIndex["PVI"], i-1) : i-1;
-				} else {
+				} else if( ! ignoreTags.includes(`${nameSpace}.${tagName}`) ) {
 					value = buffer.readUInt32LE(pos+7);
-					this.log.warn( `Received data type ERROR with value ${value} - tag ${rscpTag[tagCode].TagName}` );
+					this.log.warn( `Received data type ERROR with value ${value} - tag ${rscpTag[tagCode].GlobalTagName}` );
 				}
 				return 7+len;
 			case "None":
@@ -761,12 +843,6 @@ class E3dcRscp extends utils.Adapter {
 				value = null;
 				return 7+len;
 		}
-		if( !rscpTag[tagCode] ) {
-			this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}`);
-			return 7+len;
-		}
-		const nameSpace = rscpTag[tagCode].NameSpace;
-		const tagName = rscpTag[tagCode].TagName;
 		let tagNameNew = tagName; // tag name will be changed under certain conditions; see below
 		if( ignoreTags.includes(`${nameSpace}.${tagName}`) ) {
 			this.log.silly(`Ignoring tag: ${nameSpace}.${tagName}`);
@@ -793,6 +869,15 @@ class E3dcRscp extends utils.Adapter {
 			this.maxIndex[i] = this.maxIndex[i] ? Math.max( this.maxIndex[i], value) : value;
 			this.level2 = `${tagName.replace("_INDEX","")}#${value}`;
 			this.level3 = -1;
+		} else if( tagName == "SYS_SPEC_NAME" ) {
+			// Just record the name for value coming with next tag:
+			this.sysSpecName = value;
+		} else if( tagName == "IDLE_PERIOD_TYPE" ) {
+			// Record the name for values coming with next tags:
+			this.idlePeriodType = value;
+			this.level1 = this.idlePeriodType ? "IDLE_PERIODS_DISCHARGE" : "IDLE_PERIODS_CHARGE";
+		} else if( tagName == "IDLE_PERIOD_DAY" ) {
+			this.level2 = `${value.toString().padStart(2,"0")}-${dayOfWeek[value]}`;
 		} else {
 			// Take note of explicit maximum index for creating complete request frames:
 			if( tagName.endsWith("_COUNT") ) {
@@ -803,9 +888,28 @@ class E3dcRscp extends utils.Adapter {
 				// @ts-ignore
 				this.level3++;
 			}
+			// SYS_SPEC_VALUE_INT - use the name recorded before:
+			if( tagName == "SYS_SPEC_VALUE_INT" ) {
+				tagNameNew = this.sysSpecName;
+				this.sysSpecName = "";
+			}
 			// Container=(INDEX, VAULE) - use container name for value:
 			if( tagName == "VALUE" && this.currentContainer.length > 1 ) {
 				tagNameNew  = `${this.currentContainer.slice(-1)[0].tag}`;
+			}
+			if( tagName == "IDLE_PERIOD_HOUR" ) {
+				if( this.currentContainer.slice(-1)[0].tag == "IDLE_PERIOD_START" ) {
+					tagNameNew = "START_HOUR";
+				} else if( this.currentContainer.slice(-1)[0].tag == "IDLE_PERIOD_END" ) {
+					tagNameNew = "END_HOUR";
+				}
+			}
+			if( tagName == "IDLE_PERIOD_MINUTE" ) {
+				if( this.currentContainer.slice(-1)[0].tag == "IDLE_PERIOD_START" ) {
+					tagNameNew = "START_MINUTE";
+				} else if( this.currentContainer.slice(-1)[0].tag == "IDLE_PERIOD_END" ) {
+					tagNameNew = "END_MINUTE";
+				}
 			}
 			// Handle mapping between "read" tag names and "write" tag names:
 			const i = `${nameSpace}.${tagName}`;
@@ -832,6 +936,10 @@ class E3dcRscp extends utils.Adapter {
 			if( negateValue.includes(i) ) {
 				value = -value;
 			}
+			// Adjust sto percent value where neccessary:
+			if( percentValue.includes(i) ) {
+				value = value * 100;
+			}
 			// Concatenate target object id, inserting device/channel levels into path (if so):
 			let id = nameSpace;
 			id += (this.level1 != "") ? `.${this.level1}` : "";
@@ -857,7 +965,7 @@ class E3dcRscp extends utils.Adapter {
 					role: oRole,
 					read: true,
 					write: oWrite,
-					states: (commonStates[oKey] ? commonStates[oKey].states : ""),
+					states: (commonStates[oKey] ? commonStates[oKey] : ""),
 				},
 				native: {},
 			}, () => {
@@ -869,6 +977,7 @@ class E3dcRscp extends utils.Adapter {
 
 	processFrame( buffer ) {
 		this.currentContainer = [{tag: "NO_CONTAINER", end: buffer.length}];
+		this.sysSpecName = "";
 		this.level1 = ""; // reset "INDEX" tag
 		this.level2 = ""; // reset "..._INDEX" tag
 		this.level3 = -1; // reset multiple value counter
@@ -930,6 +1039,7 @@ class E3dcRscp extends utils.Adapter {
 				this.initChannel();
 				dataPollingTimer = setInterval(() => {
 					this.queueRequestEmsData();
+					this.queueRequestEpData();
 					this.queueRequestBatData();
 					this.queueRequestPviData();
 					this.sendNextFrame();
@@ -968,6 +1078,14 @@ class E3dcRscp extends utils.Adapter {
 			common: {
 				name: systemDictionary["EMS"][this.language],
 				role: "energy.management",
+			},
+			native: {},
+		});
+		await this.setObjectNotExistsAsync("EP", {
+			type: "device",
+			common: {
+				name: systemDictionary["EP"][this.language],
+				role: "emergency.power",
 			},
 			native: {},
 		});
@@ -1134,7 +1252,7 @@ function parseRscpToken ( buffer, pos, text ) {
 			text.content += `value: ${buffer.readFloatLE(pos+7)} `;
 			return 7+len;
 		case "Timestamp":
-			text.content += `seconds: ${buffer.readUInt64LE(pos+7)} - nseconds: ${buffer.readUInt32LE(pos+7+8)} `;
+			text.content += `seconds: ${buffer.readBigUInt64LE(pos+7)} - nseconds: ${buffer.readUInt32LE(pos+7+8)} `;
 			return 7+len;
 		default:
 			if( len > 0 ) text.content += `${dumpRscpFrame(buffer.slice(pos+7,pos+7+len))} `;
