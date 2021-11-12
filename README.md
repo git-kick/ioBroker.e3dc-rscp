@@ -245,6 +245,11 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.8-beta
+(git-kick) 
+* Reworked INDEX handling (due to bug concerning PVI#0/#1 data assignment)
+* resolved UNDEFINED names
+* excluded PVI_COS_PHI (always returns ERROR tag)
 ### 0.0.7-beta
 (git-kick) 
 * Complete coverage of INV namespace, including multiple strings and phases
