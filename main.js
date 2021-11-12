@@ -680,7 +680,8 @@ class E3dcRscp extends utils.Adapter {
 	queueRequestEmsData() {
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS" );
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
+		this.pushFrame();
+		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_POWER_SETTINGS" );
 		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE" );
 		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_TO_CAR_MODE" );
@@ -719,6 +720,9 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_ALIVE" );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_MANUAL_CHARGE" );
 		this.addTagtoFrame( "TAG_EMS_REQ_STATUS" );
+		this.pushFrame();
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
 		this.pushFrame();
 	}
 
@@ -890,6 +894,7 @@ class E3dcRscp extends utils.Adapter {
 			}
 			// SYS_SPEC_VALUE_INT - use the name recorded before:
 			if( tagName == "SYS_SPEC_VALUE_INT" ) {
+				this.level2 = "SYS_SPECS";
 				tagNameNew = this.sysSpecName;
 				this.sysSpecName = "";
 			}
@@ -1003,6 +1008,11 @@ class E3dcRscp extends utils.Adapter {
 			i += this.processDataToken( buffer, 18+i );
 			if( i >= this.currentContainer.slice(-1)[0].end ) {
 				this.currentContainer.pop();
+				if( this.currentContainer.length == 1 ) {
+					this.level1 = "";
+					this.level2 = "";
+					this.level3 = -1;
+				}
 			}
 		}
 		if( buffer.length < 18 + dataLength + (hasCrc ? 4 : 0) ) {
