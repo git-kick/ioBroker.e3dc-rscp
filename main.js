@@ -303,6 +303,8 @@ const stringTags = [
 const ignoreTags = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
+	"EMS.MANUAL_CHARGE_START_COUNTER", // invalid Int64 value
+	"EMS.MANUAL_CHARGE_LASTSTART", // invalid Timestamp value
 	"EMS.SYS_SPEC_INDEX",
 	"BAT.UNDEFINED",
 	"BAT.INTERNAL_CURRENT_AVG30",
