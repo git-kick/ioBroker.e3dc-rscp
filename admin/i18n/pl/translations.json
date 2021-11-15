@@ -142,6 +142,7 @@
     "RSOC_REAL": "Obliczone rzeczywiste SOC [%]",
     "SELF_CONSUMPTION": "Zużycie własne [%]",
     "SERIAL_NUMBER": "Numer seryjny",
+    "SET_POWER": "Moc zestawu [W]",
     "SPECIFIED_CAPACITY": "Określona pojemność [Wh]",
     "SPECIFIED_CHARGE_POWER": "Określona moc ładowania [W]",
     "SPECIFIED_DISCHARGE_POWER": "Określona moc rozładowania [W]",

@@ -142,6 +142,7 @@
     "RSOC_REAL": "SOC reale calcolato [ % ]",
     "SELF_CONSUMPTION": "Autoconsumo [ % ]",
     "SERIAL_NUMBER": "Numero di serie",
+    "SET_POWER": "Imposta potenza [W]",
     "SPECIFIED_CAPACITY": "Capacità specificata [Wh]",
     "SPECIFIED_CHARGE_POWER": "Potenza di carica specificata [W]",
     "SPECIFIED_DISCHARGE_POWER": "Potenza di scarica specificata [W]",
