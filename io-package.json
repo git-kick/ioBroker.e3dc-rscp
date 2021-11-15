@@ -1,11 +1,11 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.8-beta",
+        "version": "0.0.8-beta2",
         "news": {
-            "0.0.7-beta": {
-                "en": "Index handling revised",
-                "de": "Index-Behandlung überarbeitet",
+            "0.0.8-beta2": {
+                "en": "REQ_SET_POWER trial",
+                "de": "REQ_SET_POWER trial",
                 "ru": "Пересмотрена обработка индексов",
                 "pt": "Tratamento revisto do Índice",
                 "nl": "Indexafhandeling herzien",
