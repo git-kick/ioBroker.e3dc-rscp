@@ -130,7 +130,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   <tr>
     <td>EP</td>
     <td>Emergency Power</td>
-    <td>not supported (yet)</td>
+    <td>complete</td>
   </tr>
   <tr>
     <td>SYS</td>
@@ -186,6 +186,18 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>WEATHER_REGULATED_CHARGE_ENABLED</td>
     <td>boolean</td>
     <td>Weather regulated charging is enabled</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>MODE</td>
+    <td>states</td>
+    <td>Charging mode can be set</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>SET_POWER</td>
+    <td>number</td>
+    <td>Charging power can be set</td>
   </tr>
 </table> 
 
@@ -245,6 +257,14 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.9-beta
+(git-kick) 
+* EMS: SET_POWER, first implementation for setting MODE and VALUE
+* EP: values are in a separate device now
+* ASOC / State of Health (SOH) German naming: "Alterungszustand"
+* ERRORs will be decoded to short text
+* WARN messages resulting from BAT and PVI probing are now filtered (will not show up anymore) 
+* Refactoring: recursive parser for incoming data
 ### 0.0.8-beta
 (git-kick) 
 * Reworked INDEX handling (due to bug concerning PVI#0/#1 data assignment)
@@ -268,20 +288,6 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * Reconnect after end of TCP connection
 * Fixed message queue memory leak
 * Reworked sample code
-### 0.0.4-alpha
-(git-kick) 
-* Updated README and split off developer manual (README-dev)
-* enabled automatic npm releases
-### 0.0.3-alpha
-(git-kick) 
-* (git-kick) CI up and running (npm run test:integration, github test-and-release.yml)
-### 0.0.2-alpha
-(git-kick) 
-* five settable parameters
-* refactored rscpConst and specialTags (rules)
-### 0.0.1-alpha
-(git-kick) 
-* initial release
 
 <a name="lic"></a>
 ## License

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 "use strict";
 
 const Sentry = require("@sentry/node");
@@ -240,7 +239,7 @@ const rscpUmUpdateStatus = {
 
 
 // Assign enumerations to states:
-const mapIdToCommonStates = {
+const commonStates = {
 	"RSCP.GENERAL_ERROR": rscpGeneralError,
 	"RSCP.AUTHENTICATION": rscpAuthLevel,
 	"BAT.GENERAL_ERROR": rscpGeneralError,
@@ -258,7 +257,7 @@ const mapIdToCommonStates = {
 // List of writable states, with Mapping for response value handling.
 // Key is returned_tag; value is (type_pattern: target_state)
 // type "*" means: apply to all types
-const mapReceivedIdToState = {
+const targetStates = {
 	"EMS.RES_POWERSAVE_ENABLED": { "*": "EMS.POWERSAVE_ENABLED" },
 	"EMS.RES_WEATHER_REGULATED_CHARGE_ENABLED": { "*": "EMS.RETURN_CODE" },
 	"EMS.RES_MAX_CHARGE_POWER": { "*": "EMS.RETURN_CODE" },
@@ -270,7 +269,7 @@ const mapReceivedIdToState = {
 // List of all writable states
 // For standard cases, define how to send a SET to E3/DC
 // key is state id; value is [container_tag, setter_tag]
-const mapChangedIdToSetTags = {
+const setTags = {
 	"EMS.POWERSAVE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWERSAVE_ENABLED"],
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS"],
 	"EMS.MAX_CHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_CHARGE_POWER"],
@@ -282,7 +281,7 @@ const mapChangedIdToSetTags = {
 	"EMS.SET_POWER": [],
 };
 // RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
-const castToBooleanIds = [
+const castToBoolean = [
 	"EMS.POWERSAVE_ENABLED",
 	"EMS.RES_POWERSAVE_ENABLED",
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED",
@@ -292,42 +291,42 @@ const castToBooleanIds = [
 	"EMS.EXT_SRC_AVAILABLE",
 ];
 // RSCP is sloppy concerning Timestamp - some UInt64 values must be converted:
-const castToTimestampIds = [
+const castToTimestamp = [
 	"BAT.DCB_LAST_MESSAGE_TIMESTAMP",
 ];
 // Adjust algebraic sign: e.g. discharge limit is sometimes positive, sometimes negative
-const negateValueIds = [
+const negateValue = [
 	"EMS.USER_DISCHARGE_LIMIT",
 ];
 // Adjust to percent (divide by 100):
-const percentValueIds = [
+const percentValue = [
 	"EMS.DERATE_AT_PERCENT_VALUE",
 ];
 // For multiple values within one frame, a subchannel will be generated
-const multipleValueIds = [
+const multipleValue = [
 	"BAT.DCB_CELL_TEMPERATURE",
 	"BAT.DCB_CELL_VOLTAGE",
 	"PVI.RELEASE",
 ];
 // Some indexed tags are grouped within a channel
-const phaseIds = [
-	"PVI.AC_POWER",
-	"PVI.AC_VOLTAGE",
-	"PVI.AC_CURRENT",
-	"PVI.AC_APPARENTPOWER",
-	"PVI.AC_REACTIVEPOWER",
-	"PVI.AC_ENERGY_ALL",
-	"PVI.AC_ENERGY_GRID_CONSUMPTION",
+const phaseTags = [
+	"AC_POWER",
+	"AC_VOLTAGE",
+	"AC_CURRENT",
+	"AC_APPARENTPOWER",
+	"AC_REACTIVEPOWER",
+	"AC_ENERGY_ALL",
+	"AC_ENERGY_GRID_CONSUMPTION",
 ];
-const stringIds = [
-	"PVI.DC_POWER",
-	"PVI.DC_VOLTAGE",
-	"PVI.DC_CURRENT",
-	"PVI.DC_STRING_ENERGY_ALL",
+const stringTags = [
+	"DC_POWER",
+	"DC_VOLTAGE",
+	"DC_CURRENT",
+	"DC_STRING_ENERGY_ALL",
 ];
 // Some of the return values we do not want to see as (missing) states:
 // "INDEX" and "..._INDEX" tags are automatically treated as subchannels, no need to list them here.
-const ignoreIds = [
+const ignoreTags = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
 	"EMS.MANUAL_CHARGE_START_COUNTER", // invalid Int64 value
@@ -345,10 +344,10 @@ const ignoreIds = [
 ];
 // Some of the INDEX values are redundant and can be safely ignored:
 // Listed here are containers which contain redundant INDEX tags.
-const ignoreIndexIds = [
-	"PVI.AC_MAX_APPARENTPOWER",
-	"PVI.MIN_TEMPERATURE",
-	"PVI.MAX_TEMPERATURE",
+const ignoreIndexTags = [
+	"AC_MAX_APPARENTPOWER",
+	"MIN_TEMPERATURE",
+	"MAX_TEMPERATURE",
 ];
 
 // Encryption setup for E3/DC RSCP
@@ -365,8 +364,6 @@ const KEY_SIZE = 32;
  * Created with @iobroker/create-adapter v1.31.0
  */
 const utils = require("@iobroker/adapter-core");
-const { resourceLimits } = require("worker_threads");
-const { type } = require("os");
 let dataPollingTimer = null;
 class E3dcRscp extends utils.Adapter {
 
@@ -390,7 +387,12 @@ class E3dcRscp extends utils.Adapter {
 		this.queue = []; // outbound message queue
 
 		// For processing inbound frames:
+		this.currentContainer = []; // array of (TagName, endPos), for (possibly nested) containers
+		this.sysSpecName = ""; // value name recorded for next value tag
 		this.idlePeriodType = 0; // recorded for following values
+		this.level1; // level below namespace, for INDEX tags
+		this.level2; // level below namespace/device, for ..._INDEX tags
+		this.level3; // level below namespace/device{/channel}, for multiple values, e.g. DCB_CELL_TEMPERATURE
 		this.maxIndex = {}; // observed max. indexes, e.g. BAT.INDEX, DCB_COUNT etc.
 
 		// For probing device count:
@@ -423,10 +425,10 @@ class E3dcRscp extends utils.Adapter {
 		// Initial authentication frame:
 		this.queueRscpAuthentication();
 		// Find out number of BAT units:
-		this.log.debug(`Probing for BAT units - 0..${this.batProbes-1}.`);
+		this.log.warn(`Probing for BAT units - up to ${this.batProbes} messages about received ERROR may follow (just ignore them).`);
 		this.queueBatProbe(this.batProbes);
 		// Find out number of PVI units and sensors:
-		this.log.debug(`Probing for PVI units - 0..${this.pviProbes-1}.`);
+		this.log.warn(`Probing for PVI units - up to ${this.pviProbes} messages about received ERROR may follow (just ignore them).`);
 		this.queuePviProbe(this.pviProbes);
 
 		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
@@ -488,12 +490,12 @@ class E3dcRscp extends utils.Adapter {
 		this.frame = Buffer.from([0xE3, 0xDC, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 	}
 
-	addTagtoFrame( tag, value = Object(0) ) {
-		if( !rscpTagCode[tag] ) {
-			this.log.warn(`Unknown tag ${tag} with value ${value} - cannot add to frame.`);
+	addTagtoFrame( globalTagName, value = Object(0) ) {
+		if( !rscpTagCode[globalTagName] ) {
+			this.log.warn(`Unknown tag ${globalTagName} with value ${value} - cannot add to frame.`);
 			return;
 		}
-		const tagCode = rscpTagCode[tag];
+		const tagCode = rscpTagCode[globalTagName];
 		const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
 		const buf1 = Buffer.alloc(1);
 		const buf2 = Buffer.alloc(2);
@@ -684,13 +686,13 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_APPARENTPOWER" );
 			this.addTagtoFrame( "TAG_PVI_REQ_DEVICE_STATE" );
 			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI#${pviIndex}.AC_MAX_PHASE`]; phaseIndex++) {
-				for( const id of phaseIds ) {
-					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, phaseIndex );
+				for( const tag of phaseTags ) {
+					this.addTagtoFrame( `TAG_PVI_REQ_${tag}`, phaseIndex );
 				}
 			}
 			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI#${pviIndex}.DC_MAX_STRING`]; stringIndex++) {
-				for( const id of stringIds ) {
-					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, stringIndex );
+				for( const tag of stringTags ) {
+					this.addTagtoFrame( `TAG_PVI_REQ_${tag}`, stringIndex );
 				}
 			}
 			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI#${pviIndex}.TEMPERATURE`]; tempIndex++) {
@@ -775,10 +777,10 @@ class E3dcRscp extends utils.Adapter {
 	queueSetValue( globalId, value ) {
 		this.log.info( `queueValue( ${globalId}, ${value} )`);
 		const id = globalId.match("^[^.]+[.][^.]+[.](.*)")[1];
-		if( mapChangedIdToSetTags[id] && mapChangedIdToSetTags[id].length == 2 ) {
+		if( setTags[id] && setTags[id].length == 2 ) {
 			this.clearFrame();
-			this.addTagtoFrame( mapChangedIdToSetTags[id][0] );
-			this.addTagtoFrame( mapChangedIdToSetTags[id][1], value );
+			this.addTagtoFrame( setTags[id][0] );
+			this.addTagtoFrame( setTags[id][1], value );
 			this.pushFrame();
 		} else {
 			this.log.warn( `Don't know how to queue ${id}`);
@@ -806,84 +808,226 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	// Parse flat TLV into data tree with (tag, type, content) nodes.
-	// For container: include content by recursive descent.
-	// Note that type is not always the same as specified in official tag list:
-	// e.g. TAG_BAT_DATA (usually a container) may carry just an Error value.
-	parseTlv( buffer, start, end ) {
-		const tree = [];
-		while( start < end ) {
-			const tagCode = buffer.readUInt32LE(start);
-			const typeCode = buffer.readUInt8(start+4);
-			const len = buffer.readUInt16LE(start+5);
-			const typeName = rscpType[typeCode];
-			if( !rscpTag[tagCode] ) {
-				this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}`);
-			} else if( typeName == "Container") {
-				tree.push({ "tag": tagCode, "type": typeCode, "content": this.parseTlv( buffer, start+7, start+7+len ) });
-			} else {
-				let value = null;
-				switch( typeName  ) {
-					case "CString":
-					case "BitField":
-					case "ByteArray":
-						value = buffer.toString("utf8",start+7,start+7+len);
-						break;
-					case "Char8":
-						value = buffer.readInt8(start+7);
-						break;
-					case "UChar8":
-						value = buffer.readUInt8(start+7);
-						break;
-					case "Bool":
-						value = (buffer.readUInt8(start+7) != 0);
-						break;
-					case "Int16":
-						value = buffer.readInt16LE(start+7);
-						break;
-					case "UInt16":
-						value = buffer.readUInt16LE(start+7);
-						break;
-					case "Int32":
-						value = buffer.readInt32LE(start+7);
-						break;
-					case "UInt32":
-						value = buffer.readUInt32LE(start+7);
-						break;
-					case "Int64":
-						value = buffer.readBigInt64LE(start+7).toString(); // setState does not accept BigInt, so use string representation
-						break;
-					case "UInt64":
-						value = buffer.readBigUInt64LE(start+7).toString(); // setState does not accept BigInt, so use string representation
-						break;
-					case "Double64":
-						value = roundForReadability( buffer.readDoubleLE(start+7) );
-						break;
-					case "Float32":
-						value = roundForReadability( buffer.readFloatLE(start+7) );
-						break;
-					case "Timestamp":
-						value = Math.round(Number(buffer.readBigUInt64LE(start+7))/1000); // setState does not accept BigInt, so convert to seconds
-						break;
-					case "Error":
-						value = buffer.readUInt32LE(start+7);
-						break;
-					case "None":
-						if( len > 0 ) this.log.warn( `Received data type NONE with data length = ${len} - tagCode 0x${tagCode.toString(16)}` );
-						break;
-					default:
-						this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(start,start+7+len) )}` );
-						value = null;
-				}
-				tree.push({ "tag": tagCode, "type": typeCode, "content": value });
-			}
-			start += 7+len;
+	processDataToken( buffer, pos ) {
+		const tagCode = buffer.readUInt32LE(pos);
+		const typeCode = buffer.readUInt8(pos+4);
+		const len = buffer.readUInt16LE(pos+5);
+		if( !rscpTag[tagCode] ) {
+			this.log.warn(`Unknown tag: tagCode=0x${tagCode.toString(16)}, len=${len}, typeCode=0x${typeCode.toString(16)}`);
+			return 7+len;
 		}
-		return tree;
+		const nameSpace = rscpTag[tagCode].NameSpace;
+		const tagName = rscpTag[tagCode].TagName;
+		let tagNameNew = tagName; // tag name will be changed under certain conditions; see below
+		const typeName = rscpType[typeCode];
+		let typeNameNew = typeName; // type name will be changed under certain conditions; see below
+		let value;
+		switch( typeName  ) {
+			case "Container":
+				this.currentContainer.push({tag: tagName, end: pos+7+len});
+				return 7;
+			case "CString":
+			case "BitField":
+			case "ByteArray":
+				value = buffer.toString("utf8",pos+7,pos+7+len);
+				break;
+			case "Char8":
+				value = buffer.readInt8(pos+7);
+				break;
+			case "UChar8":
+				value = buffer.readUInt8(pos+7);
+				break;
+			case "Bool":
+				value = (buffer.readUInt8(pos+7) != 0);
+				break;
+			case "Int16":
+				value = buffer.readInt16LE(pos+7);
+				break;
+			case "UInt16":
+				value = buffer.readUInt16LE(pos+7);
+				break;
+			case "Int32":
+				value = buffer.readInt32LE(pos+7);
+				break;
+			case "UInt32":
+				value = buffer.readUInt32LE(pos+7);
+				break;
+			case "Int64":
+				value = buffer.readBigInt64LE(pos+7).toString(); // setState does not accept BigInt, so use string representation
+				break;
+			case "UInt64":
+				value = buffer.readBigUInt64LE(pos+7).toString(); // setState does not accept BigInt, so use string representation
+				break;
+			case "Double64":
+				value = roundForReadability( buffer.readDoubleLE(pos+7) );
+				break;
+			case "Float32":
+				value = roundForReadability( buffer.readFloatLE(pos+7) );
+				break;
+			case "Timestamp":
+				value = Math.round(Number(buffer.readBigUInt64LE(pos+7))/1000); // setState does not accept BigInt, so convert to seconds
+				break;
+			case "Error":
+				// Ignore ERROR from BAT/PVI probe with out-of-range index
+				if( tagCode == rscpTagCode["TAG_BAT_DATA"] && this.maxIndex["BAT"] < --this.batProbes ) return 7+len;
+				if( tagCode == rscpTagCode["TAG_PVI_REQ_DATA"] && this.maxIndex["PVI"] < --this.pviProbes ) return 7+len;
+				if( tagCode == rscpTagCode["TAG_EMS_SYS_SPEC_VALUE_INT"]) {
+					// Gently skip SYS_SPEC error values, just set to zero
+					typeNameNew = "Int32";
+					value = 0;
+					break;
+				} else if( ! ignoreTags.includes(`${nameSpace}.${tagName}`) ) {
+					value = buffer.readUInt32LE(pos+7);
+					this.log.warn( `Received data type ERROR: ${rscpError[value]} (${value}) - tag ${rscpTag[tagCode].TagNameGlobal} (0x${tagCode.toString(16)})` );
+					this.log.silly( `Pos ${pos} in: ${dumpRscpFrame(buffer)}` );
+				}
+				return 7+len;
+			case "None":
+				if( len > 0 ) this.log.warn( `Received data type NONE with data length = ${len} - tagCode 0x${tagCode.toString(16)}` );
+				return 7+len;
+			default:
+				this.log.warn( `Unable to parse data: ${dumpRscpFrame( buffer.slice(pos+7,pos+7+len) )}` );
+				value = null;
+				return 7+len;
+		}
+		if( ignoreTags.includes(`${nameSpace}.${tagName}`) ) {
+			this.log.silly(`Ignoring tag: ${nameSpace}.${tagName}`);
+		} else if( tagName == "INDEX" ) {
+			// Use INDEX for object path, level1-3:
+			if( phaseTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+				this.level2 = `Phase#${value}`;
+			} else if( stringTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+				this.level2 = `String#${value}`;
+			} else if ( this.currentContainer.slice(-1)[0].tag == "TEMPERATURE" ) {
+				this.level2 = "";
+				this.level3 = value;
+			} else if ( this.currentContainer.length == 2 ){
+				this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], value ) : value;
+				this.level1 = `${nameSpace}#${value}`;
+				this.level2 = "";
+				this.level3 = -1;
+			} else if( !ignoreIndexTags.includes(this.currentContainer.slice(-1)[0].tag) ) {
+				this.log.warn( `Ignoring unexpected INDEX=${value} in container ${this.currentContainer.slice(-1)[0].tag}` );
+			}
+		} else if( tagName.endsWith("_INDEX") ) {
+			// Use _INDEX for object path level2, e.g. TAG_BAT_DCB_INDEX
+			const i = `${nameSpace}.${tagName.replace("_INDEX","")}`;
+			this.maxIndex[i] = this.maxIndex[i] ? Math.max( this.maxIndex[i], value) : value;
+			this.level2 = `${tagName.replace("_INDEX","")}#${value}`;
+			this.level3 = -1;
+		} else if( tagName == "SYS_SPEC_NAME" ) {
+			// Just record the name for value coming with next tag:
+			this.sysSpecName = value;
+		} else if( tagName == "IDLE_PERIOD_TYPE" ) {
+			// Record the name for values coming with next tags:
+			this.idlePeriodType = value;
+			this.level1 = this.idlePeriodType ? "IDLE_PERIODS_DISCHARGE" : "IDLE_PERIODS_CHARGE";
+		} else if( tagName == "IDLE_PERIOD_DAY" ) {
+			this.level2 = `${value.toString().padStart(2,"0")}-${dayOfWeek[value]}`;
+		} else {
+			// Take note of explicit maximum index for creating complete request frames:
+			if( tagName.endsWith("_COUNT") ) {
+				this.maxIndex[`${this.level1}.${tagName.replace("_COUNT","")}`] = value - 1;
+			}
+			// Multiple values within one container are listed in a substructure (level3):
+			if( multipleValue.includes(`${nameSpace}.${tagName}`) ) {
+				// @ts-ignore
+				this.level3++;
+			}
+			// SYS_SPEC_VALUE_INT - use the name recorded before:
+			if( tagName == "SYS_SPEC_VALUE_INT" ) {
+				this.level2 = "SYS_SPECS";
+				tagNameNew = this.sysSpecName;
+				this.sysSpecName = "";
+			}
+			// Container=(INDEX, VAULE) - use container name for value:
+			if( tagName == "VALUE" && this.currentContainer.length > 1 ) {
+				tagNameNew  = `${this.currentContainer.slice(-1)[0].tag}`;
+			}
+			if( tagName == "IDLE_PERIOD_HOUR" ) {
+				if( this.currentContainer.slice(-1)[0].tag == "IDLE_PERIOD_START" ) {
+					tagNameNew = "START_HOUR";
+				} else if( this.currentContainer.slice(-1)[0].tag == "IDLE_PERIOD_END" ) {
+					tagNameNew = "END_HOUR";
+				}
+			}
+			if( tagName == "IDLE_PERIOD_MINUTE" ) {
+				if( this.currentContainer.slice(-1)[0].tag == "IDLE_PERIOD_START" ) {
+					tagNameNew = "START_MINUTE";
+				} else if( this.currentContainer.slice(-1)[0].tag == "IDLE_PERIOD_END" ) {
+					tagNameNew = "END_MINUTE";
+				}
+			}
+			// Handle mapping between "read" tag names and "write" tag names:
+			const i = `${nameSpace}.${tagName}`;
+			let targetStateMatch = null;
+			if( targetStates[i] ) {
+				if( targetStates[i]["*"] ) targetStateMatch = "*";
+				if( targetStates[i][typeName] ) targetStateMatch = typeName;
+				if( targetStateMatch && targetStates[i][targetStateMatch].targetState == "RETURN_CODE" && value < 0 ) {
+					this.log.warn(`SET failed: ${i} = ${value}`);
+				}
+			}
+			if( targetStateMatch ) tagNameNew = targetStates[i][targetStateMatch].split(".")[1];
+			// RSCP is sloppy concerning Bool type - cast where neccessary:
+			if( castToBoolean.includes(i) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
+				value = (value!=0);
+				typeNameNew = "Bool";
+			}
+			// RSCP is sloppy concerning Timestamp type - cast where neccessary:
+			if( castToTimestamp.includes(i) && typeName == "UInt64" ) {
+				value = Math.round(value/1000); // setState does not accept BigInt, so convert to seconds
+				typeNameNew = "Timestamp";
+			}
+			// Adjust sign where semantically similar values come sometimes positive and sometimes negative:
+			if( negateValue.includes(i) ) {
+				value = -value;
+			}
+			// Adjust sto percent value where neccessary:
+			if( percentValue.includes(i) ) {
+				value = value * 100;
+			}
+			// Concatenate target object id, inserting device/channel levels into path (if so):
+			let id = nameSpace;
+			id += (this.level1 != "") ? `.${this.level1}` : "";
+			id += (this.level2 != "") ? `.${this.level2}` : "";
+			id += `.${tagNameNew}`;
+			id += (this.level3 >= 0) ? `.${this.level3.toString().padStart(2,"0")}` : "";
+			// Write state to object DB:
+			this.log.silly(`setState( "${id}", ${value}, true )`);
+			const oKey = `${nameSpace}.${tagNameNew}`;
+			const oWrite = oKey in setTags;
+			let oRole = "";
+			if( typeNameNew == "Bool") {
+				oRole = oWrite?"switch":"indicator";
+			} else {
+				oRole = oWrite?"level":"value";
+			}
+			const oName = systemDictionary[tagNameNew] ? systemDictionary[tagNameNew][this.language] : "***UNDEFINED_NAME***";
+			this.setObjectNotExists( id, {
+				type: "state",
+				common: {
+					name: oName,
+					type: rscpTypeMap[typeNameNew],
+					role: oRole,
+					read: true,
+					write: oWrite,
+					states: (commonStates[oKey] ? commonStates[oKey] : ""),
+				},
+				native: {},
+			}, () => {
+				this.setState( id, value, true );
+			});
+		}
+		return 7+len;
 	}
 
-	// Process one complete frame received from E3/DC:
 	processFrame( buffer ) {
+		this.currentContainer = [{tag: "NO_CONTAINER", end: buffer.length}];
+		this.sysSpecName = "";
+		this.level1 = ""; // reset "INDEX" tag
+		this.level2 = ""; // reset "..._INDEX" tag
+		this.level3 = -1; // reset multiple value counter
 		const magic = buffer.toString("hex",0,2).toUpperCase();
 		if( magic != "E3DC" ) {
 			this.log.warn(`Received message with invalid MAGIC: >${magic}<`);
@@ -901,193 +1045,27 @@ class E3dcRscp extends utils.Adapter {
 				this.log.warn(`Received message with invalid CTRL: >${ctrl}<`);
 		}
 		const dataLength = buffer.readUInt16LE(16);
+		let i = this.processDataToken( buffer, 18 );
+		while( i < dataLength ) {
+			i += this.processDataToken( buffer, 18+i );
+			if( i >= this.currentContainer.slice(-1)[0].end ) {
+				this.currentContainer.pop();
+				if( this.currentContainer.length == 1 ) {
+					this.level1 = "";
+					this.level2 = "";
+					this.level3 = -1;
+				}
+			}
+		}
 		if( buffer.length < 18 + dataLength + (hasCrc ? 4 : 0) ) {
 			this.log.warn(`Received message with inconsistent length: ${buffer.length} vs ${18 + dataLength + (hasCrc ? 4 : 0)}`);
 			this.log.debug( `IN: ${printRscpFrame(buffer)}` );
 			this.log.silly( dumpRscpFrame(buffer) );
 		}
-		if( hasCrc && (CRC32.buf(buffer.slice(0,18+dataLength)) != buffer.readInt32LE(18+dataLength))  ) {
-			this.log.warn(`Received message with invalid CRC-32: 0x${CRC32.buf(buffer.slice(0,18+dataLength)).toString(16)} vs 0x${buffer.readUInt32LE(18+dataLength).toString(16)} - dataLength = ${dataLength}`);
+		if( hasCrc && (CRC32.buf(buffer.slice(0,18+dataLength)) != buffer.readInt32LE(18+i))  ) {
+			this.log.warn(`Received message with invalid CRC-32: 0x${CRC32.buf(buffer.slice(0,18+dataLength)).toString(16)} vs 0x${buffer.readUInt32LE(18+i).toString(16)} - dataLength = ${dataLength}`);
 			this.log.silly( dumpRscpFrame(buffer) );
 		}
-		this.processTree( this.parseTlv( buffer, 18, 18+dataLength ), "" );
-	}
-
-	// Process a (sub)tree of TLV data:
-	processTree( tree, path ) {
-		this.log.silly( `processTree: path = ${path}, tree = ${printTree(tree)}` );
-		if( !tree ) return;
-		let pathNew = path;
-		const multipleValueIndex = {};
-		for( const i in tree ) {
-			const token = tree[i];
-			const tagName = rscpTag[token.tag].TagName;
-			let tagNameNew = tagName;
-			const nameSpace = rscpTag[token.tag].NameSpace;
-			const shortId = `${nameSpace}.${tagName}`;
-			const typeName = rscpType[token.type];
-			if( typeName == "Error" ) {
-				// Ignore ERRORs from BAT/PVI probe with out-of-range index
-				if( shortId == "BAT.DATA" && this.batProbes-- > 0 ) continue;
-				if( shortId == "PVI.REQ_DATA" && this.pviProbes-- > 0 ) continue;
-				if( shortId == "EMS.SYS_SPEC_VALUE_INT" ) {
-					// Gently skip SYS_SPEC error values, just set to zero
-					this.storeValue( nameSpace, pathNew, tagName, "Int32", 0 );
-					continue;
-				}
-				if( ! ignoreIds.includes(shortId) ) {
-					this.log.warn( `Received data type ERROR: ${rscpError[token.content]} (${token.content}) - tag ${rscpTag[token.tag].TagNameGlobal} (0x${token.tag.toString(16)})` );
-					continue;
-				}
-			}
-			if( typeName == "Container" ) {
-				if( shortId == "EMS.SYS_SPEC" && token.content.length == 3 ) {
-					this.storeValue( nameSpace, pathNew + "SYS_SPECS.", token.content[1].content, "Int32", token.content[2].content);
-					this.extendObject( `EMS.SYS_SPECS`, {type: "channel", common: {role: "info"}} );
-				} else if( shortId == "EMS.GET_IDLE_PERIODS" ) {
-					this.storeIdlePeriods( token.content, pathNew );
-				} else if ( ignoreIndexIds.includes(shortId)  && token.content.length == 2 ) {
-					this.storeValue( nameSpace, pathNew, tagName, rscpType[token.content[1].type], token.content[1].content );
-				} else if ( phaseIds.includes(shortId)  && token.content.length == 2 ) {
-					this.storeValue( nameSpace, pathNew + `Phase#${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
-					this.extendObject( `${nameSpace}.${pathNew}Phase#${token.content[0].content}`, {type: "channel", common: {role: "sensor.electricity"}} );
-				} else if ( stringIds.includes(shortId)  && token.content.length == 2 ) {
-					this.storeValue( nameSpace, pathNew + `String#${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
-					this.extendObject( `${nameSpace}.${pathNew}String#${token.content[0].content}`, {type: "channel", common: {role: "sensor.electricity"}} );
-				} else if ( shortId == "PVI.TEMPERATURE"  && token.content.length == 2 ) {
-					this.storeValue( nameSpace, pathNew + "TEMPERATURE.", token.content[0].content.toString().padStart(2,"0"), rscpType[token.content[1].type], token.content[1].content, "TEMPERATURE" );
-					this.extendObject( `${nameSpace}.${pathNew}TEMPERATURE`, {type: "channel", common: {role: "sensor.temperature"}} );
-				} else {
-					this.processTree( token.content, pathNew );
-				}
-			} else {
-				// Some tags we just skip, e.g. EMS_SYS_SPEC_INDEX
-				if( ignoreIds.includes(shortId)) continue;
-
-				// Handle multiple values for same tag within one container, e.g. PVI_RELEASE
-				if ( multipleValueIds.includes(shortId) ) {
-					if( ! multipleValueIndex[shortId] ) multipleValueIndex[shortId] = 0;
-					this.log.silly( `storeValue( ${nameSpace}, ${pathNew + tagName + "."}, ${multipleValueIndex[shortId].toString().padStart(2,"0")}, ${rscpType[token.type]}, ${token.content}, ${tagName} )`);
-					const dictionaryIndex = ( tagName == "DCB_CELL_TEMPERATURE" && token.content < 4.5 ) ? "DCB_CELL_VOLTAGE" : tagName;
-					this.storeValue( nameSpace, pathNew + tagName + ".", multipleValueIndex[shortId].toString().padStart(2,"0"), rscpType[token.type], token.content, dictionaryIndex );
-					let r = "info";
-					if( tagName.includes("TEMPERATURE") ) r = "sensor.temperature"; else if( tagName.includes("VOLTAGE") ) r = "sensor.electricity";
-					this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}.${tagName}`, {type: "channel", common: {role: r}} );
-					multipleValueIndex[shortId]++;
-					continue;
-				}
-
-				// INDEX indicates top level device, e.g. TAG_BAT_INDEX
-				if( tagName == "INDEX" ) {
-					if( tree.length > Number(i)+1 && rscpType[tree[Number(i)+1].type] != "Error" ) {
-						this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], token.content) : token.content;
-						this.log.silly(`maxIndex[${nameSpace}] = ${this.maxIndex[nameSpace]}`);
-						pathNew = `${nameSpace}#${token.content}.`;
-						this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}`, {type: "channel", common: {role: "info.module"}} );
-					}
-					continue;
-				}
-				// ..._INDEX indicates sub-device, e.g. TAG_BAT_DCB_INDEX
-				if( tagName.endsWith("_INDEX") ) {
-					const name = tagName.replace("_INDEX","");
-					const key = `${path}.${name}`;
-					this.maxIndex[key] = this.maxIndex[key] ? Math.max( this.maxIndex[key], token.content) : token.content;
-					pathNew = `${pathNew.split(".").slice(0,-1).join(".")}.${name}#${token.content}.`;
-					this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}`, {type: "channel", common: {role: "info.submodule"}} );
-					continue;
-				}
-				// ..._COUNT explicitely sets upper bound for (sub-)device index
-				if( tagName.endsWith("_COUNT") ) {
-					this.maxIndex[`${pathNew}${tagName.replace("_COUNT","")}`] = token.content - 1;
-				}
-
-				// Handle mapping between "receive" tag names and "set" tag names:
-				let targetStateMatch = null;
-				if( mapReceivedIdToState[shortId] ) {
-					if( mapReceivedIdToState[shortId]["*"] ) targetStateMatch = "*";
-					if( mapReceivedIdToState[shortId][typeName] ) targetStateMatch = typeName;
-					if( targetStateMatch && mapReceivedIdToState[shortId][targetStateMatch].targetState == "RETURN_CODE" && token.content < 0 ) {
-						this.log.warn(`SET failed: ${shortId} = ${token.content}`);
-					}
-				}
-				if( targetStateMatch ) tagNameNew = mapReceivedIdToState[shortId][targetStateMatch].split(".")[1];
-
-				// Apply value/type corrections due to E3/DC inconsistencies:
-				let valueNew = token.content;
-				let typeNameNew = typeName;
-				if( negateValueIds.includes(shortId) ) valueNew = -valueNew;
-				if( percentValueIds.includes(shortId) ) valueNew = valueNew * 100;
-				if( castToBooleanIds.includes(shortId) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
-					valueNew = (valueNew!=0);
-					typeNameNew = "Bool";
-				}
-				if( castToTimestampIds.includes(shortId) && typeName == "UInt64" ) {
-					valueNew = Math.round(valueNew/1000); // setState does not accept BigInt, so convert to seconds
-					typeNameNew = "Timestamp";
-				}
-				this.storeValue( nameSpace, pathNew, tagNameNew, typeNameNew, valueNew );
-			}
-		}
-	}
-
-	storeValue( nameSpace, path, tagName, typeName, value, dictionaryIndex ) {
-		if( !dictionaryIndex ) dictionaryIndex = tagName;
-		const oId = `${nameSpace}.${path}${tagName}`;
-		const oKey = `${nameSpace}.${tagName}`;
-		const oWrite = oKey in mapChangedIdToSetTags;
-		let oRole = "";
-		if( typeName == "Bool") {
-			oRole = oWrite?"switch":"indicator";
-		} else {
-			oRole = oWrite?"level":"value";
-		}
-		const oName = systemDictionary[dictionaryIndex] ? systemDictionary[dictionaryIndex][this.language] : "***UNDEFINED_NAME***";
-		this.setObjectNotExists( oId, {
-			type: "state",
-			common: {
-				name: oName,
-				type: rscpTypeMap[typeName],
-				role: oRole,
-				read: true,
-				write: oWrite,
-				states: (mapIdToCommonStates[oKey] ? mapIdToCommonStates[oKey] : ""),
-			},
-			native: {},
-		}, () => {
-			this.setState( oId, value, true );
-		});
-	}
-
-	storeIdlePeriods( tree, path ) {
-		tree.forEach(token => {
-			if( rscpTag[token.tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD" || token.content.length != 5 ) return;
-			if( rscpTag[token.content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_TYPE" ) return;
-			const periodType = token.content[0].content;
-			if( rscpTag[token.content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_DAY" ) return;
-			const periodDay = token.content[1].content;
-			if( rscpTag[token.content[2].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_ACTIVE" ) return;
-			const periodActive = token.content[2].content;
-			if( rscpTag[token.content[3].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_START" || token.content[3].content.length != 2)  return;
-			if( rscpTag[token.content[3].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
-			const periodStartHour = token.content[3].content[0].content;
-			if( rscpTag[token.content[3].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
-			const periodStartMinute = token.content[3].content[1].content;
-			if( rscpTag[token.content[4].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_END" || token.content[4].content.length != 2)  return;
-			if( rscpTag[token.content[4].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
-			const periodEndHour = token.content[4].content[0].content;
-			if( rscpTag[token.content[4].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
-			const periodEndMinute = token.content[4].content[1].content;
-			const t = (periodType==0) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
-			const p = `${path}${t}.${periodDay.toString().padStart(2,"0")}-${dayOfWeek[periodDay]}.`;
-			this.storeValue( "EMS", p, "IDLE_PERIOD_ACTIVE", "Bool", (periodActive!=0) );
-			this.storeValue( "EMS", p, "START_HOUR", "UChar8", periodStartHour );
-			this.storeValue( "EMS", p, "END_HOUR", "UChar8", periodEndHour );
-			this.storeValue( "EMS", p, "START_MINUTE", "UChar8", periodStartMinute );
-			this.storeValue( "EMS", p, "END_MINUTE", "UChar8", periodEndMinute );
-			this.extendObject( `EMS.${p.slice(0,-1)}`, {type: "channel", common: {role: "calendar.day"}} );
-		});
-		this.extendObject( "EMS.IDLE_PERIODS_CHARGE", {type: "channel", common: {role: "calendar.week"}} );
-		this.extendObject( "EMS.IDLE_PERIODS_DISCHARGE", {type: "channel", common: {role: "calendar.week"}} );
 	}
 
 	// ioBroker best practice for password encryption, using key native.secret
@@ -1103,6 +1081,25 @@ class E3dcRscp extends utils.Adapter {
 	 * Is called when databases are connected and adapter received configuration.
 	 */
 	async onReady() {
+		// Initialize your adapter here
+		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.rscp_password}, ${this.config.portal_user}, ${this.config.portal_password}, ${this.config.polling_interval})` );
+		// @ts-ignore
+		this.getForeignObject("system.config", (err, obj) => {
+			if (obj && obj.native && obj.native.secret) {
+				this.config.rscp_password = this.decryptPassword(obj.native.secret,this.config.rscp_password);
+				this.config.portal_password = this.decryptPassword(obj.native.secret,this.config.portal_password);
+				this.initChannel();
+				dataPollingTimer = setInterval(() => {
+					this.queueEmsRequestData();
+					this.queueEpRequestData();
+					this.queueBatRequestData();
+					this.queuePviRequestData();
+					this.sendNextFrame();
+				}, this.config.polling_interval*1000 );
+			} else {
+				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
+			}
+		});
 		// Statically, we define only one device per supported RSCP namespace - rest of the object tree is defined dynamically.
 		await this.setObjectNotExistsAsync("RSCP", {
 			type: "device",
@@ -1145,29 +1142,9 @@ class E3dcRscp extends utils.Adapter {
 			native: {},
 		});
 
-		// Initialize your adapter here
-		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.rscp_password}, ${this.config.portal_user}, ${this.config.portal_password}, ${this.config.polling_interval})` );
-		// @ts-ignore
-		this.getForeignObject("system.config", (err, obj) => {
-			if (obj && obj.native && obj.native.secret) {
-				this.config.rscp_password = this.decryptPassword(obj.native.secret,this.config.rscp_password);
-				this.config.portal_password = this.decryptPassword(obj.native.secret,this.config.portal_password);
-				this.initChannel();
-				dataPollingTimer = setInterval(() => {
-					this.queueEmsRequestData();
-					this.queueEpRequestData();
-					this.queueBatRequestData();
-					this.queuePviRequestData();
-					this.sendNextFrame();
-				}, this.config.polling_interval*1000 );
-			} else {
-				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
-			}
-		});
-
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("RSCP.AUTHENTICATION");
-		for( const s in mapChangedIdToSetTags ) this.subscribeStates(s);
+		for( const s in setTags ) this.subscribeStates(s);
 		// You can also add a subscription for multiple states. The following line watches all states starting with 'lights.'
 		// this.subscribeStates('lights.*');
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -1378,23 +1355,18 @@ function printRscpFrame( buffer ) {
 	return result.content;
 }
 
-function printTree( tree ) {
-	let result = "";
-	if( tree ) {
-		result = "[ ";
-		tree.forEach(element => {
-			result += `{${rscpTag[element.tag].TagNameGlobal}(${rscpType[element.type]}) = `;
-			if( rscpType[element.type] == "Container" ) {
-				result += printTree( element.content );
-			} else {
-				result += element.content;
-			}
-			result += "}, ";
-		});
-		result += " ]";
-	}
-	return result;
+// Find numerical RSCP tag code for a given string. Accepts
+// (1) full global tag, e.g. TAG_EMS_MAX_CHARGE_POWER
+// (2) global tag without TAG_ prefix, e.g. EMS_MAX_CHARGE_POWER
+// (3) object id, e.g. EMS.MAX_CHARGE_POWER
+// returns null if no match.
+/*
+function encodeRscpTag( name ) {
+	if( name.indexOf("TAG_") != 0 ) name = `TAG_${name}`;
+	name = name.replace(".","_");
+	return rscpTagCode[name];
 }
+*/
 
 // Round numerical values for better readability
 // If the integer part is has more digits than <s>, then just round to integer.
