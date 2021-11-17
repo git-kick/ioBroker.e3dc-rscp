@@ -941,19 +941,22 @@ class E3dcRscp extends utils.Adapter {
 				}
 			}
 			if( typeName == "Container" ) {
-				//this.log.silly(`processTree/Container, shortId = ${shortId}`);
 				if( shortId == "EMS.SYS_SPEC" && token.content.length == 3 ) {
 					this.storeValue( nameSpace, pathNew + "SYS_SPECS.", token.content[1].content, "Int32", token.content[2].content);
+					this.extendObject( `EMS.SYS_SPECS`, {type: "channel", common: {role: "info"}} );
 				} else if( shortId == "EMS.GET_IDLE_PERIODS" ) {
 					this.storeIdlePeriods( token.content, pathNew );
 				} else if ( ignoreIndexIds.includes(shortId)  && token.content.length == 2 ) {
 					this.storeValue( nameSpace, pathNew, tagName, rscpType[token.content[1].type], token.content[1].content );
 				} else if ( phaseIds.includes(shortId)  && token.content.length == 2 ) {
 					this.storeValue( nameSpace, pathNew + `Phase#${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
+					this.extendObject( `${nameSpace}.${pathNew}Phase#${token.content[0].content}`, {type: "channel", common: {role: "sensor.electricity"}} );
 				} else if ( stringIds.includes(shortId)  && token.content.length == 2 ) {
 					this.storeValue( nameSpace, pathNew + `String#${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
+					this.extendObject( `${nameSpace}.${pathNew}String#${token.content[0].content}`, {type: "channel", common: {role: "sensor.electricity"}} );
 				} else if ( shortId == "PVI.TEMPERATURE"  && token.content.length == 2 ) {
 					this.storeValue( nameSpace, pathNew + "TEMPERATURE.", token.content[0].content.toString().padStart(2,"0"), rscpType[token.content[1].type], token.content[1].content, "TEMPERATURE" );
+					this.extendObject( `${nameSpace}.${pathNew}TEMPERATURE`, {type: "channel", common: {role: "sensor.temperature"}} );
 				} else {
 					this.processTree( token.content, pathNew );
 				}
@@ -965,8 +968,11 @@ class E3dcRscp extends utils.Adapter {
 				if ( multipleValueIds.includes(shortId) ) {
 					if( ! multipleValueIndex[shortId] ) multipleValueIndex[shortId] = 0;
 					this.log.silly( `storeValue( ${nameSpace}, ${pathNew + tagName + "."}, ${multipleValueIndex[shortId].toString().padStart(2,"0")}, ${rscpType[token.type]}, ${token.content}, ${tagName} )`);
-					const dictionaryIndex = ( tagName == "DCB_CELL_TEMPERATURE" && token.content < 4 ) ? "DCB_CELL_VOLTAGE" : tagName;
+					const dictionaryIndex = ( tagName == "DCB_CELL_TEMPERATURE" && token.content < 4.5 ) ? "DCB_CELL_VOLTAGE" : tagName;
 					this.storeValue( nameSpace, pathNew + tagName + ".", multipleValueIndex[shortId].toString().padStart(2,"0"), rscpType[token.type], token.content, dictionaryIndex );
+					let r = "info";
+					if( tagName.includes("TEMPERATURE") ) r = "sensor.temperature"; else if( tagName.includes("VOLTAGE") ) r = "sensor.electricity";
+					this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}.${tagName}`, {type: "channel", common: {role: r}} );
 					multipleValueIndex[shortId]++;
 					continue;
 				}
@@ -977,6 +983,7 @@ class E3dcRscp extends utils.Adapter {
 						this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], token.content) : token.content;
 						this.log.silly(`maxIndex[${nameSpace}] = ${this.maxIndex[nameSpace]}`);
 						pathNew = `${nameSpace}#${token.content}.`;
+						this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}`, {type: "channel", common: {role: "info.module"}} );
 					}
 					continue;
 				}
@@ -986,6 +993,7 @@ class E3dcRscp extends utils.Adapter {
 					const key = `${path}.${name}`;
 					this.maxIndex[key] = this.maxIndex[key] ? Math.max( this.maxIndex[key], token.content) : token.content;
 					pathNew = `${pathNew.split(".").slice(0,-1).join(".")}.${name}#${token.content}.`;
+					this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}`, {type: "channel", common: {role: "info.submodule"}} );
 					continue;
 				}
 				// ..._COUNT explicitely sets upper bound for (sub-)device index
@@ -1069,15 +1077,17 @@ class E3dcRscp extends utils.Adapter {
 			const periodEndHour = token.content[4].content[0].content;
 			if( rscpTag[token.content[4].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
 			const periodEndMinute = token.content[4].content[1].content;
-			let p = path;
-			p += (periodType==0) ? "IDLE_PERIODS_CHARGE." : "IDLE_PERIODS_DISCHARGE.";
-			p += `${periodDay.toString().padStart(2,"0")}-${dayOfWeek[periodDay]}.`;
+			const t = (periodType==0) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
+			const p = `${path}${t}.${periodDay.toString().padStart(2,"0")}-${dayOfWeek[periodDay]}.`;
 			this.storeValue( "EMS", p, "IDLE_PERIOD_ACTIVE", "Bool", (periodActive!=0) );
 			this.storeValue( "EMS", p, "START_HOUR", "UChar8", periodStartHour );
 			this.storeValue( "EMS", p, "END_HOUR", "UChar8", periodEndHour );
 			this.storeValue( "EMS", p, "START_MINUTE", "UChar8", periodStartMinute );
 			this.storeValue( "EMS", p, "END_MINUTE", "UChar8", periodEndMinute );
+			this.extendObject( `EMS.${p.slice(0,-1)}`, {type: "channel", common: {role: "calendar.day"}} );
 		});
+		this.extendObject( "EMS.IDLE_PERIODS_CHARGE", {type: "channel", common: {role: "calendar.week"}} );
+		this.extendObject( "EMS.IDLE_PERIODS_DISCHARGE", {type: "channel", common: {role: "calendar.week"}} );
 	}
 
 	// ioBroker best practice for password encryption, using key native.secret
@@ -1093,25 +1103,6 @@ class E3dcRscp extends utils.Adapter {
 	 * Is called when databases are connected and adapter received configuration.
 	 */
 	async onReady() {
-		// Initialize your adapter here
-		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.rscp_password}, ${this.config.portal_user}, ${this.config.portal_password}, ${this.config.polling_interval})` );
-		// @ts-ignore
-		this.getForeignObject("system.config", (err, obj) => {
-			if (obj && obj.native && obj.native.secret) {
-				this.config.rscp_password = this.decryptPassword(obj.native.secret,this.config.rscp_password);
-				this.config.portal_password = this.decryptPassword(obj.native.secret,this.config.portal_password);
-				this.initChannel();
-				dataPollingTimer = setInterval(() => {
-					this.queueEmsRequestData();
-					this.queueEpRequestData();
-					this.queueBatRequestData();
-					this.queuePviRequestData();
-					this.sendNextFrame();
-				}, this.config.polling_interval*1000 );
-			} else {
-				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
-			}
-		});
 		// Statically, we define only one device per supported RSCP namespace - rest of the object tree is defined dynamically.
 		await this.setObjectNotExistsAsync("RSCP", {
 			type: "device",
@@ -1152,6 +1143,26 @@ class E3dcRscp extends utils.Adapter {
 				role: "emergency.power",
 			},
 			native: {},
+		});
+
+		// Initialize your adapter here
+		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.rscp_password}, ${this.config.portal_user}, ${this.config.portal_password}, ${this.config.polling_interval})` );
+		// @ts-ignore
+		this.getForeignObject("system.config", (err, obj) => {
+			if (obj && obj.native && obj.native.secret) {
+				this.config.rscp_password = this.decryptPassword(obj.native.secret,this.config.rscp_password);
+				this.config.portal_password = this.decryptPassword(obj.native.secret,this.config.portal_password);
+				this.initChannel();
+				dataPollingTimer = setInterval(() => {
+					this.queueEmsRequestData();
+					this.queueEpRequestData();
+					this.queueBatRequestData();
+					this.queuePviRequestData();
+					this.sendNextFrame();
+				}, this.config.polling_interval*1000 );
+			} else {
+				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
+			}
 		});
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
