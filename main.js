@@ -84,7 +84,7 @@ const rscpTypeMap = {
 	"Bitfield": "string",
 	"CString": "string",
 	"Container": "undefined",
-	"Timestamp": "number",
+	"Timestamp": "string",
 	"ByteArray": "string",
 	"Error": "number",
 };
@@ -294,6 +294,8 @@ const castToBooleanIds = [
 // RSCP is sloppy concerning Timestamp - some UInt64 values must be converted:
 const castToTimestampIds = [
 	"BAT.DCB_LAST_MESSAGE_TIMESTAMP",
+	"EMS.ERROR_TIMESTAMP",
+	"EMS.EPTEST_NEXT_TESTSTART",
 ];
 // Adjust algebraic sign: e.g. discharge limit is sometimes positive, sometimes negative
 const negateValueIds = [
@@ -750,7 +752,7 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueEmsSetPower( mode, value ) {
-		this.log.info( `queueEmsSetPower( ${mode}, ${value} )`);
+		this.log.silly( `queueEmsSetPower( ${mode}, ${value} )`);
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER" );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_MODE", mode );
@@ -1021,8 +1023,8 @@ class E3dcRscp extends utils.Adapter {
 					valueNew = (valueNew!=0);
 					typeNameNew = "Bool";
 				}
-				if( castToTimestampIds.includes(shortId) && typeName == "UInt64" ) {
-					valueNew = Math.round(valueNew/1000); // setState does not accept BigInt, so convert to seconds
+				if( castToTimestampIds.includes(shortId) ) {
+					valueNew = new Date(Number(valueNew)).toISOString();
 					typeNameNew = "Timestamp";
 				}
 				this.storeValue( nameSpace, pathNew, tagNameNew, typeNameNew, valueNew );
@@ -1103,7 +1105,9 @@ class E3dcRscp extends utils.Adapter {
 	 * Is called when databases are connected and adapter received configuration.
 	 */
 	async onReady() {
-		// Statically, we define only one device per supported RSCP namespace - rest of the object tree is defined dynamically.
+		// Statically, we define only one device per supported RSCP namespace,
+		// plus some setter objects which would not appear before first setting.
+		// The rest of the object tree is defined dynamically.
 		await this.setObjectNotExistsAsync("RSCP", {
 			type: "device",
 			common: {
@@ -1141,6 +1145,17 @@ class E3dcRscp extends utils.Adapter {
 			common: {
 				name: systemDictionary["EP"][this.language],
 				role: "emergency.power",
+			},
+			native: {},
+		});
+		await this.setObjectNotExists( "EMS.SET_POWER", {
+			type: "state",
+			common: {
+				name: systemDictionary["SET_POWER"][this.language],
+				type: "number",
+				role: "level",
+				read: true,
+				write: true,
 			},
 			native: {},
 		});
