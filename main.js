@@ -271,15 +271,16 @@ const mapReceivedIdToState = {
 // For standard cases, define how to send a SET to E3/DC
 // key is state id; value is [container_tag, setter_tag]
 const mapChangedIdToSetTags = {
-	"EMS.POWERSAVE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWERSAVE_ENABLED"],
-	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS"],
 	"EMS.MAX_CHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_CHARGE_POWER"],
 	"EMS.MAX_DISCHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_DISCHARGE_POWER"],
 	"EMS.DISCHARGE_START_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_DISCHARGE_START_POWER"],
-	"EMS.USER_CHARGE_LIMIT": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_USER_CHARGE_LIMIT"],
-	"EMS.USER_DISCHARGE_LIMIT": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_USER_DISCHARGE_LIMIT"],
-	"EMS.MODE": [],
-	"EMS.SET_POWER": [],
+	"EMS.POWERSAVE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWERSAVE_ENABLED"],
+	"EMS.POWER_LIMITS_USED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWER_LIMITS_USED"],
+	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED"],
+	//"EMS.USER_CHARGE_LIMIT": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_USER_CHARGE_LIMIT"],
+	//"EMS.USER_DISCHARGE_LIMIT": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_USER_DISCHARGE_LIMIT"],
+	"EMS.SET_POWER_MODE": [],
+	"EMS.SET_POWER_VALUE": [],
 };
 // RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
 const castToBooleanIds = [
@@ -370,6 +371,7 @@ const utils = require("@iobroker/adapter-core");
 const { resourceLimits } = require("worker_threads");
 const { type } = require("os");
 let dataPollingTimer = null;
+let setPowerTimer = null;
 class E3dcRscp extends utils.Adapter {
 
 	/**
@@ -642,7 +644,7 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_BAT_REQ_INTERNALS" );
 			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_USE_TIME" );
 			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME" );
-			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT#${batIndex}.DCB`]; dcbIndex++ ) {
+			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT_${batIndex}.DCB`]; dcbIndex++ ) {
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES", dcbIndex );
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", dcbIndex );
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", dcbIndex );
@@ -685,17 +687,17 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_PVI_REQ_MIN_TEMPERATURE" );
 			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_APPARENTPOWER" );
 			this.addTagtoFrame( "TAG_PVI_REQ_DEVICE_STATE" );
-			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI#${pviIndex}.AC_MAX_PHASE`]; phaseIndex++) {
+			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI_${pviIndex}.AC_MAX_PHASE`]; phaseIndex++) {
 				for( const id of phaseIds ) {
 					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, phaseIndex );
 				}
 			}
-			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI#${pviIndex}.DC_MAX_STRING`]; stringIndex++) {
+			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI_${pviIndex}.DC_MAX_STRING`]; stringIndex++) {
 				for( const id of stringIds ) {
 					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, stringIndex );
 				}
 			}
-			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI#${pviIndex}.TEMPERATURE`]; tempIndex++) {
+			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI_${pviIndex}.TEMPERATURE`]; tempIndex++) {
 				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", tempIndex );
 			}
 			this.pushFrame();
@@ -752,7 +754,7 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueEmsSetPower( mode, value ) {
-		this.log.silly( `queueEmsSetPower( ${mode}, ${value} )`);
+		this.log.info( `queueEmsSetPower( ${mode}, ${value} )`);
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER" );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_MODE", mode );
@@ -762,6 +764,16 @@ class E3dcRscp extends utils.Adapter {
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_MODE" );
 		this.pushFrame();
+		// E3/DC requires regular SET_POWER repetition, otherwise it will fall back:
+		if( ! setPowerTimer ) {
+			setPowerTimer = setInterval(() => {
+				this.getState( "EMS.SET_POWER_VALUE", (err, power) => {
+					this.getState( "EMS.SET_POWER_MODE", (err, mode) => {
+						this.queueEmsSetPower( mode ? mode.val : 0, power ? power.val : 0 );
+					});
+				});
+			}, this.config.setpower_interval*1000 );
+		}
 	}
 
 	queueEpRequestData() {
@@ -951,11 +963,11 @@ class E3dcRscp extends utils.Adapter {
 				} else if ( ignoreIndexIds.includes(shortId)  && token.content.length == 2 ) {
 					this.storeValue( nameSpace, pathNew, tagName, rscpType[token.content[1].type], token.content[1].content );
 				} else if ( phaseIds.includes(shortId)  && token.content.length == 2 ) {
-					this.storeValue( nameSpace, pathNew + `Phase#${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
-					this.extendObject( `${nameSpace}.${pathNew}Phase#${token.content[0].content}`, {type: "channel", common: {role: "sensor.electricity"}} );
+					this.storeValue( nameSpace, pathNew + `Phase_${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
+					this.extendObject( `${nameSpace}.${pathNew}Phase_${token.content[0].content}`, {type: "channel", common: {role: "sensor.electricity"}} );
 				} else if ( stringIds.includes(shortId)  && token.content.length == 2 ) {
-					this.storeValue( nameSpace, pathNew + `String#${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
-					this.extendObject( `${nameSpace}.${pathNew}String#${token.content[0].content}`, {type: "channel", common: {role: "sensor.electricity"}} );
+					this.storeValue( nameSpace, pathNew + `String_${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
+					this.extendObject( `${nameSpace}.${pathNew}String_${token.content[0].content}`, {type: "channel", common: {role: "sensor.electricity"}} );
 				} else if ( shortId == "PVI.TEMPERATURE"  && token.content.length == 2 ) {
 					this.storeValue( nameSpace, pathNew + "TEMPERATURE.", token.content[0].content.toString().padStart(2,"0"), rscpType[token.content[1].type], token.content[1].content, "TEMPERATURE" );
 					this.extendObject( `${nameSpace}.${pathNew}TEMPERATURE`, {type: "channel", common: {role: "sensor.temperature"}} );
@@ -984,7 +996,7 @@ class E3dcRscp extends utils.Adapter {
 					if( tree.length > Number(i)+1 && rscpType[tree[Number(i)+1].type] != "Error" ) {
 						this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], token.content) : token.content;
 						this.log.silly(`maxIndex[${nameSpace}] = ${this.maxIndex[nameSpace]}`);
-						pathNew = `${nameSpace}#${token.content}.`;
+						pathNew = `${nameSpace}_${token.content}.`;
 						this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}`, {type: "channel", common: {role: "info.module"}} );
 					}
 					continue;
@@ -994,7 +1006,7 @@ class E3dcRscp extends utils.Adapter {
 					const name = tagName.replace("_INDEX","");
 					const key = `${path}.${name}`;
 					this.maxIndex[key] = this.maxIndex[key] ? Math.max( this.maxIndex[key], token.content) : token.content;
-					pathNew = `${pathNew.split(".").slice(0,-1).join(".")}.${name}#${token.content}.`;
+					pathNew = `${pathNew.split(".").slice(0,-1).join(".")}.${name}_${token.content}.`;
 					this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}`, {type: "channel", common: {role: "info.submodule"}} );
 					continue;
 				}
@@ -1153,15 +1165,38 @@ class E3dcRscp extends utils.Adapter {
 			common: {
 				name: systemDictionary["SET_POWER"][this.language],
 				type: "number",
-				role: "level",
+				role: "value",
 				read: true,
+				write: false,
+			},
+			native: {},
+		});
+		await this.setObjectNotExists( "EMS.SET_POWER_VALUE", {
+			type: "state",
+			common: {
+				name: systemDictionary["SET_POWER_VALUE"][this.language],
+				type: "number",
+				role: "level",
+				read: false,
 				write: true,
+			},
+			native: {},
+		});
+		await this.setObjectNotExists( "EMS.SET_POWER_MODE", {
+			type: "state",
+			common: {
+				name: systemDictionary["SET_POWER_MODE"][this.language],
+				type: "number",
+				role: "level",
+				read: false,
+				write: true,
+				states: rscpEmsPowerMode,
 			},
 			native: {},
 		});
 
 		// Initialize your adapter here
-		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.rscp_password}, ${this.config.portal_user}, ${this.config.portal_password}, ${this.config.polling_interval})` );
+		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.rscp_password}, ${this.config.portal_user}, ${this.config.portal_password}, ${this.config.polling_interval}, ${this.config.setpower_interval})` );
 		// @ts-ignore
 		this.getForeignObject("system.config", (err, obj) => {
 			if (obj && obj.native && obj.native.secret) {
@@ -1212,15 +1247,14 @@ class E3dcRscp extends utils.Adapter {
 		if (state) {
 			this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
 			if( !state.ack ) {
-				if( id.endsWith("EMS.MODE") ) {
-					this.getState( "EMS.SET_POWER", (err, power) => {
+				if( id.endsWith("EMS.SET_POWER_MODE") ) {
+					this.getState( "EMS.SET_POWER_VALUE", (err, power) => {
 						this.queueEmsSetPower( state.val, power ? power.val : 0 );
 					});
-				} else if( id.endsWith("EMS.SET_POWER") ) {
-					this.getState( "EMS.MODE", (err, mode) => {
+				} else if( id.endsWith("EMS.SET_POWER_VALUE") ) {
+					this.getState( "EMS.SET_POWER_MODE", (err, mode) => {
 						this.queueEmsSetPower( mode ? mode.val : 0, state.val );
 					});
-					this.queueEmsSetPower( 0, state.val );
 				} else {
 					this.queueSetValue( id, state.val );
 				}

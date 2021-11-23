@@ -183,21 +183,27 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>EMS</td>
+    <td>POWERLIMITS_USED</td>
+    <td>boolean</td>
+    <td>Power limits are used</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
     <td>WEATHER_REGULATED_CHARGE_ENABLED</td>
     <td>boolean</td>
     <td>Weather regulated charging is enabled</td>
   </tr>
   <tr>
     <td>EMS</td>
-    <td>MODE</td>
+    <td>SET_POWER_MODE</td>
     <td>states</td>
-    <td>Charging mode can be set</td>
+    <td>Charging mode; reflects to MODE</td>
   </tr>
   <tr>
     <td>EMS</td>
-    <td>SET_POWER</td>
+    <td>SET_POWER_VALUE</td>
     <td>number</td>
-    <td>Charging power can be set</td>
+    <td>Charging power [W]; reflects to SET_POWER</td>
   </tr>
 </table> 
 
@@ -207,56 +213,33 @@ Note that RSCP defines ca. 680 tags (representing around 300 parameters), so we 
 Therefore, we will add tags to the adapter upon upcoming use-cases.
 
 <a name="sam"></a>
-
 ## Sample script
 Here is a sample script for charge limit control - it is not meant for as-is usage, only to demonstrate how E3/DC values can be used.
 
-    // Heuristics: only charge as fast as needed to reach 100% SOC in the afternoon,
-    // aiming to avoid early 100% SOC causing PV cut-off
-    // Exception 1: when already in cut-off situation, reset charge power limit to maximum
-    // Exception 2: when SOC is low, reset charge power limit to maximum
-
-    const targetHour = 15; // [hrs] we want to reach 100% SOC by that time, not before
-    const scheduleHours = [];
-    for( let i=7; i<=targetHour; i++ ) scheduleHours.push(i);
-    const scheduleMinutes = [0, 15, 30, 45];
-    const batCapacity = 10000; // [Wh]
-    const minSoc = 20; // [%] as long as SOC is below, do not reduce charge power 
-    const peakPV = 10000; // [W] photovoltaic peak power
-    const cutOff = 70; // [%] PV power will be cut off at 70% of peak power
-    const maxChargePower = 3000; // [W] max. charge power given by the battery
-
-    function avgChargePower( ) {
-        let now = new Date();
-        let then = new Date(now); then.setHours( targetHour-1, 30, 0 ); // half an hour earlier, then phase-out
-        const deltaHours = (then.getTime()-now.getTime())/1000/3600;
-        if( deltaHours > 0 ) {
-            const avgPower = batCapacity * ( 1 - getState('e3dc-rscp.0.BAT.RSOC').val/100 ) / deltaHours;
-            return Math.min( avgPower, maxChargePower );
-        } else {
-            return maxChargePower;
-        }
-    }
-
-    schedule( {hour: scheduleHours, minute: scheduleMinutes}, () => {
-        let limit;
-        if( -getState('e3dc-rscp.0.EMS.POWER_GRID').val > peakPV * cutOff/100 * 0.95 ) {
-            limit = maxChargePower;
-            if( getState('e3dc-rscp.0.EMS.MAX_CHARGE_POWER').val != limit ) console.log( `Cut-off detected - reset charge power limit to ${limit} W`);
-        } else if( getState('e3dc-rscp.0.BAT.RSOC').val < minSoc ) {
-            limit = maxChargePower;
-            if( getState('e3dc-rscp.0.EMS.MAX_CHARGE_POWER').val != limit ) console.log( `Low battery SOC - reset charge power limit to ${limit} W`);
-        } else {
-            limit = avgChargePower();
-            console.log( `Charge power is too high - setting limit to ${limit} W`)
-        }
-        setState( 'e3dc-rscp.0.EMS.MAX_CHARGE_POWER', limit );
+    // Trigger: derate power is reached, i.e. power to grid will be capped
+    // Action: reset battery charge power limit to maximum, as specified under SYS_SPECS
+    on( {
+        id: 'e3dc-rscp.0.EMS.POWER_GRID', 
+        valLe: -getState('e3dc-rscp.0.EMS.DERATE_AT_POWER_VALUE').val, 
+        change: 'lt', 
+        logic: 'and'
+    }, (obj) => {
+        console.log('Trigger: power to grid is at derate threshold - reset charge power limit');
+        setState('e3dc-rscp.0.EMS.MAX_CHARGE_POWER', getState('e3dc-rscp.0.EMS.SYS_SPECS.maxBatChargePower').val );
     });
-
 <a name="log"></a>
 
 ## Changelog
 
+### 0.0.10-beta
+(git-kick) 
+* SET_POWER is now initialized and appears after adapter setup
+* Translations: EMS_ERROR_*, BAT_FCC, BAT_RC, BAT_SPECIFIED_CAPACITY
+* Timestamps are displayed in ISO-8601 format
+* Object names: replaced "#" by "_" to avoid interference with ioBoroker name resolution (e.g. former BAT#0 is now BAT_0)  -  **NOTE: this is likely to break <=0.0.9 based js scripts; adjust object references!**
+* Solved issue setting EMS.WEATHER_REGULATED_CHARGE_ENABLED (before, failed with warning)
+* Solved issue setting EMS.POWER_LIMITS_USED (before, object was defined r/o)
+* SET_POWER: introduced extra objects for entering desired values (SET_POWER_MODE, SET_POWER_VALUE)  -  **E3/DC behavior is still unclear. Feature under development.**
 ### 0.0.9-beta
 (git-kick) 
 * EMS: SET_POWER, first implementation for setting MODE and VALUE

@@ -147,6 +147,8 @@
     "SELF_CONSUMPTION": "Autoconsumo [ % ]",
     "SERIAL_NUMBER": "Numero di serie",
     "SET_POWER": "Imposta potenza [W]",
+    "SET_POWER_MODE": "Modalità di alimentazione (in uscita)",
+    "SET_POWER_VALUE": "Imposta potenza (in uscita) [W]",
     "SPECIFIED_CAPACITY": "Capacità specificata [Wh]",
     "SPECIFIED_CHARGE_POWER": "Potenza di carica specificata [W]",
     "SPECIFIED_DISCHARGE_POWER": "Potenza di scarica specificata [W]",
@@ -198,6 +200,7 @@
     "recommendedMinChargeLimit": "Limite minimo di carica consigliato [W]",
     "recommendedMinDischargeLimit": "Limite minimo di scarico consigliato [W]",
     "rscp_password": "E3/DC RSCP password",
+    "setpower_interval": "SET_POWER reinvia intervallo [s]",
     "startChargeDefault": "Avviare la carica di default [W]",
     "startDischargeDefault": "Avvio scarico predefinito [W]"
 }

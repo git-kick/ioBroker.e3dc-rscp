@@ -147,6 +147,8 @@
     "SELF_CONSUMPTION": "Zużycie własne [%]",
     "SERIAL_NUMBER": "Numer seryjny",
     "SET_POWER": "Moc zestawu [W]",
+    "SET_POWER_MODE": "Tryb zasilania (wyjście)",
+    "SET_POWER_VALUE": "Moc nastawcza (wyjściowa) [W]",
     "SPECIFIED_CAPACITY": "Określona pojemność [Wh]",
     "SPECIFIED_CHARGE_POWER": "Określona moc ładowania [W]",
     "SPECIFIED_DISCHARGE_POWER": "Określona moc rozładowania [W]",
@@ -198,6 +200,7 @@
     "recommendedMinChargeLimit": "Zalecany minimalny limit ładowania [W]",
     "recommendedMinDischargeLimit": "Zalecany minimalny limit rozładowania [W]",
     "rscp_password": "Hasło E3/DC RSCP",
+    "setpower_interval": "SET_POWER resend interval [s]",
     "startChargeDefault": "Start charge default [W]",
     "startDischargeDefault": "Start rozładowanie domyślne [W]"
 }

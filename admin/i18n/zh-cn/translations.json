@@ -147,6 +147,8 @@
     "SELF_CONSUMPTION": "自我消耗[%]",
     "SERIAL_NUMBER": "序列号",
     "SET_POWER": "设定功率[W]",
+    "SET_POWER_MODE": "电源模式（出站）",
+    "SET_POWER_VALUE": "设定功率(出站)[W]",
     "SPECIFIED_CAPACITY": "指定容量[西]",
     "SPECIFIED_CHARGE_POWER": "指定充电功率[W]",
     "SPECIFIED_DISCHARGE_POWER": "指定放电功率[W]",
@@ -198,6 +200,7 @@
     "recommendedMinChargeLimit": "建议最低收费限额[W]",
     "recommendedMinDischargeLimit": "建议最低排放限值[W]",
     "rscp_password": "E3/DC RSCP密码",
+    "setpower_interval": "SET_POWER重新发送间隔[s]",
     "startChargeDefault": "启动收费默认值[W]",
     "startDischargeDefault": "启动放电默认值[W]"
 }

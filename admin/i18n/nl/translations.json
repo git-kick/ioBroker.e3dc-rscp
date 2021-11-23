@@ -147,6 +147,8 @@
     "SELF_CONSUMPTION": "Eigen verbruik [%]",
     "SERIAL_NUMBER": "Serienummer",
     "SET_POWER": "Ingesteld vermogen [W]",
+    "SET_POWER_MODE": "Stroommodus (uitgaand)",
+    "SET_POWER_VALUE": "Vermogen instellen (uitgaand) [W]",
     "SPECIFIED_CAPACITY": "Opgegeven capaciteit [Wh]",
     "SPECIFIED_CHARGE_POWER": "Gespecificeerd laadvermogen [W]",
     "SPECIFIED_DISCHARGE_POWER": "Gespecificeerd ontladingsvermogen [W]",
@@ -198,6 +200,7 @@
     "recommendedMinChargeLimit": "Aanbevolen minimum laadlimiet [W]",
     "recommendedMinDischargeLimit": "Aanbevolen minimale lozingsgrens [W]",
     "rscp_password": "E3/DC rscp-wachtwoord",
+    "setpower_interval": "Interval [s]opnieuw versturen instellen",
     "startChargeDefault": "Start opladen standaard [W]",
     "startDischargeDefault": "Begin ontlading standaard [W]"
 }
