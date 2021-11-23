@@ -754,7 +754,7 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueEmsSetPower( mode, value ) {
-		this.log.info( `queueEmsSetPower( ${mode}, ${value} )`);
+		this.log.debug( `queueEmsSetPower( ${mode}, ${value} )`);
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER" );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_MODE", mode );
