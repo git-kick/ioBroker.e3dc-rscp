@@ -147,6 +147,8 @@
     "SELF_CONSUMPTION": "Собственное потребление [%]",
     "SERIAL_NUMBER": "Серийный номер",
     "SET_POWER": "Установленная мощность [Вт]",
+    "SET_POWER_MODE": "Режим питания (исходящий)",
+    "SET_POWER_VALUE": "Установленная мощность (исходящая) [Вт]",
     "SPECIFIED_CAPACITY": "Указанная мощность [Втч]",
     "SPECIFIED_CHARGE_POWER": "Указанная мощность заряда [Вт]",
     "SPECIFIED_DISCHARGE_POWER": "Указанная мощность разряда [Вт]",
@@ -198,6 +200,7 @@
     "recommendedMinChargeLimit": "Рекомендуемый минимальный предел заряда [Вт]",
     "recommendedMinDischargeLimit": "Рекомендуемый минимальный предел разряда [Вт]",
     "rscp_password": "Пароль RSCP E3/DC",
+    "setpower_interval": "Интервал повторной отправки SET_POWER [s]",
     "startChargeDefault": "Начальная зарядка по умолчанию [Вт]",
     "startDischargeDefault": "Начальная разрядка по умолчанию [Вт]"
 }
