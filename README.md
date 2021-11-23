@@ -239,6 +239,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * Object names: replaced "#" by "_" to avoid interference with ioBoroker name resolution (e.g. former BAT#0 is now BAT_0)  -  **NOTE: this is likely to break <=0.0.9 based js scripts; adjust object references!**
 * Solved issue setting EMS.WEATHER_REGULATED_CHARGE_ENABLED (before, failed with warning)
 * Solved issue setting EMS.POWER_LIMITS_USED (before, object was defined r/o)
+* SET_POWER: values set are re-sent according to a given interval (see admin panel)
 * SET_POWER: introduced extra objects for entering desired values (SET_POWER_MODE, SET_POWER_VALUE)  -  **E3/DC behavior is still unclear. Feature under development.**
 ### 0.0.9-beta
 (git-kick) 
