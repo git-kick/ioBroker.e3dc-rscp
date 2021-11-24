@@ -231,6 +231,9 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.11-beta
+(git-kick) 
+* SET_POWER_MODE=0(NORMAL) stops timer for re-sending SET_POWER_* 
 ### 0.0.10-beta
 (git-kick) 
 * SET_POWER is now initialized and appears after adapter setup

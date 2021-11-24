@@ -447,16 +447,16 @@ class E3dcRscp extends utils.Adapter {
 			}
 			if( this.inBuffer && this.inBuffer.length % 32 == 0 ) {
 				const receivedFrame = Buffer.from(this.cipher.decrypt(this.inBuffer, 256, this.decryptionIV));
-				this.log.debug("Received response");
+				this.log.silly("Received response");
 				if( rscpTag[receivedFrame.readUInt32LE(18)] ) this.log.silly(rscpTag[receivedFrame.readUInt32LE(18)].TagNameGlobal);
 				if( this.decryptionIV ) this.inBuffer.copy( this.decryptionIV, 0, this.inBuffer.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
-				this.log.debug( `IN: ${printRscpFrame(receivedFrame)}` );
+				this.log.silly( `IN: ${printRscpFrame(receivedFrame)}` );
 				this.log.silly( dumpRscpFrame(receivedFrame) );
 				this.processFrame(receivedFrame);
 				this.sendNextFrame();
 				this.inBuffer = null;
 			} else {
-				this.log.debug(`inBuffer has length ${this.inBuffer.length} which is not a multiple of 256bit - waiting for next chunk...`);
+				this.log.silly(`inBuffer has length ${this.inBuffer.length} which is not a multiple of 256bit - waiting for next chunk...`);
 			}
 		});
 
@@ -765,7 +765,7 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_MODE" );
 		this.pushFrame();
 		// E3/DC requires regular SET_POWER repetition, otherwise it will fall back:
-		if( ! setPowerTimer ) {
+		if( mode > 0 && !setPowerTimer ) {
 			setPowerTimer = setInterval(() => {
 				this.getState( "EMS.SET_POWER_VALUE", (err, power) => {
 					this.getState( "EMS.SET_POWER_MODE", (err, mode) => {
@@ -773,6 +773,9 @@ class E3dcRscp extends utils.Adapter {
 					});
 				});
 			}, this.config.setpower_interval*1000 );
+		} else if( mode == 0 && setPowerTimer ) { // clear timer when mode is set to NORMAL
+			clearInterval(setPowerTimer);
+			setPowerTimer = null; // is neccessary for "is timer running" check
 		}
 	}
 
@@ -802,7 +805,7 @@ class E3dcRscp extends utils.Adapter {
 	sendNextFrame() {
 		if( this && this.queue[0] ) {
 			this.log.debug( `Sending request ${rscpTag[this.queue[0].readUInt32LE(18)].TagNameGlobal}` );
-			this.log.debug( `OUT: ${printRscpFrame(this.queue[0])}` );
+			this.log.silly( `OUT: ${printRscpFrame(this.queue[0])}` );
 			this.log.silly( dumpRscpFrame(this.queue[0]) );
 
 			const encryptedFrame = Buffer.from( this.cipher.encrypt( this.queue[0], 256, this.encryptionIV ) );
@@ -810,13 +813,13 @@ class E3dcRscp extends utils.Adapter {
 			if( this.encryptionIV ) encryptedFrame.copy( this.encryptionIV, 0, encryptedFrame.length - BLOCK_SIZE );
 
 			if( this.tcpConnection && this.tcpConnection.write( encryptedFrame ) ) {
-				this.log.debug( `Successfully written data to socket` );
+				this.log.silly( `Successfully written data to socket` );
 				this.queue.shift();
 			} else {
 				this.log.error( `Failed writing data to socket` );
 			}
 		} else {
-			this.log.debug( "Message queue is empty");
+			this.log.silly( "Message queue is empty");
 		}
 	}
 
@@ -1196,7 +1199,7 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 		// Initialize your adapter here
-		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.rscp_password}, ${this.config.portal_user}, ${this.config.portal_password}, ${this.config.polling_interval}, ${this.config.setpower_interval})` );
+		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.portal_user}, ${this.config.polling_interval}, ${this.config.setpower_interval})` );
 		// @ts-ignore
 		this.getForeignObject("system.config", (err, obj) => {
 			if (obj && obj.native && obj.native.secret) {
