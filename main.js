@@ -426,12 +426,6 @@ class E3dcRscp extends utils.Adapter {
 		this.cipher = new Rijndael(this.aesKey, "cbc");
 		// Initial authentication frame:
 		this.queueRscpAuthentication();
-		// Find out number of BAT units:
-		this.log.debug(`Probing for BAT units - 0..${this.batProbes-1}.`);
-		this.queueBatProbe(this.batProbes);
-		// Find out number of PVI units and sensors:
-		this.log.debug(`Probing for PVI units - 0..${this.pviProbes-1}.`);
-		this.queuePviProbe(this.pviProbes);
 
 		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
 			this.log.info("Connection to E3/DC is established");
@@ -492,116 +486,120 @@ class E3dcRscp extends utils.Adapter {
 		this.frame = Buffer.from([0xE3, 0xDC, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 	}
 
-	addTagtoFrame( tag, value = Object(0) ) {
+	addTagtoFrame( tag, refreshPeriod = "", value = Object(0) ) {
 		if( !rscpTagCode[tag] ) {
 			this.log.warn(`Unknown tag ${tag} with value ${value} - cannot add to frame.`);
 			return;
 		}
 		const tagCode = rscpTagCode[tag];
-		const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
-		const buf1 = Buffer.alloc(1);
-		const buf2 = Buffer.alloc(2);
-		const buf4 = Buffer.alloc(4);
-		const buf8 = Buffer.alloc(8);
-		buf4.writeInt32LE( tagCode );
-		this.frame = Buffer.concat( [this.frame, buf4] );
-		this.frame = Buffer.concat( [this.frame, Buffer.from([typeCode])] );
-		this.frame = Buffer.concat( [this.frame, Buffer.from([0x00, 0x00])] ); // reserve space for Length
-		switch( rscpType[typeCode] ) {
-			case "None":
-				break;
-			case "Container":
-				if( this.openContainer > 0 ) {
-					this.frame.writeUInt16LE( this.frame.length - this.openContainer - 9, this.openContainer );
-				}
-				this.openContainer = this.frame.length - 2;
-				break;
-			case "CString":
-			case "Bitfield":
-			case "ByteArray":
-				this.frame.writeUInt16LE(value.length, this.frame.length - 2);
-				this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
-				break;
-			case "Char8":
-			case "UChar8":
-			case "Error":
-				this.frame.writeUInt16LE( 1, this.frame.length - 2);
-				buf1.writeUInt8( value );
-				this.frame = Buffer.concat( [this.frame, buf1] );
-				break;
-			case "Bool": // bool is encoded as 0/1 byte
-				this.frame.writeUInt16LE( 1, this.frame.length - 2);
-				buf1.writeUInt8( value?1:0 );
-				this.frame = Buffer.concat( [this.frame, buf1] );
-				break;
-			case "Int16":
-				this.frame.writeUInt16LE( 2, this.frame.length - 2 );
-				buf2.writeInt16LE( value );
-				this.frame = Buffer.concat( [this.frame, buf2] );
-				break;
-			case "UInt16":
-				this.frame.writeUInt16LE( 2, this.frame.length - 2 );
-				buf2.writeUInt16LE( value );
-				this.frame = Buffer.concat( [this.frame, buf2] );
-				break;
-			case "Int32":
-				this.frame.writeUInt16LE( 4, this.frame.length - 2 );
-				buf4.writeInt32LE( value );
-				this.frame = Buffer.concat( [this.frame, buf4] );
-				break;
-			case "UInt32":
-				this.frame.writeUInt16LE( 4, this.frame.length - 2 );
-				buf4.writeUInt32LE( value );
-				this.frame = Buffer.concat( [this.frame, buf4] );
-				break;
-			case "Int64":
-				this.frame.writeUInt16LE( 8, this.frame.length - 2 );
-				buf8.writeBigInt64LE( value );
-				this.frame = Buffer.concat( [this.frame, buf8] );
-				break;
-			case "UInt64":
-				this.frame.writeUInt16LE( 8, this.frame.length - 2 );
-				buf8.writeBigUInt64LE( value );
-				this.frame = Buffer.concat( [this.frame, buf8] );
-				break;
-			case "Float32":
-				this.frame.writeUInt16LE( 4, this.frame.length - 2 );
-				buf4.writeFloatLE( value );
-				this.frame = Buffer.concat( [this.frame, buf4] );
-				break;
-			case "Double64":
-				this.frame.writeUInt16LE( 8, this.frame.length - 2 );
-				buf8.writeDoubleLE( value );
-				this.frame = Buffer.concat( [this.frame, buf8] );
-				break;
-			case "Timestamp": // CAUTION: treating value as seconds - setting nanoseconds to zero
-				this.frame.writeUInt16LE( 12, this.frame.length - 2 );
-				buf8.writeUIntLE( value, 0, 8 );
-				this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array([0x00,0x00,0x00,0x00])] );
-				break;
-			default:
-				this.log.warn(`addTagtoFrame does not know how to handle data type ${rscpType[typeCode]}`);
+		if( refreshPeriod == "" || rscpTag[tagCode].RefreshPeriod == "" || rscpTag[tagCode].RefreshPeriod == refreshPeriod ) {
+			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
+			const buf1 = Buffer.alloc(1);
+			const buf2 = Buffer.alloc(2);
+			const buf4 = Buffer.alloc(4);
+			const buf8 = Buffer.alloc(8);
+			buf4.writeInt32LE( tagCode );
+			this.frame = Buffer.concat( [this.frame, buf4] );
+			this.frame = Buffer.concat( [this.frame, Buffer.from([typeCode])] );
+			this.frame = Buffer.concat( [this.frame, Buffer.from([0x00, 0x00])] ); // reserve space for Length
+			switch( rscpType[typeCode] ) {
+				case "None":
+					break;
+				case "Container":
+					if( this.openContainer > 0 ) {
+						this.frame.writeUInt16LE( this.frame.length - this.openContainer - 9, this.openContainer );
+					}
+					this.openContainer = this.frame.length - 2;
+					break;
+				case "CString":
+				case "Bitfield":
+				case "ByteArray":
+					this.frame.writeUInt16LE(value.length, this.frame.length - 2);
+					this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
+					break;
+				case "Char8":
+				case "UChar8":
+				case "Error":
+					this.frame.writeUInt16LE( 1, this.frame.length - 2);
+					buf1.writeUInt8( value );
+					this.frame = Buffer.concat( [this.frame, buf1] );
+					break;
+				case "Bool": // bool is encoded as 0/1 byte
+					this.frame.writeUInt16LE( 1, this.frame.length - 2);
+					buf1.writeUInt8( value?1:0 );
+					this.frame = Buffer.concat( [this.frame, buf1] );
+					break;
+				case "Int16":
+					this.frame.writeUInt16LE( 2, this.frame.length - 2 );
+					buf2.writeInt16LE( value );
+					this.frame = Buffer.concat( [this.frame, buf2] );
+					break;
+				case "UInt16":
+					this.frame.writeUInt16LE( 2, this.frame.length - 2 );
+					buf2.writeUInt16LE( value );
+					this.frame = Buffer.concat( [this.frame, buf2] );
+					break;
+				case "Int32":
+					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
+					buf4.writeInt32LE( value );
+					this.frame = Buffer.concat( [this.frame, buf4] );
+					break;
+				case "UInt32":
+					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
+					buf4.writeUInt32LE( value );
+					this.frame = Buffer.concat( [this.frame, buf4] );
+					break;
+				case "Int64":
+					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
+					buf8.writeBigInt64LE( value );
+					this.frame = Buffer.concat( [this.frame, buf8] );
+					break;
+				case "UInt64":
+					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
+					buf8.writeBigUInt64LE( value );
+					this.frame = Buffer.concat( [this.frame, buf8] );
+					break;
+				case "Float32":
+					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
+					buf4.writeFloatLE( value );
+					this.frame = Buffer.concat( [this.frame, buf4] );
+					break;
+				case "Double64":
+					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
+					buf8.writeDoubleLE( value );
+					this.frame = Buffer.concat( [this.frame, buf8] );
+					break;
+				case "Timestamp": // CAUTION: treating value as seconds - setting nanoseconds to zero
+					this.frame.writeUInt16LE( 12, this.frame.length - 2 );
+					buf8.writeUIntLE( value, 0, 8 );
+					this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array([0x00,0x00,0x00,0x00])] );
+					break;
+				default:
+					this.log.warn(`addTagtoFrame does not know how to handle data type ${rscpType[typeCode]}`);
+			}
 		}
 	}
 
 	pushFrame() { // finalize frame, then push it to the queue
-		this.frame.writeUIntLE( Math.floor(new Date().getTime()/1000), 4, 6 ); // set timestamp - bytes 7,8 remain zero (which will be wrong after 19.01.2038)
-		this.frame.writeUInt16LE( this.frame.length - 18, 16 ); // set total length
-		if( this.openContainer > 0 ) {
-			this.frame.writeUInt16LE( this.frame.length - this.openContainer - 2, this.openContainer );
-			this.openContainer = 0;
+		if( this.frame.length > 18 ) {
+			this.frame.writeUIntLE( Math.floor(new Date().getTime()/1000), 4, 6 ); // set timestamp - bytes 7,8 remain zero (which will be wrong after 19.01.2038)
+			this.frame.writeUInt16LE( this.frame.length - 18, 16 ); // set total length
+			if( this.openContainer > 0 ) {
+				this.frame.writeUInt16LE( this.frame.length - this.openContainer - 2, this.openContainer );
+				this.openContainer = 0;
+			}
+			const buf4 = Buffer.alloc(4);
+			buf4.writeInt32LE( CRC32.buf(this.frame) );
+			this.frame = Buffer.concat( [this.frame, buf4] ); // concat returns a copy of this.frame, which therefore can be reused
+			this.queue.push(this.frame);
 		}
-		const buf4 = Buffer.alloc(4);
-		buf4.writeInt32LE( CRC32.buf(this.frame) );
-		this.frame = Buffer.concat( [this.frame, buf4] ); // concat returns a copy of this.frame, which therefore can be reused
-		this.queue.push(this.frame);
 	}
 
 	queueRscpAuthentication( ) {
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_RSCP_REQ_AUTHENTICATION" );
-		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_USER", this.config.portal_user );
-		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_PASSWORD", this.config.portal_password );
+		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_USER", "", this.config.portal_user );
+		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_PASSWORD", "", this.config.portal_password );
 		this.pushFrame();
 	}
 
@@ -609,45 +607,45 @@ class E3dcRscp extends utils.Adapter {
 		for( let batIndex = 0; batIndex < probes; batIndex++ ) {
 			this.clearFrame();
 			this.addTagtoFrame( "TAG_BAT_REQ_DATA" );
-			this.addTagtoFrame( "TAG_BAT_INDEX", batIndex );
+			this.addTagtoFrame( "TAG_BAT_INDEX", "", batIndex );
 			this.addTagtoFrame( "TAG_BAT_REQ_ASOC" );
 			this.pushFrame();
 		}
 	}
 
-	queueBatRequestData() {
+	queueBatRequestData( refreshPeriod ) {
 		for( let batIndex = 0; batIndex <= this.maxIndex["BAT"]; batIndex++ ) {
 			this.clearFrame();
 			this.addTagtoFrame( "TAG_BAT_REQ_DATA" );
-			this.addTagtoFrame( "TAG_BAT_INDEX", batIndex );
-			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_CAPACITY" );
-			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY" );
-			this.addTagtoFrame( "TAG_BAT_REQ_ASOC" );
-			this.addTagtoFrame( "TAG_BAT_REQ_RSOC_REAL" );
-			this.addTagtoFrame( "TAG_BAT_REQ_MAX_BAT_VOLTAGE" );
-			this.addTagtoFrame( "TAG_BAT_REQ_MAX_CHARGE_CURRENT" );
-			this.addTagtoFrame( "TAG_BAT_REQ_EOD_VOLTAGE" );
-			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT" );
-			this.addTagtoFrame( "TAG_BAT_REQ_CHARGE_CYCLES" );
-			this.addTagtoFrame( "TAG_BAT_REQ_TERMINAL_VOLTAGE" );
-			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE" );
-			this.addTagtoFrame( "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE" );
-			this.addTagtoFrame( "TAG_BAT_REQ_READY_FOR_SHUTDOWN" );
-			this.addTagtoFrame( "TAG_BAT_REQ_TRAINING_MODE" );
-			this.addTagtoFrame( "TAG_BAT_REQ_FCC" );
-			this.addTagtoFrame( "TAG_BAT_REQ_RC" );
-			this.addTagtoFrame( "TAG_BAT_REQ_INFO" );
-			this.addTagtoFrame( "TAG_BAT_REQ_DCB_COUNT" );
-			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_NAME" );
-			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_STATE" );
-			this.addTagtoFrame( "TAG_BAT_REQ_SPECIFICATION" );
-			this.addTagtoFrame( "TAG_BAT_REQ_INTERNALS" );
-			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_USE_TIME" );
-			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME" );
+			this.addTagtoFrame( "TAG_BAT_INDEX", "", batIndex );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_BAT_VOLTAGE", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_INFO", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_ASOC", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_RSOC_REAL", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_TERMINAL_VOLTAGE", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_READY_FOR_SHUTDOWN", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_TRAINING_MODE", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_STATE", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_USE_TIME", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_CAPACITY", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_CHARGE_CURRENT", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_EOD_VOLTAGE", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_CHARGE_CYCLES", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_FCC", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_RC", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_DCB_COUNT", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_NAME", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_SPECIFICATION", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_INTERNALS", refreshPeriod );
 			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT_${batIndex}.DCB`]; dcbIndex++ ) {
-				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES", dcbIndex );
-				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", dcbIndex );
-				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", dcbIndex );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES", refreshPeriod, dcbIndex );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", refreshPeriod, dcbIndex );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", refreshPeriod, dcbIndex );
 			}
 			this.pushFrame();
 		}
@@ -657,7 +655,7 @@ class E3dcRscp extends utils.Adapter {
 		for( let pviIndex = 0; pviIndex < probes; pviIndex++ ) {
 			this.clearFrame();
 			this.addTagtoFrame( "TAG_PVI_REQ_DATA" );
-			this.addTagtoFrame( "TAG_PVI_INDEX", pviIndex );
+			this.addTagtoFrame( "TAG_PVI_INDEX", "", pviIndex );
 			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT" );
 			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT" );
 			this.addTagtoFrame( "TAG_PVI_REQ_DC_MAX_STRING_COUNT" );
@@ -665,91 +663,91 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	queuePviRequestData() {
+	queuePviRequestData( refreshPeriod ) {
 		for( let pviIndex = 0; pviIndex <= this.maxIndex["PVI"]; pviIndex++ ) {
 			this.clearFrame();
 			this.addTagtoFrame( "TAG_PVI_REQ_DATA" );
-			this.addTagtoFrame( "TAG_PVI_INDEX", pviIndex );
-			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT" );
-			this.addTagtoFrame( "TAG_PVI_REQ_TYPE" );
-			this.addTagtoFrame( "TAG_PVI_REQ_SERIAL_NUMBER" );
-			this.addTagtoFrame( "TAG_PVI_REQ_VERSION" );
-			this.addTagtoFrame( "TAG_PVI_REQ_ON_GRID" );
-			this.addTagtoFrame( "TAG_PVI_REQ_STATE" );
-			this.addTagtoFrame( "TAG_PVI_REQ_LAST_ERROR" );
-			// this.addTagtoFrame( "TAG_PVI_REQ_COS_PHI" ); // always returns data type ERROR
-			this.addTagtoFrame( "TAG_PVI_REQ_VOLTAGE_MONITORING" );
-			this.addTagtoFrame( "TAG_PVI_REQ_POWER_MODE" );
-			this.addTagtoFrame( "TAG_PVI_REQ_SYSTEM_MODE" );
-			this.addTagtoFrame( "TAG_PVI_REQ_FREQUENCY_UNDER_OVER" );
-			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT" );
-			this.addTagtoFrame( "TAG_PVI_REQ_MAX_TEMPERATURE" );
-			this.addTagtoFrame( "TAG_PVI_REQ_MIN_TEMPERATURE" );
-			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_APPARENTPOWER" );
-			this.addTagtoFrame( "TAG_PVI_REQ_DEVICE_STATE" );
+			this.addTagtoFrame( "TAG_PVI_INDEX", "", pviIndex );
+			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_TYPE", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_SERIAL_NUMBER", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_VERSION", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_ON_GRID", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_STATE", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_LAST_ERROR", refreshPeriod  );
+			// this.addTagtoFrame( "TAG_PVI_REQ_COS_PHI", refreshPeriod ); // always returns data type ERROR
+			this.addTagtoFrame( "TAG_PVI_REQ_VOLTAGE_MONITORING", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_POWER_MODE", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_SYSTEM_MODE", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_FREQUENCY_UNDER_OVER", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_MAX_TEMPERATURE", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_MIN_TEMPERATURE", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_APPARENTPOWER", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_DEVICE_STATE", refreshPeriod  );
 			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI_${pviIndex}.AC_MAX_PHASE`]; phaseIndex++) {
 				for( const id of phaseIds ) {
-					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, phaseIndex );
+					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, refreshPeriod, phaseIndex );
 				}
 			}
 			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI_${pviIndex}.DC_MAX_STRING`]; stringIndex++) {
 				for( const id of stringIds ) {
-					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, stringIndex );
+					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, refreshPeriod, stringIndex );
 				}
 			}
 			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI_${pviIndex}.TEMPERATURE`]; tempIndex++) {
-				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", tempIndex );
+				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", refreshPeriod, tempIndex );
 			}
 			this.pushFrame();
 		}
 	}
 
-	queueEmsRequestData() {
+	queueEmsRequestData( refreshPeriod ) {
 		this.clearFrame();
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS" );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_POWER_SETTINGS", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_TO_CAR_MODE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_PV", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_BAT", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_HOME", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_GRID", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_ADD", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_BAT_SOC", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_AUTARKY", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_SELF_CONSUMPTION", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_MODE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_ALL", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_SOLAR", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_ALIVE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_MANUAL_CHARGE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_STATUS", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_COUPLING_MODE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_BALANCED_PHASES", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_USED_CHARGE_LIMIT", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_USER_CHARGE_LIMIT", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_BAT_CHARGE_LIMIT", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_CHARGE_LIMIT", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_USED_DISCHARGE_LIMIT", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_USER_DISCHARGE_LIMIT", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_STORED_ERRORS", refreshPeriod );
+		// this.addTagtoFrame( "TAG_EMS_REQ_GET_GENERATOR_STATE", refreshPeriod ); // always returns ERROR data type
+		// this.addTagtoFrame( "TAG_EMS_REQ_ERROR_BUZZER_ENABLED", refreshPeriod ); // always returns ERROR data type
+		this.addTagtoFrame( "TAG_EMS_REQ_INSTALLED_PEAK_POWER", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_POWER_VALUE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE", refreshPeriod );
 		this.pushFrame();
 		this.clearFrame();
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_POWER_SETTINGS" );
-		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE" );
-		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_TO_CAR_MODE" );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_PV" );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_BAT" );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_HOME" );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_GRID" );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_ADD" );
-		this.addTagtoFrame( "TAG_EMS_REQ_BAT_SOC" );
-		this.addTagtoFrame( "TAG_EMS_REQ_AUTARKY" );
-		this.addTagtoFrame( "TAG_EMS_REQ_SELF_CONSUMPTION" );
-		this.addTagtoFrame( "TAG_EMS_REQ_COUPLING_MODE" );
-		this.addTagtoFrame( "TAG_EMS_REQ_BALANCED_PHASES" );
-		this.addTagtoFrame( "TAG_EMS_REQ_INSTALLED_PEAK_POWER" );
-		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE" );
-		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_POWER_VALUE" );
-		this.addTagtoFrame( "TAG_EMS_REQ_USED_CHARGE_LIMIT" );
-		this.addTagtoFrame( "TAG_EMS_REQ_USER_CHARGE_LIMIT" );
-		this.addTagtoFrame( "TAG_EMS_REQ_BAT_CHARGE_LIMIT" );
-		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_CHARGE_LIMIT" );
-		this.addTagtoFrame( "TAG_EMS_REQ_USED_DISCHARGE_LIMIT" );
-		this.addTagtoFrame( "TAG_EMS_REQ_USER_DISCHARGE_LIMIT" );
-		this.addTagtoFrame( "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT" );
-		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT" );
-		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER" );
-		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER" );
-		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS" );
-		this.addTagtoFrame( "TAG_EMS_REQ_MODE" );
-		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE" );
-		// this.addTagtoFrame( "TAG_EMS_REQ_GET_GENERATOR_STATE" ); // always returns ERROR data type
-		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS" );
-		this.addTagtoFrame( "TAG_EMS_REQ_STORED_ERRORS" );
-		// this.addTagtoFrame( "TAG_EMS_REQ_ERROR_BUZZER_ENABLED" ); // always returns ERROR data type
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_ALL" );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_SOLAR" );
-		this.addTagtoFrame( "TAG_EMS_REQ_ALIVE" );
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_MANUAL_CHARGE" );
-		this.addTagtoFrame( "TAG_EMS_REQ_STATUS" );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", refreshPeriod );
 		this.pushFrame();
 		this.clearFrame();
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS", refreshPeriod );
 		this.pushFrame();
 	}
 
@@ -757,8 +755,8 @@ class E3dcRscp extends utils.Adapter {
 		this.log.debug( `queueEmsSetPower( ${mode}, ${value} )`);
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER" );
-		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_MODE", mode );
-		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_VALUE", value );
+		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_MODE", "", mode );
+		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_VALUE", "", value );
 		this.pushFrame();
 		// SET_POWER response carries VALUE, but not MODE. Therefore, update MODE separately:
 		this.clearFrame();
@@ -779,13 +777,13 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	queueEpRequestData() {
+	queueEpRequestData( refreshPeriod ) {
 		this.clearFrame();
-		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH" );
-		this.addTagtoFrame( "TAG_EP_REQ_IS_GRID_CONNECTED" );
-		this.addTagtoFrame( "TAG_EP_REQ_IS_ISLAND_GRID" );
-		this.addTagtoFrame( "TAG_EP_REQ_IS_POSSIBLE" );
-		this.addTagtoFrame( "TAG_EP_REQ_IS_INVALID_STATE" );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH", refreshPeriod );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_GRID_CONNECTED", refreshPeriod );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_ISLAND_GRID", refreshPeriod );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_POSSIBLE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_INVALID_STATE", refreshPeriod );
 		this.pushFrame();
 	}
 
@@ -795,11 +793,19 @@ class E3dcRscp extends utils.Adapter {
 		if( mapChangedIdToSetTags[id] && mapChangedIdToSetTags[id].length == 2 ) {
 			this.clearFrame();
 			this.addTagtoFrame( mapChangedIdToSetTags[id][0] );
-			this.addTagtoFrame( mapChangedIdToSetTags[id][1], value );
+			this.addTagtoFrame( mapChangedIdToSetTags[id][1], "", value );
 			this.pushFrame();
 		} else {
 			this.log.warn( `Don't know how to queue ${id}`);
 		}
+	}
+
+	requestAllData( refreshPeriod ) {
+		this.queueEmsRequestData( refreshPeriod );
+		this.queueEpRequestData( refreshPeriod );
+		this.queueBatRequestData( refreshPeriod );
+		this.queuePviRequestData( refreshPeriod );
+		this.sendNextFrame();
 	}
 
 	sendNextFrame() {
@@ -1199,20 +1205,37 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 		// Initialize your adapter here
-		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.portal_user}, ${this.config.polling_interval}, ${this.config.setpower_interval})` );
+		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.portal_user}, ${this.config.polling_interval_short}, ${this.config.polling_interval_medium}, ${this.config.polling_interval_long}, ${this.config.setpower_interval})` );
 		// @ts-ignore
 		this.getForeignObject("system.config", (err, obj) => {
 			if (obj && obj.native && obj.native.secret) {
 				this.config.rscp_password = this.decryptPassword(obj.native.secret,this.config.rscp_password);
 				this.config.portal_password = this.decryptPassword(obj.native.secret,this.config.portal_password);
 				this.initChannel();
+
+				// Find out number of BAT units:
+				this.log.debug(`Probing for BAT units - 0..${this.batProbes-1}.`);
+				this.queueBatProbe(this.batProbes);
+				// Find out number of PVI units and sensors:
+				this.log.debug(`Probing for PVI units - 0..${this.pviProbes-1}.`);
+				this.queuePviProbe(this.pviProbes);
+				// Force some quick data requests for probing and building the object tree:
+				for( let i = 0; i < 5; i++ ) {
+					setTimeout(() => {
+						this.requestAllData( "" );
+					}, i * 1000 * 7 );
+				}
+
 				dataPollingTimer = setInterval(() => {
-					this.queueEmsRequestData();
-					this.queueEpRequestData();
-					this.queueBatRequestData();
-					this.queuePviRequestData();
-					this.sendNextFrame();
-				}, this.config.polling_interval*1000 );
+					this.requestAllData( "short" );
+				}, this.config.polling_interval_short * 1000 ); // seconds
+				dataPollingTimer = setInterval(() => {
+					this.requestAllData( "medium" );
+				}, this.config.polling_interval_medium * 1000 * 60 ); // minutes
+				dataPollingTimer = setInterval(() => {
+					this.requestAllData( "long" );
+				}, this.config.polling_interval_long * 1000 * 3600 ); //hours
+
 			} else {
 				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
 			}
