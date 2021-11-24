@@ -44,7 +44,19 @@ Here is what to configure when creating a new instance of the adapter:
     <td>RSCP port of your E3/DC, usually 5033</td>
   </tr>
   <tr>
-    <td>Polling interval in seconds</td>
+    <td>Polling interval short [s]</td>
+    <td>Defines how often ioBroker will request state updates from E3/DC for most dynamic variables.</td>
+  </tr>
+  <tr>
+    <td>Polling interval medium [m]</td>
+    <td>Defines how often ioBroker will request state updates from E3/DC in the regular case.</td>
+  </tr>
+  <tr>
+    <td>Polling interval long [h]</td>
+    <td>Defines how often ioBroker will request state updates from E3/DC for rarely or never modified variables.</td>
+  </tr>
+  <tr>
+    <td>SET_POWER re-send interval s]</td>
     <td>Defines how often ioBroker will request state updates from E3/DC.</td>
   </tr>
   <tr>
@@ -234,6 +246,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### 0.0.11-beta
 (git-kick) 
 * SET_POWER_MODE=0(NORMAL) stops timer for re-sending SET_POWER_* 
+* Introduced short/medium/long polling intervals to reduce amount of (mostly redundant) requests
 ### 0.0.10-beta
 (git-kick) 
 * SET_POWER is now initialized and appears after adapter setup

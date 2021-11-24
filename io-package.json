@@ -4,8 +4,8 @@
         "version": "0.0.11-beta",
         "news": {
             "0.0.11-beta": {
-                "en": "EMS SET_POWER stop timer when SET_POWER_MODE=0",
-                "de": "EMS SET_POWER stop timer when SET_POWER_MODE=0",
+                "en": "Short/medium/long polling intervals",
+                "de": "Short/medium/long polling intervals",
                 "ru": "Пересмотрена обработка индексов",
                 "pt": "Tratamento revisto do Índice",
                 "nl": "Indexafhandeling herzien",
@@ -82,7 +82,9 @@
         "rscp_password": "",
         "portal_user": "",
         "portal_password": "",
-        "polling_interval": 60,
+        "polling_interval_short": 30,
+        "polling_interval_medium": 5,
+        "polling_interval_long": 12,
         "setpower_interval": 15
     },
     "objects": [],
