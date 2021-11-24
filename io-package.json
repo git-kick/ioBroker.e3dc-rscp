@@ -1,11 +1,11 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.10-beta",
+        "version": "0.0.11-beta",
         "news": {
-            "0.0.8-beta2": {
-                "en": "EMS SET_POWER init",
-                "de": "EMS SET_POWER init",
+            "0.0.11-beta": {
+                "en": "EMS SET_POWER stop timer when SET_POWER_MODE=0",
+                "de": "EMS SET_POWER stop timer when SET_POWER_MODE=0",
                 "ru": "Пересмотрена обработка индексов",
                 "pt": "Tratamento revisto do Índice",
                 "nl": "Indexafhandeling herzien",
