@@ -243,6 +243,9 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.12-beta
+(git-kick)
+* Polling interval: only 11 most important parameters left in "short" class, according to [@ArnoD's analysis](https://forum.iobroker.net/post/711108)
 ### 0.0.11-beta
 (git-kick) 
 * SET_POWER_MODE=0(NORMAL) stops timer for re-sending SET_POWER_* 

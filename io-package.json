@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.11-beta",
+        "version": "0.0.12-beta",
         "news": {
-            "0.0.11-beta": {
+            "0.0.12-beta": {
                 "en": "Short/medium/long polling intervals",
                 "de": "Short/medium/long polling intervals",
                 "ru": "Пересмотрена обработка индексов",
