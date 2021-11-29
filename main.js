@@ -801,10 +801,10 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	requestAllData( refreshPeriod ) {
-		this.queueEmsRequestData( refreshPeriod );
-		this.queueEpRequestData( refreshPeriod );
-		this.queueBatRequestData( refreshPeriod );
-		this.queuePviRequestData( refreshPeriod );
+		if( this.config.query_ems ) this.queueEmsRequestData( refreshPeriod );
+		if( this.config.query_ep ) this.queueEpRequestData( refreshPeriod );
+		if( this.config.query_bat ) this.queueBatRequestData( refreshPeriod );
+		if( this.config.query_pvi ) this.queuePviRequestData( refreshPeriod );
 		this.sendNextFrame();
 	}
 
@@ -1137,72 +1137,80 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("BAT", {
-			type: "device",
-			common: {
-				name: systemDictionary["BAT"][this.language],
-				role: "battery.storage",
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("PVI", {
-			type: "device",
-			common: {
-				name: systemDictionary["PVI"][this.language],
-				role: "photovoltaic.inverter",
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EMS", {
-			type: "device",
-			common: {
-				name: systemDictionary["EMS"][this.language],
-				role: "energy.management",
-			},
-			native: {},
-		});
-		await this.setObjectNotExistsAsync("EP", {
-			type: "device",
-			common: {
-				name: systemDictionary["EP"][this.language],
-				role: "emergency.power",
-			},
-			native: {},
-		});
-		await this.setObjectNotExists( "EMS.SET_POWER", {
-			type: "state",
-			common: {
-				name: systemDictionary["SET_POWER"][this.language],
-				type: "number",
-				role: "value",
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-		await this.setObjectNotExists( "EMS.SET_POWER_VALUE", {
-			type: "state",
-			common: {
-				name: systemDictionary["SET_POWER_VALUE"][this.language],
-				type: "number",
-				role: "level",
-				read: false,
-				write: true,
-			},
-			native: {},
-		});
-		await this.setObjectNotExists( "EMS.SET_POWER_MODE", {
-			type: "state",
-			common: {
-				name: systemDictionary["SET_POWER_MODE"][this.language],
-				type: "number",
-				role: "level",
-				read: false,
-				write: true,
-				states: rscpEmsPowerMode,
-			},
-			native: {},
-		});
+		if( this.config.query_bat ) {
+			await this.setObjectNotExistsAsync("BAT", {
+				type: "device",
+				common: {
+					name: systemDictionary["BAT"][this.language],
+					role: "battery.storage",
+				},
+				native: {},
+			});
+		}
+		if( this.config.query_pvi ) {
+			await this.setObjectNotExistsAsync("PVI", {
+				type: "device",
+				common: {
+					name: systemDictionary["PVI"][this.language],
+					role: "photovoltaic.inverter",
+				},
+				native: {},
+			});
+		}
+		if( this.config.query_ep ) {
+			await this.setObjectNotExistsAsync("EP", {
+				type: "device",
+				common: {
+					name: systemDictionary["EP"][this.language],
+					role: "emergency.power",
+				},
+				native: {},
+			});
+		}
+		if( this.config.query_ems ) {
+			await this.setObjectNotExistsAsync("EMS", {
+				type: "device",
+				common: {
+					name: systemDictionary["EMS"][this.language],
+					role: "energy.management",
+				},
+				native: {},
+			});
+			await this.setObjectNotExists( "EMS.SET_POWER", {
+				type: "state",
+				common: {
+					name: systemDictionary["SET_POWER"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+				},
+				native: {},
+			});
+			await this.setObjectNotExists( "EMS.SET_POWER_VALUE", {
+				type: "state",
+				common: {
+					name: systemDictionary["SET_POWER_VALUE"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+				},
+				native: {},
+			});
+			await this.setObjectNotExists( "EMS.SET_POWER_MODE", {
+				type: "state",
+				common: {
+					name: systemDictionary["SET_POWER_MODE"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					states: rscpEmsPowerMode,
+				},
+				native: {},
+			});
+		}
 
 		// Initialize your adapter here
 		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.portal_user}, ${this.config.polling_interval_short}, ${this.config.polling_interval_medium}, ${this.config.polling_interval_long}, ${this.config.setpower_interval})` );
@@ -1215,10 +1223,10 @@ class E3dcRscp extends utils.Adapter {
 
 				// Find out number of BAT units:
 				this.log.debug(`Probing for BAT units - 0..${this.batProbes-1}.`);
-				this.queueBatProbe(this.batProbes);
+				if( this.config.query_bat ) this.queueBatProbe(this.batProbes);
 				// Find out number of PVI units and sensors:
 				this.log.debug(`Probing for PVI units - 0..${this.pviProbes-1}.`);
-				this.queuePviProbe(this.pviProbes);
+				if( this.config.query_pvi ) this.queuePviProbe(this.pviProbes);
 				// Force some quick data requests for probing and building the object tree:
 				for( let i = 0; i < 5; i++ ) {
 					setTimeout(() => {

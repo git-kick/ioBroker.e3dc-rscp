@@ -85,7 +85,11 @@
         "polling_interval_short": 30,
         "polling_interval_medium": 5,
         "polling_interval_long": 12,
-        "setpower_interval": 15
+        "setpower_interval": 15,
+        "query_bat": "true",
+        "query_ems": "true",
+        "query_ep": "true",
+        "query_pvi": "true"
     },
     "objects": [],
     "instanceObjects": []
