@@ -245,6 +245,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ### 0.0.12-beta
 (git-kick)
+* New in configuration panel: select namespaces to query - use it to reduce CPU load (and transmitted data volume)
 * Polling interval: only 11 most important parameters left in "short" class, according to [@ArnoD's analysis](https://forum.iobroker.net/post/711108)
 ### 0.0.11-beta
 (git-kick) 
