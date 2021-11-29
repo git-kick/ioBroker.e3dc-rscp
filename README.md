@@ -36,12 +36,24 @@ Here is what to configure when creating a new instance of the adapter:
     <th>Meaning</th>
   </tr>
   <tr>
+    <td>E3/DC Portal Username</td>
+    <td>Your username at the <a href="https://s10.e3dc.com/s10/">E3/DC portal</a>. E3/DC checks your credentials there before granting RSCP access.</td>
+  </tr>
+  <tr>
+    <td>E3/DC Portal Password</td>
+    <td>Your username at the <a href="https://s10.e3dc.com/s10/">E3/DC portal</a>.</td>
+  </tr>
+  <tr>
     <td>E3/DC IP address</td>
     <td>Address in your local network, like 192.168.178.33</td>
   </tr>
   <tr>
     <td>E3/DC Port</td>
     <td>RSCP port of your E3/DC, usually 5033</td>
+  </tr>
+  <tr>
+    <td>RSCP Password</td>
+    <td>Password, as entered locally at your E3/DC station.</td>
   </tr>
   <tr>
     <td>Polling interval short [s]</td>
@@ -60,16 +72,8 @@ Here is what to configure when creating a new instance of the adapter:
     <td>Defines how often ioBroker will request state updates from E3/DC.</td>
   </tr>
   <tr>
-    <td>RSCP Password</td>
-    <td>Password, as entered locally at your E3/DC station.</td>
-  </tr>
-  <tr>
-    <td>E3/DC Portal Username</td>
-    <td>Your username at the <a href="https://s10.e3dc.com/s10/">E3/DC portal</a>. E3/DC checks your credentials there before granting RSCP access.</td>
-  </tr>
-  <tr>
-    <td>E3/DC Portal Password</td>
-    <td>Your username at the <a href="https://s10.e3dc.com/s10/">E3/DC portal</a>.</td>
+    <td>Select E3/DC namespaces to query data for (check-boxes)</td>
+    <td>Data will be requested only for checked namespaces.</td>
   </tr>
 </table>
 
