@@ -190,6 +190,7 @@
     "maxDischargePower": "Maximaal ontlaadvermogen [W]",
     "maxFbcChargePower": "Maximum FCB-laadvermogen [W]",
     "maxFbcDischargePower": "Maximaal FCB-ontlaadvermogen [W]",
+    "maxPvPower": "Maximaal FCB-ontlaadvermogen [W]",
     "maxStartChargePower": "Maximaal startvermogen [W]",
     "maxStartDischargePower": "Maximaal startontladingsvermogen [W]",
     "minStartChargePower": "Minimaal startladingsvermogen [W]",

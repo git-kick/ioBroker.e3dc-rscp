@@ -1,11 +1,11 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.12-beta",
+        "version": "0.0.13-beta",
         "news": {
-            "0.0.12-beta": {
-                "en": "Short/medium/long polling intervals",
-                "de": "Short/medium/long polling intervals",
+            "0.0.13-beta": {
+                "en": "Units trailing values",
+                "de": "Units trailing values",
                 "ru": "Пересмотрена обработка индексов",
                 "pt": "Tratamento revisto do Índice",
                 "nl": "Indexafhandeling herzien",

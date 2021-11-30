@@ -190,6 +190,7 @@
     "maxDischargePower": "最大放电功率[W]",
     "maxFbcChargePower": "最大FCB充电功率[W]",
     "maxFbcDischargePower": "最大FCB放电功率[W]",
+    "maxPvPower": "最大FCB放电功率[W]",
     "maxStartChargePower": "最大启动充电功率[W]",
     "maxStartDischargePower": "最大启动放电功率[W]",
     "minStartChargePower": "最小启动充电功率[W]",
