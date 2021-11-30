@@ -247,6 +247,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.13-beta
+(git-kick)
+* Units are now trailing the values (no longer at end of name)
+
 ### 0.0.12-beta
 (git-kick)
 * New in configuration panel: select namespaces to query - use it to reduce CPU load (and transmitted data volume)

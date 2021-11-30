@@ -190,6 +190,7 @@
     "maxDischargePower": "Maksymalna moc rozładowania [W]",
     "maxFbcChargePower": "Maksymalna moc ładowania FCB [W]",
     "maxFbcDischargePower": "Maksymalna moc rozładowania FCB [W]",
+    "maxPvPower": "Maksymalna moc rozładowania FCB [W]",
     "maxStartChargePower": "Maksymalna moc ładowania rozruchowego [W]",
     "maxStartDischargePower": "Maksymalna moc rozruchu [W]",
     "minStartChargePower": "Minimalna moc ładowania rozruchowego [W]",

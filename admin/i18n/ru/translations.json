@@ -190,6 +190,7 @@
     "maxDischargePower": "Максимальная мощность разряда [Вт]",
     "maxFbcChargePower": "Максимальная мощность заряда FCB [Вт]",
     "maxFbcDischargePower": "Максимальная мощность разряда FCB [Вт]",
+    "maxPvPower": "Максимальная мощность разряда FCB [Вт]",
     "maxStartChargePower": "Максимальная начальная мощность заряда [Вт]",
     "maxStartDischargePower": "Максимальная начальная мощность разряда [Вт]",
     "minStartChargePower": "Минимальная начальная мощность заряда [Вт]",

@@ -190,6 +190,7 @@
     "maxDischargePower": "Potenza massima di scarico [W]",
     "maxFbcChargePower": "Potenza massima di carica FCB [W]",
     "maxFbcDischargePower": "Potenza massima di scarica FCB [W]",
+    "maxPvPower": "Potenza massima di scarica FCB [W]",
     "maxStartChargePower": "Potenza massima di carica iniziale [W]",
     "maxStartDischargePower": "Potenza massima di scarico iniziale [W]",
     "minStartChargePower": "Potenza minima di carica iniziale [W]",

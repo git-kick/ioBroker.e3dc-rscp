@@ -353,6 +353,28 @@ const ignoreIndexIds = [
 	"PVI.MIN_TEMPERATURE",
 	"PVI.MAX_TEMPERATURE",
 ];
+// For SYS_SPECs, names and values are transmitted over Interface, i.e. they are not in rscpTags[]
+// So we list the SYS_SPEC units here:
+const sysSpecUnits = {
+	"hybridModeSupported": "",
+	"installedBatteryCapacity": "Wh",
+	"maxAcPower": "W",
+	"maxBatChargePower": "W",
+	"maxBatDischargPower": "W",
+	"maxChargePower": "W",
+	"maxDischargePower": "W",
+	"maxFbcChargePower": "W",
+	"maxFbcDischargePower": "W",
+	"maxPvPower": "W",
+	"maxStartChargePower": "W",
+	"maxStartDischargePower": "W",
+	"minStartChargePower": "W",
+	"minStartDischargePower": "W",
+	"recommendedMinChargeLimit": "W",
+	"recommendedMinDischargeLimit": "W",
+	"startChargeDefault": "W",
+	"startDischargeDefault": "W",
+};
 
 // Encryption setup for E3/DC RSCP
 // NOTE: E3/DC uses 256 bit block-size, which ist _not_ covered by AES standard.
@@ -810,7 +832,11 @@ class E3dcRscp extends utils.Adapter {
 
 	sendNextFrame() {
 		if( this && this.queue[0] ) {
-			this.log.debug( `Sending request ${rscpTag[this.queue[0].readUInt32LE(18)].TagNameGlobal}` );
+			if( rscpTag[this.queue[0].readUInt32LE(18)] ) {
+				this.log.debug( `Sending request ${rscpTag[this.queue[0].readUInt32LE(18)].TagNameGlobal}` );
+			} else {
+				this.log.warn( `sendNextFrame called with invalid content: first tag is ${this.queue[0].readUInt32LE(18)}` );
+			}
 			this.log.silly( `OUT: ${printRscpFrame(this.queue[0])}` );
 			this.log.silly( dumpRscpFrame(this.queue[0]) );
 
@@ -965,7 +991,7 @@ class E3dcRscp extends utils.Adapter {
 			}
 			if( typeName == "Container" ) {
 				if( shortId == "EMS.SYS_SPEC" && token.content.length == 3 ) {
-					this.storeValue( nameSpace, pathNew + "SYS_SPECS.", token.content[1].content, "Int32", token.content[2].content);
+					this.storeValue( nameSpace, pathNew + "SYS_SPECS.", token.content[1].content, "Int32", token.content[2].content, token.content[1].content, sysSpecUnits[token.content[1].content] );
 					this.extendObject( `EMS.SYS_SPECS`, {type: "channel", common: {role: "info"}} );
 				} else if( shortId == "EMS.GET_IDLE_PERIODS" ) {
 					this.storeIdlePeriods( token.content, pathNew );
@@ -978,7 +1004,7 @@ class E3dcRscp extends utils.Adapter {
 					this.storeValue( nameSpace, pathNew + `String_${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
 					this.extendObject( `${nameSpace}.${pathNew}String_${token.content[0].content}`, {type: "channel", common: {role: "sensor.electricity"}} );
 				} else if ( shortId == "PVI.TEMPERATURE"  && token.content.length == 2 ) {
-					this.storeValue( nameSpace, pathNew + "TEMPERATURE.", token.content[0].content.toString().padStart(2,"0"), rscpType[token.content[1].type], token.content[1].content, "TEMPERATURE" );
+					this.storeValue( nameSpace, pathNew + "TEMPERATURE.", token.content[0].content.toString().padStart(2,"0"), rscpType[token.content[1].type], token.content[1].content, "TEMPERATURE", "°C" );
 					this.extendObject( `${nameSpace}.${pathNew}TEMPERATURE`, {type: "channel", common: {role: "sensor.temperature"}} );
 				} else {
 					this.processTree( token.content, pathNew );
@@ -991,8 +1017,19 @@ class E3dcRscp extends utils.Adapter {
 				if ( multipleValueIds.includes(shortId) ) {
 					if( ! multipleValueIndex[shortId] ) multipleValueIndex[shortId] = 0;
 					this.log.silly( `storeValue( ${nameSpace}, ${pathNew + tagName + "."}, ${multipleValueIndex[shortId].toString().padStart(2,"0")}, ${rscpType[token.type]}, ${token.content}, ${tagName} )`);
-					const dictionaryIndex = ( tagName == "DCB_CELL_TEMPERATURE" && token.content < 4.5 ) ? "DCB_CELL_VOLTAGE" : tagName;
-					this.storeValue( nameSpace, pathNew + tagName + ".", multipleValueIndex[shortId].toString().padStart(2,"0"), rscpType[token.type], token.content, dictionaryIndex );
+					let dictionaryIndex = tagName;
+					let unit = "";
+					if( tagName == "DCB_CELL_TEMPERATURE" ) {
+						if( token.content > 4.5 ) {
+							unit = "°C";
+						} else { // low values are regarded as voltage (seems to be a flaw in RSCP interface)
+							unit = "V";
+							dictionaryIndex = "DCB_CELL_VOLTAGE";
+						}
+					} else if( tagName == "DCB_CELL_VOLTAGE" ) {
+						unit = "V";
+					}
+					this.storeValue( nameSpace, pathNew + tagName + ".", multipleValueIndex[shortId].toString().padStart(2,"0"), rscpType[token.type], token.content, dictionaryIndex, unit );
 					let r = "info";
 					if( tagName.includes("TEMPERATURE") ) r = "sensor.temperature"; else if( tagName.includes("VOLTAGE") ) r = "sensor.electricity";
 					this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}.${tagName}`, {type: "channel", common: {role: r}} );
@@ -1053,7 +1090,7 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	storeValue( nameSpace, path, tagName, typeName, value, dictionaryIndex ) {
+	storeValue( nameSpace, path, tagName, typeName, value, dictionaryIndex, unit = "" ) {
 		if( !dictionaryIndex ) dictionaryIndex = tagName;
 		const oId = `${nameSpace}.${path}${tagName}`;
 		const oKey = `${nameSpace}.${tagName}`;
@@ -1063,6 +1100,10 @@ class E3dcRscp extends utils.Adapter {
 			oRole = oWrite?"switch":"indicator";
 		} else {
 			oRole = oWrite?"level":"value";
+		}
+		let oUnit = unit;
+		if( oUnit == "" && rscpTag[rscpTagCode[`TAG_${nameSpace}_${tagName}`]] ) {
+			oUnit = rscpTag[rscpTagCode[`TAG_${nameSpace}_${tagName}`]].Unit;
 		}
 		const oName = systemDictionary[dictionaryIndex] ? systemDictionary[dictionaryIndex][this.language] : "***UNDEFINED_NAME***";
 		this.setObjectNotExists( oId, {
@@ -1074,6 +1115,7 @@ class E3dcRscp extends utils.Adapter {
 				read: true,
 				write: oWrite,
 				states: (mapIdToCommonStates[oKey] ? mapIdToCommonStates[oKey] : ""),
+				unit: oUnit,
 			},
 			native: {},
 		}, () => {
@@ -1103,10 +1145,10 @@ class E3dcRscp extends utils.Adapter {
 			const t = (periodType==0) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
 			const p = `${path}${t}.${periodDay.toString().padStart(2,"0")}-${dayOfWeek[periodDay]}.`;
 			this.storeValue( "EMS", p, "IDLE_PERIOD_ACTIVE", "Bool", (periodActive!=0) );
-			this.storeValue( "EMS", p, "START_HOUR", "UChar8", periodStartHour );
-			this.storeValue( "EMS", p, "END_HOUR", "UChar8", periodEndHour );
-			this.storeValue( "EMS", p, "START_MINUTE", "UChar8", periodStartMinute );
-			this.storeValue( "EMS", p, "END_MINUTE", "UChar8", periodEndMinute );
+			this.storeValue( "EMS", p, "START_HOUR", "UChar8", periodStartHour, "START_HOUR", "h" );
+			this.storeValue( "EMS", p, "END_HOUR", "UChar8", periodEndHour, "END_HOUR", "h" );
+			this.storeValue( "EMS", p, "START_MINUTE", "UChar8", periodStartMinute, "START_MINUTE", "m" );
+			this.storeValue( "EMS", p, "END_MINUTE", "UChar8", periodEndMinute, "END_MINUTE", "m" );
 			this.extendObject( `EMS.${p.slice(0,-1)}`, {type: "channel", common: {role: "calendar.day"}} );
 		});
 		this.extendObject( "EMS.IDLE_PERIODS_CHARGE", {type: "channel", common: {role: "calendar.week"}} );
@@ -1184,6 +1226,7 @@ class E3dcRscp extends utils.Adapter {
 					role: "value",
 					read: true,
 					write: false,
+					unit: rscpTag[rscpTagCode["TAG_EMS_SET_POWER"]].Unit,
 				},
 				native: {},
 			});
@@ -1195,6 +1238,7 @@ class E3dcRscp extends utils.Adapter {
 					role: "level",
 					read: false,
 					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_SET_POWER_VALUE"]].Unit,
 				},
 				native: {},
 			});
