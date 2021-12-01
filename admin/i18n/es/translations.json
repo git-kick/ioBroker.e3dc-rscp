@@ -207,6 +207,7 @@
     "recommendedMinChargeLimit": "Límite mínimo de carga recomendado [W]",
     "recommendedMinDischargeLimit": "Límite mínimo de descarga recomendado [W]",
     "rscp_password": "Contraseña RSCP E3/DC",
+    "setidleperiod_delay": "SET_IDLE_PERIOD delay [s]",
     "setpower_interval": "SET_POWER intervalo de reenvío [s]",
     "startChargeDefault": "Inicio de carga predeterminado [W]",
     "startDischargeDefault": "Inicio de descarga por defecto [W]",

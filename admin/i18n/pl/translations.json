@@ -207,6 +207,7 @@
     "recommendedMinChargeLimit": "Zalecany minimalny limit ładowania [W]",
     "recommendedMinDischargeLimit": "Zalecany minimalny limit rozładowania [W]",
     "rscp_password": "Hasło E3/DC RSCP",
+    "setidleperiod_delay": "SET_IDLE_PERIOD delay [s]",
     "setpower_interval": "SET_POWER resend interval [s]",
     "startChargeDefault": "Start charge default [W]",
     "startDischargeDefault": "Start rozładowanie domyślne [W]",

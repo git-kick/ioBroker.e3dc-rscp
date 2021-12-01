@@ -207,6 +207,7 @@
     "recommendedMinChargeLimit": "Рекомендуемый минимальный предел заряда [Вт]",
     "recommendedMinDischargeLimit": "Рекомендуемый минимальный предел разряда [Вт]",
     "rscp_password": "Пароль RSCP E3/DC",
+    "setidleperiod_delay": "Задержка SET_IDLE_PERIOD [с]",
     "setpower_interval": "Интервал повторной отправки SET_POWER [s]",
     "startChargeDefault": "Начальная зарядка по умолчанию [Вт]",
     "startDischargeDefault": "Начальная разрядка по умолчанию [Вт]",

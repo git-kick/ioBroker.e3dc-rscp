@@ -159,7 +159,12 @@ const rscpEmsIdlePeriodType = {
 	0: "IDLE_CHARGE",
 	1: "IDLE_DISCHARGE",
 };
-const rscpEmsPowerMode = {
+const rscpEmsMode = {
+	0: "IDLE",
+	1: "DISCHARGE",
+	2: "CHARGE",
+};
+const rscpEmsSetPowerMode = {
 	0: "NORMAL",
 	1: "IDLE",
 	2: "DISCHARGE",
@@ -253,7 +258,7 @@ const mapIdToCommonStates = {
 	"EMS.COUPLING_MODE": rscpEmsCouplingMode,
 	"EMS.EMERGENCY_POWER_STATUS": rscpEmsEmergencyPowerStatus,
 	"EMS.IDLE_PERIOD_TYPE": rscpEmsIdlePeriodType,
-	"EMS.MODE": rscpEmsPowerMode,
+	"EMS.MODE": rscpEmsMode,
 };
 // List of writable states, with Mapping for response value handling.
 // Key is returned_tag; value is (type_pattern: target_state)
@@ -269,7 +274,8 @@ const mapReceivedIdToState = {
 };
 // List of all writable states
 // For standard cases, define how to send a SET to E3/DC
-// key is state id; value is [container_tag, setter_tag]
+// key is state id without path (i.e. only namespace + tag)
+// value is [container_tag, setter_tag]; may be [] empty for cases with special handling
 const mapChangedIdToSetTags = {
 	"EMS.MAX_CHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_CHARGE_POWER"],
 	"EMS.MAX_DISCHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_DISCHARGE_POWER"],
@@ -281,6 +287,11 @@ const mapChangedIdToSetTags = {
 	//"EMS.USER_DISCHARGE_LIMIT": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_USER_DISCHARGE_LIMIT"],
 	"EMS.SET_POWER_MODE": [],
 	"EMS.SET_POWER_VALUE": [],
+	"EMS.IDLE_PERIOD_ACTIVE": [],
+	"EMS.START_HOUR": [],
+	"EMS.START_MINUTE": [],
+	"EMS.END_HOUR": [],
+	"EMS.END_MINUTE": [],
 };
 // RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
 const castToBooleanIds = [
@@ -336,6 +347,7 @@ const ignoreIds = [
 	"EMS.MANUAL_CHARGE_START_COUNTER", // invalid Int64 value
 	"EMS.MANUAL_CHARGE_LASTSTART", // invalid Timestamp value
 	"EMS.SYS_SPEC_INDEX",
+	"EMS.SET_IDLE_PERIODS",
 	"BAT.UNDEFINED",
 	"BAT.INTERNAL_CURRENT_AVG30",
 	"BAT.INTERNAL_MTV_AVG30",
@@ -390,10 +402,11 @@ const KEY_SIZE = 32;
  * Created with @iobroker/create-adapter v1.31.0
  */
 const utils = require("@iobroker/adapter-core");
-const { resourceLimits } = require("worker_threads");
+const { resourceLimits, threadId } = require("worker_threads");
 const { type } = require("os");
 let dataPollingTimer = null;
 let setPowerTimer = null;
+const setIdlePeriodTimeout = []; // [10*type+day]
 class E3dcRscp extends utils.Adapter {
 
 	/**
@@ -422,6 +435,9 @@ class E3dcRscp extends utils.Adapter {
 		// For probing device count:
 		this.batProbes = 4; // set to upper bound
 		this.pviProbes = 3; // set to upper bound
+
+		// For preparing idle period update:
+		this.idlePeriodModified = {};
 
 		// TCP connection:
 		this.tcpConnection = new Net.Socket();
@@ -508,6 +524,8 @@ class E3dcRscp extends utils.Adapter {
 		this.frame = Buffer.from([0xE3, 0xDC, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 	}
 
+	// Add one tag to the frame under preparation
+	// Not for Container tags, see startContainer
 	addTagtoFrame( tag, refreshPeriod = "", value = Object(0) ) {
 		if( !rscpTagCode[tag] ) {
 			this.log.warn(`Unknown tag ${tag} with value ${value} - cannot add to frame.`);
@@ -528,11 +546,8 @@ class E3dcRscp extends utils.Adapter {
 				case "None":
 					break;
 				case "Container":
-					if( this.openContainer > 0 ) {
-						this.frame.writeUInt16LE( this.frame.length - this.openContainer - 9, this.openContainer );
-					}
-					this.openContainer = this.frame.length - 2;
-					break;
+					this.log.warn(`Container-tag ${tag} - cannot add to frame.`);
+					return;
 				case "CString":
 				case "Bitfield":
 				case "ByteArray":
@@ -599,17 +614,46 @@ class E3dcRscp extends utils.Adapter {
 				default:
 					this.log.warn(`addTagtoFrame does not know how to handle data type ${rscpType[typeCode]}`);
 			}
+			return 0;
 		}
 	}
 
-	pushFrame() { // finalize frame, then push it to the queue
+	// Add a Container tag to frame under preparation
+	// Returns position of Container length within frame for use in endContainer
+	startContainer( tag, refreshPeriod = "" ) {
+		if( !rscpTagCode[tag] ) {
+			this.log.warn(`Unknown container tag ${tag} - cannot start container.`);
+			return 0;
+		}
+		const tagCode = rscpTagCode[tag];
+		if( refreshPeriod == "" || rscpTag[tagCode].RefreshPeriod == "" || rscpTag[tagCode].RefreshPeriod == refreshPeriod ) {
+			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
+			if( rscpType[typeCode] != "Container") {
+				this.log.warn(`Non-container tag ${tag} - cannot start container.`);
+				return 0;
+			}
+			const buf4 = Buffer.alloc(4);
+			buf4.writeInt32LE( tagCode );
+			this.frame = Buffer.concat( [this.frame, buf4] );
+			this.frame = Buffer.concat( [this.frame, Buffer.from([typeCode])] );
+			this.frame = Buffer.concat( [this.frame, Buffer.from([0x00, 0x00])] ); // reserve space for Length
+			return this.frame.length - 2;
+		} else {
+			return 0;
+		}
+	}
+
+	endContainer( pos ) {
+		this.frame.writeUInt16LE( this.frame.length - pos - 2, pos );
+	}
+
+	// Finalize frame, then push it to the queue
+	// pos > 0 includes endContainer
+	pushFrame( pos=0 ) {
 		if( this.frame.length > 18 ) {
 			this.frame.writeUIntLE( Math.floor(new Date().getTime()/1000), 4, 6 ); // set timestamp - bytes 7,8 remain zero (which will be wrong after 19.01.2038)
 			this.frame.writeUInt16LE( this.frame.length - 18, 16 ); // set total length
-			if( this.openContainer > 0 ) {
-				this.frame.writeUInt16LE( this.frame.length - this.openContainer - 2, this.openContainer );
-				this.openContainer = 0;
-			}
+			if( pos > 0 ) this.endContainer(pos);
 			const buf4 = Buffer.alloc(4);
 			buf4.writeInt32LE( CRC32.buf(this.frame) );
 			this.frame = Buffer.concat( [this.frame, buf4] ); // concat returns a copy of this.frame, which therefore can be reused
@@ -619,26 +663,26 @@ class E3dcRscp extends utils.Adapter {
 
 	queueRscpAuthentication( ) {
 		this.clearFrame();
-		this.addTagtoFrame( "TAG_RSCP_REQ_AUTHENTICATION" );
+		const pos = this.startContainer( "TAG_RSCP_REQ_AUTHENTICATION" );
 		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_USER", "", this.config.portal_user );
 		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_PASSWORD", "", this.config.portal_password );
-		this.pushFrame();
+		this.pushFrame( pos );
 	}
 
 	queueBatProbe( probes ) {
 		for( let batIndex = 0; batIndex < probes; batIndex++ ) {
 			this.clearFrame();
-			this.addTagtoFrame( "TAG_BAT_REQ_DATA" );
+			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
 			this.addTagtoFrame( "TAG_BAT_INDEX", "", batIndex );
 			this.addTagtoFrame( "TAG_BAT_REQ_ASOC" );
-			this.pushFrame();
+			this.pushFrame( pos );
 		}
 	}
 
 	queueBatRequestData( refreshPeriod ) {
 		for( let batIndex = 0; batIndex <= this.maxIndex["BAT"]; batIndex++ ) {
 			this.clearFrame();
-			this.addTagtoFrame( "TAG_BAT_REQ_DATA" );
+			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
 			this.addTagtoFrame( "TAG_BAT_INDEX", "", batIndex );
 			this.addTagtoFrame( "TAG_BAT_REQ_MAX_BAT_VOLTAGE", refreshPeriod );
 			this.addTagtoFrame( "TAG_BAT_REQ_INFO", refreshPeriod );
@@ -669,26 +713,26 @@ class E3dcRscp extends utils.Adapter {
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", refreshPeriod, dcbIndex );
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", refreshPeriod, dcbIndex );
 			}
-			this.pushFrame();
+			this.pushFrame( pos );
 		}
 	}
 
 	queuePviProbe( probes ) {
 		for( let pviIndex = 0; pviIndex < probes; pviIndex++ ) {
 			this.clearFrame();
-			this.addTagtoFrame( "TAG_PVI_REQ_DATA" );
+			const pos = this.startContainer( "TAG_PVI_REQ_DATA" );
 			this.addTagtoFrame( "TAG_PVI_INDEX", "", pviIndex );
 			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT" );
 			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT" );
 			this.addTagtoFrame( "TAG_PVI_REQ_DC_MAX_STRING_COUNT" );
-			this.pushFrame();
+			this.pushFrame( pos );
 		}
 	}
 
 	queuePviRequestData( refreshPeriod ) {
 		for( let pviIndex = 0; pviIndex <= this.maxIndex["PVI"]; pviIndex++ ) {
 			this.clearFrame();
-			this.addTagtoFrame( "TAG_PVI_REQ_DATA" );
+			const pos = this.startContainer( "TAG_PVI_REQ_DATA" );
 			this.addTagtoFrame( "TAG_PVI_INDEX", "", pviIndex );
 			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", refreshPeriod  );
 			this.addTagtoFrame( "TAG_PVI_REQ_TYPE", refreshPeriod  );
@@ -720,7 +764,7 @@ class E3dcRscp extends utils.Adapter {
 			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI_${pviIndex}.TEMPERATURE`]; tempIndex++) {
 				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", refreshPeriod, tempIndex );
 			}
-			this.pushFrame();
+			this.pushFrame( pos );
 		}
 	}
 
@@ -764,11 +808,7 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE", refreshPeriod );
 		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_POWER_VALUE", refreshPeriod );
 		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE", refreshPeriod );
-		this.pushFrame();
-		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", refreshPeriod );
-		this.pushFrame();
-		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS", refreshPeriod );
 		this.pushFrame();
 	}
@@ -776,20 +816,22 @@ class E3dcRscp extends utils.Adapter {
 	queueEmsSetPower( mode, value ) {
 		this.log.debug( `queueEmsSetPower( ${mode}, ${value} )`);
 		this.clearFrame();
-		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER" );
+		const pos = this.startContainer( "TAG_EMS_REQ_SET_POWER" );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_MODE", "", mode );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_VALUE", "", value );
-		this.pushFrame();
-		// SET_POWER response carries VALUE, but not MODE. Therefore, update MODE separately:
+		this.pushFrame( pos );
 		this.clearFrame();
-		this.addTagtoFrame( "TAG_EMS_REQ_MODE" );
+		this.addTagtoFrame( "TAG_EMS_REQ_MODE" ); // update MODE because SET_POWER response carries VALUE, but not MODE
 		this.pushFrame();
+		// Acknowledge SET_POWER_*
+		this.setState( "EMS.SET_POWER_MODE", mode, true );
+		this.setState( "EMS.SET_POWER_VALUE", value, true );
 		// E3/DC requires regular SET_POWER repetition, otherwise it will fall back:
 		if( mode > 0 && !setPowerTimer ) {
 			setPowerTimer = setInterval(() => {
-				this.getState( "EMS.SET_POWER_VALUE", (err, power) => {
-					this.getState( "EMS.SET_POWER_MODE", (err, mode) => {
-						this.queueEmsSetPower( mode ? mode.val : 0, power ? power.val : 0 );
+				this.getState( "EMS.SET_POWER_VALUE", (err, vObj) => {
+					this.getState( "EMS.SET_POWER_MODE", (err, mObj) => {
+						this.queueEmsSetPower( mObj ? mObj.val : 0, vObj ? vObj.val : 0 );
 					});
 				});
 			}, this.config.setpower_interval*1000 );
@@ -810,15 +852,63 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueSetValue( globalId, value ) {
-		this.log.info( `queueValue( ${globalId}, ${value} )`);
+		this.log.info( `queueSetValue( ${globalId}, ${value} )`);
 		const id = globalId.match("^[^.]+[.][^.]+[.](.*)")[1];
 		if( mapChangedIdToSetTags[id] && mapChangedIdToSetTags[id].length == 2 ) {
 			this.clearFrame();
-			this.addTagtoFrame( mapChangedIdToSetTags[id][0] );
+			const pos = this.startContainer( mapChangedIdToSetTags[id][0] );
 			this.addTagtoFrame( mapChangedIdToSetTags[id][1], "", value );
-			this.pushFrame();
+			this.pushFrame( pos );
 		} else {
 			this.log.warn( `Don't know how to queue ${id}`);
+		}
+	}
+
+	queueSetIdlePeriod( globalId ) {
+		this.log.info( `queueSetIdlePeriod( ${globalId} )`);
+		const el = globalId.split(".");
+		if( el.length == 6 ) {
+			const prefix = el.slice(2,5).join("."); // e.g. "EMS.IDLE_PERIODS_CHARGE.00-Monday"
+			const type = (el[3].endsWith("_CHARGE")) ? 0 : 1;
+			const day = Number(el[4].split("-")[0]);
+			if( setIdlePeriodTimeout[10*type+day] ) {
+				clearTimeout(setIdlePeriodTimeout[10*type+day]);
+			}
+			setIdlePeriodTimeout[10*type+day] = setTimeout(() => {
+				this.getState( `${prefix}.IDLE_PERIOD_ACTIVE`, (err, active) => {
+					this.getState( `${prefix}.START_HOUR`, (err, startHour) => {
+						this.getState( `${prefix}.START_MINUTE`, (err, startMinute) => {
+							this.getState( `${prefix}.END_HOUR`, (err, endHour) => {
+								this.getState( `${prefix}.END_MINUTE`, (err, endMinute) => {
+									setIdlePeriodTimeout[10*type+day] = null;
+									this.clearFrame();
+									const c1 = this.startContainer( "TAG_EMS_REQ_SET_IDLE_PERIODS" );
+									const c2 = this.startContainer( "TAG_EMS_IDLE_PERIOD" );
+									this.addTagtoFrame( "TAG_EMS_IDLE_PERIOD_TYPE", "", type );
+									this.addTagtoFrame( "TAG_EMS_IDLE_PERIOD_DAY", "", day );
+									this.addTagtoFrame( "TAG_EMS_IDLE_PERIOD_ACTIVE", "", active ? active.val : 0 );
+									const c3 = this.startContainer( "TAG_EMS_IDLE_PERIOD_START" );
+									this.addTagtoFrame( "TAG_EMS_IDLE_PERIOD_HOUR", "", startHour ? startHour.val : 0 );
+									this.addTagtoFrame( "TAG_EMS_IDLE_PERIOD_MINUTE", "", startMinute ? startMinute.val : 0 );
+									this.endContainer(c3);
+									const c4 = this.startContainer( "TAG_EMS_IDLE_PERIOD_END" );
+									this.addTagtoFrame( "TAG_EMS_IDLE_PERIOD_HOUR", "", endHour ? endHour.val : 0 );
+									this.addTagtoFrame( "TAG_EMS_IDLE_PERIOD_MINUTE", "", endMinute ? endMinute.val : 0 );
+									this.endContainer(c4);
+									this.endContainer(c2);
+									this.pushFrame(c1);
+									// SET_IDLE_PERIODS response does not contain new values, so we need to request them:
+									this.clearFrame();
+									this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
+									this.pushFrame();
+								});
+							});
+						});
+					});
+				});
+			}, this.config.setidleperiod_delay*1000 );
+		} else {
+			this.log.warn(`queueSetIdlePeriod: invalid globalId ${globalId}`);
 		}
 	}
 
@@ -855,7 +945,7 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	// Parse flat TLV into data tree with (tag, type, content) nodes.
+	// Parse flat TLV into tree with (tag, type, content) nodes.
 	// For container: include content by recursive descent.
 	// Note that type is not always the same as specified in official tag list:
 	// e.g. TAG_BAT_DATA (usually a container) may carry just an Error value.
@@ -1119,7 +1209,11 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		}, () => {
-			this.setState( oId, value, true );
+			this.getState( oId, (err,obj) => {
+				if( !(obj && obj.val == value && obj.ack ) ) {
+					this.setState( oId, value, true );
+				}
+			});
 		});
 	}
 
@@ -1127,29 +1221,31 @@ class E3dcRscp extends utils.Adapter {
 		tree.forEach(token => {
 			if( rscpTag[token.tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD" || token.content.length != 5 ) return;
 			if( rscpTag[token.content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_TYPE" ) return;
-			const periodType = token.content[0].content;
+			const type = token.content[0].content;
 			if( rscpTag[token.content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_DAY" ) return;
-			const periodDay = token.content[1].content;
-			if( rscpTag[token.content[2].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_ACTIVE" ) return;
-			const periodActive = token.content[2].content;
-			if( rscpTag[token.content[3].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_START" || token.content[3].content.length != 2)  return;
-			if( rscpTag[token.content[3].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
-			const periodStartHour = token.content[3].content[0].content;
-			if( rscpTag[token.content[3].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
-			const periodStartMinute = token.content[3].content[1].content;
-			if( rscpTag[token.content[4].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_END" || token.content[4].content.length != 2)  return;
-			if( rscpTag[token.content[4].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
-			const periodEndHour = token.content[4].content[0].content;
-			if( rscpTag[token.content[4].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
-			const periodEndMinute = token.content[4].content[1].content;
-			const t = (periodType==0) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
-			const p = `${path}${t}.${periodDay.toString().padStart(2,"0")}-${dayOfWeek[periodDay]}.`;
-			this.storeValue( "EMS", p, "IDLE_PERIOD_ACTIVE", "Bool", (periodActive!=0) );
-			this.storeValue( "EMS", p, "START_HOUR", "UChar8", periodStartHour, "START_HOUR", "h" );
-			this.storeValue( "EMS", p, "END_HOUR", "UChar8", periodEndHour, "END_HOUR", "h" );
-			this.storeValue( "EMS", p, "START_MINUTE", "UChar8", periodStartMinute, "START_MINUTE", "m" );
-			this.storeValue( "EMS", p, "END_MINUTE", "UChar8", periodEndMinute, "END_MINUTE", "m" );
-			this.extendObject( `EMS.${p.slice(0,-1)}`, {type: "channel", common: {role: "calendar.day"}} );
+			const day = token.content[1].content;
+			if( !setIdlePeriodTimeout[10*type+day] ) { // do not overwrite manual changes which are waiting to be sent
+				if( rscpTag[token.content[2].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_ACTIVE" ) return;
+				const active = token.content[2].content;
+				if( rscpTag[token.content[3].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_START" || token.content[3].content.length != 2)  return;
+				if( rscpTag[token.content[3].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
+				const startHour = token.content[3].content[0].content;
+				if( rscpTag[token.content[3].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
+				const startMinute = token.content[3].content[1].content;
+				if( rscpTag[token.content[4].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_END" || token.content[4].content.length != 2)  return;
+				if( rscpTag[token.content[4].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
+				const endHour = token.content[4].content[0].content;
+				if( rscpTag[token.content[4].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
+				const endMinute = token.content[4].content[1].content;
+				const t = (type==0) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
+				const p = `${path}${t}.${day.toString().padStart(2,"0")}-${dayOfWeek[day]}.`;
+				this.storeValue( "EMS", p, "IDLE_PERIOD_ACTIVE", "Bool", (active!=0) );
+				this.storeValue( "EMS", p, "START_HOUR", "UChar8", startHour, "START_HOUR", "h" );
+				this.storeValue( "EMS", p, "START_MINUTE", "UChar8", startMinute, "START_MINUTE", "m" );
+				this.storeValue( "EMS", p, "END_HOUR", "UChar8", endHour, "END_HOUR", "h" );
+				this.storeValue( "EMS", p, "END_MINUTE", "UChar8", endMinute, "END_MINUTE", "m" );
+				this.extendObject( `EMS.${p.slice(0,-1)}`, {type: "channel", common: {role: "calendar.day"}} );
+			}
 		});
 		this.extendObject( "EMS.IDLE_PERIODS_CHARGE", {type: "channel", common: {role: "calendar.week"}} );
 		this.extendObject( "EMS.IDLE_PERIODS_DISCHARGE", {type: "channel", common: {role: "calendar.week"}} );
@@ -1218,7 +1314,7 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			});
-			await this.setObjectNotExists( "EMS.SET_POWER", {
+			await this.setObjectNotExistsAsync( "EMS.SET_POWER", {
 				type: "state",
 				common: {
 					name: systemDictionary["SET_POWER"][this.language],
@@ -1230,7 +1326,7 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			});
-			await this.setObjectNotExists( "EMS.SET_POWER_VALUE", {
+			await this.setObjectNotExistsAsync( "EMS.SET_POWER_VALUE", {
 				type: "state",
 				common: {
 					name: systemDictionary["SET_POWER_VALUE"][this.language],
@@ -1242,7 +1338,7 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			});
-			await this.setObjectNotExists( "EMS.SET_POWER_MODE", {
+			await this.setObjectNotExistsAsync( "EMS.SET_POWER_MODE", {
 				type: "state",
 				common: {
 					name: systemDictionary["SET_POWER_MODE"][this.language],
@@ -1250,7 +1346,7 @@ class E3dcRscp extends utils.Adapter {
 					role: "level",
 					read: false,
 					write: true,
-					states: rscpEmsPowerMode,
+					states: rscpEmsSetPowerMode,
 				},
 				native: {},
 			});
@@ -1295,7 +1391,9 @@ class E3dcRscp extends utils.Adapter {
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("RSCP.AUTHENTICATION");
-		for( const s in mapChangedIdToSetTags ) this.subscribeStates(s);
+		this.subscribeStates("EMS.IDLE_PERIODS_CHARGE.*");
+		this.subscribeStates("EMS.IDLE_PERIODS_DISCHARGE.*");
+		for( const s in mapChangedIdToSetTags ) this.subscribeStates( s );
 		// You can also add a subscription for multiple states. The following line watches all states starting with 'lights.'
 		// this.subscribeStates('lights.*');
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -1333,6 +1431,8 @@ class E3dcRscp extends utils.Adapter {
 					this.getState( "EMS.SET_POWER_MODE", (err, mode) => {
 						this.queueEmsSetPower( mode ? mode.val : 0, state.val );
 					});
+				} else if( id.includes("IDLE_PERIOD") ) {
+					this.queueSetIdlePeriod( id );
 				} else {
 					this.queueSetValue( id, state.val );
 				}

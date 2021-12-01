@@ -68,8 +68,12 @@ Here is what to configure when creating a new instance of the adapter:
     <td>Defines how often ioBroker will request state updates from E3/DC for rarely or never modified variables.</td>
   </tr>
   <tr>
-    <td>SET_POWER re-send interval s]</td>
+    <td>SET_POWER re-send interval [s]</td>
     <td>Defines how often ioBroker will request state updates from E3/DC.</td>
+  </tr>
+  <tr>
+    <td>SET_IDLE_PERIOD delay [s]</td>
+    <td>Defines how long ioBroker will wait before writing idle period changes to E3/DC. (Purpose is to merge several subsequent changes into one single call.)</td>
   </tr>
   <tr>
     <td>Select E3/DC namespaces to query data for (check-boxes)</td>
@@ -221,7 +225,41 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>number</td>
     <td>Charging power [W]; reflects to SET_POWER</td>
   </tr>
+  <tr>
+    <td>EMS (1)</td>
+    <td>IDLE_PERIOD_ACTIVE</td>
+    <td>boolean</td>
+    <td>(de-)activate idle period (2)</td>
+  </tr>
+  <tr>
+    <td>EMS (1)</td>
+    <td>START_HOUR</td>
+    <td>number</td>
+    <td>Start hour of idle period (2)</td>
+  </tr>
+  <tr>
+    <td>EMS (1)</td>
+    <td>START_MINUTE</td>
+    <td>number</td>
+    <td>Start minute of idle period (2)</td>
+  </tr>
+  <tr>
+    <td>EMS (1)</td>
+    <td>END_HOUR</td>
+    <td>number</td>
+    <td>End hour of idle period (2)</td>
+  </tr>
+  <tr>
+    <td>EMS (1)</td>
+    <td>END_MINUTE</td>
+    <td>number</td>
+    <td>End minute of idle period (2)</td>
+  </tr>
 </table> 
+
+Note (1): Full path is EMS.IDLE_PERIODS_(DIS)CHARGE.&lt;day-of-week&gt; - e.g. "EMS.IDLE_PERIODS_CHARGE.00-Monday"
+
+Note (2): Note that all IDLE_PERIOD tags are written only after the SET_IDLE_PERIOD delay, as defined in the configuration. The delay is restarted upon every change within one IDLE_PERIOD day. 
 
 For the currently unspupported RSCP namespaces and tags, please refer to th official E3/DC tag list provided with the [sample application](http://s10.e3dc.com/dokumentation/RscpExample.zip).
 
@@ -249,7 +287,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ### 0.0.13-beta
 (git-kick)
-* Units are now trailing the values (no longer at end of name)
+* IDLE_PERIODS are now writable - note "SET_IDLE_PERIOD delay" in configuration.
+* EMS.MODE was empirically re-mapped to 0 = IDLE, 1 = DISCHARGE, 2 = CHARGE.
+* SET_POWER_MODE/VALUE are now acknowledged after frame was queued to E3/DC.
+* Units are now trailing the values (no longer at end of name).
 
 ### 0.0.12-beta
 (git-kick)
