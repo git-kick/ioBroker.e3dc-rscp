@@ -207,6 +207,7 @@
     "recommendedMinChargeLimit": "建议最低收费限额[W]",
     "recommendedMinDischargeLimit": "建议最低排放限值[W]",
     "rscp_password": "E3/DC RSCP密码",
+    "setidleperiod_delay": "SET_IDLE_PERIOD延迟[s]",
     "setpower_interval": "SET_POWER重新发送间隔[s]",
     "startChargeDefault": "启动收费默认值[W]",
     "startDischargeDefault": "启动放电默认值[W]",

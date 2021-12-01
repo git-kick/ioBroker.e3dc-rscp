@@ -207,6 +207,7 @@
     "recommendedMinChargeLimit": "Aanbevolen minimum laadlimiet [W]",
     "recommendedMinDischargeLimit": "Aanbevolen minimale lozingsgrens [W]",
     "rscp_password": "E3/DC rscp-wachtwoord",
+    "setidleperiod_delay": "Set_idle_period vertraging [s]",
     "setpower_interval": "Interval [s]opnieuw versturen instellen",
     "startChargeDefault": "Start opladen standaard [W]",
     "startDischargeDefault": "Begin ontlading standaard [W]",

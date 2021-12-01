@@ -207,6 +207,7 @@
     "recommendedMinChargeLimit": "Limite minimo di carica consigliato [W]",
     "recommendedMinDischargeLimit": "Limite minimo di scarico consigliato [W]",
     "rscp_password": "E3/DC RSCP password",
+    "setidleperiod_delay": "Ritardo SET_IDLE_PERIOD [s]",
     "setpower_interval": "SET_POWER reinvia intervallo [s]",
     "startChargeDefault": "Avviare la carica di default [W]",
     "startDischargeDefault": "Avvio scarico predefinito [W]",

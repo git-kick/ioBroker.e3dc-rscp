@@ -4,8 +4,8 @@
         "version": "0.0.13-beta",
         "news": {
             "0.0.13-beta": {
-                "en": "Units trailing values",
-                "de": "Units trailing values",
+                "en": "IDLE_PERIODS are writable",
+                "de": "IDLE_PERIODS are writable",
                 "ru": "Пересмотрена обработка индексов",
                 "pt": "Tratamento revisto do Índice",
                 "nl": "Indexafhandeling herzien",
@@ -86,6 +86,7 @@
         "polling_interval_medium": 5,
         "polling_interval_long": 12,
         "setpower_interval": 15,
+        "setidleperiod_delay": 10,
         "query_bat": "true",
         "query_ems": "true",
         "query_ep": "true",
