@@ -5,7 +5,6 @@
 [![Downloads](https://img.shields.io/npm/dm/iobroker.e3dc-rscp.svg)](https://www.npmjs.com/package/iobroker.e3dc-rscp)
 ![Number of Installations (latest)](http://iobroker.live/badges/e3dc-rscp-installed.svg)
 ![Number of Installations (stable)](http://iobroker.live/badges/e3dc-rscp-stable.svg)
-[![Dependency Status](https://img.shields.io/david/git-kick/iobroker.e3dc-rscp.svg)](https://david-dm.org/git-kick/iobroker.e3dc-rscp)
 [![Known Vulnerabilities](https://snyk.io/test/github/git-kick/ioBroker.e3dc-rscp/badge.svg)](https://snyk.io/test/github/git-kick/ioBroker.e3dc-rscp)
 
 [![NPM](https://nodei.co/npm/iobroker.e3dc-rscp.png?downloads=true)](https://nodei.co/npm/iobroker.e3dc-rscp/)
