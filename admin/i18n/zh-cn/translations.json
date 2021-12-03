@@ -178,6 +178,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "电压监测阈值底部",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "电压监测阈值顶部",
     "WEATHER_REGULATED_CHARGE_ENABLED": "启用天气调节收费",
+    "column_interval": "轮询间隔",
+    "column_tag": "请求标签名称",
     "e3dc-rscp adapter settings": "e3dc-rscp的适配器设置",
     "e3dc_ip": "E3/DC IP地址",
     "e3dc_port": "E3/DC端口",
@@ -195,9 +197,11 @@
     "maxStartDischargePower": "最大启动放电功率[W]",
     "minStartChargePower": "最小启动充电功率[W]",
     "minStartDischargePower": "最小启动放电功率[W]",
+    "options": "选项",
     "polling_interval_long": "轮询间隔长[h]",
     "polling_interval_medium": "轮询间隔介质[m]",
     "polling_interval_short": "轮询间隔短[s]",
+    "polling_intervals": "轮询间隔",
     "portal_password": "E3/DC门户密码",
     "portal_user": "E3/DC门户用户",
     "query_bat": "EMS(能源管理系统)",
@@ -213,5 +217,6 @@
     "startDischargeDefault": "启动放电默认值[W]",
     "title_connection": "设置E3/DC连接",
     "title_intervals": "设置查询和重新发送的时间间隔",
-    "title_namespaces": "选择E3/DC命名空间以查询数据"
+    "title_namespaces": "选择E3/DC命名空间以查询数据",
+    "title_polling_intervals": "微调数据轮询间隔"
 }

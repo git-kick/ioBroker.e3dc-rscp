@@ -404,9 +404,6 @@ const KEY_SIZE = 32;
 const utils = require("@iobroker/adapter-core");
 const { resourceLimits, threadId } = require("worker_threads");
 const { type } = require("os");
-let dataPollingTimer = null;
-let setPowerTimer = null;
-const setIdlePeriodTimeout = []; // [10*type+day]
 class E3dcRscp extends utils.Adapter {
 
 	/**
@@ -424,20 +421,26 @@ class E3dcRscp extends utils.Adapter {
 		this.on("unload", this.onUnload.bind(this));
 
 		// For preparing & buffering outbound frames:
-		this.frame = null; // buffer for generating frames
-		this.openContainer = 0; // start pos of open container when generating frame
-		this.queue = []; // outbound message queue
+		this.frame = null;
+		this.queue = [];
 
 		// For processing inbound frames:
 		this.idlePeriodType = 0; // recorded for following values
 		this.maxIndex = {}; // observed max. indexes, e.g. BAT.INDEX, DCB_COUNT etc.
 
-		// For probing device count:
-		this.batProbes = 4; // set to upper bound
-		this.pviProbes = 3; // set to upper bound
+		// For probing device count (upper bounds):
+		this.batProbes = 4;
+		this.pviProbes = 3;
 
-		// For preparing idle period update:
-		this.idlePeriodModified = {};
+		// For triggering polling and setting requests:
+		this.dataPollingTimerS = null;
+		this.dataPollingTimerM = null;
+		this.dataPollingTimerL = null;
+		this.setPowerTimer = null;
+		this.setIdlePeriodTimeout = []; // [10*type+day]
+
+		// For efficient access to polling intervals:
+		this.pollingInterval = [];
 
 		// TCP connection:
 		this.tcpConnection = new Net.Socket();
@@ -526,13 +529,17 @@ class E3dcRscp extends utils.Adapter {
 
 	// Add one tag to the frame under preparation
 	// Not for Container tags, see startContainer
-	addTagtoFrame( tag, refreshPeriod = "", value = Object(0) ) {
+	addTagtoFrame( tag, pollingSML = "", value = Object(0) ) {
 		if( !rscpTagCode[tag] ) {
 			this.log.warn(`Unknown tag ${tag} with value ${value} - cannot add to frame.`);
 			return;
 		}
 		const tagCode = rscpTagCode[tag];
-		if( refreshPeriod == "" || rscpTag[tagCode].RefreshPeriod == "" || rscpTag[tagCode].RefreshPeriod == refreshPeriod ) {
+		if( this.pollingInterval[tagCode] == "" && tag.contains("_REQ_") ) {
+			this.log.warn(`${tag} has no polling interval assigned - assuming 'M' - assignment should be added to io-package.json`);
+			this.pollingInterval[tagCode] == "M";
+		}
+		if( pollingSML == "" || this.pollingInterval[tagCode] == pollingSML ) {
 			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
 			const buf1 = Buffer.alloc(1);
 			const buf2 = Buffer.alloc(2);
@@ -620,13 +627,13 @@ class E3dcRscp extends utils.Adapter {
 
 	// Add a Container tag to frame under preparation
 	// Returns position of Container length within frame for use in endContainer
-	startContainer( tag, refreshPeriod = "" ) {
+	startContainer( tag, pollingSML = "" ) {
 		if( !rscpTagCode[tag] ) {
 			this.log.warn(`Unknown container tag ${tag} - cannot start container.`);
 			return 0;
 		}
 		const tagCode = rscpTagCode[tag];
-		if( refreshPeriod == "" || rscpTag[tagCode].RefreshPeriod == "" || rscpTag[tagCode].RefreshPeriod == refreshPeriod ) {
+		if( pollingSML == "" || this.pollingInterval[tagCode] == "" || this.pollingInterval[tagCode] == pollingSML ) {
 			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
 			if( rscpType[typeCode] != "Container") {
 				this.log.warn(`Non-container tag ${tag} - cannot start container.`);
@@ -679,39 +686,39 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	queueBatRequestData( refreshPeriod ) {
+	queueBatRequestData( pollingSML ) {
 		for( let batIndex = 0; batIndex <= this.maxIndex["BAT"]; batIndex++ ) {
 			this.clearFrame();
 			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
 			this.addTagtoFrame( "TAG_BAT_INDEX", "", batIndex );
-			this.addTagtoFrame( "TAG_BAT_REQ_MAX_BAT_VOLTAGE", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_INFO", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_ASOC", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_RSOC_REAL", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_TERMINAL_VOLTAGE", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_READY_FOR_SHUTDOWN", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_TRAINING_MODE", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_STATE", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_USE_TIME", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_CAPACITY", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_MAX_CHARGE_CURRENT", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_EOD_VOLTAGE", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_CHARGE_CYCLES", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_FCC", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_RC", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_DCB_COUNT", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_NAME", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_SPECIFICATION", refreshPeriod );
-			this.addTagtoFrame( "TAG_BAT_REQ_INTERNALS", refreshPeriod );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_BAT_VOLTAGE", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_INFO", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_ASOC", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_RSOC_REAL", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_TERMINAL_VOLTAGE", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_READY_FOR_SHUTDOWN", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_TRAINING_MODE", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_STATE", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_USE_TIME", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_CAPACITY", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_CHARGE_CURRENT", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_EOD_VOLTAGE", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_CHARGE_CYCLES", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_FCC", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_RC", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_DCB_COUNT", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_NAME", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_SPECIFICATION", pollingSML );
+			this.addTagtoFrame( "TAG_BAT_REQ_INTERNALS", pollingSML );
 			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT_${batIndex}.DCB`]; dcbIndex++ ) {
-				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES", refreshPeriod, dcbIndex );
-				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", refreshPeriod, dcbIndex );
-				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", refreshPeriod, dcbIndex );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES", pollingSML, dcbIndex );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", pollingSML, dcbIndex );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", pollingSML, dcbIndex );
 			}
 			this.pushFrame( pos );
 		}
@@ -729,87 +736,87 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	queuePviRequestData( refreshPeriod ) {
+	queuePviRequestData( pollingSML ) {
 		for( let pviIndex = 0; pviIndex <= this.maxIndex["PVI"]; pviIndex++ ) {
 			this.clearFrame();
 			const pos = this.startContainer( "TAG_PVI_REQ_DATA" );
 			this.addTagtoFrame( "TAG_PVI_INDEX", "", pviIndex );
-			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_TYPE", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_SERIAL_NUMBER", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_VERSION", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_ON_GRID", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_STATE", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_LAST_ERROR", refreshPeriod  );
-			// this.addTagtoFrame( "TAG_PVI_REQ_COS_PHI", refreshPeriod ); // always returns data type ERROR
-			this.addTagtoFrame( "TAG_PVI_REQ_VOLTAGE_MONITORING", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_POWER_MODE", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_SYSTEM_MODE", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_FREQUENCY_UNDER_OVER", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_MAX_TEMPERATURE", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_MIN_TEMPERATURE", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_APPARENTPOWER", refreshPeriod  );
-			this.addTagtoFrame( "TAG_PVI_REQ_DEVICE_STATE", refreshPeriod  );
+			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_TYPE", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_SERIAL_NUMBER", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_VERSION", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_ON_GRID", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_STATE", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_LAST_ERROR", pollingSML  );
+			// this.addTagtoFrame( "TAG_PVI_REQ_COS_PHI", pollingSML ); // always returns data type ERROR
+			this.addTagtoFrame( "TAG_PVI_REQ_VOLTAGE_MONITORING", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_POWER_MODE", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_SYSTEM_MODE", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_FREQUENCY_UNDER_OVER", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_MAX_TEMPERATURE", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_MIN_TEMPERATURE", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_APPARENTPOWER", pollingSML  );
+			this.addTagtoFrame( "TAG_PVI_REQ_DEVICE_STATE", pollingSML  );
 			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI_${pviIndex}.AC_MAX_PHASE`]; phaseIndex++) {
 				for( const id of phaseIds ) {
-					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, refreshPeriod, phaseIndex );
+					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, pollingSML, phaseIndex );
 				}
 			}
 			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI_${pviIndex}.DC_MAX_STRING`]; stringIndex++) {
 				for( const id of stringIds ) {
-					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, refreshPeriod, stringIndex );
+					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, pollingSML, stringIndex );
 				}
 			}
 			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI_${pviIndex}.TEMPERATURE`]; tempIndex++) {
-				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", refreshPeriod, tempIndex );
+				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", pollingSML, tempIndex );
 			}
 			this.pushFrame( pos );
 		}
 	}
 
-	queueEmsRequestData( refreshPeriod ) {
+	queueEmsRequestData( pollingSML ) {
 		this.clearFrame();
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_POWER_SETTINGS", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_TO_CAR_MODE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_PV", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_BAT", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_HOME", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_GRID", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_ADD", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_BAT_SOC", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_AUTARKY", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_SELF_CONSUMPTION", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_MODE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_ALL", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_SOLAR", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_ALIVE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_MANUAL_CHARGE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_STATUS", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_COUPLING_MODE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_BALANCED_PHASES", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_USED_CHARGE_LIMIT", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_USER_CHARGE_LIMIT", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_BAT_CHARGE_LIMIT", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_CHARGE_LIMIT", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_USED_DISCHARGE_LIMIT", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_USER_DISCHARGE_LIMIT", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_STORED_ERRORS", refreshPeriod );
-		// this.addTagtoFrame( "TAG_EMS_REQ_GET_GENERATOR_STATE", refreshPeriod ); // always returns ERROR data type
-		// this.addTagtoFrame( "TAG_EMS_REQ_ERROR_BUZZER_ENABLED", refreshPeriod ); // always returns ERROR data type
-		this.addTagtoFrame( "TAG_EMS_REQ_INSTALLED_PEAK_POWER", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_POWER_VALUE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", refreshPeriod );
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS", refreshPeriod );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_POWER_SETTINGS", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_TO_CAR_MODE", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_PV", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_BAT", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_HOME", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_GRID", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_ADD", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_BAT_SOC", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_AUTARKY", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_SELF_CONSUMPTION", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_MODE", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_ALL", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_POWER_WB_SOLAR", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_ALIVE", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_MANUAL_CHARGE", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_STATUS", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_COUPLING_MODE", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_BALANCED_PHASES", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_USED_CHARGE_LIMIT", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_USER_CHARGE_LIMIT", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_BAT_CHARGE_LIMIT", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_CHARGE_LIMIT", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_USED_DISCHARGE_LIMIT", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_USER_DISCHARGE_LIMIT", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_STORED_ERRORS", pollingSML );
+		// this.addTagtoFrame( "TAG_EMS_REQ_GET_GENERATOR_STATE", pollingSML ); // always returns ERROR data type
+		// this.addTagtoFrame( "TAG_EMS_REQ_ERROR_BUZZER_ENABLED", pollingSML ); // always returns ERROR data type
+		this.addTagtoFrame( "TAG_EMS_REQ_INSTALLED_PEAK_POWER", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_POWER_VALUE", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", pollingSML );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS", pollingSML );
 		this.pushFrame();
 	}
 
@@ -827,27 +834,27 @@ class E3dcRscp extends utils.Adapter {
 		this.setState( "EMS.SET_POWER_MODE", mode, true );
 		this.setState( "EMS.SET_POWER_VALUE", value, true );
 		// E3/DC requires regular SET_POWER repetition, otherwise it will fall back:
-		if( mode > 0 && !setPowerTimer ) {
-			setPowerTimer = setInterval(() => {
+		if( mode > 0 && !this.setPowerTimer ) {
+			this.setPowerTimer = setInterval(() => {
 				this.getState( "EMS.SET_POWER_VALUE", (err, vObj) => {
 					this.getState( "EMS.SET_POWER_MODE", (err, mObj) => {
 						this.queueEmsSetPower( mObj ? mObj.val : 0, vObj ? vObj.val : 0 );
 					});
 				});
 			}, this.config.setpower_interval*1000 );
-		} else if( mode == 0 && setPowerTimer ) { // clear timer when mode is set to NORMAL
-			clearInterval(setPowerTimer);
-			setPowerTimer = null; // is neccessary for "is timer running" check
+		} else if( mode == 0 && this.setPowerTimer ) { // clear timer when mode is set to NORMAL
+			clearInterval(this.setPowerTimer);
+			this.setPowerTimer = null; // is neccessary for "is timer running" check
 		}
 	}
 
-	queueEpRequestData( refreshPeriod ) {
+	queueEpRequestData( pollingSML ) {
 		this.clearFrame();
-		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH", refreshPeriod );
-		this.addTagtoFrame( "TAG_EP_REQ_IS_GRID_CONNECTED", refreshPeriod );
-		this.addTagtoFrame( "TAG_EP_REQ_IS_ISLAND_GRID", refreshPeriod );
-		this.addTagtoFrame( "TAG_EP_REQ_IS_POSSIBLE", refreshPeriod );
-		this.addTagtoFrame( "TAG_EP_REQ_IS_INVALID_STATE", refreshPeriod );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH", pollingSML );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_GRID_CONNECTED", pollingSML );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_ISLAND_GRID", pollingSML );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_POSSIBLE", pollingSML );
+		this.addTagtoFrame( "TAG_EP_REQ_IS_INVALID_STATE", pollingSML );
 		this.pushFrame();
 	}
 
@@ -871,16 +878,16 @@ class E3dcRscp extends utils.Adapter {
 			const prefix = el.slice(2,5).join("."); // e.g. "EMS.IDLE_PERIODS_CHARGE.00-Monday"
 			const type = (el[3].endsWith("_CHARGE")) ? 0 : 1;
 			const day = Number(el[4].split("-")[0]);
-			if( setIdlePeriodTimeout[10*type+day] ) {
-				clearTimeout(setIdlePeriodTimeout[10*type+day]);
+			if( this.setIdlePeriodTimeout[10*type+day] ) {
+				clearTimeout(this.setIdlePeriodTimeout[10*type+day]);
 			}
-			setIdlePeriodTimeout[10*type+day] = setTimeout(() => {
+			this.setIdlePeriodTimeout[10*type+day] = setTimeout(() => {
 				this.getState( `${prefix}.IDLE_PERIOD_ACTIVE`, (err, active) => {
 					this.getState( `${prefix}.START_HOUR`, (err, startHour) => {
 						this.getState( `${prefix}.START_MINUTE`, (err, startMinute) => {
 							this.getState( `${prefix}.END_HOUR`, (err, endHour) => {
 								this.getState( `${prefix}.END_MINUTE`, (err, endMinute) => {
-									setIdlePeriodTimeout[10*type+day] = null;
+									this.setIdlePeriodTimeout[10*type+day] = null;
 									this.clearFrame();
 									const c1 = this.startContainer( "TAG_EMS_REQ_SET_IDLE_PERIODS" );
 									const c2 = this.startContainer( "TAG_EMS_IDLE_PERIOD" );
@@ -912,11 +919,11 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	requestAllData( refreshPeriod ) {
-		if( this.config.query_ems ) this.queueEmsRequestData( refreshPeriod );
-		if( this.config.query_ep ) this.queueEpRequestData( refreshPeriod );
-		if( this.config.query_bat ) this.queueBatRequestData( refreshPeriod );
-		if( this.config.query_pvi ) this.queuePviRequestData( refreshPeriod );
+	requestAllData( pollingSML ) {
+		if( this.config.query_ems ) this.queueEmsRequestData( pollingSML );
+		if( this.config.query_ep ) this.queueEpRequestData( pollingSML );
+		if( this.config.query_bat ) this.queueBatRequestData( pollingSML );
+		if( this.config.query_pvi ) this.queuePviRequestData( pollingSML );
 		this.sendNextFrame();
 	}
 
@@ -1224,7 +1231,7 @@ class E3dcRscp extends utils.Adapter {
 			const type = token.content[0].content;
 			if( rscpTag[token.content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_DAY" ) return;
 			const day = token.content[1].content;
-			if( !setIdlePeriodTimeout[10*type+day] ) { // do not overwrite manual changes which are waiting to be sent
+			if( !this.setIdlePeriodTimeout[10*type+day] ) { // do not overwrite manual changes which are waiting to be sent
 				if( rscpTag[token.content[2].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_ACTIVE" ) return;
 				const active = token.content[2].content;
 				if( rscpTag[token.content[3].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_START" || token.content[3].content.length != 2)  return;
@@ -1374,15 +1381,19 @@ class E3dcRscp extends utils.Adapter {
 					}, i * 1000 * 7 );
 				}
 
-				dataPollingTimer = setInterval(() => {
-					this.requestAllData( "short" );
+				this.dataPollingTimerS = setInterval(() => {
+					this.requestAllData( "S" );
 				}, this.config.polling_interval_short * 1000 ); // seconds
-				dataPollingTimer = setInterval(() => {
-					this.requestAllData( "medium" );
+				this.dataPollingTimerM = setInterval(() => {
+					this.requestAllData( "M" );
 				}, this.config.polling_interval_medium * 1000 * 60 ); // minutes
-				dataPollingTimer = setInterval(() => {
-					this.requestAllData( "long" );
+				this.dataPollingTimerL = setInterval(() => {
+					this.requestAllData( "L" );
 				}, this.config.polling_interval_long * 1000 * 3600 ); //hours
+
+				this.config.polling_intervals.forEach(element => {
+					this.pollingInterval[rscpTagCode[element.tag]] = element.interval;
+				});
 
 			} else {
 				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
@@ -1407,7 +1418,13 @@ class E3dcRscp extends utils.Adapter {
 	onUnload(callback) {
 		try {
 			// Here you must clear all timeouts or intervals that may still be active
-			clearInterval(dataPollingTimer);
+			if( this.dataPollingTimerS ) clearInterval(this.dataPollingTimerS);
+			if( this.dataPollingTimerM ) clearInterval(this.dataPollingTimerM);
+			if( this.dataPollingTimerL ) clearInterval(this.dataPollingTimerL);
+			if( this.setPowerTimer ) clearInterval(this.setPowerTimer);
+			this.setIdlePeriodTimeout.forEach(element => {
+				if( element ) this.clearInterval(element);
+			});
 			callback();
 		} catch (e) {
 			callback();

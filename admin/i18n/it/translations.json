@@ -178,6 +178,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Monitoraggio della tensione soglia inferiore",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Monitoraggio della tensione soglia top",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Carica regolata dalle condizioni meteorologiche abilitata",
+    "column_interval": "Intervallo di polling",
+    "column_tag": "Richiesta nome tag",
     "e3dc-rscp adapter settings": "Impostazioni dell'adattatore per e3dc-rscp",
     "e3dc_ip": "Indirizzo IP E3/DC",
     "e3dc_port": "Porta E3/DC",
@@ -195,9 +197,11 @@
     "maxStartDischargePower": "Potenza massima di scarico iniziale [W]",
     "minStartChargePower": "Potenza minima di carica iniziale [W]",
     "minStartDischargePower": "Potenza minima di scarico iniziale [W]",
+    "options": "Opzioni",
     "polling_interval_long": "Intervallo di polling lungo [h]",
     "polling_interval_medium": "Intervallo di polling medio [m]",
     "polling_interval_short": "Intervallo di polling breve [s]",
+    "polling_intervals": "Intervalli di polling",
     "portal_password": "Password del portale E3/DC",
     "portal_user": "Utente del portale E3/DC",
     "query_bat": "EMS (sistema di gestione dell'energia)",
@@ -213,5 +217,6 @@
     "startDischargeDefault": "Avvio scarico predefinito [W]",
     "title_connection": "Configurazione connessione E3 / DC",
     "title_intervals": "Impostare intervalli di tempo per la query e la rispedizione",
-    "title_namespaces": "Selezionare gli spazi dei nomi E3 / DC per interrogare i dati"
+    "title_namespaces": "Selezionare gli spazi dei nomi E3 / DC per interrogare i dati",
+    "title_polling_intervals": "Ottimizzare gli intervalli di polling dei dati"
 }

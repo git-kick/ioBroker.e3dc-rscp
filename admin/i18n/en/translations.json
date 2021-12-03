@@ -178,6 +178,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Voltage monitoring threshold bottom",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Voltage monitoring threshold top",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Weather regulated charge enabled",
+    "column_interval": "Polling interval",
+    "column_tag": "Request tag name",
     "e3dc-rscp adapter settings": "Adapter settings for e3dc-rscp",
     "e3dc_ip": "E3/DC IP address",
     "e3dc_port": "E3/DC port",
@@ -195,9 +197,11 @@
     "maxStartDischargePower": "Maximum start discharge power",
     "minStartChargePower": "Minimum start charge power",
     "minStartDischargePower": "Minimum start discharge power",
-    "polling_interval_long": "Polling interval long [h]",
-    "polling_interval_medium": "Polling interval medium [m]",
-    "polling_interval_short": "Polling interval short [s]",
+    "options": "Options",
+    "polling_interval_long": "Polling interval L = long [h]",
+    "polling_interval_medium": "Polling interval M = medium [m]",
+    "polling_interval_short": "Polling interval S = short [s]",
+    "polling_intervals": "Polling intervals",
     "portal_password": "E3/DC portal password",
     "portal_user": "E3/DC portal user",
     "query_bat": "BAT (battery)",
@@ -212,6 +216,7 @@
     "startChargeDefault": "Start charge default",
     "startDischargeDefault": "Start discharge default",
     "title_connection": "Setup E3/DC connection",
-    "title_intervals": "Set time intervals for query and resending",
-    "title_namespaces": "Select E3/DC namespaces to query data for"
+    "title_intervals": "Set time intervals for sending",
+    "title_namespaces": "Select E3/DC namespaces to query data for",
+    "title_polling_intervals": "Set data polling intervals"
 }

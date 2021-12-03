@@ -1,11 +1,11 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.13-beta",
+        "version": "0.0.14-beta",
         "news": {
-            "0.0.13-beta": {
-                "en": "IDLE_PERIODS are writable",
-                "de": "IDLE_PERIODS are writable",
+            "0.0.14-beta": {
+                "en": "Polling interval setting per state",
+                "de": "Polling interval setting per state",
                 "ru": "Пересмотрена обработка индексов",
                 "pt": "Tratamento revisto do Índice",
                 "nl": "Indexafhandeling herzien",
@@ -82,6 +82,400 @@
         "rscp_password": "",
         "portal_user": "",
         "portal_password": "",
+        "polling_intervals": [
+            {
+                "tag": "TAG_EMS_REQ_POWER_BAT",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_EMS_REQ_POWER_HOME",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_EMS_REQ_POWER_GRID",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_EMS_REQ_POWER_ADD",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_EMS_REQ_AUTARKY",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_SELF_CONSUMPTION",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_BAT_SOC",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_COUPLING_MODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_STORED_ERRORS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_MODE",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_EMS_REQ_BALANCED_PHASES",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_INSTALLED_PEAK_POWER",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_EMS_REQ_DERATE_AT_POWER_VALUE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_EMS_REQ_POWER_WB_ALL",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_POWER_WB_SOLAR",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_EXT_SRC_AVAILABLE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_EMS_REQ_STATUS",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_EMS_REQ_USED_CHARGE_LIMIT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_BAT_CHARGE_LIMIT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_DCDC_CHARGE_LIMIT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_USER_CHARGE_LIMIT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_USED_DISCHARGE_LIMIT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_USER_DISCHARGE_LIMIT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_BATTERY_TO_CAR_MODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_GET_POWER_SETTINGS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_GET_MANUAL_CHARGE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_GET_SYS_SPECS",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_EMS_REQ_POWER_PV_AC_OUT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_ALIVE",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EP_REQ_IS_GRID_CONNECTED",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EP_REQ_IS_ISLAND_GRID",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EP_REQ_IS_INVALID_STATE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EP_REQ_IS_POSSIBLE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_ON_GRID",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_STATE",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PVI_REQ_LAST_ERROR",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_TYPE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_PVI_REQ_VOLTAGE_MONITORING",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_FREQUENCY_UNDER_OVER",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_SYSTEM_MODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_POWER_MODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_TEMPERATURE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_TEMPERATURE_COUNT",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_PVI_REQ_MAX_TEMPERATURE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_MIN_TEMPERATURE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_DEVICE_STATE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_SERIAL_NUMBER",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_PVI_REQ_VERSION",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_PVI_REQ_AC_MAX_PHASE_COUNT",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_PVI_REQ_AC_POWER",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PVI_REQ_AC_VOLTAGE",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PVI_REQ_AC_CURRENT",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PVI_REQ_AC_APPARENTPOWER",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_AC_REACTIVEPOWER",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_AC_ENERGY_ALL",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_AC_MAX_APPARENTPOWER",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_AC_ENERGY_GRID_CONSUMPTION",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_DC_POWER",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_DC_VOLTAGE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_DC_CURRENT",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PVI_REQ_DC_STRING_ENERGY_ALL",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_MAX_BAT_VOLTAGE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_MAX_CHARGE_CURRENT",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_EOD_VOLTAGE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_CHARGE_CYCLES",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_TERMINAL_VOLTAGE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_DEVICE_NAME",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_DCB_COUNT",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_RSOC_REAL",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_ASOC",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_FCC",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_RC",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_READY_FOR_SHUTDOWN",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_INFO",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_TRAINING_MODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_USABLE_CAPACITY",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_DCB_INFO",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_SPECIFICATION",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_INTERNALS",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_BAT_REQ_TOTAL_USE_TIME",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_DEVICE_STATE",
+                "interval": "M"
+            }
+        ],
         "polling_interval_short": 30,
         "polling_interval_medium": 5,
         "polling_interval_long": 12,

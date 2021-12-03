@@ -178,6 +178,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Spannungsüberwachung untere Schwelle",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Spannungsüberwachung obere Schwelle",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Wettergesteuertes Laden aktiviert",
+    "column_interval": "Abfrageintervall",
+    "column_tag": "Abfrage-Tag",
     "e3dc-rscp adapter settings": "Adaptereinstellungen für e3dc-rscp",
     "e3dc_ip": "E3/DC IP-Adresse",
     "e3dc_port": "E3/DC Port",
@@ -195,9 +197,11 @@
     "maxStartDischargePower": "Maximale anfängliche Entladeleistung",
     "minStartChargePower": "Minimale anfängliche Ladeleistung",
     "minStartDischargePower": "Minimum anfängliche Entladeleistung",
-    "polling_interval_long": "Abfrageintervall lang [h]",
-    "polling_interval_medium": "Abfrageintervall mittel [m]",
-    "polling_interval_short": "Abfrageintervall kurz [s]",
+    "options": "Einstellungen",
+    "polling_interval_long": "Abfrageintervall L = lang [h]",
+    "polling_interval_medium": "Abfrageintervall M = mittel [m]",
+    "polling_interval_short": "Abfrageintervall S = kurz [s]",
+    "polling_intervals": "Abfrageintervalle",
     "portal_password": "E3/DC Portal Passwort",
     "portal_user": "E3/DC Portal Benutzername",
     "query_bat": "BAT (Batterie)",
@@ -212,6 +216,7 @@
     "startChargeDefault": "Anfängliche Ladeleistung Standard",
     "startDischargeDefault": "Anfängliche Entladeleistung Standard",
     "title_connection": "E3/DC-Verbindung",
-    "title_intervals": "Zeitintervalle für Abfrage und erneutes Senden",
-    "title_namespaces": "Auswahl der E3/DC-Namespaces, für die Daten abgefragt werden"
+    "title_intervals": "Zeitintervalle für Senden",
+    "title_namespaces": "Auswahl der E3/DC-Namespaces, für die Daten abgefragt werden",
+    "title_polling_intervals": "Einstellung der Abfrageintervalle"
 }

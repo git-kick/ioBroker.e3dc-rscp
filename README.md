@@ -285,6 +285,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.14-beta
+(git-kick)
+* Polling intervals (S/M/L) are now assignable per request tag, see second configuration tab.
+* Bug fix: short and medium timers for polling intervals did not work properly.
 ### 0.0.13-beta
 (git-kick)
 * IDLE_PERIODS are now writable - note "SET_IDLE_PERIOD delay" in configuration.
