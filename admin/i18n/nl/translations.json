@@ -178,6 +178,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Spanning monitoring drempel bodem",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Spanningsbewakingsdrempel boven",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Weer gereguleerd opladen ingeschakeld",
+    "column_interval": "Peiling-interval",
+    "column_tag": "Tagnaam aanvragen",
     "e3dc-rscp adapter settings": "Adapterinstellingen voor e3dc-rscp",
     "e3dc_ip": "E3/DC IP-adres",
     "e3dc_port": "E3/DC-poort",
@@ -195,9 +197,11 @@
     "maxStartDischargePower": "Maximaal startontladingsvermogen [W]",
     "minStartChargePower": "Minimaal startladingsvermogen [W]",
     "minStartDischargePower": "Minimaal startontladingsvermogen [W]",
+    "options": "Optie",
     "polling_interval_long": "Peilinginterval lang [h]",
     "polling_interval_medium": "Peilinginterval medium [m]",
     "polling_interval_short": "Peilinginterval kort [s]",
+    "polling_intervals": "Frequentie van de peilingen",
     "portal_password": "E3/DC-portaalwachtwoord",
     "portal_user": "E3/DC portal gebruiker",
     "query_bat": "EMS (energiebeheersysteem)",
@@ -213,5 +217,6 @@
     "startDischargeDefault": "Begin ontlading standaard [W]",
     "title_connection": "E3/DC verbinding instellen",
     "title_intervals": "Tijdintervallen instellen voor opvragen en opnieuw verzenden",
-    "title_namespaces": "Selecteer E3 / DC-naamruimten om gegevens op te vragen"
+    "title_namespaces": "Selecteer E3 / DC-naamruimten om gegevens op te vragen",
+    "title_polling_intervals": "Fijnafstellen van data polling intervallen"
 }

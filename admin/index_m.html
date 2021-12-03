@@ -1,7 +1,5 @@
 <html>
-
 <head>
-
 	<!-- Load ioBroker scripts and styles-->
 	<link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
 	<link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
@@ -38,6 +36,7 @@
 		function loadHelper(settings, onChange) {
 			// example: select elements with id=key and class=value and insert value
 			if (!settings) return;
+			polling_intervals = settings.polling_intervals || [];
 			$('.value').each(function () {
 				var $key = $(this);
 				var id = $key.attr('id');
@@ -60,7 +59,10 @@
 			onChange(false);
 			// reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
 			if (M) M.updateTextFields();
+			polling_intervals = settings.polling_intervals || [];
+			values2table('polling_intervals', polling_intervals, onChange);
 		}
+
 		function load(settings, onChange) {
 			if (!settings) return;
 	        socket.emit('getObject', 'system.config', function (err, obj) {
@@ -86,93 +88,123 @@
 						obj[$this.attr('id')] = $this.val();
 				}
 			});
+			obj.polling_intervals = table2values('polling_intervals');
 			callback(obj);
 		}
 	</script>
-
 </head>
 
 <body>
-
 	<div class="m adapter-container">
-
 		<div class="row">
-			<div class="col s12 m4 l2">
-				<img src="e3dc-rscp.png" class="logo">
+			<div class="row">
+				<!-- Logo -->
+				<div class="col s1">
+					<img src="e3dc-rscp.png" class="logo">
+				</div>
+				<!-- Tabs navigation -->
+				<div class="col s9">
+					<ul class="tabs">
+						<li class="tab col s2">
+							<a href="#tab-options" class="translate">options</a>
+						</li>
+						<li class="tab col s2">
+							<a href="#tab-intervals" class="translate">polling_intervals</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- Tab1 content -->
+			<div id="tab-options" class="col s12">
+				<div class="row">
+					<h6 class="translate title" style="background-color:#2196F3; font-size: 0.9rem; border-radius: 4px;">title_connection</h6>
+					<div class="col s4 input-field">
+						<input type="text" class="value" id="portal_user" />
+						<label for="portal_user" class="translate">portal_user</label>
+					</div>
+					<div class="col s4 input-field">
+						<input type="text" class="value" id="portal_password" />
+						<label for="portal_password" class="translate">portal_password</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s4 input-field">
+						<input type="text" class="value" id="e3dc_ip" />
+						<label for="e3dc_ip" class="translate">e3dc_ip</label>
+					</div>
+					<div class="col s4 input-field">
+						<input type="number" class="value" id="e3dc_port" min="1" />
+						<label for="e3dc_port" class="translate">e3dc_port</label>
+					</div>
+					<div class="col s4 input-field">
+						<input type="text" class="value" id="rscp_password" />
+						<label for="rscp_password" class="translate">rscp_password</label>
+					</div>
+				</div>
+				<div class="row">
+					<h6 class="translate title" style="background-color:#2196F3; font-size: 0.9rem; border-radius: 4px;">title_intervals</h6>
+					<div class="col s4 input-field">
+						<input type="number" class="value" id="setpower_interval" min="1" />
+						<label for="setpower_interval" class="translate">setpower_interval</label>
+					</div>
+					<div class="col s4 input-field">
+						<input type="number" class="value" id="setidleperiod_delay" min="1" />
+						<label for="setidleperiod_delay" class="translate">setidleperiod_delay</label>
+					</div>
+				</div>
+				<div class="row">
+					<h6 class="translate title" style="background-color:#2196F3; font-size: 0.9rem; border-radius: 4px;">title_namespaces</h6>
+					<div class="col s4 input-field">
+						<input type="checkbox" class="value" id="query_bat" />
+						<label for="query_bat" class="translate">query_bat</label>
+					</div>
+					<div class="col s4 input-field">
+						<input type="checkbox" class="value" id="query_ems" />
+						<label for="query_ems" class="translate">query_ems</label>
+					</div>
+					<div class="col s4 input-field">
+						<input type="checkbox" class="value" id="query_ep" />
+						<label for="query_ep" class="translate">query_ep</label>
+					</div>
+					<div class="col s4 input-field">
+						<input type="checkbox" class="value" id="query_pvi" />
+						<label for="query_pvi" class="translate">query_pvi</label>
+					</div>
+				</div>
+			</div>
+			<!-- Tab2 content -->
+			<div id="tab-intervals" class="col s12">
+				<div class="row">
+					<h6 class="translate title" style="background-color:#2196F3; font-size: 0.9rem; border-radius: 4px;">title_polling_intervals</h6>
+					<div class="col s4 input-field">
+						<input type="number" class="value" id="polling_interval_short" min="1" />
+						<label for="polling_interval_short" class="translate">polling_interval_short</label>
+					</div>
+					<div class="col s4 input-field">
+						<input type="number" class="value" id="polling_interval_medium" min="1" />
+						<label for="polling_interval_medium" class="translate">polling_interval_medium</label>
+					</div>
+					<div class="col s4 input-field">
+						<input type="number" class="value" id="polling_interval_long" min="1" />
+						<label for="polling_interval_long" class="translate">polling_interval_long</label>
+					</div>
+					<div id="tab-polling_intervals"    class="col s12">
+						<div class="col s6" id="polling_intervals">
+							<div class="table-values-div">
+								<table class="table-values">
+									<thead>
+									<tr>
+										<th data-name="tag" style="width: 400px" class="translate">column_tag</th>
+										<th data-name="interval" style="width: 100px" data-type="select" data-options="S;M;L"  class="translate">column_interval</th>
+									</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+					</div>	
+				</div>
 			</div>
 		</div>
-
-		<!-- Put your content here -->
-
-		<!-- For example columns with settings: -->
-		<div class="row">
-			<h6 class="translate title" style="background-color:#2196F3; font-size: 0.9rem; border-radius: 4px;">title_connection</h6>
-			<div class="col s6 input-field">
-				<input type="text" class="value" id="portal_user" />
-				<label for="portal_user" class="translate">portal_user</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="text" class="value" id="portal_password" />
-				<label for="portal_password" class="translate">portal_password</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="text" class="value" id="e3dc_ip" />
-				<label for="e3dc_ip" class="translate">e3dc_ip</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="number" class="value" id="e3dc_port" min="1" />
-				<label for="e3dc_port" class="translate">e3dc_port</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="text" class="value" id="rscp_password" />
-				<label for="rscp_password" class="translate">rscp_password</label>
-			</div>
-		</div>
-		<div class="row">
-			<h6 class="translate title" style="background-color:#2196F3; font-size: 0.9rem; border-radius: 4px;">title_intervals</h6>
-			<div class="col s6 input-field">
-				<input type="number" class="value" id="polling_interval_short" min="1" />
-				<label for="polling_interval_short" class="translate">polling_interval_short</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="number" class="value" id="polling_interval_medium" min="1" />
-				<label for="polling_interval_medium" class="translate">polling_interval_medium</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="number" class="value" id="polling_interval_long" min="1" />
-				<label for="polling_interval_long" class="translate">polling_interval_long</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="number" class="value" id="setpower_interval" min="1" />
-				<label for="setpower_interval" class="translate">setpower_interval</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="number" class="value" id="setidleperiod_delay" min="1" />
-				<label for="setidleperiod_delay" class="translate">setidleperiod_delay</label>
-			</div>
-		</div>
-		<div class="row">
-			<h6 class="translate title" style="background-color:#2196F3; font-size: 0.9rem; border-radius: 4px;">title_namespaces</h6>
-			<div class="col s6 input-field">
-				<input type="checkbox" class="value" id="query_bat" />
-				<label for="query_bat" class="translate">query_bat</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="checkbox" class="value" id="query_ems" />
-				<label for="query_ems" class="translate">query_ems</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="checkbox" class="value" id="query_ep" />
-				<label for="query_ep" class="translate">query_ep</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="checkbox" class="value" id="query_pvi" />
-				<label for="query_pvi" class="translate">query_pvi</label>
-			</div>
-		</div>
-
 	</div>
-
 </body>
-
 </html>
