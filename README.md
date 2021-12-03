@@ -28,7 +28,8 @@ This adapter was tested with node-v12 and node-v14, not with node-v10. (This is 
 
 <a name="toc"></a>
 ## Adapter configuration
-Here is what to configure when creating a new instance of the adapter:
+Here is what to configure when creating a new instance of the adapter. Options are organized in Tabs.
+### Tab "Options"
  <table>
   <tr>
     <th>Input field</th>
@@ -54,25 +55,12 @@ Here is what to configure when creating a new instance of the adapter:
     <td>RSCP Password</td>
     <td>Password, as entered locally at your E3/DC station.</td>
   </tr>
-  <tr>
-    <td>Polling interval short [s]</td>
-    <td>Defines how often ioBroker will request state updates from E3/DC for most dynamic variables.</td>
-  </tr>
-  <tr>
-    <td>Polling interval medium [m]</td>
-    <td>Defines how often ioBroker will request state updates from E3/DC in the regular case.</td>
-  </tr>
-  <tr>
-    <td>Polling interval long [h]</td>
-    <td>Defines how often ioBroker will request state updates from E3/DC for rarely or never modified variables.</td>
-  </tr>
-  <tr>
     <td>SET_POWER re-send interval [s]</td>
-    <td>Defines how often ioBroker will request state updates from E3/DC.</td>
+    <td>Define how often ioBroker will request state updates from E3/DC.</td>
   </tr>
   <tr>
     <td>SET_IDLE_PERIOD delay [s]</td>
-    <td>Defines how long ioBroker will wait before writing idle period changes to E3/DC. (Purpose is to merge several subsequent changes into one single call.)</td>
+    <td>Define how long ioBroker will wait before writing idle period changes to E3/DC. (Purpose is to merge several subsequent changes into one single call.)</td>
   </tr>
   <tr>
     <td>Select E3/DC namespaces to query data for (check-boxes)</td>
@@ -80,6 +68,29 @@ Here is what to configure when creating a new instance of the adapter:
   </tr>
 </table>
 
+### Tab "Polling intervals"
+ <table>
+  <tr>
+    <th>Input field</th>
+    <th>Meaning</th>
+  </tr>
+  <tr>
+    <td>Polling interval short [s]</td>
+    <td>Define how often ioBroker will request state updates from E3/DC for most dynamic variables.</td>
+  </tr>
+  <tr>
+    <td>Polling interval medium [m]</td>
+    <td>Define how often ioBroker will request state updates from E3/DC in the regular case.</td>
+  </tr>
+  <tr>
+    <td>Polling interval long [h]</td>
+    <td>Define how often ioBroker will request state updates from E3/DC for rarely or never modified variables.</td>
+  </tr>
+  <tr>
+    <td>Request tag table</td>
+    <td>Assign single request tags to S/M/L polling intervals.</td>
+  </tr>
+</table>
 <a name="toc"></a>
 
 ## Coverage of interface messages
@@ -262,7 +273,7 @@ Note (2): Note that all IDLE_PERIOD tags are written only after the SET_IDLE_PER
 
 For the currently unspupported RSCP namespaces and tags, please refer to th official E3/DC tag list provided with the [sample application](http://s10.e3dc.com/dokumentation/RscpExample.zip).
 
-Note that RSCP defines ca. 680 tags (representing around 300 parameters), so we think it does not make sense to read all of them.
+Note that RSCP knows ca. 680 tags (representing around 300 parameters), so we think it does not make sense to read all of them.
 Therefore, we will add tags to the adapter upon upcoming use-cases.
 
 <a name="sam"></a>
