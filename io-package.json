@@ -1,11 +1,11 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.14-beta",
+        "version": "0.0.15-beta",
         "news": {
-            "0.0.14-beta": {
-                "en": "Polling interval setting per state",
-                "de": "Polling interval setting per state",
+            "0.0.15-beta": {
+                "en": "Read WB data (experimental)",
+                "de": "Read WB data (experimental)",
                 "ru": "Пересмотрена обработка индексов",
                 "pt": "Tratamento revisto do Índice",
                 "nl": "Indexafhandeling herzien",
@@ -474,6 +474,206 @@
             {
                 "tag": "TAG_BAT_REQ_DEVICE_STATE",
                 "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_STATUS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_ENERGY_ALL",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_ENERGY_SOLAR",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_SOC",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_STATUS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_ERROR_CODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_MODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_APP_SOFTWARE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_BOOTLOADER_SOFTWARE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_HW_VERSION",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_FLASH_VERSION",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DEVICE_ID",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DEVICE_STATE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_POWER_L1",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_POWER_L2",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_POWER_L3",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_ACTIVE_PHASES",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_MODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_ENERGY_L1",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_ENERGY_L2",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_ENERGY_L3",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_DEVICE_ID",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_ERROR_CODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_DEVICE_STATE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_FIRMWARE_VERSION",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_DEVICE_ID",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_BAT_CAPACITY",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_USER_PARAM",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_MAX_CURRENT",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_PHASE_VOLTAGE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_DISPLAY_SPEECH",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_DESIGN",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_INFOS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_WARNINGS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_ERRORS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_TEMP_1",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_TEMP_2",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_CP_PEGEL",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_PP_IN_A",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_STATUS_DIODE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_DIG_IN_1",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DIAG_DIG_IN_2",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PM_MAX_PHASE_POWER",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_DEVICE_NAME",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_WB_REQ_EXTERN_DATA_SUN",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_EXTERN_DATA_NET",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_EXTERN_DATA_ALL",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_EXTERN_DATA_ALG",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PARAM_1",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_PARAM_2",
+                "interval": "M"
             }
         ],
         "polling_interval_short": 30,
@@ -484,7 +684,8 @@
         "query_bat": "true",
         "query_ems": "true",
         "query_ep": "true",
-        "query_pvi": "true"
+        "query_pvi": "true",
+        "query_wb": "true"
     },
     "objects": [],
     "instanceObjects": []

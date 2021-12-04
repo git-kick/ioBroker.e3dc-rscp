@@ -171,6 +171,11 @@ const rscpEmsSetPowerMode = {
 	3: "CHARGE",
 	4: "GRID_CHARGE",
 };
+const rscpWbMode = {
+	0: "NONE",
+	128: "LOADING",
+	144: "NOT_LOADING",
+};
 /* RSCP enumerations for later use:
 const rscpReturnCodes = {
 	0: "OK",
@@ -226,20 +231,15 @@ const rscpPmActivePhases = {
 	6: "PHASE_011",
 	7: "PHASE_111",
 };
-const rscpWbMode = {
-	0: "NONE",
-	128: "LOADING",
-	144: "NOT_LOADING",
-};
-const rscpWbType = {
-	1: "E3DC",
-	2: "EASYCONNECT",
-};
 const rscpUmUpdateStatus = {
 	0: "IDLE",
 	1: "UPDATE_CHECK_RUNNING",
 	2: "UPDATING_MODULES_AND_FILES",
 	3: "UPDATING_HARDWARE",
+};
+const rscpWbType = {
+	1: "E3DC",
+	2: "EASYCONNECT",
 };
 */
 
@@ -259,6 +259,7 @@ const mapIdToCommonStates = {
 	"EMS.EMERGENCY_POWER_STATUS": rscpEmsEmergencyPowerStatus,
 	"EMS.IDLE_PERIOD_TYPE": rscpEmsIdlePeriodType,
 	"EMS.MODE": rscpEmsMode,
+	"WB.MODE": rscpWbMode,
 };
 // List of writable states, with Mapping for response value handling.
 // Key is returned_tag; value is (type_pattern: target_state)
@@ -687,10 +688,10 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueBatRequestData( pollingSML ) {
-		for( let batIndex = 0; batIndex <= this.maxIndex["BAT"]; batIndex++ ) {
+		for( let i = 0; i <= this.maxIndex["BAT"]; i++ ) {
 			this.clearFrame();
 			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
-			this.addTagtoFrame( "TAG_BAT_INDEX", "", batIndex );
+			this.addTagtoFrame( "TAG_BAT_INDEX", "", i );
 			this.addTagtoFrame( "TAG_BAT_REQ_MAX_BAT_VOLTAGE", pollingSML );
 			this.addTagtoFrame( "TAG_BAT_REQ_INFO", pollingSML );
 			this.addTagtoFrame( "TAG_BAT_REQ_ASOC", pollingSML );
@@ -715,10 +716,10 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_NAME", pollingSML );
 			this.addTagtoFrame( "TAG_BAT_REQ_SPECIFICATION", pollingSML );
 			this.addTagtoFrame( "TAG_BAT_REQ_INTERNALS", pollingSML );
-			for( let dcbIndex=0; dcbIndex <= this.maxIndex[`BAT_${batIndex}.DCB`]; dcbIndex++ ) {
-				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES", pollingSML, dcbIndex );
-				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", pollingSML, dcbIndex );
-				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", pollingSML, dcbIndex );
+			for( let j=0; j <= this.maxIndex[`BAT_${i}.DCB`]; j++ ) {
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES", pollingSML, j );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", pollingSML, j );
+				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", pollingSML, j );
 			}
 			this.pushFrame( pos );
 		}
@@ -737,10 +738,10 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queuePviRequestData( pollingSML ) {
-		for( let pviIndex = 0; pviIndex <= this.maxIndex["PVI"]; pviIndex++ ) {
+		for( let i = 0; i <= this.maxIndex["PVI"]; i++ ) {
 			this.clearFrame();
 			const pos = this.startContainer( "TAG_PVI_REQ_DATA" );
-			this.addTagtoFrame( "TAG_PVI_INDEX", "", pviIndex );
+			this.addTagtoFrame( "TAG_PVI_INDEX", "", i );
 			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", pollingSML  );
 			this.addTagtoFrame( "TAG_PVI_REQ_TYPE", pollingSML  );
 			this.addTagtoFrame( "TAG_PVI_REQ_SERIAL_NUMBER", pollingSML  );
@@ -758,18 +759,18 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_PVI_REQ_MIN_TEMPERATURE", pollingSML  );
 			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_APPARENTPOWER", pollingSML  );
 			this.addTagtoFrame( "TAG_PVI_REQ_DEVICE_STATE", pollingSML  );
-			for( let phaseIndex = 0; phaseIndex <= this.maxIndex[`PVI_${pviIndex}.AC_MAX_PHASE`]; phaseIndex++) {
+			for( let j = 0; j <= this.maxIndex[`PVI_${i}.AC_MAX_PHASE`]; j++) {
 				for( const id of phaseIds ) {
-					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, pollingSML, phaseIndex );
+					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, pollingSML, j );
 				}
 			}
-			for( let stringIndex = 0; stringIndex <= this.maxIndex[`PVI_${pviIndex}.DC_MAX_STRING`]; stringIndex++) {
+			for( let j = 0; j <= this.maxIndex[`PVI_${i}.DC_MAX_STRING`]; j++) {
 				for( const id of stringIds ) {
-					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, pollingSML, stringIndex );
+					this.addTagtoFrame( `TAG_PVI_REQ_${id.split(".")[1]}`, pollingSML, j );
 				}
 			}
-			for( let tempIndex = 0; tempIndex <= this.maxIndex[`PVI_${pviIndex}.TEMPERATURE`]; tempIndex++) {
-				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", pollingSML, tempIndex );
+			for( let j = 0; j <= this.maxIndex[`PVI_${i}.TEMPERATURE`]; j++) {
+				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", pollingSML, j );
 			}
 			this.pushFrame( pos );
 		}
@@ -858,6 +859,67 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
+	queueWbRequestData( pollingSML ) {
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_WB_REQ_CONNECTED_DEVICES", pollingSML );
+		for( let i = 0; i <= this.maxIndex["WB"]; i++ ) {
+			const pos = this.startContainer( "TAG_WB_REQ_DATA" );
+			this.addTagtoFrame( "TAG_WB_INDEX", "", i );
+			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_STATUS", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_ENERGY_ALL", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_ENERGY_SOLAR", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_SOC", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_ERROR_CODE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_MODE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_APP_SOFTWARE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_BOOTLOADER_SOFTWARE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_HW_VERSION", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_FLASH_VERSION", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_ID", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_STATE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_POWER_L1", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_POWER_L2", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_POWER_L3", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_ACTIVE_PHASES", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_MODE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_ENERGY_L1", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_ENERGY_L2", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_ENERGY_L3", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_DEVICE_ID", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_ERROR_CODE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_DEVICE_STATE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_FIRMWARE_VERSION", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DEVICE_ID", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_BAT_CAPACITY", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_USER_PARAM", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_MAX_CURRENT", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_PHASE_VOLTAGE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DISPLAY_SPEECH", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DESIGN", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_INFOS", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_WARNINGS", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_ERRORS", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_TEMP_1", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_TEMP_2", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_CP_PEGEL", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_PP_IN_A", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_STATUS_DIODE", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DIG_IN_1", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DIG_IN_2", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PM_MAX_PHASE_POWER", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_NAME", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_SUN", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_NET", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALL", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALG", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PARAM_1", pollingSML  );
+			this.addTagtoFrame( "TAG_WB_REQ_PARAM_2", pollingSML  );
+			this.endContainer(pos);
+		}
+		this.pushFrame();
+	}
+
 	queueSetValue( globalId, value ) {
 		this.log.info( `queueSetValue( ${globalId}, ${value} )`);
 		const id = globalId.match("^[^.]+[.][^.]+[.](.*)")[1];
@@ -924,6 +986,7 @@ class E3dcRscp extends utils.Adapter {
 		if( this.config.query_ep ) this.queueEpRequestData( pollingSML );
 		if( this.config.query_bat ) this.queueBatRequestData( pollingSML );
 		if( this.config.query_pvi ) this.queuePviRequestData( pollingSML );
+		if( this.config.query_wb ) this.queueWbRequestData( pollingSML );
 		this.sendNextFrame();
 	}
 
@@ -1358,6 +1421,17 @@ class E3dcRscp extends utils.Adapter {
 				native: {},
 			});
 		}
+		if( this.config.query_wb ) {
+			await this.setObjectNotExistsAsync("WB", {
+				type: "device",
+				common: {
+					name: systemDictionary["WB"][this.language],
+					role: "wallbox",
+				},
+				native: {},
+			});
+		}
+
 
 		// Initialize your adapter here
 		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.portal_user}, ${this.config.polling_interval_short}, ${this.config.polling_interval_medium}, ${this.config.polling_interval_long}, ${this.config.setpower_interval})` );

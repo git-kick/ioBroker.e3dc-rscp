@@ -60,7 +60,7 @@ Here is what to configure when creating a new instance of the adapter. Options a
   </tr>
   <tr>
     <td>SET_IDLE_PERIOD delay [s]</td>
-    <td>Define how long ioBroker will wait before writing idle period changes to E3/DC. (Purpose is to merge several subsequent changes into one single call.)</td>
+    <td>Define how long ioBroker will wait before writing idle period changes to E3/DC. Purpose is to merge several subsequent changes into one single call. A dedicated timeout is set/reset upon every change concerning the five values within one idle period; changes are only transmitted after the timeout is over.</td>
   </tr>
   <tr>
     <td>Select E3/DC namespaces to query data for (check-boxes)</td>
@@ -175,7 +175,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   <tr>
     <td>WB</td>
     <td>Wallbox</td>
-    <td>not supported (yet)</td>
+    <td>experimental</td>
   </tr>
 </table> 
 
@@ -295,6 +295,9 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.15-beta
+(git-kick)
+* First attempt to read wallbox data (namespace WB).
 ### 0.0.14-beta
 (git-kick)
 * Polling intervals (S/M/L) are now assignable per request tag, see second configuration tab.
