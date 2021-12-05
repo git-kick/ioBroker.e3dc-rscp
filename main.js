@@ -447,11 +447,6 @@ class E3dcRscp extends utils.Adapter {
 
 	// Create channel to E3/DC: encapsulating TCP connection, encryption, message queuing
 	initChannel( ) {
-		this.language = "en";
-		// @ts-ignore
-		this.getForeignObject("system.config", (err, systemConfig) => {
-			if( systemConfig ) this.language = systemConfig.common.language;
-		});
 		if( ! this.config.portal_user ) this.config.portal_user = "";
 		if( ! this.config.portal_password ) this.config.portal_password = "";
 
@@ -1331,6 +1326,10 @@ class E3dcRscp extends utils.Adapter {
 		// Statically, we define only one device per supported RSCP namespace,
 		// plus some setter objects which would not appear before first setting.
 		// The rest of the object tree is defined dynamically.
+		this.language = "en";
+		this.getForeignObject("system.config", (err, systemConfig) => {
+			if( systemConfig ) this.language = systemConfig.common.language;
+		});
 		await this.setObjectNotExistsAsync("RSCP", {
 			type: "device",
 			common: {
@@ -1402,6 +1401,7 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			});
+			this.log.info(`systemDictionary[SET_POWER_MODE] = ${systemDictionary["SET_POWER_MODE"][this.language]}    this.language = ${this.language}`);
 			await this.setObjectNotExistsAsync( "EMS.SET_POWER_MODE", {
 				type: "state",
 				common: {
