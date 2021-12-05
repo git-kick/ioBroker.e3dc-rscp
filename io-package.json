@@ -576,34 +576,6 @@
                 "interval": "L"
             },
             {
-                "tag": "TAG_WB_REQ_DIAG_DEVICE_ID",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_BAT_CAPACITY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_USER_PARAM",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_MAX_CURRENT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_PHASE_VOLTAGE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_DISPLAY_SPEECH",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_DESIGN",
-                "interval": "L"
-            },
-            {
                 "tag": "TAG_WB_REQ_DIAG_INFOS",
                 "interval": "M"
             },
@@ -621,26 +593,6 @@
             },
             {
                 "tag": "TAG_WB_REQ_DIAG_TEMP_2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_CP_PEGEL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_PP_IN_A",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_STATUS_DIODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_DIG_IN_1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_DIG_IN_2",
                 "interval": "M"
             },
             {

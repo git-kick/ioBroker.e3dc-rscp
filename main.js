@@ -176,6 +176,16 @@ const rscpWbMode = {
 	128: "LOADING",
 	144: "NOT_LOADING",
 };
+const rscpActivePhases = {
+	0: "PHASE_000",
+	1: "PHASE_001",
+	2: "PHASE_010",
+	3: "PHASE_011",
+	4: "PHASE_100",
+	5: "PHASE_101",
+	6: "PHASE_110",
+	7: "PHASE_111",
+};
 /* RSCP enumerations for later use:
 const rscpReturnCodes = {
 	0: "OK",
@@ -222,15 +232,6 @@ const rscpPmMode = {
 	3: "ERROR_ACTIVE",
 	4: "ERROR_PASSIVE",
 };
-const rscpPmActivePhases = {
-	1: "PHASE_100",
-	2: "PHASE_010",
-	3: "PHASE_110",
-	4: "PHASE_001",
-	5: "PHASE_101",
-	6: "PHASE_011",
-	7: "PHASE_111",
-};
 const rscpUmUpdateStatus = {
 	0: "IDLE",
 	1: "UPDATE_CHECK_RUNNING",
@@ -259,6 +260,8 @@ const mapIdToCommonStates = {
 	"EMS.EMERGENCY_POWER_STATUS": rscpEmsEmergencyPowerStatus,
 	"EMS.IDLE_PERIOD_TYPE": rscpEmsIdlePeriodType,
 	"EMS.MODE": rscpEmsMode,
+	"EMS.BALANCED_PHASES": rscpActivePhases,
+	"PM.ACTIVE_PHASES": rscpActivePhases,
 	"WB.MODE": rscpWbMode,
 };
 // List of writable states, with Mapping for response value handling.
@@ -879,23 +882,11 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_WB_REQ_PM_ERROR_CODE", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_PM_DEVICE_STATE", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_PM_FIRMWARE_VERSION", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DEVICE_ID", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_BAT_CAPACITY", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_USER_PARAM", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_MAX_CURRENT", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_PHASE_VOLTAGE", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DISPLAY_SPEECH", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DESIGN", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_DIAG_INFOS", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_DIAG_WARNINGS", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_DIAG_ERRORS", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_DIAG_TEMP_1", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_DIAG_TEMP_2", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_CP_PEGEL", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_PP_IN_A", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_STATUS_DIODE", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DIG_IN_1", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_DIG_IN_2", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_PM_MAX_PHASE_POWER", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_NAME", sml  );
 			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_SUN", sml  );
