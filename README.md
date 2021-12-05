@@ -297,6 +297,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ### 0.0.16-beta
 (git-kick)
+* Bugfix: Wallbox count (WB_CONNECTED_DEVICES) was not handled correctly.
 * Bugfix: name for 3 SET_POWER objects is now displayed.
 * Bugfix: removed needless vertical scrollbar from configuration page (index_m.html).
 ### 0.0.15-beta
