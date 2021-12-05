@@ -1,11 +1,11 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.15-beta",
+        "version": "0.0.16-beta",
         "news": {
-            "0.0.15-beta": {
-                "en": "Read WB data (experimental)",
-                "de": "Read WB data (experimental)",
+            "0.0.16-beta": {
+                "en": "Bugfixes",
+                "de": "Bugfixes",
                 "ru": "Пересмотрена обработка индексов",
                 "pt": "Tratamento revisto do Índice",
                 "nl": "Indexafhandeling herzien",

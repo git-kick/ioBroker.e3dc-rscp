@@ -295,6 +295,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 0.0.16-beta
+(git-kick)
+* Bugfix: name for 3 SET_POWER objects is now displayed.
+* Bugfix: removed needless vertical scrollbar from configuration page (index_m.html).
 ### 0.0.15-beta
 (git-kick)
 * First attempt to read wallbox data (namespace WB).
