@@ -1405,7 +1405,6 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			});
-			this.log.info(`systemDictionary[SET_POWER_MODE] = ${systemDictionary["SET_POWER_MODE"][this.language]}    this.language = ${this.language}`);
 			await this.setObjectNotExistsAsync( "EMS.SET_POWER_MODE", {
 				type: "state",
 				common: {
