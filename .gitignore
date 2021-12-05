@@ -16,5 +16,5 @@ Thumbs.db
 admin/i18n/flat.txt
 admin/i18n/*/flat.txt
 
-# Powershell scripts for json
-lib/*.ps1
+# Powershell scripts for json etc.
+*.ps1
