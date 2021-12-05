@@ -13,7 +13,7 @@
 
 ## e3dc-rscp adapter for ioBroker
 
-Control your E3/DC power station using the proprietary RSCP protocol which allows for reading state values and also set control parameters, e.g. setting the charge power limit. This is the advantage of RSCP compared to the standard Modbus, which is only for reading values. If you have no need to write values, have a look at the (simpler) [Modbus adapter](https://github.com/ioBroker/ioBroker.modbus).
+Control your E3/DC power station using the proprietary RSCP protocol which allows for reading state values and also setting control parameters, e.g. the charge power limit. This is the advantage of RSCP compared to the standard Modbus, which is only for reading values. If you have no need to write values, have a look at the (simpler) [Modbus adapter](https://github.com/ioBroker/ioBroker.modbus).
 
 The e3dc-rscp adapter was developed for the E3/DC *S10* device. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
 
@@ -28,7 +28,7 @@ This adapter was tested with node-v12 and node-v14, not with node-v10. (This is 
 
 <a name="toc"></a>
 ## Adapter configuration
-Here is what to configure when creating a new instance of the adapter. Options are organized in Tabs.
+Here is what to configure when creating a new instance of the adapter. Settings are organized in Tabs.
 ### Tab "Options"
  <table>
   <tr>
@@ -227,13 +227,13 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>EMS</td>
     <td>SET_POWER_MODE</td>
     <td>states</td>
-    <td>Charging mode; reflects to MODE</td>
+    <td>Charging mode; usually propagates to MODE</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>SET_POWER_VALUE</td>
     <td>number</td>
-    <td>Charging power [W]; reflects to SET_POWER</td>
+    <td>Charging power [W]; usually propagates to SET_POWER</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
@@ -273,12 +273,12 @@ Note (2): Note that all IDLE_PERIOD tags are written only after the SET_IDLE_PER
 
 For the currently unspupported RSCP namespaces and tags, please refer to th official E3/DC tag list provided with the [sample application](http://s10.e3dc.com/dokumentation/RscpExample.zip).
 
-Note that RSCP knows ca. 680 tags (representing around 300 parameters), so we think it does not make sense to read all of them.
+Note that RSCP knows more tha 600 tags (representing ca. 300 parameters), so we think it does not make sense to read all of them.
 Therefore, we will add tags to the adapter upon upcoming use-cases.
 
 <a name="sam"></a>
 ## Sample script
-Here is a sample script for charge limit control - it is not meant for as-is usage, only to demonstrate how E3/DC values can be used.
+Here is a sample script for charge limit control - it is not meant for as-is usage, only to demonstrate how E3/DC values could be used.
 
     // Trigger: derate power is reached, i.e. power to grid will be capped
     // Action: reset battery charge power limit to maximum, as specified under SYS_SPECS
