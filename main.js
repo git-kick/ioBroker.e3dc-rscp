@@ -366,6 +366,12 @@ const ignoreIndexIds = [
 	"PVI.AC_MAX_APPARENTPOWER",
 	"PVI.MIN_TEMPERATURE",
 	"PVI.MAX_TEMPERATURE",
+	"WB.EXTERN_DATA_SUN",
+	"WB.EXTERN_DATA_NET",
+	"WB.EXTERN_DATA_ALL",
+	"WB.EXTERN_DATA_ALG",
+	"WB.EXTERN_RSP_PARAM_1",
+	"WB.EXTERN_RSP_PARAM_2",
 ];
 // For SYS_SPECs, names and values are transmitted over Interface, i.e. they are not in rscpTags[]
 // Therefore we list the SYS_SPEC units here:
@@ -549,10 +555,13 @@ class E3dcRscp extends utils.Adapter {
 					this.log.warn(`Container-tag ${tag} passed to addTagToFrame - cannot add tag to frame.`);
 					return;
 				case "CString":
+					this.frame.writeUInt16LE( value.length, this.frame.length - 2);
+					this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
+					break;
 				case "Bitfield":
 				case "ByteArray":
-					this.frame.writeUInt16LE(value.length, this.frame.length - 2);
-					this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
+					this.frame.writeUInt16LE( stringToByteArray( value ).length, this.frame.length - 2);
+					this.frame = Buffer.concat( [this.frame, stringToByteArray( value )] );
 					break;
 				case "Char8":
 				case "UChar8":
@@ -1014,7 +1023,7 @@ class E3dcRscp extends utils.Adapter {
 					case "CString":
 					case "BitField":
 					case "ByteArray":
-						value = buffer.toString("utf8",start+7,start+7+len);
+						value = byteArrayToString( buffer.slice(start+7,start+7+len) );
 						break;
 					case "Char8":
 						value = buffer.readInt8(start+7);
@@ -1708,4 +1717,20 @@ function roundForReadability( n ) {
 		const p = Math.pow(10,s-d);
 		return Math.round(n*p)/p;
 	}
+}
+
+// RSCP ByteArray type is displayed as string, e.g. a 4 byte "F0 12 FF 00"
+function byteArrayToString( buf ) {
+	let str = "";
+	for (const x of buf ) {
+		str += x.toString(16).padStart(2,"0") + " ";
+	}
+	return str.trim();
+}
+function stringToByteArray ( str ) {
+	const arr = [];
+	str.split(" ").array.forEach(element => {
+		arr.push( Number(`0x${element}`) );
+	});
+	return Buffer.from(arr);
 }
