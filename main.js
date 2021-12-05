@@ -476,7 +476,7 @@ class E3dcRscp extends utils.Adapter {
 				if( rscpTag[receivedFrame.readUInt32LE(18)] ) this.log.silly(rscpTag[receivedFrame.readUInt32LE(18)].TagNameGlobal);
 				if( this.decryptionIV ) this.inBuffer.copy( this.decryptionIV, 0, this.inBuffer.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
 				this.log.silly( `IN: ${printRscpFrame(receivedFrame)}` );
-				this.log.silly( dumpRscpFrame(receivedFrame) );
+				// this.log.silly( dumpRscpFrame(receivedFrame) );
 				this.processFrame(receivedFrame);
 				this.sendNextFrame();
 				this.inBuffer = null;
@@ -667,10 +667,10 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueBatProbe( probes ) {
-		for( let batIndex = 0; batIndex < probes; batIndex++ ) {
+		for( let i = 0; i < probes; i++ ) {
 			this.clearFrame();
 			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
-			this.addTagtoFrame( "TAG_BAT_INDEX", "", batIndex );
+			this.addTagtoFrame( "TAG_BAT_INDEX", "", i );
 			this.addTagtoFrame( "TAG_BAT_REQ_ASOC" );
 			this.pushFrame( pos );
 		}
@@ -987,7 +987,7 @@ class E3dcRscp extends utils.Adapter {
 				this.log.warn( `sendNextFrame called with invalid content: first tag is ${this.queue[0].readUInt32LE(18)}` );
 			}
 			this.log.silly( `OUT: ${printRscpFrame(this.queue[0])}` );
-			this.log.silly( dumpRscpFrame(this.queue[0]) );
+			// this.log.silly( dumpRscpFrame(this.queue[0]) );
 
 			const encryptedFrame = Buffer.from( this.cipher.encrypt( this.queue[0], 256, this.encryptionIV ) );
 			// last encrypted block will be used as IV for next frame
@@ -1188,7 +1188,7 @@ class E3dcRscp extends utils.Adapter {
 
 				// INDEX indicates top level device, e.g. TAG_BAT_INDEX
 				if( tagName == "INDEX" ) {
-					if( tree.length > Number(i)+1 && rscpType[tree[Number(i)+1].type] != "Error" ) {
+					if( tree.length <= Number(i)+1 || rscpType[tree[Number(i)+1].type] != "Error" ) {
 						this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], token.content) : token.content;
 						this.log.silly(`maxIndex[${nameSpace}] = ${this.maxIndex[nameSpace]}`);
 						pathNew = `${nameSpace}_${token.content}.`;
@@ -1208,10 +1208,6 @@ class E3dcRscp extends utils.Adapter {
 				// ..._COUNT explicitely sets upper bound for (sub-)device index
 				if( tagName.endsWith("_COUNT") ) {
 					this.maxIndex[`${pathNew}${tagName.replace("_COUNT","")}`] = token.content - 1;
-				}
-				// Wallbox counter has a different name scheme
-				if( tagName.endsWith("CONNECTED_DEVICES") && nameSpace == "WB" ) {
-					this.maxIndex["WB"] = token.content - 1;
 				}
 
 				// Handle mapping between "receive" tag names and "set" tag names:
