@@ -1209,6 +1209,10 @@ class E3dcRscp extends utils.Adapter {
 				if( tagName.endsWith("_COUNT") ) {
 					this.maxIndex[`${pathNew}${tagName.replace("_COUNT","")}`] = token.content - 1;
 				}
+				// Wallbox counter has a different name scheme
+				if( tagName.endsWith("CONNECTED_DEVICES") && nameSpace == "WB" ) {
+					this.maxIndex["WB"] = token.content - 1;
+				}
 
 				// Handle mapping between "receive" tag names and "set" tag names:
 				let targetStateMatch = null;
