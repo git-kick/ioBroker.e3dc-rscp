@@ -560,8 +560,8 @@ class E3dcRscp extends utils.Adapter {
 					break;
 				case "Bitfield":
 				case "ByteArray":
-					this.frame.writeUInt16LE( stringToByteArray( value ).length, this.frame.length - 2);
-					this.frame = Buffer.concat( [this.frame, stringToByteArray( value )] );
+					this.frame.writeUInt16LE( stringToBuffer( value ).length, this.frame.length - 2);
+					this.frame = Buffer.concat( [this.frame, stringToBuffer( value )] );
 					break;
 				case "Char8":
 				case "UChar8":
@@ -1021,9 +1021,11 @@ class E3dcRscp extends utils.Adapter {
 				let value = null;
 				switch( typeName  ) {
 					case "CString":
+						value = buffer.slice(start+7,start+7+len).toString();
+						break;
 					case "BitField":
 					case "ByteArray":
-						value = byteArrayToString( buffer.slice(start+7,start+7+len) );
+						value = bufferToString( buffer.slice(start+7,start+7+len) );
 						break;
 					case "Char8":
 						value = buffer.readInt8(start+7);
@@ -1176,7 +1178,8 @@ class E3dcRscp extends utils.Adapter {
 					} else if( tagName == "DCB_CELL_VOLTAGE" ) {
 						unit = "V";
 					}
-					this.storeValue( nameSpace, pathNew + tagName + ".", multipleValueIndex[shortId].toString().padStart(2,"0"), rscpType[token.type], token.content, dictionaryIndex, unit );
+					const [ t, v ] = this.adjustTypeAndValue( shortId, rscpType[token.type], token.content );
+					this.storeValue( nameSpace, pathNew + tagName + ".", multipleValueIndex[shortId].toString().padStart(2,"0"), t, v, dictionaryIndex, unit );
 					let r = "info";
 					if( tagName.includes("TEMPERATURE") ) r = "sensor.temperature"; else if( tagName.includes("VOLTAGE") ) r = "sensor.electricity";
 					this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}.${tagName}`, {type: "channel", common: {role: r}} );
@@ -1219,22 +1222,28 @@ class E3dcRscp extends utils.Adapter {
 				}
 				if( targetStateMatch ) tagNameNew = mapReceivedIdToState[shortId][targetStateMatch].split(".")[1];
 
-				// Apply value and/or type corrections due to E3/DC inconsistencies:
-				let valueNew = token.content;
-				let typeNameNew = typeName;
-				if( negateValueIds.includes(shortId) ) valueNew = -valueNew;
-				if( percentValueIds.includes(shortId) ) valueNew = valueNew * 100;
-				if( castToBooleanIds.includes(shortId) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
-					valueNew = (valueNew!=0);
-					typeNameNew = "Bool";
-				}
-				if( castToTimestampIds.includes(shortId) ) {
-					valueNew = new Date(Number(valueNew)).toISOString();
-					typeNameNew = "Timestamp";
-				}
-				this.storeValue( nameSpace, pathNew, tagNameNew, typeNameNew, valueNew );
+				const [ t, v ] = this.adjustTypeAndValue( shortId, typeName, token.content );
+				this.storeValue( nameSpace, pathNew, tagNameNew, t, v );
 			}
 		}
+	}
+
+	// Apply value and/or type corrections due to E3/DC inconsistencies:
+	adjustTypeAndValue( shortId, typeName, value ) {
+		let newValue = value;
+		let newTypeName = typeName;
+		if( negateValueIds.includes(shortId) ) newValue = -newValue;
+		if( percentValueIds.includes(shortId) ) newValue = newValue * 100;
+		if( castToBooleanIds.includes(shortId) && ( typeName == "Char8" || typeName == "UChar8" ) ) {
+			newValue = (newValue!=0);
+			newTypeName = "Bool";
+		}
+		if( castToTimestampIds.includes(shortId) ) {
+			newValue = new Date(Number(newValue)).toISOString();
+			newTypeName = "Timestamp";
+		}
+		// if( typeName != newTypeName || value != newValue ) this.log.silly(`adjustTypeAndValue(${shortId},${typeName},${value}}) returns [${newTypeName},${newValue}]`);
+		return [ newTypeName, newValue ];
 	}
 
 	storeValue( nameSpace, path, tagName, typeName, value, dictionaryIndex, unit = "" ) {
@@ -1603,9 +1612,11 @@ function parseRscpToken ( buffer, pos, text ) {
 			text.content += "<Container content follows...> ";
 			return 7; // length of container header, not content
 		case "CString":
+			text.content += `value: ${buffer.toString("utf8",pos+7,pos+7+len)} `;
+			return 7+len;
 		case "Bitfield":
 		case "ByteArray":
-			text.content += `value: ${buffer.toString("utf8",pos+7,pos+7+len)} `;
+			text.content += `value: ${bufferToString(buffer.slice(pos+7,pos+7+len))} `;
 			return 7+len;
 		case "Char8":
 		case "UChar8":
@@ -1719,15 +1730,16 @@ function roundForReadability( n ) {
 	}
 }
 
-// RSCP ByteArray type is displayed as string, e.g. a 4 byte "F0 12 FF 00"
-function byteArrayToString( buf ) {
+// Convert Buffer <> human readable string, e.g. 4 byte like "F0 12 FF 00"
+// Also used to display RSCP ByteArray/BitString types
+function bufferToString( buf ) {
 	let str = "";
 	for (const x of buf ) {
-		str += x.toString(16).padStart(2,"0") + " ";
+		str += x.toString(16).padStart(2,"0").toUpperCase() + " ";
 	}
 	return str.trim();
 }
-function stringToByteArray ( str ) {
+function stringToBuffer ( str ) {
 	const arr = [];
 	str.split(" ").array.forEach(element => {
 		arr.push( Number(`0x${element}`) );
