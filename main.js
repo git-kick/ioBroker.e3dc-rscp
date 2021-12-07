@@ -359,6 +359,7 @@ const ignoreIds = [
 	"BAT.INTERNAL_MAX_DISCHARGE_CURR_PER_DCB",
 	"BAT.INTERNAL_MAX_CHARGE_CURR_DATA_LOG",
 	"BAT.INTERNAL_MAX_DISCHARGE_CURR_DATA_LOG",
+	"WB.EXTERN_DATA_LEN",
 ];
 // Some of the INDEX values are redundant and can be safely ignored:
 // Listed here are containers which contain redundant INDEX tags.
