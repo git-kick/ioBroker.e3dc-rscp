@@ -61,7 +61,7 @@
 		"DataType": "Timestamp",
 		"DataTypeHex": "0x0F",
 		"UserLevel": "USER",
-		"Unit": "",
+		"Unit": "s",
 		"Description": ""
 	},
 	"100663555": {
@@ -74,7 +74,7 @@
 		"DataType": "Timestamp",
 		"DataTypeHex": "0x0F",
 		"UserLevel": "USER",
-		"Unit": "",
+		"Unit": "s",
 		"Description": ""
 	},
 	"100663808": {

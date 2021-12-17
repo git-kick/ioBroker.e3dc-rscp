@@ -294,7 +294,9 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-
+### 0.0.17-beta
+(git-kick)
+* DB namespace - experimental implementation
 ### 0.0.16-beta
 (git-kick)
 * Bugfix: Wallbox count (WB_CONNECTED_DEVICES) was not handled correctly.

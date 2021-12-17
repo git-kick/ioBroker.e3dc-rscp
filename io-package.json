@@ -1,11 +1,11 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.16-beta",
+        "version": "0.0.17-beta",
         "news": {
-            "0.0.16-beta": {
-                "en": "Bugfixes",
-                "de": "Bugfixes",
+            "0.0.17-beta": {
+                "en": "DB namespace (experimental)",
+                "de": "DB namespace (experimental)",
                 "ru": "Пересмотрена обработка индексов",
                 "pt": "Tratamento revisto do Índice",
                 "nl": "Indexafhandeling herzien",
@@ -632,12 +632,13 @@
         "polling_interval_medium": 5,
         "polling_interval_long": 12,
         "setpower_interval": 15,
-        "setidleperiod_delay": 10,
+        "send_tuple_delay": 10,
         "query_bat": "true",
         "query_ems": "true",
         "query_ep": "true",
         "query_pvi": "true",
-        "query_wb": "true"
+        "query_wb": "true",
+        "query_db": "true"
     },
     "objects": [],
     "instanceObjects": []
