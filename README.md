@@ -59,11 +59,11 @@ Here is what to configure when creating a new instance of the adapter. Settings 
     <td>Define how often ioBroker will request state updates from E3/DC.</td>
   </tr>
   <tr>
-    <td>SET_IDLE_PERIOD delay [s]</td>
-    <td>Define how long ioBroker will wait before writing idle period changes to E3/DC. Purpose is to merge several subsequent changes into one single call. A dedicated timeout is set/reset upon every change concerning the five values within one idle period; changes are only transmitted after the timeout is over.</td>
+    <td>Tuple sending delay [s]</td>
+    <td>Define how long ioBroker will wait before writing idle period or data history changes to E3/DC. Purpose is to merge several subsequent changes into one single call. A dedicated timeout is set/reset upon every change concerning the values within one idle period or one data history scale, resepectively; changes are only transmitted after the timeout is over.</td>
   </tr>
   <tr>
-    <td>Select E3/DC namespaces to query data for (check-boxes)</td>
+    <td>Checkbox for each E3/DC namespace</td>
     <td>Data will be requested only for checked namespaces.</td>
   </tr>
 </table>
@@ -135,7 +135,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   <tr>
     <td>DB</td>
     <td>Database</td>
-    <td>not supported (yet)</td>
+    <td>experimental</td>
   </tr>
   <tr>
     <td>FMS</td>
@@ -265,15 +265,35 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>number</td>
     <td>End minute of idle period (2)</td>
   </tr>
+  <tr>
+    <td>DB (3)</td>
+    <td>TIME_START</td>
+    <td>string</td>
+    <td>Start of time range to request data for</td>
+  </tr>
+  <tr>
+    <td>DB (3)</td>
+    <td>TIME_SPAN</td>
+    <td>string</td>
+    <td>Length of time range to request data for (seconds)</td>
+  </tr>
+  <tr>
+    <td>DB (3)</td>
+    <td>TIME_INTERVAL</td>
+    <td>string</td>
+    <td>Interval between data points</td>
+  </tr>
 </table> 
 
 Note (1): Full path is EMS.IDLE_PERIODS_(DIS)CHARGE.&lt;day-of-week&gt; - e.g. "EMS.IDLE_PERIODS_CHARGE.00-Monday"
 
 Note (2): Note that all IDLE_PERIOD tags are written only after the SET_IDLE_PERIOD delay, as defined in the configuration. The delay is restarted upon every change within one IDLE_PERIOD day. 
 
+Note (3): Full path is DB.HISTORY_DATA_{DAY,WEEK,MONTH,YEAR} - e.g. "DB.HISTORY_DATA_DAY".  
+
 For the currently unspupported RSCP namespaces and tags, please refer to th official E3/DC tag list provided with the [sample application](http://s10.e3dc.com/dokumentation/RscpExample.zip).
 
-Note that RSCP knows more tha 600 tags (representing ca. 300 parameters), so we think it does not make sense to read all of them.
+Note that RSCP knows more than 600 tags (representing ca. 300 parameters), so we think it does not make sense to read all of them.
 Therefore, we will add tags to the adapter upon upcoming use-cases.
 
 <a name="sam"></a>
@@ -297,6 +317,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### 0.0.17-beta
 (git-kick)
 * DB namespace - experimental implementation
+* Timestamps are now aligned to ioBroker format: "2022-01-30 12:00:00.000" - using local timezone (not UTC)
 ### 0.0.16-beta
 (git-kick)
 * Bugfix: Wallbox count (WB_CONNECTED_DEVICES) was not handled correctly.
