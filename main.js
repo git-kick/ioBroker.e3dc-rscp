@@ -1423,6 +1423,7 @@ class E3dcRscp extends utils.Adapter {
 		});
 	}
 
+	// Delete VALUE_x object branches for a certain x, x+1, ...
 	deleteValueObjects( count, path ) {
 		const id = `DB.${path}VALUE_${count.toString().padStart(2,"0")}`;
 		//this.log.silly(`deleteValueObjects: count=${count}, id=${id}`);
