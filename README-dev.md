@@ -7,6 +7,48 @@ It was developed looking at E3/DC's [sample application](http://s10.e3dc.com/dok
 
 The sample application package also contains the official tag lists, which are necessary to interpret RSCP frames semantically.
 
+### DB Namespace Semantics
+
+In the DB namespace, time series can be requested from E3/DC:
+* TIME_START = start of observed time range
+* TIME_SPAN = length of observed time range; minimum is 900 seconds, i.e. 15 minutes
+* TIME_INTERVAL = sampling rate; minimum is 900 seconds, i.e. 15 minutes
+
+Results contain GRAPH_INDEX, described as "relative position within the graph". The data point's timestamp can be approximated like
+
+	TIMESTAMP = TIME_START + GRAPH_INDEX * TIME_INTERVAL
+
+Here is some data from test calls:
+<table>
+  <tr> <th>SPAN</th> <th>INTERVAL</th> <th>GRAPH_INDEX increment</th> <th># of values</th> </tr>
+  <tr> <td>7200</td> <td>60</td> <td>13.6</td> <td>8</td> </tr>
+  <tr> <td>3600</td> <td>60</td> <td>13.6</td> <td>4</td> </tr>
+  <tr> <td>3600</td> <td>120</td> <td>6.8</td> <td>4</td> </tr>
+  <tr> <td>120</td> <td>3600</td> <td>ERR</td> <td>ERR</td> </tr>
+  <tr> <td>120</td> <td>120</td> <td>ERR</td> <td>ERR</td> </tr>
+  <tr> <td>360</td> <td>120</td> <td>ERR</td> <td>ERR</td> </tr>
+  <tr> <td>1800</td> <td>120</td> <td>6.8</td> <td>2</td> </tr>
+  <tr> <td>900</td> <td>120</td> <td>6.8</td> <td>1</td> </tr>
+  <tr> <td>86400</td> <td>3600</td> <td>1</td> <td>24</td> </tr>
+  <tr> <td>86400</td> <td>60</td> <td>13.6</td> <td>96</td> </tr>
+  <tr> <td>86400</td> <td>7200</td> <td>1</td> <td>12</td> </tr>
+  <tr> <td>86400</td> <td>1800</td> <td>1</td> <td>48</td> </tr>
+  <tr> <td>43200</td> <td>900</td> <td>1</td> <td>48</td> </tr>
+  <tr> <td>86400</td> <td>900</td> <td>1</td> <td>96</td> </tr>
+  <tr> <td>172800</td> <td>3600</td> <td>1</td> <td>32</td> </tr>
+  <tr> <td>172800</td> <td>1800</td> <td>1</td> <td>64</td> </tr>
+  <tr> <td>172800</td> <td>7200</td> <td>1</td> <td>16</td> </tr>
+  <tr> <td>345600</td> <td>7200</td> <td>1</td> <td>16</td> </tr>
+ </table>
+
+Observations:
+* It looks like E3/DC stores values in 15 minutes resolution.
+* TIME_SPAN below 900 seconds causes an error response. 
+* TIME_INTERVAL below 900 seconds is treated like 900 seconds.
+* For HISTORY_DATA_DAY, it seems that TIME_SPAN maximum is 32 hours.
+* Typically, the first data value is at TIME_START + TIME_INTERVAL/2
+* One additional value is (always?) transmitted at the end of TIME_SPAN.
+
 **The rest of this Developer manual will be modified/removed when processed and done, respectively.**
 
 ### Best Practices

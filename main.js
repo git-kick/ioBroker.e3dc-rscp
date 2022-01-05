@@ -1273,6 +1273,13 @@ class E3dcRscp extends utils.Adapter {
 				if( tagName.endsWith("_COUNT") ) {
 					this.maxIndex[`${pathNew}${tagName.replace("_COUNT","")}`] = token.content - 1;
 				}
+				// Translate bit-mapped EMS.STATUS
+				if( shortId == "EMS.STATUS" ) {
+					for( let bit = 0; bit < 10; bit++ ) {
+						this.storeValue( nameSpace, pathNew, `STATUS_${bit}`, "Bool", (token.content & (2**bit)) != 0, `EMS_STATUS_${bit}`);
+					}
+					continue;
+				}
 
 				// Handle mapping between "receive" tag names and "set" tag names:
 				let targetStateMatch = null;
