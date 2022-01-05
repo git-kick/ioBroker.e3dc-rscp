@@ -996,10 +996,10 @@ class E3dcRscp extends utils.Adapter {
 						this.getState( `${nameSpace}.${shortTag}.TIME_INTERVAL`, (err, interval) => {
 							this.getState( `${nameSpace}.${shortTag}.TIME_SPAN`, (err, span) => {
 								this.sendTupleTimeout[prefix] = null;
-								let t = 0;
+								let d = new Date();
 								if( timeStart && timeStart.val ) {
-									t = stringToDate(timeStart.val.toString()).getTime()/1000; // epoch seconds
-									this.setState( `${nameSpace}.${shortTag}.TIME_START`, timeStart.val, true ); // ack
+									d = stringToDate(timeStart.val.toString());
+									this.setState( `${nameSpace}.${shortTag}.TIME_START`, dateToString(d), true ); // ack, and format time string
 								}
 								let i = 0;
 								if( interval && interval.val ) {
@@ -1013,12 +1013,12 @@ class E3dcRscp extends utils.Adapter {
 								}
 								this.clearFrame();
 								const pos = this.startContainer( `TAG_DB_REQ_${shortTag}` );
-								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_START", "", t );
+								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_START", "", d.getTime()/1000 );
 								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_INTERVAL", "", i );
 								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_SPAN", "", s );
 								this.endContainer(pos);
 								this.pushFrame();
-								this.log.debug(`TAG_DB_REQ_${shortTag} - START=${t} INTERVAL=${i} SPAN=${s}`);
+								this.log.debug(`TAG_DB_REQ_${shortTag} - START=${d.getTime()/1000} INTERVAL=${i} SPAN=${s}`);
 							});
 						});
 					});
