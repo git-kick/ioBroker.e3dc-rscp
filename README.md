@@ -289,7 +289,14 @@ Note (1): Full path is EMS.IDLE_PERIODS_(DIS)CHARGE.&lt;day-of-week&gt; - e.g. "
 
 Note (2): Note that all IDLE_PERIOD tags are written only after the SET_IDLE_PERIOD delay, as defined in the configuration. The delay is restarted upon every change within one IDLE_PERIOD day. 
 
-Note (3): Full path is DB.HISTORY_DATA_{DAY,WEEK,MONTH,YEAR} - e.g. "DB.HISTORY_DATA_DAY".  
+Note (3): Full path is DB.HISTORY_DATA_{DAY,WEEK,MONTH,YEAR} - e.g. "DB.HISTORY_DATA_DAY".
+
+For DB, it is not clear what makes the difference between the scales (DAY/WEEK/MONTH/YEAR). Results are looking similar. Hypotheses are:
+* specific data retention
+* specific data resolution
+* specific data aggregation
+
+Further investigation is necessary.
 
 For the currently unspupported RSCP namespaces and tags, please refer to th official E3/DC tag list provided with the [sample application](http://s10.e3dc.com/dokumentation/RscpExample.zip).
 
@@ -318,6 +325,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 (git-kick)
 * DB namespace - experimental implementation
 * Timestamps are now aligned to ioBroker format: "2022-01-30 12:00:00.000" - using local timezone (not UTC)
+* EMS.STATUS bitmap is now decoded into EMS.STATUS_[0..9] - thanks to @ArnoD for providing E3/DC specs
 ### 0.0.16-beta
 (git-kick)
 * Bugfix: Wallbox count (WB_CONNECTED_DEVICES) was not handled correctly.

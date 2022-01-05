@@ -1273,6 +1273,13 @@ class E3dcRscp extends utils.Adapter {
 				if( tagName.endsWith("_COUNT") ) {
 					this.maxIndex[`${pathNew}${tagName.replace("_COUNT","")}`] = token.content - 1;
 				}
+				// Translate bit-mapped EMS.STATUS
+				if( shortId == "EMS.STATUS" ) {
+					for( let bit = 0; bit < 10; bit++ ) {
+						this.storeValue( nameSpace, pathNew, `STATUS_${bit}`, "Bool", (token.content & (2**bit)) != 0, `EMS_STATUS_${bit}`);
+					}
+					continue;
+				}
 
 				// Handle mapping between "receive" tag names and "set" tag names:
 				let targetStateMatch = null;
@@ -1932,17 +1939,21 @@ function dateToString( date ) {
 	const ms = date.getMilliseconds().toString().padStart(3,"0");
 	return `${year}-${month}-${day} ${hour}:${minute}:${second}.${ms}`;
 }
+// Missing seconds/milliseconds will be set to zero - minimal valid string is like "2021-1-1 0:0"
+// If no match is found, return "today midnight"
 function stringToDate( string ) {
-	const found =  string.match( /(\d\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+).(\d+)/ ); // TODO: allow missing time values
+	const found =  string.match( /(\d\d\d\d)-(\d\d?)-(\d\d?) (\d\d?):(\d\d?)(?::(\d\d?)(?:\.(\d\d?\d?))?)?/ );
 	if( found ) {
-		return new Date( Number(found[1]), Number(found[2])-1, Number(found[3]), Number(found[4]), Number(found[5]), Number(found[6]), Number(found[7]) );
-		//return new Date(2021,10,22,14,30,59,111);
+		const second = found[6] ? Number(found[6]) : 0;
+		const ms = found[7] ? Number(found[7]) : 0;
+		return new Date( Number(found[1]), Number(found[2])-1, Number(found[3]), Number(found[4]), Number(found[5]), second, ms );
 	} else {
-		return new Date();
+		const now = new Date();
+		return new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
 	}
 }
 
-// Convert Buffer <> human readable string, e.g. 4 byte like "F0 12 FF 00"
+// Convert Buffer to/from human readable string, e.g. 4 byte like "F0 12 FF 00"
 // Also used to display RSCP ByteArray/BitString types
 function bufferToString( buf ) {
 	let str = "";
