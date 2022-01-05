@@ -445,7 +445,7 @@ class E3dcRscp extends utils.Adapter {
 		this.dataPollingTimerM = null;
 		this.dataPollingTimerL = null;
 		this.setPowerTimer = null;
-		this.setIdlePeriodTimeout = []; // [10*type+day]
+		this.sendTupleTimeout = {}; // every tuple for grouped sending gets it's own timeout, e.g. "DB.HISTORY_DATA_DAY" or "EMS.IDLE_PERIODS_CHARGE.00-Monday"
 
 		// For efficient access to polling intervals:
 		this.pollingInterval = []; // [tagCode]
@@ -618,7 +618,7 @@ class E3dcRscp extends utils.Adapter {
 					break;
 				case "Timestamp": // NOTE: treating value as seconds - setting nanoseconds to zero
 					this.frame.writeUInt16LE( 12, this.frame.length - 2 );
-					buf8.writeUIntLE( value, 0, 8 );
+					buf8.writeBigUInt64LE( BigInt(value?Math.round(value):0) );
 					this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array([0x00,0x00,0x00,0x00])] );
 					break;
 				default:
@@ -908,6 +908,17 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
+	// Only used for interface exploration:
+	queueDbRequestData( sml ) {
+		this.clearFrame();
+		const pos = this.startContainer( "TAG_DB_REQ_HISTORY_DATA_DAY" );
+		this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_START", "", 1639609200 );
+		this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_INTERVAL", "", 1800 );
+		this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_SPAN", "", 86400);
+		this.endContainer(pos);
+		this.pushFrame();
+	}
+
 	queueSetValue( globalId, value ) {
 		this.log.info( `queueSetValue( ${globalId}, ${value} )`);
 		const id = globalId.match("^[^.]+[.][^.]+[.](.*)")[1];
@@ -928,16 +939,16 @@ class E3dcRscp extends utils.Adapter {
 			const prefix = el.slice(2,5).join("."); // e.g. "EMS.IDLE_PERIODS_CHARGE.00-Monday"
 			const type = (el[3].endsWith("_CHARGE")) ? 0 : 1;
 			const day = Number(el[4].split("-")[0]);
-			if( this.setIdlePeriodTimeout[10*type+day] ) {
-				clearTimeout(this.setIdlePeriodTimeout[10*type+day]);
+			if( this.sendTupleTimeout[prefix] ) {
+				clearTimeout(this.sendTupleTimeout[prefix]);
 			}
-			this.setIdlePeriodTimeout[10*type+day] = setTimeout(() => {
+			this.sendTupleTimeout[prefix] = setTimeout(() => {
 				this.getState( `${prefix}.IDLE_PERIOD_ACTIVE`, (err, active) => {
 					this.getState( `${prefix}.START_HOUR`, (err, startHour) => {
 						this.getState( `${prefix}.START_MINUTE`, (err, startMinute) => {
 							this.getState( `${prefix}.END_HOUR`, (err, endHour) => {
 								this.getState( `${prefix}.END_MINUTE`, (err, endMinute) => {
-									this.setIdlePeriodTimeout[10*type+day] = null;
+									this.sendTupleTimeout[prefix] = null;
 									this.clearFrame();
 									const c1 = this.startContainer( "TAG_EMS_REQ_SET_IDLE_PERIODS" );
 									const c2 = this.startContainer( "TAG_EMS_IDLE_PERIOD" );
@@ -963,9 +974,58 @@ class E3dcRscp extends utils.Adapter {
 						});
 					});
 				});
-			}, this.config.setidleperiod_delay*1000 );
+			}, this.config.send_tuple_delay*1000 );
 		} else {
 			this.log.warn(`queueSetIdlePeriod: invalid globalId ${globalId}`);
+		}
+	}
+
+	queueGetHistoryData( globalId ) {
+		this.log.info( `queueGetHistoryData( ${globalId} )`);
+		const el = globalId.split(".");
+		if( el.length == 5 ) { // e.g. "e3dc-rscp.0.DB.HISTORY_DATA_DAY.TIME_START"
+			const nameSpace = el[2];
+			const shortTag = el[3]; // e.g. "HISTORY_DATA_DAY"
+			const prefix = `${nameSpace}.${shortTag}`;
+			if( nameSpace == "DB" && shortTag.startsWith("HISTORY_DATA_") ) {
+				if( this.sendTupleTimeout[prefix] ) {
+					clearTimeout(this.sendTupleTimeout[prefix]);
+				}
+				this.sendTupleTimeout[prefix] = setTimeout(() => {
+					this.getState( `${nameSpace}.${shortTag}.TIME_START`, (err, timeStart) => {
+						this.getState( `${nameSpace}.${shortTag}.TIME_INTERVAL`, (err, interval) => {
+							this.getState( `${nameSpace}.${shortTag}.TIME_SPAN`, (err, span) => {
+								this.sendTupleTimeout[prefix] = null;
+								let t = 0;
+								if( timeStart && timeStart.val ) {
+									t = stringToDate(timeStart.val.toString()).getTime()/1000; // epoch seconds
+									this.setState( `${nameSpace}.${shortTag}.TIME_START`, timeStart.val, true ); // ack
+								}
+								let i = 0;
+								if( interval && interval.val ) {
+									i = Number(interval.val);
+									this.setState( `${nameSpace}.${shortTag}.TIME_INTERVAL`, interval.val, true ); // ack
+								}
+								let s = 0;
+								if( span && span.val ) {
+									s = Number(span.val);
+									this.setState( `${nameSpace}.${shortTag}.TIME_SPAN`, span.val, true ); // ack
+								}
+								this.clearFrame();
+								const pos = this.startContainer( `TAG_DB_REQ_${shortTag}` );
+								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_START", "", t );
+								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_INTERVAL", "", i );
+								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_SPAN", "", s );
+								this.endContainer(pos);
+								this.pushFrame();
+								this.log.debug(`TAG_DB_REQ_${shortTag} - START=${t} INTERVAL=${i} SPAN=${s}`);
+							});
+						});
+					});
+				}, this.config.send_tuple_delay*1000 );
+			}
+		} else {
+			this.log.warn(`queueGetHistoryData: invalid globalId ${globalId}`);
 		}
 	}
 
@@ -1145,6 +1205,8 @@ class E3dcRscp extends utils.Adapter {
 					this.extendObject( `EMS.SYS_SPECS`, {type: "channel", common: {role: "info"}} );
 				} else if( shortId == "EMS.GET_IDLE_PERIODS" ) {
 					this.storeIdlePeriods( token.content, pathNew );
+				} else if( shortId.startsWith("DB.HISTORY_DATA_") ) {
+					this.storeHistoryData( token.content, pathNew + `${tagName}.` );
 				} else if ( ignoreIndexIds.includes(shortId)  && token.content.length == 2 ) {
 					this.storeValue( nameSpace, pathNew, tagName, rscpType[token.content[1].type], token.content[1].content );
 				} else if ( phaseIds.includes(shortId)  && token.content.length == 2 ) {
@@ -1192,7 +1254,7 @@ class E3dcRscp extends utils.Adapter {
 				if( tagName == "INDEX" ) {
 					if( tree.length <= Number(i)+1 || rscpType[tree[Number(i)+1].type] != "Error" ) {
 						this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], token.content) : token.content;
-						this.log.silly(`maxIndex[${nameSpace}] = ${this.maxIndex[nameSpace]}`);
+						//this.log.silly(`maxIndex[${nameSpace}] = ${this.maxIndex[nameSpace]}`);
 						pathNew = `${nameSpace}_${token.content}.`;
 						this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}`, {type: "channel", common: {role: "info.module"}} );
 					}
@@ -1240,7 +1302,7 @@ class E3dcRscp extends utils.Adapter {
 			newTypeName = "Bool";
 		}
 		if( castToTimestampIds.includes(shortId) ) {
-			newValue = new Date(Number(newValue)).toISOString();
+			newValue = dateToString(new Date(Number(newValue)));
 			newTypeName = "Timestamp";
 		}
 		// if( typeName != newTypeName || value != newValue ) this.log.silly(`adjustTypeAndValue(${shortId},${typeName},${value}}) returns [${newTypeName},${newValue}]`);
@@ -1291,7 +1353,10 @@ class E3dcRscp extends utils.Adapter {
 			const type = token.content[0].content;
 			if( rscpTag[token.content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_DAY" ) return;
 			const day = token.content[1].content;
-			if( !this.setIdlePeriodTimeout[10*type+day] ) { // do not overwrite manual changes which are waiting to be sent
+			const idleNode = (type==0) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
+			const dayNode = `${day.toString().padStart(2,"0")}-${dayOfWeek[day]}`;
+			const newPath = `${path}${idleNode}.${dayNode}.`;
+			if( !this.sendTupleTimeout[`EMS.${idleNode}.${dayNode}`] ) { // do not overwrite manual changes which are waiting to be sent
 				if( rscpTag[token.content[2].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_ACTIVE" ) return;
 				const active = token.content[2].content;
 				if( rscpTag[token.content[3].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_START" || token.content[3].content.length != 2)  return;
@@ -1304,18 +1369,65 @@ class E3dcRscp extends utils.Adapter {
 				const endHour = token.content[4].content[0].content;
 				if( rscpTag[token.content[4].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
 				const endMinute = token.content[4].content[1].content;
-				const t = (type==0) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
-				const p = `${path}${t}.${day.toString().padStart(2,"0")}-${dayOfWeek[day]}.`;
-				this.storeValue( "EMS", p, "IDLE_PERIOD_ACTIVE", "Bool", (active!=0) );
-				this.storeValue( "EMS", p, "START_HOUR", "UChar8", startHour, "START_HOUR", "h" );
-				this.storeValue( "EMS", p, "START_MINUTE", "UChar8", startMinute, "START_MINUTE", "m" );
-				this.storeValue( "EMS", p, "END_HOUR", "UChar8", endHour, "END_HOUR", "h" );
-				this.storeValue( "EMS", p, "END_MINUTE", "UChar8", endMinute, "END_MINUTE", "m" );
-				this.extendObject( `EMS.${p.slice(0,-1)}`, {type: "channel", common: {role: "calendar.day"}} );
+				this.storeValue( "EMS", newPath, "IDLE_PERIOD_ACTIVE", "Bool", (active!=0) );
+				this.storeValue( "EMS", newPath, "START_HOUR", "UChar8", startHour, "START_HOUR", "h" );
+				this.storeValue( "EMS", newPath, "START_MINUTE", "UChar8", startMinute, "START_MINUTE", "m" );
+				this.storeValue( "EMS", newPath, "END_HOUR", "UChar8", endHour, "END_HOUR", "h" );
+				this.storeValue( "EMS", newPath, "END_MINUTE", "UChar8", endMinute, "END_MINUTE", "m" );
+				this.extendObject( `EMS.${newPath.slice(0,-1)}`, {type: "channel", common: {role: "calendar.day"}} );
 			}
 		});
 		this.extendObject( "EMS.IDLE_PERIODS_CHARGE", {type: "channel", common: {role: "calendar.week"}} );
 		this.extendObject( "EMS.IDLE_PERIODS_DISCHARGE", {type: "channel", common: {role: "calendar.week"}} );
+	}
+
+	storeHistoryData( tree, path ) {
+		this.getState( `DB.${path}TIME_START`, (err, timeStartObj) => {
+			this.getState( `DB.${path}TIME_INTERVAL`, (err, intervalObj) => {
+				this.getState( `DB.${path}TIME_SPAN`, (err, spanObj) => {
+					let timeStart = 0;
+					if( timeStartObj && timeStartObj.val ) { timeStart = stringToDate(timeStartObj.val.toString()).getTime()/1000; } // epoch seconds
+					let interval = 0;
+					if( intervalObj && intervalObj.val ) { interval = Number(intervalObj.val); }
+					let span = 0;
+					if( spanObj && spanObj.val ) { span = Number(spanObj.val); }
+					let newPath = "";
+					let count = 0;
+					tree.forEach( token => {
+						if( rscpTag[token.tag].TagNameGlobal == "TAG_DB_SUM_CONTAINER" ) {
+							newPath = `${path}SUM.`;
+						} else if( rscpTag[token.tag].TagNameGlobal == "TAG_DB_VALUE_CONTAINER" ) {
+							newPath = `${path}VALUE_${count.toString().padStart(2,"0")}.`;
+							count++;
+							const graphIndex = Number(token.content[0].content);
+							const timeStamp = new Date( (timeStart + graphIndex * interval) * 1000 );
+							this.storeValue( "DB", newPath, "TIMESTAMP", "CString", dateToString(timeStamp), "TIMESTAMP" );
+						} else {
+							this.log.debug( `storeHistoryData: ignoring unexpected tag ${rscpTag[token.tag].TagNameGlobal}` );
+							return; // next token
+						}
+						token.content.forEach( t => {
+							this.storeValue( "DB", newPath, rscpTag[t.tag].TagName, rscpType[t.type], t.content, rscpTag[t.tag].TagName );
+						});
+					});
+					this.deleteValueObjects( count, path );
+				});
+			});
+		});
+	}
+
+	deleteValueObjects( count, path ) {
+		const id = `DB.${path}VALUE_${count.toString().padStart(2,"0")}`;
+		//this.log.silly(`deleteValueObjects: count=${count}, id=${id}`);
+		this.getObject( id+".AUTARKY", (err, obj) => {
+			if( obj ) { // TODO: list elements within node dynamically
+				["AUTARKY","BAT_CHARGE_LEVEL","BAT_CYCLE_COUNT","BAT_POWER_IN","BAT_POWER_OUT","CONSUMED_PRODUCTION","CONSUMPTION","DC_POWER","GRAPH_INDEX","GRID_POWER_IN","GRID_POWER_OUT","PM_0_POWER","PM_1_POWER","TIMESTAMP"].forEach(element => {
+					this.delObject( `${id}.${element}` );
+				});
+				this.delObject( id );
+				this.deleteValueObjects( count+1, path );
+			}
+		} );
 	}
 
 	// ioBroker best practice for password encryption, using key native.secret
@@ -1432,6 +1544,78 @@ class E3dcRscp extends utils.Adapter {
 				native: {},
 			});
 		}
+		if( this.config.query_db ) {
+			await this.setObjectNotExistsAsync("DB", {
+				type: "device",
+				common: {
+					name: systemDictionary["DB"][this.language],
+					role: "database",
+				},
+				native: {},
+			});
+			for( const scale of ["DAY","WEEK","MONTH","YEAR"] ) {
+				await this.setObjectNotExistsAsync(`DB.HISTORY_DATA_${scale}`, {
+					type: "channel",
+					common: {
+						name: systemDictionary[`HISTORY_DATA_${scale}`][this.language],
+						role: "database",
+					},
+					native: {},
+				});
+				await this.setObjectNotExistsAsync( `DB.HISTORY_DATA_${scale}.TIME_START`, {
+					type: "state",
+					common: {
+						name: systemDictionary["TIME_START"][this.language],
+						type: "string",
+						role: "level",
+						read: false,
+						write: true,
+					},
+					native: {},
+				});
+				await this.setObjectNotExistsAsync( `DB.HISTORY_DATA_${scale}.TIME_INTERVAL`, {
+					type: "state",
+					common: {
+						name: systemDictionary["TIME_INTERVAL"][this.language],
+						type: "number",
+						role: "level",
+						read: false,
+						write: true,
+						unit: rscpTag[rscpTagCode["TAG_DB_REQ_HISTORY_TIME_INTERVAL"]].Unit,
+					},
+					native: {},
+				});
+				await this.setObjectNotExistsAsync( `DB.HISTORY_DATA_${scale}.TIME_SPAN`, {
+					type: "state",
+					common: {
+						name: systemDictionary["TIME_SPAN"][this.language],
+						type: "number",
+						role: "level",
+						read: false,
+						write: true,
+						unit: rscpTag[rscpTagCode["TAG_DB_REQ_HISTORY_TIME_SPAN"]].Unit,
+					},
+					native: {},
+				});
+			}
+			const now = new Date();
+			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
+			this.setState( "DB.HISTORY_DATA_DAY.TIME_START", dateToString(d), true );
+			this.setState( "DB.HISTORY_DATA_DAY.TIME_INTERVAL", 3600/4, true );
+			this.setState( "DB.HISTORY_DATA_DAY.TIME_SPAN", 3600*6, true );
+			d = new Date( d.getTime() - (d.getDay()+6)%7*1000*3600*24 );
+			this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", dateToString(d), true );
+			this.setState( "DB.HISTORY_DATA_WEEK.TIME_INTERVAL", 3600*4, true );
+			this.setState( "DB.HISTORY_DATA_WEEK.TIME_SPAN", 3600*24*7, true );
+			d.setDate( 1 );
+			this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", dateToString(d), true );
+			this.setState( "DB.HISTORY_DATA_MONTH.TIME_INTERVAL", 3600*24, true );
+			this.setState( "DB.HISTORY_DATA_MONTH.TIME_SPAN", 3600*24*31, true );
+			d.setMonth( 0 );
+			this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", dateToString(d), true );
+			this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600*24*30, true );
+			this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600*24*365, true );
+		}
 
 
 		// Initialize your adapter here
@@ -1479,6 +1663,10 @@ class E3dcRscp extends utils.Adapter {
 		this.subscribeStates("RSCP.AUTHENTICATION");
 		this.subscribeStates("EMS.IDLE_PERIODS_CHARGE.*");
 		this.subscribeStates("EMS.IDLE_PERIODS_DISCHARGE.*");
+		this.subscribeStates("DB.HISTORY_DATA_DAY.*");
+		this.subscribeStates("DB.HISTORY_DATA_WEEK.*");
+		this.subscribeStates("DB.HISTORY_DATA_MONTH.*");
+		this.subscribeStates("DB.HISTORY_DATA_YEAR.*");
 		for( const s in mapChangedIdToSetTags ) this.subscribeStates( s );
 		// You can also add a subscription for multiple states. The following line watches all states starting with 'lights.'
 		// this.subscribeStates('lights.*');
@@ -1497,7 +1685,7 @@ class E3dcRscp extends utils.Adapter {
 			if( this.dataPollingTimerM ) clearInterval(this.dataPollingTimerM);
 			if( this.dataPollingTimerL ) clearInterval(this.dataPollingTimerL);
 			if( this.setPowerTimer ) clearInterval(this.setPowerTimer);
-			this.setIdlePeriodTimeout.forEach(element => {
+			this.sendTupleTimeout.forEach(element => {
 				if( element ) this.clearInterval(element);
 			});
 			callback();
@@ -1525,6 +1713,8 @@ class E3dcRscp extends utils.Adapter {
 					});
 				} else if( id.includes("IDLE_PERIOD") ) {
 					this.queueSetIdlePeriod( id );
+				} else if( id.includes("HISTORY_DATA") ) {
+					this.queueGetHistoryData( id );
 				} else {
 					this.queueSetValue( id, state.val );
 				}
@@ -1728,6 +1918,27 @@ function roundForReadability( n ) {
 	} else {
 		const p = Math.pow(10,s-d);
 		return Math.round(n*p)/p;
+	}
+}
+
+// Timestamps are stringified like "2022-01-30 12:00:00.000"
+function dateToString( date ) {
+	const year = date.getFullYear().toString().padStart(4,"0");
+	const month = (date.getMonth()+1).toString().padStart(2,"0");
+	const day = date.getDate().toString().padStart(2,"0");
+	const hour = date.getHours().toString().padStart(2,"0");
+	const minute = date.getMinutes().toString().padStart(2,"0");
+	const second = date.getSeconds().toString().padStart(2,"0");
+	const ms = date.getMilliseconds().toString().padStart(3,"0");
+	return `${year}-${month}-${day} ${hour}:${minute}:${second}.${ms}`;
+}
+function stringToDate( string ) {
+	const found =  string.match( /(\d\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+).(\d+)/ ); // TODO: allow missing time values
+	if( found ) {
+		return new Date( Number(found[1]), Number(found[2])-1, Number(found[3]), Number(found[4]), Number(found[5]), Number(found[6]), Number(found[7]) );
+		//return new Date(2021,10,22,14,30,59,111);
+	} else {
+		return new Date();
 	}
 }
 

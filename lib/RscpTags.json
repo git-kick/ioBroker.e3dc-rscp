@@ -61,7 +61,7 @@
 		"DataType": "Timestamp",
 		"DataTypeHex": "0x0F",
 		"UserLevel": "USER",
-		"Unit": "",
+		"Unit": "s",
 		"Description": ""
 	},
 	"100663555": {
@@ -74,7 +74,7 @@
 		"DataType": "Timestamp",
 		"DataTypeHex": "0x0F",
 		"UserLevel": "USER",
-		"Unit": "",
+		"Unit": "s",
 		"Description": ""
 	},
 	"100663808": {
@@ -360,7 +360,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
+		"Unit": "Wh",
 		"Description": ""
 	},
 	"109051907": {
@@ -373,7 +373,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
+		"Unit": "Wh",
 		"Description": ""
 	},
 	"109051908": {
@@ -386,7 +386,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
+		"Unit": "Wh",
 		"Description": ""
 	},
 	"109051909": {
@@ -399,7 +399,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
+		"Unit": "Wh",
 		"Description": ""
 	},
 	"109051910": {
@@ -412,7 +412,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
+		"Unit": "Wh",
 		"Description": ""
 	},
 	"109051911": {
@@ -425,7 +425,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
+		"Unit": "Wh",
 		"Description": ""
 	},
 	"109051912": {
@@ -438,7 +438,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
+		"Unit": "Wh",
 		"Description": ""
 	},
 	"109051913": {
@@ -451,7 +451,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
+		"Unit": "Wh",
 		"Description": ""
 	},
 	"109051914": {
@@ -490,7 +490,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "%",
 		"Description": ""
 	},
 	"109051917": {
@@ -503,7 +503,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "%",
 		"Description": ""
 	},
 	"109051920": {
