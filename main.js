@@ -1426,15 +1426,16 @@ class E3dcRscp extends utils.Adapter {
 	deleteValueObjects( count, path ) {
 		const id = `DB.${path}VALUE_${count.toString().padStart(2,"0")}`;
 		//this.log.silly(`deleteValueObjects: count=${count}, id=${id}`);
-		this.getObject( id+".AUTARKY", (err, obj) => {
-			if( obj ) { // TODO: list elements within node dynamically
-				["AUTARKY","BAT_CHARGE_LEVEL","BAT_CYCLE_COUNT","BAT_POWER_IN","BAT_POWER_OUT","CONSUMED_PRODUCTION","CONSUMPTION","DC_POWER","GRAPH_INDEX","GRID_POWER_IN","GRID_POWER_OUT","PM_0_POWER","PM_1_POWER","TIMESTAMP"].forEach(element => {
-					this.delObject( `${id}.${element}` );
-				});
+		this.getStates( `${id}.*`, (err, states) => {
+			if(states) {
+				//this.log.silly(`deleteValueObjects: getStates returned ${JSON.stringify(obj)}`);
+				for( const state in states ) {
+					this.delObject( state );
+				}
 				this.delObject( id );
 				this.deleteValueObjects( count+1, path );
 			}
-		} );
+		});
 	}
 
 	// ioBroker best practice for password encryption, using key native.secret
