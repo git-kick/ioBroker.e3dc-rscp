@@ -397,7 +397,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 <br>
 
-## Copyright (c) 2022 Ulrich Kick <iobroker@kick-web.de>
+### Copyright (c) 2022 Ulrich Kick <iobroker@kick-web.de>
 
 <br>
 
