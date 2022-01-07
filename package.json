@@ -3,8 +3,8 @@
   "version": "0.0.17-beta",
   "description": "short",
   "author": {
-    "name": "git-kick",
-    "email": "git-kick@kick-web.de"
+    "name": "Ulrich Kick",
+    "email": "iobroker@kick-web.de"
   },
   "homepage": "https://github.com/git-kick/ioBroker.e3dc-rscp",
   "license": "GPL-3.0-only",

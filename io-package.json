@@ -42,7 +42,7 @@
             "zh-cn": "使用RSCP协议控制E3/DC电站"
         },
         "authors": [
-            "git-kick <github@kick-web.de>"
+            "Ulrich Kick <iobroker@kick-web.de>"
         ],
         "keywords": [
             "E3/DC",
