@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.17-beta2",
+        "version": "0.0.17-beta3",
         "news": {
-            "0.0.17-beta2": {
+            "0.0.17-beta3": {
                 "en": "DB namespace (experimental)",
                 "de": "DB namespace (experimental)",
                 "ru": "Пересмотрена обработка индексов",
