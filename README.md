@@ -15,7 +15,7 @@
 
 Control your E3/DC power station using the proprietary RSCP protocol which allows for reading state values and also setting control parameters, e.g. the charge power limit. This is the advantage of RSCP compared to the standard Modbus, which is only for reading values. If you have no need to write values, have a look at the (simpler) [Modbus adapter](https://github.com/ioBroker/ioBroker.modbus).
 
-The e3dc-rscp adapter was developed for the E3/DC *S10* device. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
+The e3dc-rscp adapter was developed for the <a href="https://www.e3dc.com/produkte/s10/">E3/DC S10</a> device. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
 
 This adapter was tested with node-v12 and node-v14, not with node-v10. (This is due to dependencies coming with the generated adapter template, which I was not able to resolve for node-v10.)
 
