@@ -468,7 +468,9 @@ class E3dcRscp extends utils.Adapter {
 
 		this.queueRscpAuthentication();
 
+		this.setState( "info.connection", false, true );
 		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
+			this.setState( "info.connection", true, true );
 			this.log.info("Connection to E3/DC is established");
 			this.sendNextFrame();
 		});
@@ -496,20 +498,24 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 		this.tcpConnection.on("end", () => {
+			this.setState( "info.connection", false, true );
 			this.log.warn("Disconnected from E3/DC");
 			this.reconnectChannel();
 		});
 
 		this.tcpConnection.on("close", () => {
+			this.setState( "info.connection", false, true );
 			this.log.warn("E3/DC connection closed");
 		});
 
 		this.tcpConnection.on("timeout", () => {
+			this.setState( "info.connection", false, true );
 			this.log.info("E3/DC connection timeout");
 			this.reconnectChannel();
 		});
 
 		this.tcpConnection.on("error", () => {
+			this.setState( "info.connection", false, true );
 			this.log.error("E3/DC connection error");
 			this.reconnectChannel();
 		});
@@ -1458,6 +1464,25 @@ class E3dcRscp extends utils.Adapter {
 		this.language = "en";
 		this.getForeignObject("system.config", (err, systemConfig) => {
 			if( systemConfig ) this.language = systemConfig.common.language;
+		});
+		await this.setObjectNotExistsAsync("info", {
+			type: "channel",
+			common: {
+				name: systemDictionary["Information"][this.language],
+				role: "folder",
+			},
+			native: {},
+		});
+		await this.setObjectNotExistsAsync("info.connection", {
+			type: "state",
+			common: {
+				name: systemDictionary["Connected"][this.language],
+				type: "boolean",
+				role: "indicator",
+				read: true,
+				write: false,
+			},
+			native: {},
 		});
 		await this.setObjectNotExistsAsync("RSCP", {
 			type: "device",
