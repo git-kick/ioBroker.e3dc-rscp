@@ -1,19 +1,19 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "0.0.17-beta3",
+        "version": "1.0.0",
         "news": {
-            "0.0.17-beta3": {
-                "en": "DB namespace (experimental)",
-                "de": "DB namespace (experimental)",
-                "ru": "Пересмотрена обработка индексов",
-                "pt": "Tratamento revisto do Índice",
-                "nl": "Indexafhandeling herzien",
-                "fr": "Gestion des indices révisée",
-                "it": "Gestione degli indici rivista",
-                "es": "Manejo del índice revisado",
-                "pl": "Poprawiono obsługę indeksów",
-                "zh-cn": "指数处理修订"
+            "1.0.0": {
+                "en": "Initial public release",
+                "de": "Initial Public Release",
+                "ru": "Первоначальный публичный релиз",
+                "pt": "Publicação pública inicial",
+                "nl": "Eerste publieke publicatie",
+                "fr": "Diffusion publique initiale",
+                "it": "Rilascio pubblico iniziale",
+                "es": "Lanzamiento inicial",
+                "pl": "Pierwsze publiczne wydanie",
+                "zh-cn": "首次公开发行"
             }
         },
         "title": "E3/DC RSCP",
