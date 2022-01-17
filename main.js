@@ -1404,24 +1404,29 @@ class E3dcRscp extends utils.Adapter {
 					if( intervalObj && intervalObj.val ) { interval = Number(intervalObj.val); }
 					let span = 0;
 					if( spanObj && spanObj.val ) { span = Number(spanObj.val); }
-					let newPath = "";
 					let count = 0;
+					let oPath = "";
+					let oRole = "";
+					const scale = path.match(/HISTORY_DATA_([A-Z]+)[.]/)[1].toLowerCase();
 					tree.forEach( token => {
 						if( rscpTag[token.tag].TagNameGlobal == "TAG_DB_SUM_CONTAINER" ) {
-							newPath = `${path}SUM.`;
+							oPath = `${path}SUM.`;
+							oRole = `calendar.${scale}`;
 						} else if( rscpTag[token.tag].TagNameGlobal == "TAG_DB_VALUE_CONTAINER" ) {
-							newPath = `${path}VALUE_${count.toString().padStart(2,"0")}.`;
+							oPath = `${path}VALUE_${count.toString().padStart(2,"0")}.`;
+							oRole = `calendar.split.${scale}`;
 							count++;
 							const graphIndex = Number(token.content[0].content);
 							const timeStamp = new Date( (timeStart + graphIndex * interval) * 1000 );
-							this.storeValue( "DB", newPath, "TIMESTAMP", "CString", dateToString(timeStamp), "TIMESTAMP" );
+							this.storeValue( "DB", oPath, "TIMESTAMP", "CString", dateToString(timeStamp), "TIMESTAMP" );
 						} else {
 							this.log.debug( `storeHistoryData: ignoring unexpected tag ${rscpTag[token.tag].TagNameGlobal}` );
 							return; // next token
 						}
 						token.content.forEach( t => {
-							this.storeValue( "DB", newPath, rscpTag[t.tag].TagName, rscpType[t.type], t.content, rscpTag[t.tag].TagName );
+							this.storeValue( "DB", oPath, rscpTag[t.tag].TagName, rscpType[t.type], t.content, rscpTag[t.tag].TagName );
 						});
+						this.extendObject( `DB.${oPath.slice(0,-1)}`, {type: "channel", common: {role: `${oRole}`}} );
 					});
 					this.deleteValueObjects( count, path );
 				});
@@ -1469,7 +1474,7 @@ class E3dcRscp extends utils.Adapter {
 			type: "channel",
 			common: {
 				name: systemDictionary["Information"][this.language],
-				role: "folder",
+				role: "info.adapter",
 			},
 			native: {},
 		});
@@ -1592,7 +1597,7 @@ class E3dcRscp extends utils.Adapter {
 					type: "channel",
 					common: {
 						name: systemDictionary[`HISTORY_DATA_${scale}`][this.language],
-						role: "database",
+						role: `calendar.${scale.toLowerCase()}`,
 					},
 					native: {},
 				});
