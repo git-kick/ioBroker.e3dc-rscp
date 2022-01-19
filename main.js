@@ -446,6 +446,7 @@ class E3dcRscp extends utils.Adapter {
 		this.dataPollingTimerL = null;
 		this.setPowerTimer = null;
 		this.sendTupleTimeout = {}; // every tuple for grouped sending gets it's own timeout, e.g. "DB.HISTORY_DATA_DAY" or "EMS.IDLE_PERIODS_CHARGE.00-Monday"
+		this.probingTimeout = []; // for an initial series of probing requests
 
 		// For efficient access to polling intervals:
 		this.pollingInterval = []; // [tagCode]
@@ -453,6 +454,7 @@ class E3dcRscp extends utils.Adapter {
 		// TCP connection:
 		this.tcpConnection = new Net.Socket();
 		this.inBuffer = null;
+		this.reconnectTimeout = null;
 	}
 
 	// Create channel to E3/DC: encapsulating TCP connection, encryption, message queuing
@@ -522,11 +524,13 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	reconnectChannel() {
-		setTimeout(() => {
-			this.log.info("Reconnecting to E3/DC ...");
-			this.tcpConnection.removeAllListeners();
-			this.initChannel();
-		}, 10000);
+		if( !this.reconnectTimeout ) {
+			this.reconnectTimeout = setTimeout(() => {
+				this.log.info("Reconnecting to E3/DC ...");
+				this.tcpConnection.removeAllListeners();
+				this.initChannel();
+			}, 10000);
+		}
 	}
 
 	clearFrame() { // preset MAGIC and CTRL and reserve space for timestamp and length
@@ -1674,7 +1678,7 @@ class E3dcRscp extends utils.Adapter {
 				if( this.config.query_pvi ) this.queuePviProbe(this.pviProbes);
 				// Force some quick data requests for probing and building the object tree:
 				for( let i = 0; i < 5; i++ ) {
-					setTimeout(() => {
+					this.probingTimeout[i] = setTimeout(() => {
 						this.requestAllData( "" );
 					}, i * 1000 * 7 );
 				}
@@ -1727,6 +1731,12 @@ class E3dcRscp extends utils.Adapter {
 			this.sendTupleTimeout.forEach(element => {
 				if( element ) this.clearInterval(element);
 			});
+			this.probingTimeout.forEach(element => {
+				if( element ) this.clearInterval(element);
+			});
+			if( this.reconnectTimeout ) clearInterval(this.reconnectTimeout);
+			this.tcpConnection.end();
+			this.tcpConnection.destroy();
 			callback();
 		} catch (e) {
 			callback();
