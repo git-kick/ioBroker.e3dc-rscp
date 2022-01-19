@@ -329,6 +329,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * Best practices: set roles for all inner nodes in object tree
 * Bugfix: EMS.POWER_PV was never updated due to missing line in polling intervals table
 * Adapter review (PR#1589): removed tab stuff (tab_m.html)
+* Adapter review (PR#1589): onUnload(), clear _all_ timers and close TCP connection
 ### 0.0.17-beta
 (git-kick)
 * DB namespace - experimental implementation
