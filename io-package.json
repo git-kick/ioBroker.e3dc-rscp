@@ -64,7 +64,7 @@
         "connectionType": "local",
         "dataSource": "poll",
         "materialize": true,
-        "materializeTab": true,
+        "materializeTab": false,
         "dependencies": [
             {
                 "js-controller": ">=2.0.0"
@@ -83,6 +83,10 @@
         "portal_user": "",
         "portal_password": "",
         "polling_intervals": [
+            {
+                "tag": "TAG_EMS_REQ_POWER_PV",
+                "interval": "S"
+            },
             {
                 "tag": "TAG_EMS_REQ_POWER_BAT",
                 "interval": "S"
