@@ -17,7 +17,7 @@ Control your E3/DC power station using the proprietary RSCP protocol which allow
 
 The e3dc-rscp adapter was developed for the <a href="https://www.e3dc.com/produkte/s10/">E3/DC S10</a> device. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
 
-This adapter was tested with node-v12 and node-v14, not with node-v10. (This is due to dependencies coming with the generated adapter template, which I was not able to resolve for node-v10.)
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
 
 ## Table of Content
 1. [ Adapter configuration ](#toc)
