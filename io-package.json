@@ -69,12 +69,7 @@
             {
                 "js-controller": ">=2.0.0"
             }
-        ],
-        "plugins": {
-            "sentry": {
-                "dsn": "https://cc70dc76ca0d4bc89be51866648d109c@o1065834.ingest.sentry.io/6058026"
-            }
-        }
+        ]
     },
     "native": {
         "e3dc_ip": "192.168.178.1",
