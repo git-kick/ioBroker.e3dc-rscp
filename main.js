@@ -5,7 +5,7 @@
 const fs = require("fs");
 // eslint-disable-next-line prefer-const
 let systemDictionary = {};
-eval(fs.readFileSync(`${__dirname}/admin/words.js`).toString());
+eval(fs.readFileSync("./admin/words.js").toString());
 
 const dayOfWeek = [
 	"Monday",
@@ -18,7 +18,7 @@ const dayOfWeek = [
 ];
 
 // RSCP constants & lookup tables
-const rscpTag = require(`${__dirname}/lib/RscpTags.json`);
+const rscpTag = require("./lib/RscpTags.json");
 const rscpTagCode = {}; // maps string to code
 for( const i in rscpTag ) rscpTagCode[rscpTag[i].TagNameGlobal] = i;
 
