@@ -17,8 +17,6 @@ Control your E3/DC power station using the proprietary RSCP protocol which allow
 
 The e3dc-rscp adapter was developed for the <a href="https://www.e3dc.com/produkte/s10/">E3/DC S10</a> device. One may assume other E3/DC devices provide a similar interface, but I cannot verify this.
 
-**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
-
 ## Table of Content
 1. [ Adapter configuration ](#toc)
 1. [ Coverage of interface messages ](#cov)
@@ -330,6 +328,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * Bugfix: EMS.POWER_PV was never updated due to missing line in polling intervals table
 * Adapter review (PR#1589): removed tab stuff (tab_m.html)
 * Adapter review (PR#1589): onUnload(), clear _all_ timers and close TCP connection
+* Remove Sentry, because it was only a trial and not properly configured
 ### 0.0.17-beta
 (git-kick)
 * DB namespace - experimental implementation
