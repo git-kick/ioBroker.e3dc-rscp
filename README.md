@@ -328,7 +328,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ## Changelog
 ### 1.0.1
 (git-kick)
-* [Issue #61](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/61): require nanoid >=3.1.31 - [CVE-2021-23566](https://github.com/git-kick/ioBroker.e3dc-rscp/security/dependabot/package-lock.json/nanoid/open)
+* [CVE-2021-23566](https://github.com/git-kick/ioBroker.e3dc-rscp/security/dependabot/package-lock.json/nanoid/open): require nanoid >=3.1.31 - [Issue #61](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/61)
+* [CVE-2020-28469](https://github.com/git-kick/ioBroker.e3dc-rscp/security/dependabot/package-lock.json/glob-parent/open): require glob-parent >=5.1.2
 ### 1.0.0
 (git-kick)
 * Prerequisites for ioBroker repo in README.md, io-package.json, github
