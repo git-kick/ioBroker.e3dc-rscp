@@ -1028,27 +1028,29 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	sendNextFrame() {
-		if( this && this.queue[0] ) {
-			if( rscpTag[this.queue[0].readUInt32LE(18)] ) {
-				this.log.debug( `Sending request ${rscpTag[this.queue[0].readUInt32LE(18)].TagNameGlobal}` );
-			} else {
-				this.log.warn( `sendNextFrame called with invalid content: first tag is ${this.queue[0].readUInt32LE(18)}` );
-			}
-			this.log.silly( `OUT: ${printRscpFrame(this.queue[0])}` );
-			// this.log.silly( dumpRscpFrame(this.queue[0]) );
+		if( this ) {
+			if( this.queue[0] ) {
+				if( rscpTag[this.queue[0].readUInt32LE(18)] ) {
+					this.log.debug( `Sending request ${rscpTag[this.queue[0].readUInt32LE(18)].TagNameGlobal}` );
+				} else {
+					this.log.warn( `sendNextFrame called with invalid content: first tag is ${this.queue[0].readUInt32LE(18)}` );
+				}
+				this.log.silly( `OUT: ${printRscpFrame(this.queue[0])}` );
+				// this.log.silly( dumpRscpFrame(this.queue[0]) );
 
-			const encryptedFrame = Buffer.from( this.cipher.encrypt( this.queue[0], 256, this.encryptionIV ) );
-			// last encrypted block will be used as IV for next frame
-			if( this.encryptionIV ) encryptedFrame.copy( this.encryptionIV, 0, encryptedFrame.length - BLOCK_SIZE );
+				const encryptedFrame = Buffer.from( this.cipher.encrypt( this.queue[0], 256, this.encryptionIV ) );
+				// last encrypted block will be used as IV for next frame
+				if( this.encryptionIV ) encryptedFrame.copy( this.encryptionIV, 0, encryptedFrame.length - BLOCK_SIZE );
 
-			if( this.tcpConnection && this.tcpConnection.write( encryptedFrame ) ) {
-				this.log.silly( `Successfully written data to socket` );
-				this.queue.shift();
+				if( this.tcpConnection && this.tcpConnection.write( encryptedFrame ) ) {
+					this.log.silly( `Successfully written data to socket` );
+					this.queue.shift();
+				} else {
+					this.log.error( `Failed writing data to socket` );
+				}
 			} else {
-				this.log.error( `Failed writing data to socket` );
+				this.log.silly( "Message queue is empty");
 			}
-		} else {
-			this.log.silly( "Message queue is empty");
 		}
 	}
 
