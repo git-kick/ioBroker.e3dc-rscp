@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "news": {
+            "1.0.1": {
+                "en": "Minor technical fixes (CVE/Sentry)",
+                "de": "Kleinere technische Fehlerbehebungen (CVE/Sentry)",
+                "ru": "Незначительные технические исправления (CVE/Sentry)",
+                "pt": "Correcções técnicas menores (CVE/Sentry)",
+                "nl": "Kleine technische fixes (CVE / Sentry)",
+                "fr": "Corrections techniques mineures (CVE/Sentry)",
+                "it": "Correzioni tecniche minori (CVE / Sentry)",
+                "es": "Correcciones técnicas menores (CVE / Sentry)",
+                "pl": "Drobne poprawki techniczne (CVE / Sentry)",
+                "zh-cn": "次要技术修复（CVE/Sentry）"
+            },
             "1.0.0": {
                 "en": "Initial public release",
                 "de": "Initial Public Release",
