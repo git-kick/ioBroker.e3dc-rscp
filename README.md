@@ -170,7 +170,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   <tr>
     <td>SYS</td>
     <td>System reboot/start</td>
-    <td>not supported (yet)</td>
+    <td>experimental</td>
   </tr>
   <tr>
     <td>UM</td>
@@ -288,6 +288,18 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>string</td>
     <td>Interval between data points</td>
   </tr>
+  <tr>
+    <td>SYS</td>
+    <td>SYSTEM_REBOOT</td>
+    <td>number</td>
+    <td>Change value to 1 will reboot E3/DC system.</td>
+  </tr>
+  <tr>
+    <td>SYS</td>
+    <td>RESTART_APPLICATION</td>
+    <td>boolean</td>
+    <td>Change value to true will restart E3/DC application.</td>
+  </tr>
 </table> 
 
 Note (1): Full path is EMS.IDLE_PERIODS_(DIS)CHARGE.&lt;day-of-week&gt; - e.g. "EMS.IDLE_PERIODS_CHARGE.00-Monday". Changes are only sent "tuple sendig delay" after the last change. 
@@ -326,6 +338,9 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+### 1.0.2
+(git-kick)
+* SYS namespace, experimental support - [Issue #60](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/60)
 ### 1.0.1
 (git-kick)
 * [CVE-2021-23566](https://nvd.nist.gov/vuln/detail/CVE-2021-23566): require nanoid >=3.1.31 - [Issue #61](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/61)

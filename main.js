@@ -165,6 +165,12 @@ const rscpActivePhases = {
 	6: "PHASE_110",
 	7: "PHASE_111",
 };
+const rscpSysSystemReboot = {
+	0: "Reboot currently not possible, try later",
+	1: "Reboot initiated",
+	2: "Waiting for services to terminate, reboot will be initiated then"
+};
+
 /* RSCP enumerations for later use:
 const rscpReturnCodes = {
 	0: "OK",
@@ -242,6 +248,7 @@ const mapIdToCommonStates = {
 	"EMS.BALANCED_PHASES": rscpActivePhases,
 	"PM.ACTIVE_PHASES": rscpActivePhases,
 	"WB.MODE": rscpWbMode,
+	"SYS.SYTEM_REBOOT": rscpSysSystemReboot,
 };
 // List of writable states, with Mapping for response value handling.
 // Key is returned_tag; value is (type_pattern: target_state)
@@ -274,6 +281,8 @@ const mapChangedIdToSetTags = {
 	"EMS.START_MINUTE": [],
 	"EMS.END_HOUR": [],
 	"EMS.END_MINUTE": [],
+	"SYS.SYSTEM_REBOOT": ["", "REQ_SYSTEM_REBOOT"],
+	"SYS.RESTART_APPLICATION": ["", "REQ_RESTART_APPLICATION"],
 };
 // RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
 const castToBooleanIds = [
@@ -284,6 +293,8 @@ const castToBooleanIds = [
 	"EMS.BATTERY_BEFORE_CAR_MODE",
 	"EMS.BATTERY_TO_CAR_MODE",
 	"EMS.EXT_SRC_AVAILABLE",
+	"SYS.IS_SYSTEM_REBOOTING",
+	"SYS.RESTART_APPLICATION",
 ];
 // RSCP is sloppy concerning Timestamp - some UInt64 values must be converted:
 const castToTimestampIds = [
@@ -841,6 +852,12 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
+	queueSysRequestData( sml ) {
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_SYS_REQ_IS_SYSTEM_REBOOTING", sml );
+		this.pushFrame();
+	}
+
 	queueEpRequestData( sml ) {
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH", sml );
@@ -1019,11 +1036,28 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
+	queueSysSystemReboot( reboot ) {
+		if (reboot==1) {
+			this.clearFrame();
+			this.addTagtoFrame( "TAG_SYS_REQ_SYSTEM_REBOOT" );
+			this.pushFrame();
+		}
+	}
+
+	queueSysRestartApplication( restart ) {
+		if (restart) {
+			this.clearFrame();
+			this.addTagtoFrame( "TAG_SYS_REQ_RESTART_APPLICATION" );
+			this.pushFrame();
+		}
+	}
+
 	requestAllData( sml ) {
 		if( this.config.query_ems ) this.queueEmsRequestData( sml );
 		if( this.config.query_ep ) this.queueEpRequestData( sml );
 		if( this.config.query_bat ) this.queueBatRequestData( sml );
 		if( this.config.query_pvi ) this.queuePviRequestData( sml );
+		if( this.config.query_sys ) this.queueSysRequestData( sml );
 		if( this.config.query_wb ) this.queueWbRequestData( sml );
 		this.sendNextFrame();
 	}
@@ -1048,6 +1082,7 @@ class E3dcRscp extends utils.Adapter {
 					this.queue.shift();
 				} else {
 					this.log.error( `Failed writing data to socket` );
+					this.initChannel();
 				}
 			} else {
 				this.log.silly( "Message queue is empty");
@@ -1559,6 +1594,39 @@ class E3dcRscp extends utils.Adapter {
 				native: {},
 			});
 		}
+		if( this.config.query_sys ) {
+			await this.setObjectNotExistsAsync("SYS", {
+				type: "device",
+				common: {
+					name: systemDictionary["SYS"][this.language],
+					role: "system",
+				},
+				native: {},
+			});
+			await this.setObjectNotExistsAsync( "SYS.SYSTEM_REBOOT", {
+				type: "state",
+				common: {
+					name: systemDictionary["SYSTEM_REBOOT"][this.language],
+					type: "number",
+					role: "level",
+					read: true,
+					write: true,
+					states: rscpSysSystemReboot,
+				},
+				native: {},
+			});
+			await this.setObjectNotExistsAsync( "SYS.RESTART_APPLICATION", {
+				type: "state",
+				common: {
+					name: systemDictionary["RESTART_APPLICATION"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: true,
+					write: true,
+				},
+				native: {},
+			});
+		}
 		if( this.config.query_wb ) {
 			await this.setObjectNotExistsAsync("WB", {
 				type: "device",
@@ -1741,6 +1809,14 @@ class E3dcRscp extends utils.Adapter {
 				} else if( id.endsWith("EMS.SET_POWER_VALUE") ) {
 					this.getState( "EMS.SET_POWER_MODE", (err, mode) => {
 						this.queueEmsSetPower( mode ? mode.val : 0, state.val );
+					});
+				} else if( id.endsWith("SYS.SYSTEM_REBOOT") ) {
+					this.getState( "SYS.SYSTEM_REBOOT", (err, reboot) => {
+						this.queueSysSystemReboot( reboot ? reboot.val : 0 );
+					});
+				} else if( id.endsWith("SYS.RESTART_APPLICATION") ) {
+					this.getState( "SYS.RESTART_APPLICATION", (err, restart) => {
+						this.queueSysRestartApplication( restart ? restart.val : false );
 					});
 				} else if( id.includes("IDLE_PERIOD") ) {
 					this.queueSetIdlePeriod( id );
