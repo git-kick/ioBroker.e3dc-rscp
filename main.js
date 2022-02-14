@@ -438,6 +438,7 @@ class E3dcRscp extends utils.Adapter {
 		this.dataPollingTimerM = null;
 		this.dataPollingTimerL = null;
 		this.setPowerTimer = null;
+		this.checkAuthTimeout = null;
 		this.sendTupleTimeout = {}; // every tuple for grouped sending gets it's own timeout, e.g. "DB.HISTORY_DATA_DAY" or "EMS.IDLE_PERIODS_CHARGE.00-Monday"
 		this.probingTimeout = []; // for an initial series of probing requests
 
@@ -461,7 +462,16 @@ class E3dcRscp extends utils.Adapter {
 		if( this.aesKey.write( this.config.rscp_password ) > this.config.rscp_password.length ) this.log.error("ERROR initializing AES-KEY!");
 		this.cipher = new Rijndael(this.aesKey, "cbc");
 
+		this.setState( "RSCP.AUTHENTICATION", 0, true );
 		this.queueRscpAuthentication();
+		this.checkAuthTimeout = this.setTimeout(() => {
+			this.getState( "RSCP.AUTHENTICATION", (err, obj) => {
+				if( !obj || obj.val < 10 ) {
+					this.log.error("Authentication against E3/DC failed - check adapter settings, then restart instance.");
+					this.setState( "info.connection", false, true );
+				}
+			});
+		}, 5000); // check authentication success after 5 seconds - no retry.
 
 		this.setState( "info.connection", false, true );
 		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
@@ -471,6 +481,7 @@ class E3dcRscp extends utils.Adapter {
 		});
 
 		this.tcpConnection.on("data", (data) => {
+			this.setState( "info.connection", true, true );
 			// Use inBuffer to handle TCP fragmentation:
 			if( this.inBuffer ) {
 				this.inBuffer = Buffer.concat( [this.inBuffer, data] );
@@ -1780,6 +1791,7 @@ class E3dcRscp extends utils.Adapter {
 			if( this.dataPollingTimerM ) clearInterval(this.dataPollingTimerM);
 			if( this.dataPollingTimerL ) clearInterval(this.dataPollingTimerL);
 			if( this.setPowerTimer ) clearInterval(this.setPowerTimer);
+			if( this.checkAuthTimeout ) clearInterval(this.checkAuthTimeout);
 			this.sendTupleTimeout.forEach(element => {
 				if( element ) this.clearInterval(element);
 			});
@@ -1789,6 +1801,7 @@ class E3dcRscp extends utils.Adapter {
 			if( this.reconnectTimeout ) clearInterval(this.reconnectTimeout);
 			this.tcpConnection.end();
 			this.tcpConnection.destroy();
+			this.setState( "RSCP.AUTHENTICATION", 0, true );
 			callback();
 		} catch (e) {
 			callback();
@@ -1828,6 +1841,7 @@ class E3dcRscp extends utils.Adapter {
 					this.queueSetValue( id, state.val );
 				}
 			} else if( id.endsWith("RSCP.AUTHENTICATION") && state.val == 0 ) {
+				this.setState( "info.connection", false, true );
 				this.log.warn( `E3/DC authentication failed`);
 			}
 		} else {
