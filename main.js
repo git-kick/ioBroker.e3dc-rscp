@@ -152,6 +152,7 @@ const rscpEmsSetPowerMode = {
 };
 const rscpWbMode = {
 	0: "NONE",
+	8: "FINISHED_LOADING",
 	128: "LOADING",
 	144: "NOT_LOADING",
 };
@@ -247,6 +248,7 @@ const mapIdToCommonStates = {
 	"EMS.MODE": rscpEmsMode,
 	"EMS.BALANCED_PHASES": rscpActivePhases,
 	"PM.ACTIVE_PHASES": rscpActivePhases,
+	"WB.PM_ACTIVE_PHASES": rscpActivePhases,
 	"WB.MODE": rscpWbMode,
 	"SYS.SYTEM_REBOOT": rscpSysSystemReboot,
 };
