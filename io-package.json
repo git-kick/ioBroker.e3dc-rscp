@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "news": {
+            "1.0.2": {
+                "en": "Added SYS namespace (experimental)",
+                "de": "SYS Namespace hinzugefügt (experimentell)",
+                "ru": "Добавлено пространство имен SYS (экспериментальное)",
+                "pt": "Espaço de nomes de sistemas adicionado (experimental)",
+                "nl": "SYS-naamruimte toegevoegd (experimenteel)",
+                "fr": "Espace de noms SYS ajouté (expérimental)",
+                "it": "Aggiunto lo spazio dei nomi SYS (sperimentale)",
+                "es": "Espacio de nombres de sistema añadido (experimental)",
+                "pl": "Dodano przestrzeń nazw SYS (eksperymentalne)",
+                "zh-cn": "添加SYS命名空间（实验）"
+            },
             "1.0.1": {
                 "en": "Minor technical fixes (CVE/Sentry)",
                 "de": "Kleinere technische Fehlerbehebungen (CVE/Sentry)",
@@ -487,6 +499,10 @@
                 "interval": "M"
             },
             {
+                "tag": "TAG_SYS_REQ_IS_SYSTEM_REBOOTING",
+                "interval": "S"
+            },
+            {
                 "tag": "TAG_WB_REQ_STATUS",
                 "interval": "M"
             },
@@ -648,6 +664,7 @@
         "query_ems": "true",
         "query_ep": "true",
         "query_pvi": "true",
+        "query_sys": "true",
         "query_wb": "true",
         "query_db": "true"
     },
