@@ -462,11 +462,11 @@ class E3dcRscp extends utils.Adapter {
 		if( this.aesKey.write( this.config.rscp_password ) > this.config.rscp_password.length ) this.log.error("ERROR initializing AES-KEY!");
 		this.cipher = new Rijndael(this.aesKey, "cbc");
 
-		this.setState( "RSCP.AUTHENTICATION", 0, true );
 		this.queueRscpAuthentication();
 		this.checkAuthTimeout = this.setTimeout(() => {
 			this.getState( "RSCP.AUTHENTICATION", (err, obj) => {
-				if( !obj || obj.val < 10 ) {
+				const auth = obj ? obj.val : 0;
+				if( auth < 10  ) {
 					this.log.error("Authentication against E3/DC failed - check adapter settings, then restart instance.");
 					this.setState( "info.connection", false, true );
 				}
@@ -1380,7 +1380,7 @@ class E3dcRscp extends utils.Adapter {
 				role: oRole,
 				read: true,
 				write: oWrite,
-				states: (mapIdToCommonStates[oKey] ? mapIdToCommonStates[oKey] : ""),
+				states: (mapIdToCommonStates[oKey] ? mapIdToCommonStates[oKey] : null ),
 				unit: oUnit,
 			},
 			native: {},
