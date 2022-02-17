@@ -466,6 +466,7 @@ class E3dcRscp extends utils.Adapter {
 		this.checkAuthTimeout = this.setTimeout(() => {
 			this.getState( "RSCP.AUTHENTICATION", (err, obj) => {
 				const auth = obj ? obj.val : 0;
+				// @ts-ignore
 				if( auth < 10  ) {
 					this.log.error("Authentication against E3/DC failed - check adapter settings, then restart instance.");
 					this.setState( "info.connection", false, true );
