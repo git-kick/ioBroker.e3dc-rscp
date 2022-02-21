@@ -45,7 +45,8 @@ Here is what to configure when creating a new instance of the adapter. Settings 
     <td>E3/DC IP address</td>
     <td>
       Address in your local network, like 192.168.178.107 <br>
-      You can check the IP on your E3/DC screen, it's called "System-IP": <br>
+      <code>ioBroker.discovery</code> (from 2.8.0) is able to detect E3/DC devices using uPnP. <br>
+      You can also check the IP on your E3/DC screen, it's called "System-IP": <br>
       <img src="admin/e3dc-system-ip.png" width="600">
     </td>
   </tr>
