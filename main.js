@@ -513,6 +513,7 @@ class E3dcRscp extends utils.Adapter {
 		this.tcpConnection.on("close", () => {
 			this.setState( "info.connection", false, true );
 			this.log.warn("E3/DC connection closed");
+			this.reconnectChannel();
 		});
 
 		this.tcpConnection.on("timeout", () => {
@@ -526,15 +527,45 @@ class E3dcRscp extends utils.Adapter {
 			this.log.error("E3/DC connection error");
 			this.reconnectChannel();
 		});
+
+		// Find out number of BAT units:
+		this.log.debug(`Probing for BAT units - 0..${this.batProbes-1}.`);
+		if( this.config.query_bat ) this.queueBatProbe(this.batProbes);
+		// Find out number of PVI units and sensors:
+		this.log.debug(`Probing for PVI units - 0..${this.pviProbes-1}.`);
+		if( this.config.query_pvi ) this.queuePviProbe(this.pviProbes);
+		// Force some quick data requests for probing and building the object tree:
+		for( let i = 0; i < 5; i++ ) {
+			this.probingTimeout[i] = setTimeout(() => {
+				this.requestAllData( "" );
+			}, i * 1000 * 7 );
+		}
+
+		this.dataPollingTimerS = setInterval(() => {
+			this.requestAllData( "S" );
+		}, this.config.polling_interval_short * 1000 ); // seconds
+		this.dataPollingTimerM = setInterval(() => {
+			this.requestAllData( "M" );
+		}, this.config.polling_interval_medium * 1000 * 60 ); // minutes
+		this.dataPollingTimerL = setInterval(() => {
+			this.requestAllData( "L" );
+		}, this.config.polling_interval_long * 1000 * 3600 ); //hours
+
+		this.config.polling_intervals.forEach(element => {
+			this.pollingInterval[rscpTagCode[element.tag]] = element.interval;
+		});
 	}
 
 	reconnectChannel() {
 		if( !this.reconnectTimeout ) {
+			this.log.info("Stop communication with E3/DC and pause a minute before retry ...");
+			this.tcpConnection.removeAllListeners();
+			this.clearAllIntervals();
 			this.reconnectTimeout = setTimeout(() => {
-				this.log.info("Reconnecting to E3/DC ...");
-				this.tcpConnection.removeAllListeners();
+				this.reconnectTimeout = null;
+				this.log.info("Try reconnecting to E3/DC");
 				this.initChannel();
-			}, 10000);
+			}, 60000);
 		}
 	}
 
@@ -1494,6 +1525,21 @@ class E3dcRscp extends utils.Adapter {
 		return result;
 	}
 
+	clearAllIntervals() {
+		if( this.dataPollingTimerS ) clearInterval(this.dataPollingTimerS);
+		if( this.dataPollingTimerM ) clearInterval(this.dataPollingTimerM);
+		if( this.dataPollingTimerL ) clearInterval(this.dataPollingTimerL);
+		if( this.setPowerTimer ) clearInterval(this.setPowerTimer);
+		if( this.checkAuthTimeout ) clearInterval(this.checkAuthTimeout);
+		for( const [key, timeout] of Object.entries(this.sendTupleTimeout)) {
+			if( timeout ) this.clearInterval(timeout);
+		}
+		for( const timeout of this.probingTimeout ) {
+			if( timeout ) this.clearInterval(timeout) ;
+		}
+		if( this.reconnectTimeout ) clearInterval(this.reconnectTimeout);
+	}
+
 	/**
 	 * Is called when databases are connected and adapter received configuration.
 	 */
@@ -1733,34 +1779,6 @@ class E3dcRscp extends utils.Adapter {
 				this.config.rscp_password = this.decryptPassword(obj.native.secret,this.config.rscp_password);
 				this.config.portal_password = this.decryptPassword(obj.native.secret,this.config.portal_password);
 				this.initChannel();
-
-				// Find out number of BAT units:
-				this.log.debug(`Probing for BAT units - 0..${this.batProbes-1}.`);
-				if( this.config.query_bat ) this.queueBatProbe(this.batProbes);
-				// Find out number of PVI units and sensors:
-				this.log.debug(`Probing for PVI units - 0..${this.pviProbes-1}.`);
-				if( this.config.query_pvi ) this.queuePviProbe(this.pviProbes);
-				// Force some quick data requests for probing and building the object tree:
-				for( let i = 0; i < 5; i++ ) {
-					this.probingTimeout[i] = setTimeout(() => {
-						this.requestAllData( "" );
-					}, i * 1000 * 7 );
-				}
-
-				this.dataPollingTimerS = setInterval(() => {
-					this.requestAllData( "S" );
-				}, this.config.polling_interval_short * 1000 ); // seconds
-				this.dataPollingTimerM = setInterval(() => {
-					this.requestAllData( "M" );
-				}, this.config.polling_interval_medium * 1000 * 60 ); // minutes
-				this.dataPollingTimerL = setInterval(() => {
-					this.requestAllData( "L" );
-				}, this.config.polling_interval_long * 1000 * 3600 ); //hours
-
-				this.config.polling_intervals.forEach(element => {
-					this.pollingInterval[rscpTagCode[element.tag]] = element.interval;
-				});
-
 			} else {
 				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
 			}
@@ -1788,18 +1806,7 @@ class E3dcRscp extends utils.Adapter {
 	onUnload(callback) {
 		try {
 			// Here you must clear all timeouts or intervals that may still be active
-			if( this.dataPollingTimerS ) clearInterval(this.dataPollingTimerS);
-			if( this.dataPollingTimerM ) clearInterval(this.dataPollingTimerM);
-			if( this.dataPollingTimerL ) clearInterval(this.dataPollingTimerL);
-			if( this.setPowerTimer ) clearInterval(this.setPowerTimer);
-			if( this.checkAuthTimeout ) clearInterval(this.checkAuthTimeout);
-			this.sendTupleTimeout.forEach(element => {
-				if( element ) this.clearInterval(element);
-			});
-			this.probingTimeout.forEach(element => {
-				if( element ) this.clearInterval(element);
-			});
-			if( this.reconnectTimeout ) clearInterval(this.reconnectTimeout);
+			this.clearAllIntervals();
 			this.tcpConnection.end();
 			this.tcpConnection.destroy();
 			this.setState( "RSCP.AUTHENTICATION", 0, true );
