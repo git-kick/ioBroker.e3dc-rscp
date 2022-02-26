@@ -430,7 +430,7 @@ class E3dcRscp extends utils.Adapter {
 		this.maxIndex = {}; // {path}
 
 		// For probing device count (upper bounds):
-		this.batProbes = 4;
+		this.batProbes = 6;
 		this.pviProbes = 3;
 
 		// For triggering the polling and setting requests:
@@ -730,7 +730,7 @@ class E3dcRscp extends utils.Adapter {
 			this.clearFrame();
 			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
 			this.addTagtoFrame( "TAG_BAT_INDEX", "", i );
-			this.addTagtoFrame( "TAG_BAT_REQ_ASOC" );
+			this.addTagtoFrame( "TAG_BAT_REQ_DCB_COUNT", "" );
 			this.pushFrame( pos );
 		}
 	}
@@ -778,9 +778,9 @@ class E3dcRscp extends utils.Adapter {
 			this.clearFrame();
 			const pos = this.startContainer( "TAG_PVI_REQ_DATA" );
 			this.addTagtoFrame( "TAG_PVI_INDEX", "", pviIndex );
-			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT" );
-			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT" );
-			this.addTagtoFrame( "TAG_PVI_REQ_DC_MAX_STRING_COUNT" );
+			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT", "" );
+			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", "" );
+			this.addTagtoFrame( "TAG_PVI_REQ_DC_MAX_STRING_COUNT", "" );
 			this.pushFrame( pos );
 		}
 	}
