@@ -430,7 +430,7 @@ class E3dcRscp extends utils.Adapter {
 		this.maxIndex = {}; // {path}
 
 		// For probing device count (upper bounds):
-		this.batProbes = 6;
+		this.batProbes = 1; // E3/DC tag list states that BAT INDEX is always 0 (up to now)
 		this.pviProbes = 3;
 
 		// For triggering the polling and setting requests:
@@ -730,7 +730,7 @@ class E3dcRscp extends utils.Adapter {
 			this.clearFrame();
 			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
 			this.addTagtoFrame( "TAG_BAT_INDEX", "", i );
-			this.addTagtoFrame( "TAG_BAT_REQ_DCB_COUNT", "" );
+			this.addTagtoFrame( "TAG_BAT_REQ_INFO", "" );
 			this.pushFrame( pos );
 		}
 	}
