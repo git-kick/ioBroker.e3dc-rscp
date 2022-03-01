@@ -1313,7 +1313,9 @@ class E3dcRscp extends utils.Adapter {
 					} else if( tagName == "DCB_CELL_VOLTAGE" ) {
 						unit = "V";
 					}
-					const [ t, v ] = this.adjustTypeAndValue( shortId, rscpType[token.type], token.content );
+					// eslint-disable-next-line prefer-const
+					let [ t, v ] = this.adjustTypeAndValue( shortId, rscpType[token.type], token.content );
+					if( tagName == "DCB_CELL_TEMPERATURE" && v == 0 ) v = null; // 0 means "no value", so dispaly as "(null)", not "0 °C"
 					this.storeValue( nameSpace, pathNew + tagName + ".", multipleValueIndex[shortId].toString().padStart(2,"0"), t, v, dictionaryIndex, unit );
 					let r = "info";
 					if( tagName.includes("TEMPERATURE") ) r = "sensor.temperature"; else if( tagName.includes("VOLTAGE") ) r = "sensor.electricity";
