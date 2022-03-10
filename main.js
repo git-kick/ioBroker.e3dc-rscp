@@ -602,69 +602,82 @@ class E3dcRscp extends utils.Adapter {
 					this.log.warn(`Container-tag ${tag} passed to addTagToFrame - cannot add tag to frame.`);
 					return;
 				case "CString":
+					if( typeof value != "string" ) value = "";
 					this.frame.writeUInt16LE( value.length, this.frame.length - 2);
 					this.frame = Buffer.concat( [this.frame, Buffer.from(value)] );
 					break;
 				case "Bitfield":
 				case "ByteArray":
+					if( typeof value != "string" ) value = "";
 					this.frame.writeUInt16LE( stringToBuffer( value ).length, this.frame.length - 2);
 					this.frame = Buffer.concat( [this.frame, stringToBuffer( value )] );
 					break;
 				case "Char8":
 				case "UChar8":
 				case "Error":
+					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 8 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 1, this.frame.length - 2);
 					buf1.writeUInt8( value );
 					this.frame = Buffer.concat( [this.frame, buf1] );
 					break;
 				case "Bool": // bool is encoded as 0/1 byte
+					if( typeof value != "boolean" ) value = false;
 					this.frame.writeUInt16LE( 1, this.frame.length - 2);
 					buf1.writeUInt8( value?1:0 );
 					this.frame = Buffer.concat( [this.frame, buf1] );
 					break;
 				case "Int16":
+					if( typeof value != "number" || value < -Math.pow( 2, 15 ) || value > Math.pow( 2, 15 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 2, this.frame.length - 2 );
 					buf2.writeInt16LE( value );
 					this.frame = Buffer.concat( [this.frame, buf2] );
 					break;
 				case "UInt16":
+					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 16 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 2, this.frame.length - 2 );
 					buf2.writeUInt16LE( value );
 					this.frame = Buffer.concat( [this.frame, buf2] );
 					break;
 				case "Int32":
+					if( typeof value != "number" || value < -Math.pow( 2, 31 ) || value > Math.pow( 2, 31 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
 					buf4.writeInt32LE( value );
 					this.frame = Buffer.concat( [this.frame, buf4] );
 					break;
 				case "UInt32":
+					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 32 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
 					buf4.writeUInt32LE( value );
 					this.frame = Buffer.concat( [this.frame, buf4] );
 					break;
 				case "Int64":
+					if( typeof value != "number" || value < -Math.pow( 2, 63 ) || value > Math.pow( 2, 63 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
 					buf8.writeBigInt64LE( value );
 					this.frame = Buffer.concat( [this.frame, buf8] );
 					break;
 				case "UInt64":
+					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 64 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
 					buf8.writeBigUInt64LE( value );
 					this.frame = Buffer.concat( [this.frame, buf8] );
 					break;
 				case "Float32":
+					if( typeof value != "number" ) value = 0;
 					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
 					buf4.writeFloatLE( value );
 					this.frame = Buffer.concat( [this.frame, buf4] );
 					break;
 				case "Double64":
+					if( typeof value != "number" ) value = 0;
 					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
 					buf8.writeDoubleLE( value );
 					this.frame = Buffer.concat( [this.frame, buf8] );
 					break;
 				case "Timestamp": // NOTE: treating value as seconds - setting nanoseconds to zero
+					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 64 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 12, this.frame.length - 2 );
-					buf8.writeBigUInt64LE( BigInt(value?Math.round(value):0) );
+					buf8.writeBigUInt64LE( BigInt(Math.round(value)) );
 					this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array([0x00,0x00,0x00,0x00])] );
 					break;
 				default:
