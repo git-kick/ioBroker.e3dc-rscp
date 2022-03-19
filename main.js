@@ -303,6 +303,8 @@ const castToTimestampIds = [
 	"BAT.DCB_LAST_MESSAGE_TIMESTAMP",
 	"EMS.ERROR_TIMESTAMP",
 	"EMS.EPTEST_NEXT_TESTSTART",
+	"EP.PARAM_TIME_LAST_EMPTY",
+	"EP.PARAM_TIME_LAST_FULL"
 ];
 // Adjust algebraic sign: e.g. discharge limit is sometimes positive, sometimes negative
 const negateValueIds = [
@@ -923,6 +925,7 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EP_REQ_IS_ISLAND_GRID", sml );
 		this.addTagtoFrame( "TAG_EP_REQ_IS_POSSIBLE", sml );
 		this.addTagtoFrame( "TAG_EP_REQ_IS_INVALID_STATE", sml );
+		this.addTagtoFrame( "TAG_EP_REQ_EP_RESERVE", sml );
 		this.pushFrame();
 	}
 
