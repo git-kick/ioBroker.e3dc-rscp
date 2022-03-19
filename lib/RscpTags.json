@@ -4725,8 +4725,8 @@
 		"DataTagHex": "0x000010",
 		"NameSpace": "EP",
 		"NameSpaceHex": "0x0B",
-		"DataType": "None",
-		"DataTypeHex": "0x00",
+		"DataType": "Float32",
+		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "imported from nischram/E3dcGui"
