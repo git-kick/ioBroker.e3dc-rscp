@@ -267,8 +267,8 @@ const mapReceivedIdToState = {
 };
 // List of all writable states
 // For standard cases, define how to send a SET to E3/DC
-// key is state id without path (i.e. only namespace + tag)
-// value is [container_tag, setter_tag]; may be [] empty for cases with special handling
+// key is state id (wildcards in path allowed)
+// value is [optional_container_global_tag, setter_global_tag]; value = [] for cases with special handling
 const mapChangedIdToSetTags = {
 	"EMS.MAX_CHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_CHARGE_POWER"],
 	"EMS.MAX_DISCHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_DISCHARGE_POWER"],
@@ -278,13 +278,18 @@ const mapChangedIdToSetTags = {
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED"],
 	"EMS.SET_POWER_MODE": [],
 	"EMS.SET_POWER_VALUE": [],
-	"EMS.IDLE_PERIOD_ACTIVE": [],
-	"EMS.START_HOUR": [],
-	"EMS.START_MINUTE": [],
-	"EMS.END_HOUR": [],
-	"EMS.END_MINUTE": [],
-	"SYS.SYSTEM_REBOOT": ["", "REQ_SYSTEM_REBOOT"],
-	"SYS.RESTART_APPLICATION": ["", "REQ_RESTART_APPLICATION"],
+	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
+	"EMS.*.*.START_HOUR": [],
+	"EMS.*.*.START_MINUTE": [],
+	"EMS.*.*.END_HOUR": [],
+	"EMS.*.*.END_MINUTE": [],
+	"DB.HISTORY_DATA_DAY.*": [],
+	"DB.HISTORY_DATA_WEEK.*": [],
+	"DB.HISTORY_DATA_MONTH.*": [],
+	"DB.HISTORY_DATA_YEAR.*": [],
+	"SYS.SYSTEM_REBOOT": ["", "TAG_SYS_REQ_SYSTEM_REBOOT"],
+	"SYS.RESTART_APPLICATION": ["", "TAG_SYS_REQ_RESTART_APPLICATION"],
+	//"EP.*.PARAM_EP_RESERVE": ["", "TAG_EP_REQ_SET_EP_RESERVE"],   -- does not work properly as setter tag, perhaps a container is needed?
 };
 // RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
 const castToBooleanIds = [
@@ -303,6 +308,8 @@ const castToTimestampIds = [
 	"BAT.DCB_LAST_MESSAGE_TIMESTAMP",
 	"EMS.ERROR_TIMESTAMP",
 	"EMS.EPTEST_NEXT_TESTSTART",
+	"EP.PARAM_TIME_LAST_EMPTY",
+	"EP.PARAM_TIME_LAST_FULL"
 ];
 // Adjust algebraic sign: e.g. discharge limit is sometimes positive, sometimes negative
 const negateValueIds = [
@@ -923,6 +930,7 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EP_REQ_IS_ISLAND_GRID", sml );
 		this.addTagtoFrame( "TAG_EP_REQ_IS_POSSIBLE", sml );
 		this.addTagtoFrame( "TAG_EP_REQ_IS_INVALID_STATE", sml );
+		this.addTagtoFrame( "TAG_EP_REQ_EP_RESERVE", sml );
 		this.pushFrame();
 	}
 
@@ -987,11 +995,18 @@ class E3dcRscp extends utils.Adapter {
 	queueSetValue( globalId, value ) {
 		this.log.info( `queueSetValue( ${globalId}, ${value} )`);
 		const id = globalId.match("^[^.]+[.][^.]+[.](.*)")[1];
-		if( mapChangedIdToSetTags[id] && mapChangedIdToSetTags[id].length == 2 ) {
-			this.clearFrame();
-			const pos = this.startContainer( mapChangedIdToSetTags[id][0] );
-			this.addTagtoFrame( mapChangedIdToSetTags[id][1], "", value );
-			this.pushFrame( pos );
+		const setTags = getSetTags( id );
+		if( setTags && setTags.length == 2 ) {
+			if( setTags[0] ) {
+				this.clearFrame();
+				const pos = this.startContainer( setTags[0] );
+				this.addTagtoFrame( setTags[1], "", value );
+				this.pushFrame( pos );
+			} else {
+				this.clearFrame();
+				this.addTagtoFrame( setTags[1], "", value );
+				this.pushFrame();
+			}
 		} else {
 			this.log.warn( `Don't know how to queue ${id}`);
 		}
@@ -1350,9 +1365,9 @@ class E3dcRscp extends utils.Adapter {
 				// ..._INDEX indicates sub-device, e.g. TAG_BAT_DCB_INDEX
 				if( tagName.endsWith("_INDEX") ) {
 					const name = tagName.replace("_INDEX","");
-					const key = `${path}.${name}`;
+					const key = path ? `${path}.${name}` : name ;
 					this.maxIndex[key] = this.maxIndex[key] ? Math.max( this.maxIndex[key], token.content) : token.content;
-					pathNew = `${pathNew.split(".").slice(0,-1).join(".")}.${name}_${token.content}.`;
+					pathNew = path ? `${pathNew.split(".").slice(0,-1).join(".")}.${name}_${token.content}.` : `${name}_${token.content}.`;
 					this.extendObject( `${nameSpace}.${pathNew.slice(0,-1)}`, {type: "channel", common: {role: "info.submodule"}} );
 					continue;
 				}
@@ -1407,7 +1422,7 @@ class E3dcRscp extends utils.Adapter {
 		if( !dictionaryIndex ) dictionaryIndex = tagName;
 		const oId = `${nameSpace}.${path}${tagName}`;
 		const oKey = `${nameSpace}.${tagName}`;
-		const oWrite = oKey in mapChangedIdToSetTags;
+		const oWrite = ( getSetTags(oId) !== null );
 		let oRole = "";
 		if( typeName == "Bool") {
 			oRole = oWrite?"switch":"indicator";
@@ -1801,17 +1816,7 @@ class E3dcRscp extends utils.Adapter {
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("RSCP.AUTHENTICATION");
-		this.subscribeStates("EMS.IDLE_PERIODS_CHARGE.*");
-		this.subscribeStates("EMS.IDLE_PERIODS_DISCHARGE.*");
-		this.subscribeStates("DB.HISTORY_DATA_DAY.*");
-		this.subscribeStates("DB.HISTORY_DATA_WEEK.*");
-		this.subscribeStates("DB.HISTORY_DATA_MONTH.*");
-		this.subscribeStates("DB.HISTORY_DATA_YEAR.*");
 		for( const s in mapChangedIdToSetTags ) this.subscribeStates( s );
-		// You can also add a subscription for multiple states. The following line watches all states starting with 'lights.'
-		// this.subscribeStates('lights.*');
-		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-		// this.subscribeStates('*');
 	}
 
 	/**
@@ -2043,6 +2048,27 @@ function printTree( tree ) {
 	}
 	return result;
 }
+
+// Access mapChangedIdToSetTags dictionary containing '*' wildcards in it's key.
+// Input is a full state id like 'EMS.IDLE_PERIODS_DISCHARGE.01-Tuesday.END_MINUTE'
+// Output for this example is the value of mapChangedIdToSetTags[EMS.*.*.END_MINUTE]
+// Returns null if no mapChangedIdToSetTags entry matches.
+function getSetTags( id ) {
+	if( mapChangedIdToSetTags[id] ) {
+		return mapChangedIdToSetTags[id];
+	} else {
+		let result = null;
+		for( const key in mapChangedIdToSetTags ) {
+			const regex = new RegExp("^" + key.replace(/[.]/g,"\\.").replace(/[*]/g,"\\S+") + "$", "gi");
+			if( id.match(regex) ) {
+				result = mapChangedIdToSetTags[key];
+				break;
+			}
+		}
+		return result;
+	}
+}
+
 
 // Round numerical values for better readability
 // If the integer part is has more digits than <s>, then just round to integer.
