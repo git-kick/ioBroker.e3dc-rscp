@@ -4767,7 +4767,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "Wh",
+		"Unit": "%",
 		"Description": "imported from nischram/E3dcGui"
 	},
 	"453247012": {
