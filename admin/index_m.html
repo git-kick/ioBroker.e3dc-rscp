@@ -31,7 +31,7 @@
 			return result;
 		}
 
-		// This will be called by the admin adapter when the settings page loads
+		// This will be called by the admin adapter when the settings page loads, and when a json config-file has been selected
 		function loadHelper(settings, onChange) {
 			// example: select elements with id=key and class=value and insert value
 			if (!settings) return;
@@ -55,7 +55,6 @@
 						;
 				}
 			});
-			onChange(false);
 			// reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
 			if (M) M.updateTextFields();
 			polling_intervals = settings.polling_intervals || [];
