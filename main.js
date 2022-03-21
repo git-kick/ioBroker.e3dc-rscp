@@ -437,7 +437,7 @@ class E3dcRscp extends utils.Adapter {
 		this.maxIndex = {}; // {path}
 
 		// For probing device count (upper bounds):
-		this.batProbes = 1; // E3/DC tag list states that BAT INDEX is always 0 (up to now)
+		this.batProbes = 2; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
 		this.pviProbes = 3;
 
 		// For triggering the polling and setting requests:
