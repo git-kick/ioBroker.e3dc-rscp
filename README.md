@@ -197,19 +197,19 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>EMS</td>
     <td>MAX_CHARGE_POWER</td>
     <td>number</td>
-    <td>Charge limit in [W]</td>
+    <td>Charge limit in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true"</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>MAX_DISCHARGE_POWER</td>
     <td>number</td>
-    <td>Discharge limit in [W]</td>
+    <td>Discharge limit in [W] - NOTE: inffective unless POWER_LIMITS_USED is "true"</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>DISCHARGE_START_POWER</td>
     <td>number</td>
-    <td>Minimal battery discharge power in [W]</td>
+    <td>Minimal battery discharge power in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true"</td>
   </tr>
   <tr>
     <td>EMS</td>
