@@ -905,7 +905,7 @@ class E3dcRscp extends utils.Adapter {
 		this.setState( "EMS.SET_POWER_MODE", mode, true );
 		this.setState( "EMS.SET_POWER_VALUE", value, true );
 		// E3/DC requires regular SET_POWER repetition, otherwise it will fall back to NORMAL mode:
-		if( mode > 0 && !this.setPowerTimer ) {
+		if( (mode > 0 && this.config.setpower_interval > 0) && !this.setPowerTimer ) {
 			this.setPowerTimer = setInterval(() => {
 				this.getState( "EMS.SET_POWER_VALUE", (err, vObj) => {
 					this.getState( "EMS.SET_POWER_MODE", (err, mObj) => {
@@ -913,7 +913,7 @@ class E3dcRscp extends utils.Adapter {
 					});
 				});
 			}, this.config.setpower_interval*1000 );
-		} else if( mode == 0 && this.setPowerTimer ) { // clear timer when mode is set to NORMAL
+		} else if( (mode == 0 || this.config.setpower_interval == 0) && this.setPowerTimer ) { // clear timer when mode is set to NORMAL or interval is zero
 			clearInterval(this.setPowerTimer);
 			this.setPowerTimer = null; // nullify to enable "is timer running" check
 		}
