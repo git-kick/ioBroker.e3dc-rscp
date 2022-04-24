@@ -62,7 +62,7 @@ Here is what to configure when creating a new instance of the adapter. Settings 
     </td>
   </tr>
     <td>SET_POWER re-send interval [s]</td>
-    <td>Define how often ioBroker will request state updates from E3/DC. Experiments showed that SET_POWER may oscillate when this interval is longer than 10 seconds, despite a comment in the official E3/DC tag list saying that setting every 30 seconds is sufficient.</td>
+    <td>Define how often ioBroker will request state updates from E3/DC. Experiments showed that SET_POWER may oscillate when this interval is longer than 10 seconds, despite a comment in the official E3/DC tag list saying that setting every 30 seconds is sufficient. If set to 0 (zero), no re-send will happen, i.e. you have to trigger the re-send from outside, otherwise the E3/DC will fall back to normal after ca. 10 seconds.</td>
   </tr>
   <tr>
     <td>Tuple sending delay [s]</td>
