@@ -485,7 +485,7 @@ class E3dcRscp extends utils.Adapter {
 		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
 			this.setState( "info.connection", true, true );
 			this.log.info("Connection to E3/DC is established");
-			this.sendNextFrame();
+			this.sendFrameFIFO();
 		});
 
 		this.tcpConnection.on("data", (data) => {
@@ -504,7 +504,7 @@ class E3dcRscp extends utils.Adapter {
 				this.log.silly( `IN: ${printRscpFrame(receivedFrame)}` );
 				// this.log.silly( dumpRscpFrame(receivedFrame) );
 				this.processFrame(receivedFrame);
-				this.sendNextFrame();
+				this.sendFrameFIFO();
 				this.inBuffer = null;
 			} else {
 				this.log.silly(`inBuffer has length ${this.inBuffer.length} which is not a multiple of 256bit - waiting for next chunk...`);
@@ -889,29 +889,31 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
-	queueEmsSetPower( mode, value ) {
+	sendEmsSetPower( mode, value ) {
 		this.log.debug( `queueEmsSetPower( ${mode}, ${value} )`);
 		this.clearFrame();
 		const pos = this.startContainer( "TAG_EMS_REQ_SET_POWER" );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_MODE", "", mode );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_VALUE", "", value );
 		this.pushFrame( pos );
+		this.sendFrameLIFO();
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_MODE" ); // separately update MODE because SET_POWER response contains VALUE, but not MODE
 		this.pushFrame();
+		this.sendFrameLIFO();
 		// Acknowledge SET_POWER_*
 		this.setState( "EMS.SET_POWER_MODE", mode, true );
 		this.setState( "EMS.SET_POWER_VALUE", value, true );
 		// E3/DC requires regular SET_POWER repetition, otherwise it will fall back to NORMAL mode:
-		if( mode > 0 && !this.setPowerTimer ) {
+		if( (mode > 0 && this.config.setpower_interval > 0) && !this.setPowerTimer ) {
 			this.setPowerTimer = setInterval(() => {
 				this.getState( "EMS.SET_POWER_VALUE", (err, vObj) => {
 					this.getState( "EMS.SET_POWER_MODE", (err, mObj) => {
-						this.queueEmsSetPower( mObj ? mObj.val : 0, vObj ? vObj.val : 0 );
+						this.sendEmsSetPower( mObj ? mObj.val : 0, vObj ? vObj.val : 0 );
 					});
 				});
 			}, this.config.setpower_interval*1000 );
-		} else if( mode == 0 && this.setPowerTimer ) { // clear timer when mode is set to NORMAL
+		} else if( (mode == 0 || this.config.setpower_interval == 0) && this.setPowerTimer ) { // clear timer when mode is set to NORMAL or interval is zero
 			clearInterval(this.setPowerTimer);
 			this.setPowerTimer = null; // nullify to enable "is timer running" check
 		}
@@ -1132,33 +1134,50 @@ class E3dcRscp extends utils.Adapter {
 		if( this.config.query_pvi ) this.queuePviRequestData( sml );
 		if( this.config.query_sys ) this.queueSysRequestData( sml );
 		if( this.config.query_wb ) this.queueWbRequestData( sml );
-		this.sendNextFrame();
+		this.sendFrameFIFO();
 	}
 
-	sendNextFrame() {
-		if( this ) {
-			if( this.queue[0] ) {
-				if( rscpTag[this.queue[0].readUInt32LE(18)] ) {
-					this.log.debug( `Sending request ${rscpTag[this.queue[0].readUInt32LE(18)].TagNameGlobal}` );
-				} else {
-					this.log.warn( `sendNextFrame called with invalid content: first tag is ${this.queue[0].readUInt32LE(18)}` );
-				}
-				this.log.silly( `OUT: ${printRscpFrame(this.queue[0])}` );
-				// this.log.silly( dumpRscpFrame(this.queue[0]) );
-
-				const encryptedFrame = Buffer.from( this.cipher.encrypt( this.queue[0], 256, this.encryptionIV ) );
-				// last encrypted block will be used as IV for next frame
-				if( this.encryptionIV ) encryptedFrame.copy( this.encryptionIV, 0, encryptedFrame.length - BLOCK_SIZE );
-
-				if( this.tcpConnection && this.tcpConnection.write( encryptedFrame ) ) {
-					this.log.silly( `Successfully written data to socket` );
-					this.queue.shift();
-				} else {
-					this.log.error( `Failed writing data to socket` );
-					this.initChannel();
-				}
+	sendFrameFIFO() {
+		if( this && this.queue.length > 0 ) {
+			const f = this.queue.shift();
+			if( f ) {
+				this.sendFrame( f );
 			} else {
 				this.log.silly( "Message queue is empty");
+			}
+		}
+	}
+
+	sendFrameLIFO() {
+		if( this && this.queue.length > 0 ) {
+			const f = this.queue.pop();
+			if( f ) {
+				this.sendFrame( f );
+			} else {
+				this.log.silly( "Message queue is empty");
+			}
+		}
+	}
+
+	sendFrame( f ) {
+		if( f ) {
+			if( rscpTag[f.readUInt32LE(18)] ) {
+				this.log.debug( `Sending request ${rscpTag[f.readUInt32LE(18)].TagNameGlobal}` );
+			} else {
+				this.log.warn( `sendFrame called with invalid content: first tag is ${f.readUInt32LE(18)}` );
+			}
+			this.log.silly( `OUT: ${printRscpFrame(f)}` );
+			// this.log.silly( dumpRscpFrame(f) );
+
+			const encryptedFrame = Buffer.from( this.cipher.encrypt( f, 256, this.encryptionIV ) );
+			// last encrypted block will be used as IV for next frame
+			if( this.encryptionIV ) encryptedFrame.copy( this.encryptionIV, 0, encryptedFrame.length - BLOCK_SIZE );
+
+			if( this.tcpConnection && this.tcpConnection.write( encryptedFrame ) ) {
+				this.log.silly( `Successfully written data to socket` );
+			} else {
+				this.log.error( `Failed writing data to socket` );
+				this.initChannel();
 			}
 		}
 	}
@@ -1847,11 +1866,11 @@ class E3dcRscp extends utils.Adapter {
 			if( !state.ack ) {
 				if( id.endsWith("EMS.SET_POWER_MODE") ) {
 					this.getState( "EMS.SET_POWER_VALUE", (err, power) => {
-						this.queueEmsSetPower( state.val, power ? power.val : 0 );
+						this.sendEmsSetPower( state.val, power ? power.val : 0 );
 					});
 				} else if( id.endsWith("EMS.SET_POWER_VALUE") ) {
 					this.getState( "EMS.SET_POWER_MODE", (err, mode) => {
-						this.queueEmsSetPower( mode ? mode.val : 0, state.val );
+						this.sendEmsSetPower( mode ? mode.val : 0, state.val );
 					});
 				} else if( id.endsWith("SYS.SYSTEM_REBOOT") ) {
 					this.getState( "SYS.SYSTEM_REBOOT", (err, reboot) => {

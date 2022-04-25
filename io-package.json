@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.0.4",
+        "version": "1.0.5",
         "news": {
+            "1.0.5": {
+                "en": "Fixed SET_POWER timing issue",
+                "de": "SET_POWER Timing Problem behoben",
+                "ru": "Исправлена проблема с синхронизацией SET_POWER",
+                "pt": "Corrigido o problema de tempo SET_POWER",
+                "nl": "Vaste SET_POWER timing probleem",
+                "fr": "Correction d'un problème de synchronisation SET_POWER",
+                "it": "Risolto il problema di temporizzazione SET_POWER",
+                "es": "Solucionado el problema de temporización SET_POWER",
+                "pl": "Naprawiono problem z synchronizacją SET_POWER",
+                "zh-cn": "修正SET_POWER定时问题"
+            },
             "1.0.4": {
                 "en": "Minor fixes",
                 "de": "Kleinere Fehlerbehebungen",
@@ -682,7 +694,7 @@
         "polling_interval_short": 30,
         "polling_interval_medium": 5,
         "polling_interval_long": 12,
-        "setpower_interval": 15,
+        "setpower_interval": 10,
         "send_tuple_delay": 10,
         "query_bat": "true",
         "query_ems": "true",

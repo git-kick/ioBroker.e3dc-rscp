@@ -6,6 +6,7 @@
 ![Number of Installations (latest)](http://iobroker.live/badges/e3dc-rscp-installed.svg)
 ![Number of Installations (stable)](http://iobroker.live/badges/e3dc-rscp-stable.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/git-kick/ioBroker.e3dc-rscp/badge.svg)](https://snyk.io/test/github/git-kick/ioBroker.e3dc-rscp)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/ukick)
 
 [![NPM](https://nodei.co/npm/iobroker.e3dc-rscp.png?downloads=true)](https://nodei.co/npm/iobroker.e3dc-rscp/)
 
@@ -62,7 +63,7 @@ Here is what to configure when creating a new instance of the adapter. Settings 
     </td>
   </tr>
     <td>SET_POWER re-send interval [s]</td>
-    <td>Define how often ioBroker will request state updates from E3/DC.</td>
+    <td>Define how often ioBroker will request state updates from E3/DC. Experiments showed that SET_POWER may oscillate when this interval is longer than 10 seconds, despite a comment in the official E3/DC tag list saying that setting every 30 seconds is sufficient. If set to 0 (zero), no re-send will happen, i.e. you have to trigger the re-send from outside, otherwise the E3/DC will fall back to normal after ca. 10 seconds.</td>
   </tr>
   <tr>
     <td>Tuple sending delay [s]</td>
@@ -339,6 +340,9 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+### 1.0.5
+(git-kick)
+* SET_POWER not effective due to delayed transmission - [Issue #103](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/103)
 ### 1.0.4
 (git-kick)
 * BAT_1 not visible after update to v1.0.3 - [Issue #96](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/96)
