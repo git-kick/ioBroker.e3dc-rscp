@@ -6,6 +6,7 @@
 ![Number of Installations (latest)](http://iobroker.live/badges/e3dc-rscp-installed.svg)
 ![Number of Installations (stable)](http://iobroker.live/badges/e3dc-rscp-stable.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/git-kick/ioBroker.e3dc-rscp/badge.svg)](https://snyk.io/test/github/git-kick/ioBroker.e3dc-rscp)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/ukick)
 
 [![NPM](https://nodei.co/npm/iobroker.e3dc-rscp.png?downloads=true)](https://nodei.co/npm/iobroker.e3dc-rscp/)
 
