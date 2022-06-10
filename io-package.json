@@ -692,7 +692,7 @@
             },
             {
                 "tag": "TAG_WB_REQ_EXTERN_DATA_ALG",
-                "interval": "M"
+                "interval": "S"
             },
             {
                 "tag": "TAG_WB_REQ_PARAM_1",
