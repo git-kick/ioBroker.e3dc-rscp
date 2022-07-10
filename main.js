@@ -622,7 +622,8 @@ class E3dcRscp extends utils.Adapter {
 				case "Char8":
 				case "UChar8":
 				case "Error":
-					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 8 ) - 1 ) value = 0;
+					if( typeof value == "boolean" ) value = value?1:0;
+					else if( typeof value != "number" || value < 0 || value > Math.pow( 2, 8 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 1, this.frame.length - 2);
 					buf1.writeUInt8( value );
 					this.frame = Buffer.concat( [this.frame, buf1] );

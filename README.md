@@ -342,6 +342,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ## Changelog
 ### 1.0.6
 (git-kick)
+* Boolean switches (e.g. EMS.WEATHER_REGULATED_CHARGE_ENABLED) did not work properly - [Issue #109](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/103)
 * Vulnerable dependency: minimist < 1.2.6 - [CVE-2021-44906](https://nvd.nist.gov/vuln/detail/CVE-2021-44906)
 ### 1.0.5
 (git-kick)

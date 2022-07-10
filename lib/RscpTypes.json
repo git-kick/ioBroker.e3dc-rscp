@@ -1,0 +1,20 @@
+{
+    "0":	"None",
+    "1":	"Bool",
+    "2": "Char8",
+    "3": "UChar8",
+    "4": "Int16",
+    "5": "UInt16",
+    "6": "Int32",
+    "7": "UInt32",
+    "8": "Int64",
+    "9": "UInt64",
+    "10": "Float32",
+    "11": "Double64",
+    "12": "Bitfield",
+    "13": "CString",
+    "14": "Container",
+    "15": "Timestamp",
+    "16": "ByteArray",
+    "255": "Error"
+}
