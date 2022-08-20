@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.0.6",
+        "version": "1.0.7",
         "news": {
+            "1.0.7": {
+                "en": "Fixed DB object handling",
+                "de": "Fehler in DB Objektbehandlung behoben",
+                "ru": "Незначительные исправления",
+                "pt": "Pequenas correções",
+                "nl": "Kleine fixes",
+                "fr": "Corrections mineures",
+                "it": "Correzioni minori",
+                "es": "Correcciones menores",
+                "pl": "Drobne poprawki",
+                "zh-cn": "小修正"
+            },
             "1.0.6": {
                 "en": "Minor fixes",
                 "de": "Kleinere Fehlerbehebungen",

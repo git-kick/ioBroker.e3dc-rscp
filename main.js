@@ -1552,15 +1552,12 @@ class E3dcRscp extends utils.Adapter {
 
 	// Delete VALUE_x object branches for a certain x, x+1, ...
 	deleteValueObjects( count, path ) {
-		const id = `DB.${path}VALUE_${count.toString().padStart(2,"0")}`;
+		const id = `${this.common.name}.${this.instance}.DB.${path}VALUE_${count.toString().padStart(2,"0")}`;
 		//this.log.silly(`deleteValueObjects: count=${count}, id=${id}`);
-		this.getStates( `${id}.*`, (err, states) => {
-			if(states) {
-				//this.log.silly(`deleteValueObjects: getStates returned ${JSON.stringify(obj)}`);
-				for( const state in states ) {
-					this.delObject( state );
-				}
-				this.delObject( id );
+		this.getForeignObject( id, (err, obj) => {
+			if(obj) {
+				//this.log.silly(`deleteValueObjects: found object with id=${id}`);
+				this.delObject( id, {recursive:true} );
 				this.deleteValueObjects( count+1, path );
 			}
 		});
