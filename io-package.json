@@ -339,6 +339,10 @@
                 "interval": "M"
             },
             {
+                "tag": "TAG_EP_REQ_EP_RESERVE",
+                "interval": "S"
+            },
+            {
                 "tag": "TAG_PVI_REQ_ON_GRID",
                 "interval": "M"
             },
