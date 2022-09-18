@@ -69,7 +69,9 @@
     "test": "npm run test:js && npm run test:package",
     "check": "tsc --noEmit -p tsconfig.check.json",
     "lint": "eslint",
-    "release": "release-script"
+    "release-patch": "release-script patch --yes",
+    "release-major": "release-script major --yes",
+    "release-minor": "release-script minor --yes"
   },
   "bugs": {
     "url": "https://github.com/git-kick/ioBroker.e3dc-rscp/issues"
