@@ -19,3 +19,4 @@ admin/i18n/*/flat.txt
 
 # Powershell scripts for json etc.
 *.ps1
+.dev-server/
