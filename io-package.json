@@ -1,737 +1,737 @@
 {
-    "common": {
-        "name": "e3dc-rscp",
-        "version": "1.0.7",
-        "news": {
-            "1.0.7": {
-                "en": "Fixed DB object handling",
-                "de": "Fehler in DB Objektbehandlung behoben",
-                "ru": "Незначительные исправления",
-                "pt": "Pequenas correções",
-                "nl": "Kleine fixes",
-                "fr": "Corrections mineures",
-                "it": "Correzioni minori",
-                "es": "Correcciones menores",
-                "pl": "Drobne poprawki",
-                "zh-cn": "小修正"
-            },
-            "1.0.6": {
-                "en": "Minor fixes",
-                "de": "Kleinere Fehlerbehebungen",
-                "ru": "Незначительные исправления",
-                "pt": "Pequenas correções",
-                "nl": "Kleine fixes",
-                "fr": "Corrections mineures",
-                "it": "Correzioni minori",
-                "es": "Correcciones menores",
-                "pl": "Drobne poprawki",
-                "zh-cn": "小修正"
-            },
-            "1.0.5": {
-                "en": "Fixed SET_POWER timing issue",
-                "de": "SET_POWER Timing Problem behoben",
-                "ru": "Исправлена проблема с синхронизацией SET_POWER",
-                "pt": "Corrigido o problema de tempo SET_POWER",
-                "nl": "Vaste SET_POWER timing probleem",
-                "fr": "Correction d'un problème de synchronisation SET_POWER",
-                "it": "Risolto il problema di temporizzazione SET_POWER",
-                "es": "Solucionado el problema de temporización SET_POWER",
-                "pl": "Naprawiono problem z synchronizacją SET_POWER",
-                "zh-cn": "修正SET_POWER定时问题"
-            },
-            "1.0.4": {
-                "en": "Minor fixes",
-                "de": "Kleinere Fehlerbehebungen",
-                "ru": "Незначительные исправления",
-                "pt": "Pequenas correções",
-                "nl": "Kleine fixes",
-                "fr": "Corrections mineures",
-                "it": "Correzioni minori",
-                "es": "Correcciones menores",
-                "pl": "Drobne poprawki",
-                "zh-cn": "小修正"
-            },
-            "1.0.3": {
-                "en": "Minor fixes",
-                "de": "Kleinere Fehlerbehebungen",
-                "ru": "Незначительные исправления",
-                "pt": "Pequenas correções",
-                "nl": "Kleine fixes",
-                "fr": "Corrections mineures",
-                "it": "Correzioni minori",
-                "es": "Correcciones menores",
-                "pl": "Drobne poprawki",
-                "zh-cn": "小修正"
-            },
-            "1.0.2": {
-                "en": "Added SYS namespace (experimental)",
-                "de": "SYS Namespace hinzugefügt (experimentell)",
-                "ru": "Добавлено пространство имен SYS (экспериментальное)",
-                "pt": "Espaço de nomes de sistemas adicionado (experimental)",
-                "nl": "SYS-naamruimte toegevoegd (experimenteel)",
-                "fr": "Espace de noms SYS ajouté (expérimental)",
-                "it": "Aggiunto lo spazio dei nomi SYS (sperimentale)",
-                "es": "Espacio de nombres de sistema añadido (experimental)",
-                "pl": "Dodano przestrzeń nazw SYS (eksperymentalne)",
-                "zh-cn": "添加SYS命名空间（实验）"
-            },
-            "1.0.1": {
-                "en": "Minor technical fixes (CVE/Sentry)",
-                "de": "Kleinere technische Fehlerbehebungen (CVE/Sentry)",
-                "ru": "Незначительные технические исправления (CVE/Sentry)",
-                "pt": "Correcções técnicas menores (CVE/Sentry)",
-                "nl": "Kleine technische fixes (CVE / Sentry)",
-                "fr": "Corrections techniques mineures (CVE/Sentry)",
-                "it": "Correzioni tecniche minori (CVE / Sentry)",
-                "es": "Correcciones técnicas menores (CVE / Sentry)",
-                "pl": "Drobne poprawki techniczne (CVE / Sentry)",
-                "zh-cn": "次要技术修复（CVE/Sentry）"
-            },
-            "1.0.0": {
-                "en": "Initial public release",
-                "de": "Initial Public Release",
-                "ru": "Первоначальный публичный релиз",
-                "pt": "Publicação pública inicial",
-                "nl": "Eerste publieke publicatie",
-                "fr": "Diffusion publique initiale",
-                "it": "Rilascio pubblico iniziale",
-                "es": "Lanzamiento inicial",
-                "pl": "Pierwsze publiczne wydanie",
-                "zh-cn": "首次公开发行"
-            }
-        },
-        "title": "E3/DC RSCP",
-        "titleLang": {
-            "en": "E3/DC RSCP",
-            "de": "E3/DC RSCP",
-            "ru": "E3/DC RSCP",
-            "pt": "E3/DC RSCP",
-            "nl": "E3/DC RSCP",
-            "fr": "E3/DC RSCP",
-            "it": "E3/DC RSCP",
-            "es": "E3/DC RSCP",
-            "pl": "E3/DC RSCP",
-            "zh-cn": "E3/DC RSCP"
-        },
-        "desc": {
-            "en": "Control E3/DC power station using RSCP protocol",
-            "de": "Steuern Sie das E3/DC-Kraftwerk mithilfe des RSCP-Protokolls",
-            "ru": "Управление электростанцией E3/DC по протоколу RSCP",
-            "pt": "Controle da estação de energia E3/DC usando o protocolo RSCP",
-            "nl": "Bedien de E3/DC-krachtcentrale met behulp van het RSCP-protocol",
-            "fr": "Contrôlez la centrale électrique E3/DC en utilisant le protocole RSCP",
-            "it": "Controllare la centrale E3/DC utilizzando il protocollo RSCP",
-            "es": "Control de la central eléctrica E3/DC mediante protocolo RSCP",
-            "pl": "Sterowanie elektrownią E3/DC za pomocą protokołu RSCP",
-            "zh-cn": "使用RSCP协议控制E3/DC电站"
-        },
-        "authors": [
-            "Ulrich Kick <iobroker@kick-web.de>"
-        ],
-        "keywords": [
-            "E3/DC",
-            "power station",
-            "energy",
-            "RSCP"
-        ],
-        "license": "GPL-3.0-only",
-        "platform": "Javascript/Node.js",
-        "main": "main.js",
-        "icon": "e3dc-rscp.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/git-kick/ioBroker.e3dc-rscp/master/admin/e3dc-rscp.png",
-        "readme": "https://github.com/git-kick/ioBroker.e3dc-rscp/blob/master/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "energy",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "poll",
-        "materialize": true,
-        "materializeTab": false,
-        "dependencies": [
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ]
+  "common": {
+    "name": "e3dc-rscp",
+    "version": "1.0.7",
+    "news": {
+      "1.0.7": {
+        "en": "Fixed DB object handling",
+        "de": "Fehler in DB Objektbehandlung behoben",
+        "ru": "Незначительные исправления",
+        "pt": "Pequenas correções",
+        "nl": "Kleine fixes",
+        "fr": "Corrections mineures",
+        "it": "Correzioni minori",
+        "es": "Correcciones menores",
+        "pl": "Drobne poprawki",
+        "zh-cn": "小修正"
+      },
+      "1.0.6": {
+        "en": "Minor fixes",
+        "de": "Kleinere Fehlerbehebungen",
+        "ru": "Незначительные исправления",
+        "pt": "Pequenas correções",
+        "nl": "Kleine fixes",
+        "fr": "Corrections mineures",
+        "it": "Correzioni minori",
+        "es": "Correcciones menores",
+        "pl": "Drobne poprawki",
+        "zh-cn": "小修正"
+      },
+      "1.0.5": {
+        "en": "Fixed SET_POWER timing issue",
+        "de": "SET_POWER Timing Problem behoben",
+        "ru": "Исправлена проблема с синхронизацией SET_POWER",
+        "pt": "Corrigido o problema de tempo SET_POWER",
+        "nl": "Vaste SET_POWER timing probleem",
+        "fr": "Correction d'un problème de synchronisation SET_POWER",
+        "it": "Risolto il problema di temporizzazione SET_POWER",
+        "es": "Solucionado el problema de temporización SET_POWER",
+        "pl": "Naprawiono problem z synchronizacją SET_POWER",
+        "zh-cn": "修正SET_POWER定时问题"
+      },
+      "1.0.4": {
+        "en": "Minor fixes",
+        "de": "Kleinere Fehlerbehebungen",
+        "ru": "Незначительные исправления",
+        "pt": "Pequenas correções",
+        "nl": "Kleine fixes",
+        "fr": "Corrections mineures",
+        "it": "Correzioni minori",
+        "es": "Correcciones menores",
+        "pl": "Drobne poprawki",
+        "zh-cn": "小修正"
+      },
+      "1.0.3": {
+        "en": "Minor fixes",
+        "de": "Kleinere Fehlerbehebungen",
+        "ru": "Незначительные исправления",
+        "pt": "Pequenas correções",
+        "nl": "Kleine fixes",
+        "fr": "Corrections mineures",
+        "it": "Correzioni minori",
+        "es": "Correcciones menores",
+        "pl": "Drobne poprawki",
+        "zh-cn": "小修正"
+      },
+      "1.0.2": {
+        "en": "Added SYS namespace (experimental)",
+        "de": "SYS Namespace hinzugefügt (experimentell)",
+        "ru": "Добавлено пространство имен SYS (экспериментальное)",
+        "pt": "Espaço de nomes de sistemas adicionado (experimental)",
+        "nl": "SYS-naamruimte toegevoegd (experimenteel)",
+        "fr": "Espace de noms SYS ajouté (expérimental)",
+        "it": "Aggiunto lo spazio dei nomi SYS (sperimentale)",
+        "es": "Espacio de nombres de sistema añadido (experimental)",
+        "pl": "Dodano przestrzeń nazw SYS (eksperymentalne)",
+        "zh-cn": "添加SYS命名空间（实验）"
+      },
+      "1.0.1": {
+        "en": "Minor technical fixes (CVE/Sentry)",
+        "de": "Kleinere technische Fehlerbehebungen (CVE/Sentry)",
+        "ru": "Незначительные технические исправления (CVE/Sentry)",
+        "pt": "Correcções técnicas menores (CVE/Sentry)",
+        "nl": "Kleine technische fixes (CVE / Sentry)",
+        "fr": "Corrections techniques mineures (CVE/Sentry)",
+        "it": "Correzioni tecniche minori (CVE / Sentry)",
+        "es": "Correcciones técnicas menores (CVE / Sentry)",
+        "pl": "Drobne poprawki techniczne (CVE / Sentry)",
+        "zh-cn": "次要技术修复（CVE/Sentry）"
+      },
+      "1.0.0": {
+        "en": "Initial public release",
+        "de": "Initial Public Release",
+        "ru": "Первоначальный публичный релиз",
+        "pt": "Publicação pública inicial",
+        "nl": "Eerste publieke publicatie",
+        "fr": "Diffusion publique initiale",
+        "it": "Rilascio pubblico iniziale",
+        "es": "Lanzamiento inicial",
+        "pl": "Pierwsze publiczne wydanie",
+        "zh-cn": "首次公开发行"
+      }
     },
-    "native": {
-        "e3dc_ip": "192.168.178.1",
-        "e3dc_port": 5033,
-        "rscp_password": "",
-        "portal_user": "",
-        "portal_password": "",
-        "polling_intervals": [
-            {
-                "tag": "TAG_EMS_REQ_POWER_PV",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_BAT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_HOME",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_GRID",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_ADD",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_AUTARKY",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_SELF_CONSUMPTION",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BAT_SOC",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_COUPLING_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_STORED_ERRORS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_MODE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BALANCED_PHASES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_INSTALLED_PEAK_POWER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DERATE_AT_POWER_VALUE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_WB_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_WB_SOLAR",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EXT_SRC_AVAILABLE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_STATUS",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USED_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BAT_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DCDC_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USER_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USED_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USER_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BATTERY_TO_CAR_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_POWER_SETTINGS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_MANUAL_CHARGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_SYS_SPECS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_PV_AC_OUT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_ALIVE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_GRID_CONNECTED",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_ISLAND_GRID",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_INVALID_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_POSSIBLE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_EP_RESERVE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_ON_GRID",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_STATE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_LAST_ERROR",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_TYPE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_VOLTAGE_MONITORING",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_FREQUENCY_UNDER_OVER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_SYSTEM_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_POWER_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_TEMPERATURE_COUNT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_MAX_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_MIN_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_SERIAL_NUMBER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_MAX_PHASE_COUNT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_POWER",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_VOLTAGE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_CURRENT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_APPARENTPOWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_REACTIVEPOWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_ENERGY_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_MAX_APPARENTPOWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_ENERGY_GRID_CONSUMPTION",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_VOLTAGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_CURRENT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_STRING_ENERGY_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_BAT_VOLTAGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_CHARGE_CURRENT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_EOD_VOLTAGE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_CHARGE_CYCLES",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TERMINAL_VOLTAGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DEVICE_NAME",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_COUNT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_RSOC_REAL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_ASOC",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_FCC",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_RC",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_READY_FOR_SHUTDOWN",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_INFO",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TRAINING_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_USABLE_CAPACITY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_INFO",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_SPECIFICATION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_INTERNALS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TOTAL_USE_TIME",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_SYS_REQ_IS_SYSTEM_REBOOTING",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_ENERGY_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_ENERGY_SOLAR",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_SOC",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_ERROR_CODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_APP_SOFTWARE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_BOOTLOADER_SOFTWARE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_HW_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_FLASH_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DEVICE_ID",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_POWER_L1",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_POWER_L2",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_POWER_L3",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ACTIVE_PHASES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ENERGY_L1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ENERGY_L2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ENERGY_L3",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_DEVICE_ID",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ERROR_CODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_FIRMWARE_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_INFOS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_WARNINGS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_ERRORS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_TEMP_1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_TEMP_2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_MAX_PHASE_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DEVICE_NAME",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_SUN",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_NET",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_ALG",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PARAM_1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PARAM_2",
-                "interval": "M"
-            }
-        ],
-        "polling_interval_short": 30,
-        "polling_interval_medium": 5,
-        "polling_interval_long": 12,
-        "setpower_interval": 10,
-        "send_tuple_delay": 10,
-        "query_bat": "true",
-        "query_ems": "true",
-        "query_ep": "true",
-        "query_pvi": "true",
-        "query_sys": "true",
-        "query_wb": "true",
-        "query_db": "true"
+    "title": "E3/DC RSCP",
+    "titleLang": {
+      "en": "E3/DC RSCP",
+      "de": "E3/DC RSCP",
+      "ru": "E3/DC RSCP",
+      "pt": "E3/DC RSCP",
+      "nl": "E3/DC RSCP",
+      "fr": "E3/DC RSCP",
+      "it": "E3/DC RSCP",
+      "es": "E3/DC RSCP",
+      "pl": "E3/DC RSCP",
+      "zh-cn": "E3/DC RSCP"
     },
-    "objects": [],
-    "instanceObjects": []
+    "desc": {
+      "en": "Control E3/DC power station using RSCP protocol",
+      "de": "Steuern Sie das E3/DC-Kraftwerk mithilfe des RSCP-Protokolls",
+      "ru": "Управление электростанцией E3/DC по протоколу RSCP",
+      "pt": "Controle da estação de energia E3/DC usando o protocolo RSCP",
+      "nl": "Bedien de E3/DC-krachtcentrale met behulp van het RSCP-protocol",
+      "fr": "Contrôlez la centrale électrique E3/DC en utilisant le protocole RSCP",
+      "it": "Controllare la centrale E3/DC utilizzando il protocollo RSCP",
+      "es": "Control de la central eléctrica E3/DC mediante protocolo RSCP",
+      "pl": "Sterowanie elektrownią E3/DC za pomocą protokołu RSCP",
+      "zh-cn": "使用RSCP协议控制E3/DC电站"
+    },
+    "authors": [
+      "Ulrich Kick <iobroker@kick-web.de>"
+    ],
+    "keywords": [
+      "E3/DC",
+      "power station",
+      "energy",
+      "RSCP"
+    ],
+    "license": "GPL-3.0-only",
+    "platform": "Javascript/Node.js",
+    "main": "main.js",
+    "icon": "e3dc-rscp.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/git-kick/ioBroker.e3dc-rscp/master/admin/e3dc-rscp.png",
+    "readme": "https://github.com/git-kick/ioBroker.e3dc-rscp/blob/master/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "energy",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "materialize": true,
+    "materializeTab": false,
+    "dependencies": [
+      {
+        "js-controller": ">=2.0.0"
+      }
+    ]  
+  },
+  "native": {
+    "e3dc_ip": "192.168.178.1",
+    "e3dc_port": 5033,
+    "rscp_password": "",
+    "portal_user": "",
+    "portal_password": "",
+    "polling_intervals": [
+      {
+        "tag": "TAG_EMS_REQ_POWER_PV",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_BAT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_HOME",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_GRID",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_ADD",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_AUTARKY",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_SELF_CONSUMPTION",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BAT_SOC",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_COUPLING_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_STORED_ERRORS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_MODE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BALANCED_PHASES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_INSTALLED_PEAK_POWER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DERATE_AT_POWER_VALUE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_WB_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_WB_SOLAR",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EXT_SRC_AVAILABLE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_STATUS",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USED_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BAT_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DCDC_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USER_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USED_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USER_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BATTERY_TO_CAR_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_POWER_SETTINGS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_MANUAL_CHARGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_SYS_SPECS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_PV_AC_OUT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_ALIVE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_GRID_CONNECTED",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_ISLAND_GRID",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_INVALID_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_POSSIBLE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_EP_RESERVE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_ON_GRID",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_STATE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_LAST_ERROR",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_TYPE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_VOLTAGE_MONITORING",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_FREQUENCY_UNDER_OVER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_SYSTEM_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_POWER_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_TEMPERATURE_COUNT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_MAX_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_MIN_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_SERIAL_NUMBER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_MAX_PHASE_COUNT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_POWER",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_VOLTAGE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_CURRENT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_APPARENTPOWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_REACTIVEPOWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_ENERGY_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_MAX_APPARENTPOWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_ENERGY_GRID_CONSUMPTION",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_VOLTAGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_CURRENT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_STRING_ENERGY_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_BAT_VOLTAGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_CHARGE_CURRENT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_EOD_VOLTAGE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_CHARGE_CYCLES",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TERMINAL_VOLTAGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DEVICE_NAME",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_COUNT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_RSOC_REAL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_ASOC",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_FCC",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_RC",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_READY_FOR_SHUTDOWN",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_INFO",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TRAINING_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_USABLE_CAPACITY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_INFO",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_SPECIFICATION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_INTERNALS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TOTAL_USE_TIME",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_SYS_REQ_IS_SYSTEM_REBOOTING",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_ENERGY_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_ENERGY_SOLAR",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_SOC",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_ERROR_CODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_APP_SOFTWARE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_BOOTLOADER_SOFTWARE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_HW_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_FLASH_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_DEVICE_ID",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_POWER_L1",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_POWER_L2",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_POWER_L3",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ACTIVE_PHASES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ENERGY_L1",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ENERGY_L2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ENERGY_L3",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_DEVICE_ID",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ERROR_CODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_FIRMWARE_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_INFOS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_WARNINGS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_ERRORS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_TEMP_1",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_TEMP_2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_MAX_PHASE_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DEVICE_NAME",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_SUN",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_NET",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_ALG",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PARAM_1",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PARAM_2",
+        "interval": "M"
+      }
+    ],
+    "polling_interval_short": 30,
+    "polling_interval_medium": 5,
+    "polling_interval_long": 12,
+    "setpower_interval": 10,
+    "send_tuple_delay": 10,
+    "query_bat": "true",
+    "query_ems": "true",
+    "query_ep": "true",
+    "query_pvi": "true",
+    "query_sys": "true",
+    "query_wb": "true",
+    "query_db": "true"
+  },
+  "objects": [],
+  "instanceObjects": []
 }
