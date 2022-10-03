@@ -575,6 +575,10 @@
         "interval": "M"
       },
       {
+        "tag": "TAG_WB_REQ_CONNECTED_DEVICES",
+        "interval": "M"
+      },
+      {
         "tag": "TAG_WB_REQ_ENERGY_ALL",
         "interval": "M"
       },

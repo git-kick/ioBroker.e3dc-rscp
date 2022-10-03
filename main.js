@@ -588,9 +588,9 @@ class E3dcRscp extends utils.Adapter {
 			return;
 		}
 		const tagCode = rscpTagCode[tag];
-		if( typeof this.pollingInterval[tagCode] === "undefined" && tag.includes("_REQ_") && !tag.endsWith("_COUNT") ) {
+		if( sml != "" && !Object.keys(this.pollingInterval).includes(tagCode) && tag.includes("_REQ_") && !tag.endsWith("_COUNT") ) {
 			this.log.warn(`${tag} has no assigned polling interval  - assuming 'M' - please check io-package.json`);
-			this.pollingInterval[tagCode] == "M";
+			this.pollingInterval[tagCode] = "M";
 		}
 		if( sml == "" || this.pollingInterval[tagCode] == sml ) {
 			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
@@ -703,7 +703,7 @@ class E3dcRscp extends utils.Adapter {
 			return 0;
 		}
 		const tagCode = rscpTagCode[tag];
-		if( sml == "" || this.pollingInterval[tagCode] == "" || this.pollingInterval[tagCode] == sml ) {
+		if( sml == "" || !Object.keys(this.pollingInterval).includes(tagCode) || this.pollingInterval[tagCode] == sml ) {
 			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
 			if( rscpType[typeCode] != "Container") {
 				this.log.warn(`Non-container tag ${tag} passed to startContainer - cannot start container.`);
