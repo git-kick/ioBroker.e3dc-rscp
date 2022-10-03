@@ -340,7 +340,7 @@
       },
       {
         "tag": "TAG_EP_REQ_EP_RESERVE",
-        "interval": "S"
+        "interval": "M"
       },
       {
         "tag": "TAG_PVI_REQ_ON_GRID",
@@ -453,6 +453,10 @@
       {
         "tag": "TAG_PVI_REQ_DC_STRING_ENERGY_ALL",
         "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_INFO",
+        "interval": "L"
       },
       {
         "tag": "TAG_BAT_REQ_MAX_BAT_VOLTAGE",

@@ -588,7 +588,7 @@ class E3dcRscp extends utils.Adapter {
 			return;
 		}
 		const tagCode = rscpTagCode[tag];
-		if( typeof this.pollingInterval[tagCode] === "undefined" && tag.includes("_REQ_") ) {
+		if( typeof this.pollingInterval[tagCode] === "undefined" && tag.includes("_REQ_") && !tag.endsWith("_COUNT") ) {
 			this.log.warn(`${tag} has no assigned polling interval  - assuming 'M' - please check io-package.json`);
 			this.pollingInterval[tagCode] == "M";
 		}
