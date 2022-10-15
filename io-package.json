@@ -1,19 +1,31 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.0.7",
+        "version": "1.0.8",
         "news": {
+            "1.0.8": {
+                "en": "Fixed polling e3dc-rscp.0.EP.PARAM_0.*",
+                "de": "Stoppende Abfrage für e3dc-rscp.0.EP.PARAM_0.* behoben",
+                "ru": "Исправлен опрос e3dc-rscp.0.EP.PARAM_0.*",
+                "pt": "Corrigida a sondagem e3dc-rscp.0.EP.PARAM_0.*",
+                "nl": "Vaste polling e3dc-rscp.0.EP.PARAM_0.*",
+                "fr": "Interrogation fixe e3dc-rscp.0.EP.PARAM_0.*",
+                "it": "Risolto il problema con il polling e3dc-rscp.0.EP.PARAM_0.*",
+                "es": "Sondeo fijo e3dc-rscp.0.EP.PARAM_0.*",
+                "pl": "Naprawiono odpytywanie e3dc-rscp.0.EP.PARAM_0.*",
+                "zh-cn": "固定轮询 e3dc-rscp.0.EP.PARAM_0.*"
+            },
             "1.0.7": {
                 "en": "Fixed DB object handling",
                 "de": "Fehler in DB Objektbehandlung behoben",
-                "ru": "Незначительные исправления",
-                "pt": "Pequenas correções",
-                "nl": "Kleine fixes",
-                "fr": "Corrections mineures",
-                "it": "Correzioni minori",
-                "es": "Correcciones menores",
-                "pl": "Drobne poprawki",
-                "zh-cn": "小修正"
+                "ru": "Исправлена ​​работа с объектами БД.",
+                "pt": "Manipulação de objetos de banco de dados fixo",
+                "nl": "Vaste DB-objectafhandeling",
+                "fr": "Gestion fixe des objets DB",
+                "it": "Risolto il problema con la gestione degli oggetti DB",
+                "es": "Manejo fijo de objetos DB",
+                "pl": "Naprawiono obsługę obiektów DB",
+                "zh-cn": "固定数据库对象处理"
             },
             "1.0.6": {
                 "en": "Minor fixes",
@@ -339,6 +351,10 @@
                 "interval": "M"
             },
             {
+                "tag": "TAG_EP_REQ_EP_RESERVE",
+                "interval": "M"
+            },
+            {
                 "tag": "TAG_PVI_REQ_ON_GRID",
                 "interval": "M"
             },
@@ -449,6 +465,10 @@
             {
                 "tag": "TAG_PVI_REQ_DC_STRING_ENERGY_ALL",
                 "interval": "M"
+            },
+            {
+                "tag": "TAG_BAT_REQ_INFO",
+                "interval": "L"
             },
             {
                 "tag": "TAG_BAT_REQ_MAX_BAT_VOLTAGE",
@@ -564,6 +584,10 @@
             },
             {
                 "tag": "TAG_WB_REQ_STATUS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_WB_REQ_CONNECTED_DEVICES",
                 "interval": "M"
             },
             {
