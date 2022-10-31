@@ -1594,11 +1594,15 @@ class E3dcRscp extends utils.Adapter {
 		// Statically, we define only one device per supported RSCP namespace,
 		// plus some setter objects which would not appear before first setting.
 		// The rest of the object tree is defined dynamically.
+		//
 		this.language = "en";
 		this.getForeignObject("system.config", (err, systemConfig) => {
 			if( systemConfig ) this.language = systemConfig.common.language;
 		});
-		await this.setObjectNotExistsAsync("info", {
+		// For some objects, we use setObjectNotExists instead of setObjectNotExistsAsync
+		// to avoid "has no existing objects" warning in the adapter log
+		//
+		await this.setObjectNotExists("info", {
 			type: "channel",
 			common: {
 				name: systemDictionary["Information"][this.language],
@@ -1606,7 +1610,7 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("info.connection", {
+		await this.setObjectNotExists("info.connection", {
 			type: "state",
 			common: {
 				name: systemDictionary["Connected"][this.language],
@@ -1617,11 +1621,23 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("RSCP", {
+		await this.setObjectNotExists("RSCP", {
 			type: "device",
 			common: {
 				name: systemDictionary["RSCP"][this.language],
 				role: "communication.protocol",
+			},
+			native: {},
+		});
+		await this.setObjectNotExists( "RSCP.AUTHENTICATION", {
+			type: "state",
+			common: {
+				name: systemDictionary["AUTHENTICATION"][this.language],
+				type: "number",
+				role: "value",
+				read: true,
+				write: false,
+				unit: rscpTag[rscpTagCode["TAG_RSCP_AUTHENTICATION"]].Unit,
 			},
 			native: {},
 		});
