@@ -1617,7 +1617,7 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("RSCP", {
+		await this.setObjectNotExists("RSCP", {
 			type: "device",
 			common: {
 				name: systemDictionary["RSCP"][this.language],
