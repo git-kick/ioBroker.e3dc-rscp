@@ -1625,6 +1625,18 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
+		await this.setObjectNotExistsAsync( "RSCP.AUTHENTICATION", {
+			type: "state",
+			common: {
+				name: systemDictionary["AUTHENTICATION"][this.language],
+				type: "number",
+				role: "value",
+				read: true,
+				write: false,
+				unit: rscpTag[rscpTagCode["TAG_RSCP_AUTHENTICATION"]].Unit,
+			},
+			native: {},
+		});
 		if( this.config.query_bat ) {
 			await this.setObjectNotExistsAsync("BAT", {
 				type: "device",
