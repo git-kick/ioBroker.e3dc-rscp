@@ -589,9 +589,9 @@ class E3dcRscp extends utils.Adapter {
 			return;
 		}
 		const tagCode = rscpTagCode[tag];
-		if (this.pollingInterval[tagCode] == "" && tag.contains("_REQ_")) {
-			this.log.warn(`${tag} has no assigned polling interval  - assuming 'M' - assignment should be added to io-package.json`);
-			this.pollingInterval[tagCode] == "M";
+		if( sml != "" && !Object.keys(this.pollingInterval).includes(tagCode) && tag.includes("_REQ_") && !tag.endsWith("_COUNT") ) {
+			this.log.warn(`${tag} has no assigned polling interval  - assuming 'M' - please check io-package.json`);
+			this.pollingInterval[tagCode] = "M";
 		}
 		if (sml == "" || this.pollingInterval[tagCode] == sml) {
 			const typeCode = parseInt(rscpTag[tagCode].DataTypeHex, 16);
@@ -704,9 +704,9 @@ class E3dcRscp extends utils.Adapter {
 			return 0;
 		}
 		const tagCode = rscpTagCode[tag];
-		if (sml == "" || this.pollingInterval[tagCode] == "" || this.pollingInterval[tagCode] == sml) {
-			const typeCode = parseInt(rscpTag[tagCode].DataTypeHex, 16);
-			if (rscpType[typeCode] != "Container") {
+		if( sml == "" || !Object.keys(this.pollingInterval).includes(tagCode) || this.pollingInterval[tagCode] == sml ) {
+			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
+			if( rscpType[typeCode] != "Container") {
 				this.log.warn(`Non-container tag ${tag} passed to startContainer - cannot start container.`);
 				return 0;
 			}
@@ -1595,11 +1595,15 @@ class E3dcRscp extends utils.Adapter {
 		// Statically, we define only one device per supported RSCP namespace,
 		// plus some setter objects which would not appear before first setting.
 		// The rest of the object tree is defined dynamically.
+		//
 		this.language = "en";
 		this.getForeignObject("system.config", (err, systemConfig) => {
 			if (systemConfig) this.language = systemConfig.common.language;
 		});
-		await this.setObjectNotExistsAsync("info", {
+		// For some objects, we use setObjectNotExists instead of setObjectNotExistsAsync
+		// to avoid "has no existing objects" warning in the adapter log
+		//
+		await this.setObjectNotExists("info", {
 			type: "channel",
 			common: {
 				name: systemDictionary["Information"][this.language],
@@ -1607,7 +1611,7 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("info.connection", {
+		await this.setObjectNotExists("info.connection", {
 			type: "state",
 			common: {
 				name: systemDictionary["Connected"][this.language],
@@ -1618,7 +1622,7 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		await this.setObjectNotExistsAsync("RSCP", {
+		await this.setObjectNotExists("RSCP", {
 			type: "device",
 			common: {
 				name: systemDictionary["RSCP"][this.language],
@@ -1626,7 +1630,19 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		});
-		if (this.config.query_bat) {
+		await this.setObjectNotExists( "RSCP.AUTHENTICATION", {
+			type: "state",
+			common: {
+				name: systemDictionary["AUTHENTICATION"][this.language],
+				type: "number",
+				role: "value",
+				read: true,
+				write: false,
+				unit: rscpTag[rscpTagCode["TAG_RSCP_AUTHENTICATION"]].Unit,
+			},
+			native: {},
+		});
+		if( this.config.query_bat ) {
 			await this.setObjectNotExistsAsync("BAT", {
 				type: "device",
 				common: {
