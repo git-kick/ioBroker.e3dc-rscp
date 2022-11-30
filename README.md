@@ -91,8 +91,10 @@ Here is what to configure when creating a new instance of the adapter. Settings 
   </tr>
   <tr>
     <td>Polling interval long [h]</td>
-    <td>Define how often ioBroker will request state updates from E3/DC for rarely or never modified variables.</td>
+    <td>Define how often ioBroker will request state updates from E3/DC for rarely modified variables.</td>
   </tr>
+    <td>Polling interval never [n]</td>
+    <td>Define that ioBroker will never request state updates from E3/DC for variables.</td>
   <tr>
     <td>Request tag table</td>
     <td>Assign single request tags to S/M/L polling intervals. <br>Note that there is no 1:1 mapping between states in the object tree and items in the polling intervals list. Reasons are various: sometimes the response is empty (often true for EMS_REQ_STORED_ERRORS), then no state will appear in the object tree. Sometimes we choose one common name for "getter" and "setter" (e.g. EMS_USER_CHARGE_LIMIT response is written to EMS_MAX_CHARGE_POWER state). Also, the E3/DC's response may contain more than one tag (e.g. a BAT_REQ_INFO request will deliver BAT_RSOC, BAT_MODULE_VOLTAGE, BAT_CURRENT and more).</td>
