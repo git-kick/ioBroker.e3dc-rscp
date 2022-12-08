@@ -33,6 +33,25 @@
 		"semi": [
 			"error",
 			"always"
+		],
+		"object-curly-spacing": [
+			"error",
+			"always",
+			{
+				"arraysInObjects": true,
+				"objectsInObjects": true
+			}
+		],
+		"array-bracket-spacing": [
+			"error",
+			"never",
+			{
+				"singleValue": false
+			}
+		],
+		"space-in-parens": [
+			"error",
+			"always"
 		]
 	},
 	"parserOptions": {
