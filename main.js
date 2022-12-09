@@ -289,6 +289,12 @@ const mapChangedIdToSetTags = {
 	"DB.HISTORY_DATA_YEAR.*": [],
 	"SYS.SYSTEM_REBOOT": ["", "TAG_SYS_REQ_SYSTEM_REBOOT"],
 	"SYS.RESTART_APPLICATION": ["", "TAG_SYS_REQ_RESTART_APPLICATION"],
+	"WB.*.SUNMODE": [],
+	"WB.*.POWER_LIMITATION": [],
+	"WB.*.PRECHARGE": [],
+	"WB.*.TOGGLE_PHASES": [],
+	"WB.*.ABORT_CHARGING_TYP2": [],
+	//"WB.*.REQ_SET_EXTERN": ["TAG_WB_SET_EXTERN","TAG_WB_EXTERN_DATA"],
 	//"EP.*.PARAM_EP_RESERVE": ["", "TAG_EP_REQ_SET_EP_RESERVE"],   -- does not work properly as setter tag, perhaps a container is needed?
 };
 // RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
@@ -992,7 +998,90 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_INTERVAL", "", 1800 );
 		this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_SPAN", "", 86400 );
 		this.endContainer( pos );
-		this.pushFrame();
+		this.pushFrame( );
+	}
+
+	// Set Wallbox Data
+	queueWbSetData( id ) {
+		this.log.debug( "State changed: " + id );
+		const baseId = id.substr( 0, id.lastIndexOf( "." ) );
+		// Expects EXTERN_DATA (length 6) and EXTERN_DATA_LEN =6 /
+		// Byte 1: 1-Sonnenmode / 2-Mischmode /
+		// Byte 2: Strombegrenzung für alle  / Modes, [1 ? 32] A /
+		// Byte 3:  PreCharge (1: +5% / 2: -5%) /numPhases
+		// Byte 4: > 0: Anzahl Phasen tauschen  /
+		// Byte 5: > 0: Typ2, Laden abbrechen /
+		// Byte 6: > 0: Schuko, Best�tigung für ?AN?  /
+		// SUNMODE
+		this.getState( baseId + ".SUNMODE" , ( err, sunmodeState ) => {
+			if ( err ) {
+				this.log.error( err.message );
+			}
+			const sunmodeVal = ( sunmodeState ? sunmodeState.val : 0 );
+			const sunmode = toHex( sunmodeVal );
+			this.log.debug( "sunmode: " + sunmode );
+			this.setState( baseId + ".SUNMODE", sunmodeVal, true );
+			// Power_Limitation
+			this.getState( baseId + ".POWER_LIMITATION" , ( err, powerLimitationState ) => {
+				if ( err ) {
+					this.log.error( err.message );
+				}
+				const powerLimitationVal = ( powerLimitationState ? powerLimitationState.val : 10 );
+				const powerLimitation = toHex( powerLimitationVal );
+				this.log.debug( "powerLimitationVal: " + powerLimitation );
+				this.setState( baseId + ".POWER_LIMITATION", powerLimitationVal, true );
+				// Precharge
+				this.getState( baseId + ".PRECHARGE" , ( err, prechargeState ) => {
+					if ( err ) {
+						this.log.error( err.message );
+					}
+					const prechargeVal = ( prechargeState ? prechargeState.val : 10 );
+					const precharge = toHex( prechargeVal );
+					this.log.debug( "prechargeVal: " + precharge );
+					this.setState( baseId + ".PRECHARGE", prechargeVal, true );
+					// Toggle Phases 1->3, 3->1
+					this.getState( baseId + ".TOGGLE_PHASES" , ( err, togglePhasesState ) => {
+						if ( err ) {
+							this.log.error( err.message );
+						}
+						const togglePhasesVal = ( togglePhasesState ? togglePhasesState.val : 0 );
+						const togglePhases = toHex( togglePhasesVal );
+						this.log.debug( "togglePhasesVal: " + togglePhasesVal );
+						// Reset toggle phases
+						this.setState( baseId + ".TOGGLE_PHASES", 0, true );
+						// Abort Charging Typ2 Plug
+						this.getState( baseId + ".ABORT_CHARGING_TYP2" , ( err, abortChargingState ) => {
+							if ( err ) {
+								this.log.error( err.message );
+							}
+							const abortChargingVal = ( abortChargingState ? abortChargingState.val : 0 );
+							const abortCharging = toHex( abortChargingVal );
+							this.log.debug( "abortChargingVal: " + abortChargingVal );
+							// reset abort charging
+							this.setState( baseId + ".ABORT_CHARGING_TYP2", 0, true );
+							// schuko unklar, zunächst ignorieren
+							const schuko = "00";
+							const str = sunmode + " " + powerLimitation + " " + precharge  + " " + togglePhases  + " " + abortCharging  + " " + schuko;
+							this.log.debug( "String: " + str );
+							const buf = stringToBuffer( str );
+							// Construct Frame
+							this.clearFrame( );
+							const c1 = this.startContainer( "TAG_WB_REQ_DATA" );
+							this.addTagtoFrame( "TAG_WB_INDEX", "", 0 ); // Index der Wallbox = 0
+							const c2 = this.startContainer( "TAG_WB_REQ_SET_EXTERN" );
+							this.addTagtoFrame( "TAG_WB_EXTERN_DATA", "", str );
+							this.log.debug( "Buffer : " + buf );
+							this.addTagtoFrame( "TAG_WB_EXTERN_DATA_LEN", "",6 ); // Länge des bytearray
+							this.endContainer( c2 );
+							this.endContainer( c1 );
+							this.pushFrame( c1 );
+							this.log.debug( "WB-Frame : " + printRscpFrame( this.frame ) );
+
+						} ) ;
+					} ) ;
+				} ) ;
+			} ) ;
+		} );
 	}
 
 	queueSetValue( globalId, value ) {
@@ -1760,6 +1849,89 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+			// Just support one Wallbox with Index 0
+			const wbPath = "WB.WB_0";
+			await this.setObjectNotExistsAsync( wbPath + ".SUNMODE", {
+				type: "state",
+				common: {
+					name: systemDictionary["SUNMODE"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "",
+					states: {
+						"1": "SUNMODE",
+						"2": "MIXEDMODE"
+					},
+					def: "1"
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( wbPath + ".POWER_LIMITATION", {
+				type: "state",
+				common: {
+					name: systemDictionary["POWER_LIMITATION"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "A",
+					def: "10"
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( wbPath + ".PRECHARGE", {
+				type: "state",
+				common: {
+					name: systemDictionary["PRECHARGE"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "",
+					states: {
+						"1": "+5%",
+						"2": "-5%"
+					},
+					def: "1"
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( wbPath + ".TOGGLE_PHASES", {
+				type: "state",
+				common: {
+					name: systemDictionary["TOGGLE_PHASES"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "",
+					states: {
+						"0": "NO",
+						"1": "YES"
+					},
+					def: "0"
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( wbPath + ".ABORT_CHARGING_TYP2", {
+				type: "state",
+				common: {
+					name: systemDictionary["ABORT_CHARGING_TYP2"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "",
+					states: {
+						"0": "NO",
+						"1": "YES"
+					},
+					def: "0"
+				},
+				native: {},
+			} );
 		}
 		if ( this.config.query_db ) {
 			await this.setObjectNotExistsAsync( "DB", {
@@ -1895,16 +2067,21 @@ class E3dcRscp extends utils.Adapter {
 					this.getState( "SYS.RESTART_APPLICATION", ( err, restart ) => {
 						this.queueSysRestartApplication( restart ? restart.val : false );
 					} );
-				} else if( id.includes( "IDLE_PERIOD" ) ) {
+				} else if ( id.includes( ".WB.WB_0." ) ) {
+					this.queueWbSetData( id );
+				} else if ( id.includes( "IDLE_PERIOD" ) ) {
 					this.queueSetIdlePeriod( id );
 				} else if ( id.includes( "HISTORY_DATA" ) ) {
 					this.queueGetHistoryData( id );
 				} else {
 					this.queueSetValue( id, state.val );
 				}
-			} else if ( id.endsWith( "RSCP.AUTHENTICATION" ) && state.val == 0 ) {
-				this.setState( "info.connection", false, true );
-				this.log.warn( `E3/DC authentication failed` );
+			}
+			else {
+				if ( id.endsWith( "RSCP.AUTHENTICATION" ) && state.val == 0 ) {
+					this.setState( "info.connection", false, true );
+					this.log.warn( `E3/DC authentication failed` );
+				}
 			}
 		} else {
 			this.log.debug( `state ${id} deleted` );
@@ -2116,6 +2293,10 @@ function roundForReadability( n ) {
 		const p = Math.pow( 10, s - d );
 		return Math.round( n * p ) / p;
 	}
+}
+
+function toHex( d ) {
+	return  ( "0"+( Number( d ).toString( 16 ) ) ).slice( -2 ).toUpperCase();
 }
 
 // Timestamps are stringified like "2022-01-30 12:00:00.000"
