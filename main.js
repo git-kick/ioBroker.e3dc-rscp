@@ -1041,9 +1041,9 @@ class E3dcRscp extends utils.Adapter {
 
 	// Set Wallbox Data
 	queueWbSetData( id ) {
-		this.log.debug( "State changed: " + id );
+		this.log.silly( "State changed: " + id );
 		const baseId = id.substr( 0, id.lastIndexOf( "." ) );
-		this.log.debug( "baseId: " + baseId );
+		this.log.silly( "baseId: " + baseId );
 		// Expects EXTERN_DATA (length 6) and EXTERN_DATA_LEN =6 /
 		// Byte 1: 1-Sonnenmode / 2-Mischmode /
 		// Byte 2: Strombegrenzung für alle  / Modes, [1 ? 32] A /
@@ -1095,13 +1095,13 @@ class E3dcRscp extends utils.Adapter {
 							}
 							const abortChargingVal = ( abortChargingState ? abortChargingState.val : 0 );
 							const abortCharging = toHex( abortChargingVal );
-							this.log.debug( "abortChargingVal: " + abortChargingVal );
+							this.log.silly( "abortChargingVal: " + abortChargingVal );
 							// reset abort charging
 							this.setState( baseId + ".ToggleChargingTyp2", 0, true );
 							// schuko unklar, zunächst ignorieren
 							const schuko = "00";
 							const str = sunmode + " " + powerLimitation + " " + precharge + " " + togglePhases + " " + abortCharging + " " + schuko;
-							this.log.debug( "String: " + str ); //ToDo
+							this.log.silly( "String: " + str ); //ToDo
 							const buf = stringToBuffer( str );
 							// Construct Frame
 							this.clearFrame();
@@ -1109,12 +1109,12 @@ class E3dcRscp extends utils.Adapter {
 							this.addTagtoFrame( "TAG_WB_INDEX", "", 0 ); // Index der Wallbox = 0
 							const c2 = this.startContainer( "TAG_WB_REQ_SET_EXTERN" );
 							this.addTagtoFrame( "TAG_WB_EXTERN_DATA", "", str );
-							this.log.debug( "Buffer : " + buf ); //ToDo
+							this.log.silly( "Buffer : " + buf ); //ToDo
 							this.addTagtoFrame( "TAG_WB_EXTERN_DATA_LEN", "", 6 ); // Länge des bytearray
 							this.endContainer( c2 );
 							this.endContainer( c1 );
 							this.pushFrame( c1 );
-							this.log.debug( "WB-Frame : " + printRscpFrame( this.frame ) ); //ToDo
+							this.log.silly( "WB-Frame : " + printRscpFrame( this.frame ) ); //ToDo
 
 						} );
 					} );
@@ -1296,7 +1296,7 @@ class E3dcRscp extends utils.Adapter {
 				this.log.warn( `sendFrame called with invalid content: first tag is ${f.readUInt32LE( 18 )}` );
 			}
 			this.log.silly( `OUT: ${printRscpFrame( f )}` );
-			//this.log.debug( dumpRscpFrame(f) );// change back
+			this.log.silly( dumpRscpFrame( f ) );
 
 			const encryptedFrame = Buffer.from( this.cipher.encrypt( f, 256, this.encryptionIV ) );
 			// last encrypted block will be used as IV for next frame
@@ -1645,22 +1645,6 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
-			/*
-			this.setObjectNotExists( wbPath + ".Control.Precharge", {
-				type: "state",
-				common: {
-					name: systemDictionary["Precharge"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "",
-					states: rscpWbPrecharge,
-					def: 0
-				},
-				native: {},
-			} );
-			*/
 			this.setObjectNotExists( wbPath + ".Control.TogglePhases", {
 				type: "state",
 				common: {
@@ -1702,34 +1686,6 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
-			/*
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_SUN.SunEnergy", {
-				type: "state",
-				common: {
-					name: systemDictionary["SunEnergy"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "Wh",
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_SUN.SunAmount", {
-				type: "state",
-				common: {
-					name: systemDictionary["SunAmount"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "%",
-					def: 0
-				},
-				native: {},
-			} );
-			*/
 			this.setObjectNotExists( wbPath + ".EXTERN_DATA_NET.NetPower", {
 				type: "state",
 				common: {
@@ -1743,34 +1699,6 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
-			/*
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_NET.NetEnergy", {
-				type: "state",
-				common: {
-					name: systemDictionary["NetEnergy"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "Wh",
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_NET.NetAmount", {
-				type: "state",
-				common: {
-					name: systemDictionary["NetAmount"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "%",
-					def: 0
-				},
-				native: {},
-			} );
-			*/
 			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALL.AllPower", {
 				type: "state",
 				common: {
@@ -1784,34 +1712,6 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
-			/*
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALL.AllEnergy", {
-				type: "state",
-				common: {
-					name: systemDictionary["AllEnergy"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "Wh",
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALL.AllAmount", {
-				type: "state",
-				common: {
-					name: systemDictionary["AllAmount"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "%",
-					def: 0
-				},
-				native: {},
-			} );
-			*/
 			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.CarLoading", {
 				type: "state",
 				common: {
@@ -1868,48 +1768,6 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
-			/*
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.SchukoConnected", {
-				type: "state",
-				common: {
-					name: systemDictionary["SchukoConnected"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "",
-					states: rscpBool,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.SchukoActive", {
-				type: "state",
-				common: {
-					name: systemDictionary["SchukoActive"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "",
-					states: rscpBool,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.Precharge", {
-				type: "state",
-				common: {
-					name: systemDictionary["PrechargePercent"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "%",
-					def: 0
-				},
-				native: {},
-			} );*/
 			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.SunMode", {
 				type: "state",
 				common: {
@@ -1967,115 +1825,51 @@ class E3dcRscp extends utils.Adapter {
 				this.log.silly( "ExternData shortId : " + shortId );
 				this.log.silly( "ExternData Content : " + token.content );
 				container = shortId.split( "." )[1];
-				//this.log.debug( "Container : " + shortId.split( "." )[1] );
 				this.log.silly( "Container : " + container );
 				let extData = [];
 				switch ( container ) {
 					case "EXTERN_DATA_SUN":
-						/*
-						Spezifikation : contains EXTERN_DATA (length 7) and EXTERN_DATA_LEN =7 /
-										Byte 1-2: uint16, Sonnenleistung in [W] /
-										Byte 3-6: uint32, Sonnenenergie in [Wh] /
-										Byte 7: uint8, Sonnenmenge in [%] /
-						Beispiel      : 00 00 3E 95 00 00 64 00
-						Achtung       : entgegen der Spezifikation werden 8 Byte geliefert
-						*/
 						extData = token.content.split( " " );
 						this.log.silly( "EXTERN_DATA_SUN : " + JSON.stringify( extData ) );
 						this.log.silly( "SunPower[W] : " + parseInt( extData[1]+extData[2],16 ) );
 						this.setState( wbPath + ".EXTERN_DATA_SUN.SunPower",parseInt( extData[1]+extData[0],16 ),true );
-						/*this.log.silly( "SunEnergy[Wh] : " + parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_SUN.SunEnergy",parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) ,true );
-						this.log.silly( "SunAmount[%] : " + parseInt( extData[6],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_SUN.SunAmount",parseInt( extData[6],16 ),true );*/
 						break;
 					case "EXTERN_DATA_NET":
-						/*
-						Spezifikation : contains EXTERN_DATA (length 7) and EXTERN_DATA_LEN =7 /
-										Byte 1-2: uint16, Netzleistung in [W] /
-										Byte 3-6: uint32, Netzenergie in [Wh] /
-										Byte 7: uint8, Netzmenge in [%] /
-						Beispiel      : 00 00 99 F0 03 00 00 00
-						*/
 						extData = token.content.split( " " );
 						this.log.silly( "EXTERN_DATA_NET : " + JSON.stringify( extData ) );
 						this.log.silly( "NetPower[W] : " + parseInt( extData[1]+extData[2],16 ) );
 						this.setState( wbPath + ".EXTERN_DATA_NET.NetPower",parseInt( extData[1]+extData[0],16 ),true );
-						/*this.log.silly( "NetEnergy[Wh] : " + parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_NET.NetEnergy",parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) ,true );
-						this.log.silly( "NetAmount[%] : " + parseInt( extData[6],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_NET.NetAmount",parseInt( extData[6],16 ),true );*/
 						break;
 					case "EXTERN_DATA_ALL":
-						/*
-						Spezifikation : contains EXTERN_DATA (length 7) and EXTERN_DATA_LEN =7 /
-										Byte 1-2: uint16, Gesamtleistung in [W] /
-										Byte 3-6: uint32, Gesamtenergie in [Wh] /
-										Byte 7: uint8, Gesamtmenge in [%] /
-						Beispiel      : 00 00 D7 85 04 00 00 64
-						*/
 						extData = token.content.split( " " );
 						this.log.silly( "EXTERN_DATA_ALL : " + JSON.stringify( extData ) );
 						this.log.silly( "TotalPower[W] : " + parseInt( extData[1]+extData[2],16 ) );
 						this.setState( wbPath + ".EXTERN_DATA_ALL.AllPower",parseInt( extData[1]+extData[0],16 ),true );
-						/*this.log.silly( "TotalEnergy[Wh] : " + parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALL.AllEnergy",parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) ,true );
-						this.log.silly( "TotalAmount[%] : " + parseInt( extData[6],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALL.AllAmount",parseInt( extData[6],16 ),true );*/
 						break;
 					case "EXTERN_DATA_ALG":
-						/*
-						Spezifikation : contains EXTERN_DATA (length 7) and EXTERN_DATA_LEN =7 /
-										Byte 1: uint8, PreCharge in [%] /
-										Byte 2: uint8, 1: Sonnenmode, 0: Misch. / 3 = ????
-										Byte 3: uint8, 1: Auto lädt, 0: lädt nicht / Begrenzung der Ladeleistung!
-										Byte 4: uint8, 1: Typ2 verriegelt, 0: entr. /
-										Byte 5: uint8, Anzahl akt. Phasen [0-3] /
-										Byte 6: uint4 low, 1: Schuko belegt / uint4 high, 1: Schuko an  /
-						Erfahrung	  : Byte 2: uint8, Anzahl Phasen - OK
-										Byte 3: Sonnenmodus - Bit 7 = Ja/Nein - OK
-										Byte 4: Ladeleistung - OK
-						Beispiel      : 64 03 80 0A 00 00 00 00
-						*/
 						extData = token.content.split( " " );
 						this.log.silly( "EXTERN_DATA_ALG : " + JSON.stringify( extData ) );
 
-						// Byte 1 SOC/Ladezustand oder PreCharge?
-						/*
-						this.log.debug( "PreCharge[%] : " + parseInt( extData[0],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALG.Precharge",parseInt( extData[0],16 ),true );
-						*/
-
-						// Byte 2 Aktive Phasen - OK
+						// Byte 2 Aktive Phasen
 						this.log.silly( "ActivePhases : " + parseInt( extData[1],16 ) );
 						this.setState( wbPath + ".EXTERN_DATA_ALG.ActivePhases",parseInt( extData[1],16 ),true );
 
-						// Byte 3
-						// 128, Bit 7 = Ja/Nein - Sonnemodus - OK
-						//  64, Bit 6 = Ja/Nein - Typ2Locked
-						//  32, Bit 5 = Ja/Nein - CarLoading
-						this.log.debug( "WB-Status : " + parseInt( extData[1],16 ) );
+						// Byte 3 WB-Status
+						this.log.silly( "WB-Status : " + parseInt( extData[1],16 ) );
+						this.log.silly( "SunMode : " + ( ( parseInt( extData[2],16 ) & 128 ) == 128 ? 1:2 ) ) ;
 						this.setState( wbPath + ".EXTERN_DATA_ALG.SunMode",( parseInt( extData[2],16 ) & 128 ) == 128 ? 1:2,true );
 						this.setState( wbPath + ".Control.SunMode",( parseInt( extData[2],16 ) & 128 ) == 128 ? 1:2,true );
-						this.log.debug( "CarLoadingCanceled : " + ( ( parseInt( extData[2],16 ) & 64 ) == 64 ? 1:0 ) );
+						this.log.silly( "CarLoadingCanceled : " + ( ( parseInt( extData[2],16 ) & 64 ) == 64 ? 1:0 ) );
 						this.setState( wbPath + ".EXTERN_DATA_ALG.CarLoadingCanceled",( parseInt( extData[2],16 ) & 64 ) == 64 ? 1:0,true );
-						this.log.debug( "CarLoading : " + ( ( parseInt( extData[2],16 ) & 32 ) == 32 ? 1:0 ) );
+						this.log.silly( "CarLoading : " + ( ( parseInt( extData[2],16 ) & 32 ) == 32 ? 1:0 ) );
 						this.setState( wbPath + ".EXTERN_DATA_ALG.CarLoading",( parseInt( extData[2],16 ) & 32 ) == 32 ? 1:0,true );
-						this.log.debug( "Typ2Locked : " + ( ( parseInt( extData[2],16 ) & 8 ) == 8 ? 1:0 ) );
+						this.log.silly( "Typ2Locked : " + ( ( parseInt( extData[2],16 ) & 8 ) == 8 ? 1:0 ) );
 						this.setState( wbPath + ".EXTERN_DATA_ALG.Typ2Locked",( parseInt( extData[2],16 ) & 8 ) == 8 ? 1:0,true );
 
 						//Byte 4 : Ladeleistung - OK bei DEVICE_NAME "Easy Connect"
-						this.log.debug( "PowerLimitation : " + parseInt( extData[3],16 ) );
+						this.log.silly( "PowerLimitation : " + parseInt( extData[3],16 ) );
 						this.setState( wbPath + ".EXTERN_DATA_ALG.PowerLimitation",parseInt( extData[3],16 ),true );
 						this.setState( wbPath + ".Control.PowerLimitation",parseInt( extData[3],16 ),true );
-
-						// Byte 5
-
-						// Byte 6
-						/*this.log.debug( "SchukoConnected : " + parseInt( extData[5],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALG.SchukoConnected",parseInt( extData[5],16 ),true );
-						this.log.debug( "SchukoActive : " + parseInt( extData[5].substr( 4,4 ),16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALG.SchukoActive",parseInt( extData[5].substr( 0,4 ),16 ),true );*/
 						break;
 					default:
 						break;
