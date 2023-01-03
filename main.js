@@ -6,7 +6,7 @@ const fs = require( "fs" );
 const path = require( "path" );
 // eslint-disable-next-line prefer-const
 let systemDictionary = {};
-eval( fs.readFileSync( path.join( __dirname,"/admin/words.js" ) ).toString( ) );
+eval( fs.readFileSync( path.join( __dirname, "/admin/words.js" ) ).toString() );
 
 const dayOfWeek = [
 	"Monday",
@@ -19,9 +19,9 @@ const dayOfWeek = [
 ];
 
 // RSCP constants & lookup tables
-const rscpTag = require( path.join( __dirname,"/lib/RscpTags.json" ) );
+const rscpTag = require( path.join( __dirname, "/lib/RscpTags.json" ) );
 const rscpTagCode = {}; // maps string to code
-for( const i in rscpTag ) rscpTagCode[rscpTag[i].TagNameGlobal] = i;
+for ( const i in rscpTag ) rscpTagCode[rscpTag[i].TagNameGlobal] = i;
 
 const rscpType = {
 	0x00: "None",
@@ -44,7 +44,7 @@ const rscpType = {
 	0xFF: "Error"
 };
 const rscpTypeCode = {};  // maps string to code
-for( const i in rscpType ) rscpTypeCode[rscpType[i]] = i;
+for ( const i in rscpType ) rscpTypeCode[rscpType[i]] = i;
 
 // Mapping RSCP tag data type to state.common.type
 const rscpTypeMap = {
@@ -156,6 +156,33 @@ const rscpWbMode = {
 	128: "LOADING",
 	144: "NOT_LOADING",
 };
+
+const rscpWbTyp2Locked = {
+	0: "UNLOCKED",
+	1: "LOCKED",
+	16: "NOT_CONNECTED"
+};
+
+const rscpWbSunmode = {
+	"1": "SUNMODE",
+	"2": "MIXEDMODE",
+};
+
+const rscpWbPrecharge = {
+	"1": "+5%",
+	"2": "-5%",
+};
+
+const rscpBool = {
+	0: "NO",
+	1: "YES",
+};
+
+const rscpWBActivePhases = {
+	1: "1-Phase",
+	3: "3-Phase",
+};
+
 const rscpActivePhases = {
 	0: "PHASE_000",
 	1: "PHASE_001",
@@ -174,59 +201,59 @@ const rscpSysSystemReboot = {
 
 /* RSCP enumerations for later use:
 const rscpReturnCodes = {
-    0: "OK",
-    -1: "ERR_INVALID_INPUT",
-    -2: "ERR_NO_MEMORY",
-    -3: "ERR_INVALID_MAGIC",
-    -4: "ERR_PROT_VERSION_MISMATCH",
-    -5: "ERR_INVALID_FRAME_LENGTH",
-    -6: "ERR_INVALID_CRC",
-    -7: "ERR_DATA_LIMIT_EXCEEDED",
+	0: "OK",
+	-1: "ERR_INVALID_INPUT",
+	-2: "ERR_NO_MEMORY",
+	-3: "ERR_INVALID_MAGIC",
+	-4: "ERR_PROT_VERSION_MISMATCH",
+	-5: "ERR_INVALID_FRAME_LENGTH",
+	-6: "ERR_INVALID_CRC",
+	-7: "ERR_DATA_LIMIT_EXCEEDED",
 }
 const rscpEmsSetEmergencyPower = {
-    0: "NORMAL_GRID_MODE",
-    1: "EMERGENCY_MODE",
-    2: "ISLAND_NO_POWER_MODE",
+	0: "NORMAL_GRID_MODE",
+	1: "EMERGENCY_MODE",
+	2: "ISLAND_NO_POWER_MODE",
 };
 const rscpEmsGeneratorState = {
-    0x00: "IDLE",
-    0x01: "HEATUP",
-    0x02: "HEATUPDONE",
-    0x03: "STARTING",
-    0x04: "STARTINGPAUSE",
-    0x05: "RUNNING",
-    0x06: "STOPPING",
-    0x07: "STOPPED",
-    0x10: "RELAISCONTROLMODE",
-    0xFF: "NO_GENERATOR",
+	0x00: "IDLE",
+	0x01: "HEATUP",
+	0x02: "HEATUPDONE",
+	0x03: "STARTING",
+	0x04: "STARTINGPAUSE",
+	0x05: "RUNNING",
+	0x06: "STOPPING",
+	0x07: "STOPPED",
+	0x10: "RELAISCONTROLMODE",
+	0xFF: "NO_GENERATOR",
 };
 const rscpPmType = {
-    0: "UNDEFINED",
-    1: "ROOT",
-    2: "ADDITIONAL",
-    3: "ADDITIONAL_PRODUCTION",
-    4: "ADDITIONAL_CONSUMPTION",
-    5: "FARM",
-    6: "UNUSED",
-    7: "WALLBOX",
-    8: "FARM_ADDITIONAL",
+	0: "UNDEFINED",
+	1: "ROOT",
+	2: "ADDITIONAL",
+	3: "ADDITIONAL_PRODUCTION",
+	4: "ADDITIONAL_CONSUMPTION",
+	5: "FARM",
+	6: "UNUSED",
+	7: "WALLBOX",
+	8: "FARM_ADDITIONAL",
 };
 const rscpPmMode = {
-    0: "ACTIVE",
-    1: "PASSIVE",
-    2: "DIAGNOSE",
-    3: "ERROR_ACTIVE",
-    4: "ERROR_PASSIVE",
+	0: "ACTIVE",
+	1: "PASSIVE",
+	2: "DIAGNOSE",
+	3: "ERROR_ACTIVE",
+	4: "ERROR_PASSIVE",
 };
 const rscpUmUpdateStatus = {
-    0: "IDLE",
-    1: "UPDATE_CHECK_RUNNING",
-    2: "UPDATING_MODULES_AND_FILES",
-    3: "UPDATING_HARDWARE",
+	0: "IDLE",
+	1: "UPDATE_CHECK_RUNNING",
+	2: "UPDATING_MODULES_AND_FILES",
+	3: "UPDATING_HARDWARE",
 };
 const rscpWbType = {
-    1: "E3DC",
-    2: "EASYCONNECT",
+	1: "E3DC",
+	2: "EASYCONNECT",
 };
 */
 
@@ -289,11 +316,7 @@ const mapChangedIdToSetTags = {
 	"DB.HISTORY_DATA_YEAR.*": [],
 	"SYS.SYSTEM_REBOOT": ["", "TAG_SYS_REQ_SYSTEM_REBOOT"],
 	"SYS.RESTART_APPLICATION": ["", "TAG_SYS_REQ_RESTART_APPLICATION"],
-	"WB.*.SUNMODE": [],
-	"WB.*.POWER_LIMITATION": [],
-	"WB.*.PRECHARGE": [],
-	"WB.*.TOGGLE_PHASES": [],
-	"WB.*.ABORT_CHARGING_TYP2": [],
+	"WB.*.Control.*": [],
 	//"WB.*.REQ_SET_EXTERN": ["TAG_WB_SET_EXTERN","TAG_WB_EXTERN_DATA"],
 	//"EP.*.PARAM_EP_RESERVE": ["", "TAG_EP_REQ_SET_EP_RESERVE"],   -- does not work properly as setter tag, perhaps a container is needed?
 };
@@ -422,8 +445,8 @@ const { type } = require( "os" );
 class E3dcRscp extends utils.Adapter {
 
 	/**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
-     */
+	 * @param {Partial<utils.AdapterOptions>} [options={}]
+	 */
 	constructor( options ) {
 		super( {
 			...options,
@@ -459,28 +482,28 @@ class E3dcRscp extends utils.Adapter {
 		this.pollingInterval = []; // [tagCode]
 
 		// TCP connection:
-		this.tcpConnection = new Net.Socket( );
+		this.tcpConnection = new Net.Socket();
 		this.inBuffer = null;
 		this.reconnectTimeout = null;
 	}
 
 	// Create channel to E3/DC: encapsulating TCP connection, encryption, message queuing
-	initChannel( ) {
-		if( ! this.config.portal_user ) this.config.portal_user = "";
-		if( ! this.config.portal_password ) this.config.portal_password = "";
+	initChannel() {
+		if ( !this.config.portal_user ) this.config.portal_user = "";
+		if ( !this.config.portal_password ) this.config.portal_password = "";
 
 		this.aesKey = Buffer.alloc( KEY_SIZE, 0xFF );
 		this.encryptionIV = Buffer.alloc( BLOCK_SIZE, 0xFF );
 		this.decryptionIV = Buffer.alloc( BLOCK_SIZE, 0xFF );
-		if( this.aesKey.write( this.config.rscp_password ) > this.config.rscp_password.length ) this.log.error( "ERROR initializing AES-KEY!" );
+		if ( this.aesKey.write( this.config.rscp_password ) > this.config.rscp_password.length ) this.log.error( "ERROR initializing AES-KEY!" );
 		this.cipher = new Rijndael( this.aesKey, "cbc" );
 
-		this.queueRscpAuthentication( );
-		this.checkAuthTimeout = this.setTimeout( ( ) => {
+		this.queueRscpAuthentication();
+		this.checkAuthTimeout = this.setTimeout( () => {
 			this.getState( "RSCP.AUTHENTICATION", ( err, obj ) => {
 				const auth = obj ? obj.val : 0;
 				// @ts-ignore
-				if( auth < 10 ) {
+				if ( auth < 10 ) {
 					this.log.error( "Authentication against E3/DC failed - check adapter settings, then restart instance." );
 					this.setState( "info.connection", false, true );
 				}
@@ -488,79 +511,79 @@ class E3dcRscp extends utils.Adapter {
 		}, 5000 ); // check authentication success after 5 seconds - no retry.
 
 		this.setState( "info.connection", false, true );
-		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, ( ) => {
+		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
 			this.setState( "info.connection", true, true );
 			this.log.info( "Connection to E3/DC is established" );
-			this.sendFrameFIFO( );
+			this.sendFrameFIFO();
 		} );
 
 		this.tcpConnection.on( "data", ( data ) => {
 			this.setState( "info.connection", true, true );
 			// Use inBuffer to handle TCP fragmentation:
-			if( this.inBuffer ) {
+			if ( this.inBuffer ) {
 				this.inBuffer = Buffer.concat( [this.inBuffer, data] );
 			} else {
 				this.inBuffer = Buffer.from( data );
 			}
-			if( this.inBuffer && this.inBuffer.length % 32 == 0 ) {
+			if ( this.inBuffer && this.inBuffer.length % 32 == 0 ) {
 				const receivedFrame = Buffer.from( this.cipher.decrypt( this.inBuffer, 256, this.decryptionIV ) );
 				this.log.silly( "Received response" );
-				if( rscpTag[receivedFrame.readUInt32LE( 18 )] ) this.log.silly( rscpTag[receivedFrame.readUInt32LE( 18 )].TagNameGlobal );
-				if( this.decryptionIV ) this.inBuffer.copy( this.decryptionIV, 0, this.inBuffer.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
+				if ( rscpTag[receivedFrame.readUInt32LE( 18 )] ) this.log.silly( rscpTag[receivedFrame.readUInt32LE( 18 )].TagNameGlobal );
+				if ( this.decryptionIV ) this.inBuffer.copy( this.decryptionIV, 0, this.inBuffer.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
 				this.log.silly( `IN: ${printRscpFrame( receivedFrame )}` );
 				//this.log.debug( dumpRscpFrame(receivedFrame) );// change back
 				this.processFrame( receivedFrame );
-				this.sendFrameFIFO( );
+				this.sendFrameFIFO();
 				this.inBuffer = null;
 			} else {
 				this.log.silly( `inBuffer has length ${this.inBuffer.length} which is not a multiple of 256bit - waiting for next chunk...` );
 			}
 		} );
 
-		this.tcpConnection.on( "end", ( ) => {
+		this.tcpConnection.on( "end", () => {
 			this.setState( "info.connection", false, true );
 			this.log.warn( "Disconnected from E3/DC" );
-			this.reconnectChannel( );
+			this.reconnectChannel();
 		} );
 
-		this.tcpConnection.on( "close", ( ) => {
+		this.tcpConnection.on( "close", () => {
 			this.setState( "info.connection", false, true );
 			this.log.warn( "E3/DC connection closed" );
-			this.reconnectChannel( );
+			this.reconnectChannel();
 		} );
 
-		this.tcpConnection.on( "timeout", ( ) => {
+		this.tcpConnection.on( "timeout", () => {
 			this.setState( "info.connection", false, true );
 			this.log.info( "E3/DC connection timeout" );
-			this.reconnectChannel( );
+			this.reconnectChannel();
 		} );
 
-		this.tcpConnection.on( "error", ( ) => {
+		this.tcpConnection.on( "error", () => {
 			this.setState( "info.connection", false, true );
 			this.log.error( "E3/DC connection error" );
-			this.reconnectChannel( );
+			this.reconnectChannel();
 		} );
 
 		// Find out number of BAT units:
-		this.log.debug( `Probing for BAT units - 0..${this.batProbes-1}.` );
-		if( this.config.query_bat ) this.queueBatProbe( this.batProbes );
+		this.log.debug( `Probing for BAT units - 0..${this.batProbes - 1}.` );
+		if ( this.config.query_bat ) this.queueBatProbe( this.batProbes );
 		// Find out number of PVI units and sensors:
-		this.log.debug( `Probing for PVI units - 0..${this.pviProbes-1}.` );
-		if( this.config.query_pvi ) this.queuePviProbe( this.pviProbes );
+		this.log.debug( `Probing for PVI units - 0..${this.pviProbes - 1}.` );
+		if ( this.config.query_pvi ) this.queuePviProbe( this.pviProbes );
 		// Force some quick data requests for probing and building the object tree:
-		for( let i = 0; i < 5; i++ ) {
-			this.probingTimeout[i] = setTimeout( ( ) => {
+		for ( let i = 0; i < 5; i++ ) {
+			this.probingTimeout[i] = setTimeout( () => {
 				this.requestAllData( "" );
 			}, i * 1000 * 7 );
 		}
 
-		this.dataPollingTimerS = setInterval( ( ) => {
+		this.dataPollingTimerS = setInterval( () => {
 			this.requestAllData( "S" );
 		}, this.config.polling_interval_short * 1000 ); // seconds
-		this.dataPollingTimerM = setInterval( ( ) => {
+		this.dataPollingTimerM = setInterval( () => {
 			this.requestAllData( "M" );
 		}, this.config.polling_interval_medium * 1000 * 60 ); // minutes
-		this.dataPollingTimerL = setInterval( ( ) => {
+		this.dataPollingTimerL = setInterval( () => {
 			this.requestAllData( "L" );
 		}, this.config.polling_interval_long * 1000 * 3600 ); //hours
 
@@ -569,36 +592,36 @@ class E3dcRscp extends utils.Adapter {
 		} );
 	}
 
-	reconnectChannel( ) {
-		if( !this.reconnectTimeout ) {
+	reconnectChannel() {
+		if ( !this.reconnectTimeout ) {
 			this.log.info( "Stop communication with E3/DC and pause a minute before retry ..." );
-			this.tcpConnection.removeAllListeners( );
-			this.clearAllIntervals( );
-			this.reconnectTimeout = setTimeout( ( ) => {
+			this.tcpConnection.removeAllListeners();
+			this.clearAllIntervals();
+			this.reconnectTimeout = setTimeout( () => {
 				this.reconnectTimeout = null;
 				this.log.info( "Try reconnecting to E3/DC" );
-				this.initChannel( );
+				this.initChannel();
 			}, 60000 );
 		}
 	}
 
-	clearFrame( ) { // preset MAGIC and CTRL and reserve space for timestamp and length
+	clearFrame() { // preset MAGIC and CTRL and reserve space for timestamp and length
 		this.frame = Buffer.from( [0xE3, 0xDC, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00] );
 	}
 
 	// Add one tag to the frame under preparation
 	// Not for Container tags, see startContainer
 	addTagtoFrame( tag, sml = "", value = Object( 0 ) ) {
-		if( !rscpTagCode[tag] ) {
+		if ( !rscpTagCode[tag] ) {
 			this.log.warn( `Unknown tag ${tag} with value ${value} - cannot add to frame.` );
 			return;
 		}
 		const tagCode = rscpTagCode[tag];
-		if( sml != "" && !Object.keys( this.pollingInterval ).includes( tagCode ) && tag.includes( "_REQ_" ) && !tag.endsWith( "_COUNT" ) ) {
+		if ( sml != "" && !Object.keys( this.pollingInterval ).includes( tagCode ) && tag.includes( "_REQ_" ) && !tag.endsWith( "_COUNT" ) ) {
 			this.log.warn( `${tag} has no assigned polling interval  - assuming 'M' - please check io-package.json` );
 			this.pollingInterval[tagCode] = "M";
 		}
-		if( sml == "" || this.pollingInterval[tagCode] == sml ) {
+		if ( sml == "" || this.pollingInterval[tagCode] == sml ) {
 			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
 			const buf1 = Buffer.alloc( 1 );
 			const buf2 = Buffer.alloc( 2 );
@@ -608,91 +631,91 @@ class E3dcRscp extends utils.Adapter {
 			this.frame = Buffer.concat( [this.frame, buf4] );
 			this.frame = Buffer.concat( [this.frame, Buffer.from( [typeCode] )] );
 			this.frame = Buffer.concat( [this.frame, Buffer.from( [0x00, 0x00] )] ); // reserve space for Length
-			switch( rscpType[typeCode] ) {
+			switch ( rscpType[typeCode] ) {
 				case "None":
 					break;
 				case "Container":
 					this.log.warn( `Container-tag ${tag} passed to addTagToFrame - cannot add tag to frame.` );
 					return;
 				case "CString":
-					if( typeof value != "string" ) value = "";
+					if ( typeof value != "string" ) value = "";
 					this.frame.writeUInt16LE( value.length, this.frame.length - 2 );
 					this.frame = Buffer.concat( [this.frame, Buffer.from( value )] );
 					break;
 				case "Bitfield":
 				case "ByteArray":
-					if( typeof value != "string" ) value = "";
+					if ( typeof value != "string" ) value = "";
 					this.frame.writeUInt16LE( stringToBuffer( value ).length, this.frame.length - 2 );
 					this.frame = Buffer.concat( [this.frame, stringToBuffer( value )] );
 					break;
 				case "Char8":
 				case "UChar8":
 				case "Error":
-					if( typeof value == "boolean" ) value = value?1:0;
-					else if( typeof value != "number" || value < 0 || value > Math.pow( 2, 8 ) - 1 ) value = 0;
+					if ( typeof value == "boolean" ) value = value ? 1 : 0;
+					else if ( typeof value != "number" || value < 0 || value > Math.pow( 2, 8 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 1, this.frame.length - 2 );
 					buf1.writeUInt8( value );
 					this.frame = Buffer.concat( [this.frame, buf1] );
 					break;
 				case "Bool": // bool is encoded as 0/1 byte
-					if( typeof value != "boolean" ) value = false;
+					if ( typeof value != "boolean" ) value = false;
 					this.frame.writeUInt16LE( 1, this.frame.length - 2 );
-					buf1.writeUInt8( value?1:0 );
+					buf1.writeUInt8( value ? 1 : 0 );
 					this.frame = Buffer.concat( [this.frame, buf1] );
 					break;
 				case "Int16":
-					if( typeof value != "number" || value < -Math.pow( 2, 15 ) || value > Math.pow( 2, 15 ) - 1 ) value = 0;
+					if ( typeof value != "number" || value < -Math.pow( 2, 15 ) || value > Math.pow( 2, 15 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 2, this.frame.length - 2 );
 					buf2.writeInt16LE( value );
 					this.frame = Buffer.concat( [this.frame, buf2] );
 					break;
 				case "UInt16":
-					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 16 ) - 1 ) value = 0;
+					if ( typeof value != "number" || value < 0 || value > Math.pow( 2, 16 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 2, this.frame.length - 2 );
 					buf2.writeUInt16LE( value );
 					this.frame = Buffer.concat( [this.frame, buf2] );
 					break;
 				case "Int32":
-					if( typeof value != "number" || value < -Math.pow( 2, 31 ) || value > Math.pow( 2, 31 ) - 1 ) value = 0;
+					if ( typeof value != "number" || value < -Math.pow( 2, 31 ) || value > Math.pow( 2, 31 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
 					buf4.writeInt32LE( value );
 					this.frame = Buffer.concat( [this.frame, buf4] );
 					break;
 				case "UInt32":
-					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 32 ) - 1 ) value = 0;
+					if ( typeof value != "number" || value < 0 || value > Math.pow( 2, 32 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
 					buf4.writeUInt32LE( value );
 					this.frame = Buffer.concat( [this.frame, buf4] );
 					break;
 				case "Int64":
-					if( typeof value != "number" || value < -Math.pow( 2, 63 ) || value > Math.pow( 2, 63 ) - 1 ) value = 0;
+					if ( typeof value != "number" || value < -Math.pow( 2, 63 ) || value > Math.pow( 2, 63 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
 					buf8.writeBigInt64LE( value );
 					this.frame = Buffer.concat( [this.frame, buf8] );
 					break;
 				case "UInt64":
-					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 64 ) - 1 ) value = 0;
+					if ( typeof value != "number" || value < 0 || value > Math.pow( 2, 64 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
 					buf8.writeBigUInt64LE( value );
 					this.frame = Buffer.concat( [this.frame, buf8] );
 					break;
 				case "Float32":
-					if( typeof value != "number" ) value = 0;
+					if ( typeof value != "number" ) value = 0;
 					this.frame.writeUInt16LE( 4, this.frame.length - 2 );
 					buf4.writeFloatLE( value );
 					this.frame = Buffer.concat( [this.frame, buf4] );
 					break;
 				case "Double64":
-					if( typeof value != "number" ) value = 0;
+					if ( typeof value != "number" ) value = 0;
 					this.frame.writeUInt16LE( 8, this.frame.length - 2 );
 					buf8.writeDoubleLE( value );
 					this.frame = Buffer.concat( [this.frame, buf8] );
 					break;
 				case "Timestamp": // NOTE: treating value as seconds - setting nanoseconds to zero
-					if( typeof value != "number" || value < 0 || value > Math.pow( 2, 64 ) - 1 ) value = 0;
+					if ( typeof value != "number" || value < 0 || value > Math.pow( 2, 64 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 12, this.frame.length - 2 );
 					buf8.writeBigUInt64LE( BigInt( Math.round( value ) ) );
-					this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array( [0x00,0x00,0x00,0x00] )] );
+					this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array( [0x00, 0x00, 0x00, 0x00] )] );
 					break;
 				default:
 					this.log.warn( `addTagtoFrame does not know how to handle data type ${rscpType[typeCode]}` );
@@ -704,14 +727,14 @@ class E3dcRscp extends utils.Adapter {
 	// Add a Container tag to frame under preparation
 	// Returns position of Container length within frame for use in endContainer
 	startContainer( tag, sml = "" ) {
-		if( !rscpTagCode[tag] ) {
+		if ( !rscpTagCode[tag] ) {
 			this.log.warn( `Unknown container tag ${tag} - cannot start container.` );
 			return 0;
 		}
 		const tagCode = rscpTagCode[tag];
-		if( sml == "" || !Object.keys( this.pollingInterval ).includes( tagCode ) || this.pollingInterval[tagCode] == sml ) {
+		if ( sml == "" || !Object.keys( this.pollingInterval ).includes( tagCode ) || this.pollingInterval[tagCode] == sml ) {
 			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
-			if( rscpType[typeCode] != "Container" ) {
+			if ( rscpType[typeCode] != "Container" ) {
 				this.log.warn( `Non-container tag ${tag} passed to startContainer - cannot start container.` );
 				return 0;
 			}
@@ -732,11 +755,11 @@ class E3dcRscp extends utils.Adapter {
 
 	// Finalize frame, then push it to the queue
 	// If pos > 0, then endContainer is inclusive
-	pushFrame( pos=0 ) {
-		if( this.frame.length > 18 ) {
-			this.frame.writeUIntLE( Math.floor( new Date( ).getTime( )/1000 ), 4, 6 ); // set timestamp - bytes 7,8 remain zero (which will be wrong after 19.01.2038)
+	pushFrame( pos = 0 ) {
+		if ( this.frame.length > 18 ) {
+			this.frame.writeUIntLE( Math.floor( new Date().getTime() / 1000 ), 4, 6 ); // set timestamp - bytes 7,8 remain zero (which will be wrong after 19.01.2038)
 			this.frame.writeUInt16LE( this.frame.length - 18, 16 ); // set total length
-			if( pos > 0 ) this.endContainer( pos );
+			if ( pos > 0 ) this.endContainer( pos );
 			const buf4 = Buffer.alloc( 4 );
 			buf4.writeInt32LE( CRC32.buf( this.frame ) );
 			this.frame = Buffer.concat( [this.frame, buf4] ); // concat returns a copy of this.frame, which therefore can be reused
@@ -744,8 +767,8 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	queueRscpAuthentication( ) {
-		this.clearFrame( );
+	queueRscpAuthentication() {
+		this.clearFrame();
 		const pos = this.startContainer( "TAG_RSCP_REQ_AUTHENTICATION" );
 		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_USER", "", this.config.portal_user );
 		this.addTagtoFrame( "TAG_RSCP_AUTHENTICATION_PASSWORD", "", this.config.portal_password );
@@ -753,8 +776,8 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueBatProbe( probes ) {
-		for( let i = 0; i < probes; i++ ) {
-			this.clearFrame( );
+		for ( let i = 0; i < probes; i++ ) {
+			this.clearFrame();
 			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
 			this.addTagtoFrame( "TAG_BAT_INDEX", "", i );
 			this.addTagtoFrame( "TAG_BAT_REQ_INFO", "" );
@@ -763,8 +786,8 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueBatRequestData( sml ) {
-		for( let i = 0; i <= this.maxIndex["BAT"]; i++ ) {
-			this.clearFrame( );
+		for ( let i = 0; i <= this.maxIndex["BAT"]; i++ ) {
+			this.clearFrame();
 			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
 			this.addTagtoFrame( "TAG_BAT_INDEX", "", i );
 			this.addTagtoFrame( "TAG_BAT_REQ_MAX_BAT_VOLTAGE", sml );
@@ -791,7 +814,7 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_BAT_REQ_DEVICE_NAME", sml );
 			this.addTagtoFrame( "TAG_BAT_REQ_SPECIFICATION", sml );
 			this.addTagtoFrame( "TAG_BAT_REQ_INTERNALS", sml );
-			for( let j=0; j <= this.maxIndex[`BAT_${i}.DCB`]; j++ ) {
+			for ( let j = 0; j <= this.maxIndex[`BAT_${i}.DCB`]; j++ ) {
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES", sml, j );
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", sml, j );
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", sml, j );
@@ -801,8 +824,8 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queuePviProbe( probes ) {
-		for( let pviIndex = 0; pviIndex < probes; pviIndex++ ) {
-			this.clearFrame( );
+		for ( let pviIndex = 0; pviIndex < probes; pviIndex++ ) {
+			this.clearFrame();
 			const pos = this.startContainer( "TAG_PVI_REQ_DATA" );
 			this.addTagtoFrame( "TAG_PVI_INDEX", "", pviIndex );
 			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT", "" );
@@ -813,8 +836,8 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queuePviRequestData( sml ) {
-		for( let i = 0; i <= this.maxIndex["PVI"]; i++ ) {
-			this.clearFrame( );
+		for ( let i = 0; i <= this.maxIndex["PVI"]; i++ ) {
+			this.clearFrame();
 			const pos = this.startContainer( "TAG_PVI_REQ_DATA" );
 			this.addTagtoFrame( "TAG_PVI_INDEX", "", i );
 			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", sml );
@@ -834,17 +857,17 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_PVI_REQ_MIN_TEMPERATURE", sml );
 			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_APPARENTPOWER", sml );
 			this.addTagtoFrame( "TAG_PVI_REQ_DEVICE_STATE", sml );
-			for( let j = 0; j <= this.maxIndex[`PVI_${i}.AC_MAX_PHASE`]; j++ ) {
-				for( const id of phaseIds ) {
+			for ( let j = 0; j <= this.maxIndex[`PVI_${i}.AC_MAX_PHASE`]; j++ ) {
+				for ( const id of phaseIds ) {
 					this.addTagtoFrame( `TAG_PVI_REQ_${id.split( "." )[1]}`, sml, j );
 				}
 			}
-			for( let j = 0; j <= this.maxIndex[`PVI_${i}.DC_MAX_STRING`]; j++ ) {
-				for( const id of stringIds ) {
+			for ( let j = 0; j <= this.maxIndex[`PVI_${i}.DC_MAX_STRING`]; j++ ) {
+				for ( const id of stringIds ) {
 					this.addTagtoFrame( `TAG_PVI_REQ_${id.split( "." )[1]}`, sml, j );
 				}
 			}
-			for( let j = 0; j <= this.maxIndex[`PVI_${i}.TEMPERATURE`]; j++ ) {
+			for ( let j = 0; j <= this.maxIndex[`PVI_${i}.TEMPERATURE`]; j++ ) {
 				this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE", sml, j );
 			}
 			this.pushFrame( pos );
@@ -852,7 +875,7 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueEmsRequestData( sml ) {
-		this.clearFrame( );
+		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_POWER_SETTINGS", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_TO_CAR_MODE", sml );
@@ -893,27 +916,27 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS", sml );
-		this.pushFrame( );
+		this.pushFrame();
 	}
 
 	sendEmsSetPower( mode, value ) {
 		this.log.debug( `queueEmsSetPower( ${mode}, ${value} )` );
-		this.clearFrame( );
+		this.clearFrame();
 		const pos = this.startContainer( "TAG_EMS_REQ_SET_POWER" );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_MODE", "", mode );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_VALUE", "", value );
 		this.pushFrame( pos );
-		this.sendFrameLIFO( );
-		this.clearFrame( );
+		this.sendFrameLIFO();
+		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_MODE" ); // separately update MODE because SET_POWER response contains VALUE, but not MODE
-		this.pushFrame( );
-		this.sendFrameLIFO( );
+		this.pushFrame();
+		this.sendFrameLIFO();
 		// Acknowledge SET_POWER_*
 		this.setState( "EMS.SET_POWER_MODE", mode, true );
 		this.setState( "EMS.SET_POWER_VALUE", value, true );
 		// E3/DC requires regular SET_POWER repetition, otherwise it will fall back to NORMAL mode:
 		if ( ( mode > 0 && this.config.setpower_interval > 0 ) && !this.setPowerTimer ) {
-			this.setPowerTimer = setInterval( ( ) => {
+			this.setPowerTimer = setInterval( () => {
 				this.getState( "EMS.SET_POWER_VALUE", ( err, vObj ) => {
 					this.getState( "EMS.SET_POWER_MODE", ( err, mObj ) => {
 						this.sendEmsSetPower( mObj ? mObj.val : 0, vObj ? vObj.val : 0 );
@@ -927,24 +950,24 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	queueSysRequestData( sml ) {
-		this.clearFrame( );
+		this.clearFrame();
 		this.addTagtoFrame( "TAG_SYS_REQ_IS_SYSTEM_REBOOTING", sml );
-		this.pushFrame( );
+		this.pushFrame();
 	}
 
 	queueEpRequestData( sml ) {
-		this.clearFrame( );
+		this.clearFrame();
 		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH", sml );
 		this.addTagtoFrame( "TAG_EP_REQ_IS_GRID_CONNECTED", sml );
 		this.addTagtoFrame( "TAG_EP_REQ_IS_ISLAND_GRID", sml );
 		this.addTagtoFrame( "TAG_EP_REQ_IS_POSSIBLE", sml );
 		this.addTagtoFrame( "TAG_EP_REQ_IS_INVALID_STATE", sml );
 		this.addTagtoFrame( "TAG_EP_REQ_EP_RESERVE", sml );
-		this.pushFrame( );
+		this.pushFrame();
 	}
 
 	queueWbRequestData( sml ) {
-		this.clearFrame( );
+		this.clearFrame();
 		this.addTagtoFrame( "TAG_WB_REQ_CONNECTED_DEVICES", sml );
 		for ( let i = 0; i <= this.maxIndex["WB"]; i++ ) {
 			const pos = this.startContainer( "TAG_WB_REQ_DATA" );
@@ -987,24 +1010,40 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_WB_REQ_PARAM_2", sml );
 			this.endContainer( pos );
 		}
-		this.pushFrame( );
+		this.pushFrame();
+	}
+
+	queueWbRequestExternData( sml ) {
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_WB_REQ_CONNECTED_DEVICES", sml );
+		for ( let i = 0; i <= this.maxIndex["WB"]; i++ ) {
+			const pos = this.startContainer( "TAG_WB_REQ_DATA" );
+			this.addTagtoFrame( "TAG_WB_INDEX", "", i );
+			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_SUN", sml );
+			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_NET", sml );
+			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALL", sml );
+			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALG", sml );
+			this.endContainer( pos );
+		}
+		this.pushFrame();
 	}
 
 	// Only used for interface exploration:
 	queueDbRequestData( sml ) {
-		this.clearFrame( );
+		this.clearFrame();
 		const pos = this.startContainer( "TAG_DB_REQ_HISTORY_DATA_DAY" );
 		this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_START", "", 1639609200 );
 		this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_INTERVAL", "", 1800 );
 		this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_SPAN", "", 86400 );
 		this.endContainer( pos );
-		this.pushFrame( );
+		this.pushFrame();
 	}
 
 	// Set Wallbox Data
 	queueWbSetData( id ) {
 		this.log.debug( "State changed: " + id );
 		const baseId = id.substr( 0, id.lastIndexOf( "." ) );
+		this.log.debug( "baseId: " + baseId );
 		// Expects EXTERN_DATA (length 6) and EXTERN_DATA_LEN =6 /
 		// Byte 1: 1-Sonnenmode / 2-Mischmode /
 		// Byte 2: Strombegrenzung für alle  / Modes, [1 ? 32] A /
@@ -1013,44 +1052,44 @@ class E3dcRscp extends utils.Adapter {
 		// Byte 5: > 0: Typ2, Laden abbrechen /
 		// Byte 6: > 0: Schuko, Best�tigung für ?AN?  /
 		// SUNMODE
-		this.getState( baseId + ".SUNMODE" , ( err, sunmodeState ) => {
+		this.getState( baseId + ".SunMode", ( err, sunmodeState ) => {
 			if ( err ) {
 				this.log.error( err.message );
 			}
 			const sunmodeVal = ( sunmodeState ? sunmodeState.val : 0 );
 			const sunmode = toHex( sunmodeVal );
-			this.log.debug( "sunmode: " + sunmode );
-			this.setState( baseId + ".SUNMODE", sunmodeVal, true );
+			this.log.silly( "sunmode: " + sunmode );
+			this.setState( baseId + ".SunMode", sunmodeVal, true );
 			// Power_Limitation
-			this.getState( baseId + ".POWER_LIMITATION" , ( err, powerLimitationState ) => {
+			this.getState( baseId + ".PowerLimitation", ( err, powerLimitationState ) => {
 				if ( err ) {
 					this.log.error( err.message );
 				}
 				const powerLimitationVal = ( powerLimitationState ? powerLimitationState.val : 10 );
 				const powerLimitation = toHex( powerLimitationVal );
-				this.log.debug( "powerLimitationVal: " + powerLimitation );
-				this.setState( baseId + ".POWER_LIMITATION", powerLimitationVal, true );
+				this.log.silly( "powerLimitationVal: " + powerLimitation );
+				this.setState( baseId + ".PowerLimitation", powerLimitationVal, true );
 				// Precharge
-				this.getState( baseId + ".PRECHARGE" , ( err, prechargeState ) => {
+				this.getState( baseId + ".Precharge", ( err, prechargeState ) => {
 					if ( err ) {
 						this.log.error( err.message );
 					}
 					const prechargeVal = ( prechargeState ? prechargeState.val : 10 );
 					const precharge = toHex( prechargeVal );
-					this.log.debug( "prechargeVal: " + precharge );
-					this.setState( baseId + ".PRECHARGE", prechargeVal, true );
+					this.log.silly( "prechargeVal: " + precharge );
+					this.setState( baseId + ".Precharge", prechargeVal, true );
 					// Toggle Phases 1->3, 3->1
-					this.getState( baseId + ".TOGGLE_PHASES" , ( err, togglePhasesState ) => {
+					this.getState( baseId + ".TogglePhases", ( err, togglePhasesState ) => {
 						if ( err ) {
 							this.log.error( err.message );
 						}
 						const togglePhasesVal = ( togglePhasesState ? togglePhasesState.val : 0 );
 						const togglePhases = toHex( togglePhasesVal );
-						this.log.debug( "togglePhasesVal: " + togglePhasesVal );
+						this.log.silly( "togglePhasesVal: " + togglePhasesVal );
 						// Reset toggle phases
-						this.setState( baseId + ".TOGGLE_PHASES", 0, true );
+						this.setState( baseId + ".TogglePhases", 0, true );
 						// Abort Charging Typ2 Plug
-						this.getState( baseId + ".ABORT_CHARGING_TYP2" , ( err, abortChargingState ) => {
+						this.getState( baseId + ".ToggleChargingTyp2", ( err, abortChargingState ) => {
 							if ( err ) {
 								this.log.error( err.message );
 							}
@@ -1058,29 +1097,29 @@ class E3dcRscp extends utils.Adapter {
 							const abortCharging = toHex( abortChargingVal );
 							this.log.debug( "abortChargingVal: " + abortChargingVal );
 							// reset abort charging
-							this.setState( baseId + ".ABORT_CHARGING_TYP2", 0, true );
+							this.setState( baseId + ".ToggleChargingTyp2", 0, true );
 							// schuko unklar, zunächst ignorieren
 							const schuko = "00";
-							const str = sunmode + " " + powerLimitation + " " + precharge  + " " + togglePhases  + " " + abortCharging  + " " + schuko;
-							this.log.debug( "String: " + str );
+							const str = sunmode + " " + powerLimitation + " " + precharge + " " + togglePhases + " " + abortCharging + " " + schuko;
+							this.log.debug( "String: " + str ); //ToDo
 							const buf = stringToBuffer( str );
 							// Construct Frame
-							this.clearFrame( );
+							this.clearFrame();
 							const c1 = this.startContainer( "TAG_WB_REQ_DATA" );
 							this.addTagtoFrame( "TAG_WB_INDEX", "", 0 ); // Index der Wallbox = 0
 							const c2 = this.startContainer( "TAG_WB_REQ_SET_EXTERN" );
 							this.addTagtoFrame( "TAG_WB_EXTERN_DATA", "", str );
-							this.log.debug( "Buffer : " + buf );
-							this.addTagtoFrame( "TAG_WB_EXTERN_DATA_LEN", "",6 ); // Länge des bytearray
+							this.log.debug( "Buffer : " + buf ); //ToDo
+							this.addTagtoFrame( "TAG_WB_EXTERN_DATA_LEN", "", 6 ); // Länge des bytearray
 							this.endContainer( c2 );
 							this.endContainer( c1 );
 							this.pushFrame( c1 );
-							this.log.debug( "WB-Frame : " + printRscpFrame( this.frame ) );
+							this.log.debug( "WB-Frame : " + printRscpFrame( this.frame ) ); //ToDo
 
-						} ) ;
-					} ) ;
-				} ) ;
-			} ) ;
+						} );
+					} );
+				} );
+			} );
 		} );
 	}
 
@@ -1090,14 +1129,14 @@ class E3dcRscp extends utils.Adapter {
 		const setTags = getSetTags( id );
 		if ( setTags && setTags.length == 2 ) {
 			if ( setTags[0] ) {
-				this.clearFrame( );
+				this.clearFrame();
 				const pos = this.startContainer( setTags[0] );
 				this.addTagtoFrame( setTags[1], "", value );
 				this.pushFrame( pos );
 			} else {
-				this.clearFrame( );
+				this.clearFrame();
 				this.addTagtoFrame( setTags[1], "", value );
-				this.pushFrame( );
+				this.pushFrame();
 			}
 		} else {
 			this.log.warn( `Don't know how to queue ${id}` );
@@ -1114,14 +1153,14 @@ class E3dcRscp extends utils.Adapter {
 			if ( this.sendTupleTimeout[prefix] ) {
 				clearTimeout( this.sendTupleTimeout[prefix] );
 			}
-			this.sendTupleTimeout[prefix] = setTimeout( ( ) => {
+			this.sendTupleTimeout[prefix] = setTimeout( () => {
 				this.getState( `${prefix}.IDLE_PERIOD_ACTIVE`, ( err, active ) => {
 					this.getState( `${prefix}.START_HOUR`, ( err, startHour ) => {
 						this.getState( `${prefix}.START_MINUTE`, ( err, startMinute ) => {
 							this.getState( `${prefix}.END_HOUR`, ( err, endHour ) => {
 								this.getState( `${prefix}.END_MINUTE`, ( err, endMinute ) => {
 									this.sendTupleTimeout[prefix] = null;
-									this.clearFrame( );
+									this.clearFrame();
 									const c1 = this.startContainer( "TAG_EMS_REQ_SET_IDLE_PERIODS" );
 									const c2 = this.startContainer( "TAG_EMS_IDLE_PERIOD" );
 									this.addTagtoFrame( "TAG_EMS_IDLE_PERIOD_TYPE", "", type );
@@ -1138,9 +1177,9 @@ class E3dcRscp extends utils.Adapter {
 									this.endContainer( c2 );
 									this.pushFrame( c1 );
 									// SET_IDLE_PERIODS response does not contain new values, so we need to separately request them:
-									this.clearFrame( );
+									this.clearFrame();
 									this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
-									this.pushFrame( );
+									this.pushFrame();
 								} );
 							} );
 						} );
@@ -1163,14 +1202,14 @@ class E3dcRscp extends utils.Adapter {
 				if ( this.sendTupleTimeout[prefix] ) {
 					clearTimeout( this.sendTupleTimeout[prefix] );
 				}
-				this.sendTupleTimeout[prefix] = setTimeout( ( ) => {
+				this.sendTupleTimeout[prefix] = setTimeout( () => {
 					this.getState( `${nameSpace}.${shortTag}.TIME_START`, ( err, timeStart ) => {
 						this.getState( `${nameSpace}.${shortTag}.TIME_INTERVAL`, ( err, interval ) => {
 							this.getState( `${nameSpace}.${shortTag}.TIME_SPAN`, ( err, span ) => {
 								this.sendTupleTimeout[prefix] = null;
-								let d = new Date( );
+								let d = new Date();
 								if ( timeStart && timeStart.val ) {
-									d = stringToDate( timeStart.val.toString( ) );
+									d = stringToDate( timeStart.val.toString() );
 									this.setState( `${nameSpace}.${shortTag}.TIME_START`, dateToString( d ), true ); // ack, and format time string
 								}
 								let i = 0;
@@ -1183,14 +1222,14 @@ class E3dcRscp extends utils.Adapter {
 									s = Number( span.val );
 									this.setState( `${nameSpace}.${shortTag}.TIME_SPAN`, span.val, true ); // ack
 								}
-								this.clearFrame( );
+								this.clearFrame();
 								const pos = this.startContainer( `TAG_DB_REQ_${shortTag}` );
-								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_START", "", d.getTime( ) / 1000 );
+								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_START", "", d.getTime() / 1000 );
 								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_INTERVAL", "", i );
 								this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_SPAN", "", s );
 								this.endContainer( pos );
-								this.pushFrame( );
-								this.log.debug( `TAG_DB_REQ_${shortTag} - START=${d.getTime( ) / 1000} INTERVAL=${i} SPAN=${s}` );
+								this.pushFrame();
+								this.log.debug( `TAG_DB_REQ_${shortTag} - START=${d.getTime() / 1000} INTERVAL=${i} SPAN=${s}` );
 							} );
 						} );
 					} );
@@ -1203,17 +1242,17 @@ class E3dcRscp extends utils.Adapter {
 
 	queueSysSystemReboot( reboot ) {
 		if ( reboot == 1 ) {
-			this.clearFrame( );
+			this.clearFrame();
 			this.addTagtoFrame( "TAG_SYS_REQ_SYSTEM_REBOOT" );
-			this.pushFrame( );
+			this.pushFrame();
 		}
 	}
 
 	queueSysRestartApplication( restart ) {
 		if ( restart ) {
-			this.clearFrame( );
+			this.clearFrame();
 			this.addTagtoFrame( "TAG_SYS_REQ_RESTART_APPLICATION" );
-			this.pushFrame( );
+			this.pushFrame();
 		}
 	}
 
@@ -1224,12 +1263,12 @@ class E3dcRscp extends utils.Adapter {
 		if ( this.config.query_pvi ) this.queuePviRequestData( sml );
 		if ( this.config.query_sys ) this.queueSysRequestData( sml );
 		if ( this.config.query_wb ) this.queueWbRequestData( sml );
-		this.sendFrameFIFO( );
+		this.sendFrameFIFO();
 	}
 
-	sendFrameFIFO( ) {
+	sendFrameFIFO() {
 		if ( this && this.queue.length > 0 ) {
-			const f = this.queue.shift( );
+			const f = this.queue.shift();
 			if ( f ) {
 				this.sendFrame( f );
 			} else {
@@ -1238,9 +1277,9 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	sendFrameLIFO( ) {
+	sendFrameLIFO() {
 		if ( this && this.queue.length > 0 ) {
-			const f = this.queue.pop( );
+			const f = this.queue.pop();
 			if ( f ) {
 				this.sendFrame( f );
 			} else {
@@ -1267,7 +1306,7 @@ class E3dcRscp extends utils.Adapter {
 				this.log.silly( `Successfully written data to socket` );
 			} else {
 				this.log.error( `Failed writing data to socket` );
-				this.initChannel( );
+				this.initChannel();
 			}
 		}
 	}
@@ -1291,7 +1330,7 @@ class E3dcRscp extends utils.Adapter {
 				let value = null;
 				switch ( typeName ) {
 					case "CString":
-						value = buffer.slice( start + 7, start + 7 + len ).toString( );
+						value = buffer.slice( start + 7, start + 7 + len ).toString();
 						break;
 					case "BitField":
 					case "ByteArray":
@@ -1319,10 +1358,10 @@ class E3dcRscp extends utils.Adapter {
 						value = buffer.readUInt32LE( start + 7 );
 						break;
 					case "Int64":
-						value = buffer.readBigInt64LE( start + 7 ).toString( ); // setState does not accept BigInt, so use string representation
+						value = buffer.readBigInt64LE( start + 7 ).toString(); // setState does not accept BigInt, so use string representation
 						break;
 					case "UInt64":
-						value = buffer.readBigUInt64LE( start + 7 ).toString( ); // setState does not accept BigInt, so use string representation
+						value = buffer.readBigUInt64LE( start + 7 ).toString(); // setState does not accept BigInt, so use string representation
 						break;
 					case "Double64":
 						value = roundForReadability( buffer.readDoubleLE( start + 7 ) );
@@ -1352,11 +1391,11 @@ class E3dcRscp extends utils.Adapter {
 
 	// Process one complete frame received from E3/DC:
 	processFrame( buffer ) {
-		const magic = buffer.toString( "hex", 0, 2 ).toUpperCase( );
+		const magic = buffer.toString( "hex", 0, 2 ).toUpperCase();
 		if ( magic != "E3DC" ) {
 			this.log.warn( `Received message with invalid MAGIC: >${magic}<` );
 		}
-		const ctrl = buffer.toString( "hex", 2, 4 ).toUpperCase( );
+		const ctrl = buffer.toString( "hex", 2, 4 ).toUpperCase();
 		let hasCrc = false;
 		switch ( ctrl ) {
 			case "0010":
@@ -1412,6 +1451,8 @@ class E3dcRscp extends utils.Adapter {
 				if ( shortId == "EMS.SYS_SPEC" && token.content.length == 3 ) {
 					this.storeValue( nameSpace, pathNew + "SYS_SPECS.", token.content[1].content, "Int32", token.content[2].content, token.content[1].content, sysSpecUnits[token.content[1].content] );
 					this.extendObject( `EMS.SYS_SPECS`, { type: "channel", common: { role: "info" } } );
+				} else if ( shortId.includes( "WB.EXTERN_DATA_" ) && token.content.length == 2 ) {
+					this.storeWbExternData( shortId, token.content, pathNew );
 				} else if ( shortId == "EMS.GET_IDLE_PERIODS" ) {
 					this.storeIdlePeriods( token.content, pathNew );
 				} else if ( shortId.startsWith( "DB.HISTORY_DATA_" ) ) {
@@ -1425,7 +1466,7 @@ class E3dcRscp extends utils.Adapter {
 					this.storeValue( nameSpace, pathNew + `String_${token.content[0].content}.`, tagName, rscpType[token.content[1].type], token.content[1].content );
 					this.extendObject( `${nameSpace}.${pathNew}String_${token.content[0].content}`, { type: "channel", common: { role: "sensor.electricity" } } );
 				} else if ( shortId == "PVI.TEMPERATURE" && token.content.length == 2 ) {
-					this.storeValue( nameSpace, pathNew + "TEMPERATURE.", token.content[0].content.toString( ).padStart( 2, "0" ), rscpType[token.content[1].type], token.content[1].content, "TEMPERATURE", "°C" );
+					this.storeValue( nameSpace, pathNew + "TEMPERATURE.", token.content[0].content.toString().padStart( 2, "0" ), rscpType[token.content[1].type], token.content[1].content, "TEMPERATURE", "°C" );
 					this.extendObject( `${nameSpace}.${pathNew}TEMPERATURE`, { type: "channel", common: { role: "sensor.temperature" } } );
 				} else {
 					this.processTree( token.content, pathNew );
@@ -1437,7 +1478,7 @@ class E3dcRscp extends utils.Adapter {
 				// Handle multiple values for same tag within one container, e.g. PVI_RELEASE
 				if ( multipleValueIds.includes( shortId ) ) {
 					if ( !multipleValueIndex[shortId] ) multipleValueIndex[shortId] = 0;
-					this.log.silly( `storeValue( ${nameSpace}, ${pathNew + tagName + "."}, ${multipleValueIndex[shortId].toString( ).padStart( 2, "0" )}, ${rscpType[token.type]}, ${token.content}, ${tagName} )` );
+					this.log.silly( `storeValue( ${nameSpace}, ${pathNew + tagName + "."}, ${multipleValueIndex[shortId].toString().padStart( 2, "0" )}, ${rscpType[token.type]}, ${token.content}, ${tagName} )` );
 					let dictionaryIndex = tagName;
 					let unit = "";
 					if ( tagName == "DCB_CELL_TEMPERATURE" ) {
@@ -1453,7 +1494,7 @@ class E3dcRscp extends utils.Adapter {
 					// eslint-disable-next-line prefer-const
 					let [t, v] = this.adjustTypeAndValue( shortId, rscpType[token.type], token.content );
 					if ( tagName == "DCB_CELL_TEMPERATURE" && v == 0 ) v = null; // 0 means "no value", so dispaly as "(null)", not "0 °C"
-					this.storeValue( nameSpace, pathNew + tagName + ".", multipleValueIndex[shortId].toString( ).padStart( 2, "0" ), t, v, dictionaryIndex, unit );
+					this.storeValue( nameSpace, pathNew + tagName + ".", multipleValueIndex[shortId].toString().padStart( 2, "0" ), t, v, dictionaryIndex, unit );
 					let r = "info";
 					if ( tagName.includes( "TEMPERATURE" ) ) r = "sensor.temperature"; else if ( tagName.includes( "VOLTAGE" ) ) r = "sensor.electricity";
 					this.extendObject( `${nameSpace}.${pathNew.slice( 0, -1 )}.${tagName}`, { type: "channel", common: { role: r } } );
@@ -1555,12 +1596,491 @@ class E3dcRscp extends utils.Adapter {
 				unit: oUnit,
 			},
 			native: {},
-		}, ( ) => {
+		}, () => {
 			this.getState( oId, ( err, obj ) => {
 				if ( !( obj && obj.val == value && obj.ack ) ) {
 					this.setState( oId, value, true );
 				}
 			} );
+		} );
+	}
+
+	storeWbExternData( shortId, tree, path ) {
+		this.log.silly( "ExternData ShortId : " + shortId + " Path : " + path + " Tree : " + printTree( tree ) );
+		const wbPath = "WB."+path.split( "." )[0];
+		this.log.silly( "ExternData wbPath : " + wbPath );
+		if ( this.config.query_wb ) {
+			this.setObjectNotExists( "WB", {
+				type: "device",
+				common: {
+					name: systemDictionary["WB"][this.language],
+					role: "wallbox",
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".Control.SunMode", {
+				type: "state",
+				common: {
+					name: systemDictionary["SunMode"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "",
+					states: rscpWbSunmode,
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".Control.PowerLimitation", {
+				type: "state",
+				common: {
+					name: systemDictionary["PowerLimitation"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "A",
+					def: 0
+				},
+				native: {},
+			} );
+			/*
+			this.setObjectNotExists( wbPath + ".Control.Precharge", {
+				type: "state",
+				common: {
+					name: systemDictionary["Precharge"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "",
+					states: rscpWbPrecharge,
+					def: 0
+				},
+				native: {},
+			} );
+			*/
+			this.setObjectNotExists( wbPath + ".Control.TogglePhases", {
+				type: "state",
+				common: {
+					name: systemDictionary["TogglePhases"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "",
+					states: rscpBool,
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".Control.ToggleChargingTyp2", {
+				type: "state",
+				common: {
+					name: systemDictionary["ToggleChargingTyp2"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: true,
+					unit: "",
+					states: rscpBool,
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_SUN.SunPower", {
+				type: "state",
+				common: {
+					name: systemDictionary["SunPower"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "W",
+					def: 0
+				},
+				native: {},
+			} );
+			/*
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_SUN.SunEnergy", {
+				type: "state",
+				common: {
+					name: systemDictionary["SunEnergy"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "Wh",
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_SUN.SunAmount", {
+				type: "state",
+				common: {
+					name: systemDictionary["SunAmount"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "%",
+					def: 0
+				},
+				native: {},
+			} );
+			*/
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_NET.NetPower", {
+				type: "state",
+				common: {
+					name: systemDictionary["NetPower"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "W",
+					def: 0
+				},
+				native: {},
+			} );
+			/*
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_NET.NetEnergy", {
+				type: "state",
+				common: {
+					name: systemDictionary["NetEnergy"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "Wh",
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_NET.NetAmount", {
+				type: "state",
+				common: {
+					name: systemDictionary["NetAmount"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "%",
+					def: 0
+				},
+				native: {},
+			} );
+			*/
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALL.AllPower", {
+				type: "state",
+				common: {
+					name: systemDictionary["AllPower"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "W",
+					def: 0
+				},
+				native: {},
+			} );
+			/*
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALL.AllEnergy", {
+				type: "state",
+				common: {
+					name: systemDictionary["AllEnergy"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "Wh",
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALL.AllAmount", {
+				type: "state",
+				common: {
+					name: systemDictionary["AllAmount"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "%",
+					def: 0
+				},
+				native: {},
+			} );
+			*/
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.CarLoading", {
+				type: "state",
+				common: {
+					name: systemDictionary["CarLoading"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "",
+					states: rscpBool,
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.CarLoadingCanceled", {
+				type: "state",
+				common: {
+					name: systemDictionary["CarLoadingCanceled"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "",
+					states: rscpBool,
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.Typ2Locked", {
+				type: "state",
+				common: {
+					name: systemDictionary["Typ2Locked"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "",
+					states: rscpWbTyp2Locked,
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.ActivePhases", {
+				type: "state",
+				common: {
+					name: systemDictionary["ActivePhases"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "",
+					states: rscpWBActivePhases,
+					def: 0
+				},
+				native: {},
+			} );
+			/*
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.SchukoConnected", {
+				type: "state",
+				common: {
+					name: systemDictionary["SchukoConnected"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "",
+					states: rscpBool,
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.SchukoActive", {
+				type: "state",
+				common: {
+					name: systemDictionary["SchukoActive"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "",
+					states: rscpBool,
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.Precharge", {
+				type: "state",
+				common: {
+					name: systemDictionary["PrechargePercent"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "%",
+					def: 0
+				},
+				native: {},
+			} );*/
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.SunMode", {
+				type: "state",
+				common: {
+					name: systemDictionary["SunMode"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "",
+					states: rscpWbSunmode,
+					def: 0
+				},
+				native: {},
+			} );
+			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.PowerLimitation", {
+				type: "state",
+				common: {
+					name: systemDictionary["PowerLimitation"][this.language],
+					type: "number",
+					role: "value",
+					read: true,
+					write: false,
+					unit: "A",
+					def: 0
+				},
+				native: {},
+			} );
+		}
+		let container = "";
+		tree.forEach( token => {
+			this.log.silly( "ExternData Token : " + JSON.stringify( token ) );
+			const tag = shortId.split( "." )[1];
+			if ( rscpTag[token.tag].DataType == "Container" ) {
+				this.log.silly( "Container : " + container );
+			}
+			if ( rscpTag[token.tag].TagNameGlobal in ["TAG_WB_EXTERN_DATA_SUN", "TAG_WB_EXTERN_DATA_NET", "TAG_WB_EXTERN_DATA_ALL", "TAG_WB_EXTERN_DATA_ALG"] ) {
+				this.extendObject( "WB." + path + tag, { type: "channel", common: { role: "value" } } );
+			}
+			if ( rscpTag[token.tag].TagNameGlobal == "TAG_WB_EXTERN_DATA" ) {
+				this.log.silly( "ExternData fullPath : " + wbPath + "." + tag + ".EXTERN_DATA" );
+				this.setObjectNotExists( wbPath + "." + tag + ".EXTERN_DATA", {
+					type: "state",
+					common: {
+						name: systemDictionary["EXTERN_DATA"][this.language],
+						type: "string",
+						role: "value",
+						read: true,
+						write: false,
+						unit: "",
+						def: ""
+					},
+					native: {},
+				} );
+				this.setState( wbPath + "." + tag + ".EXTERN_DATA", token.content, true );
+				this.log.silly( "ExternData shortId : " + shortId );
+				this.log.silly( "ExternData Content : " + token.content );
+				container = shortId.split( "." )[1];
+				//this.log.debug( "Container : " + shortId.split( "." )[1] );
+				this.log.silly( "Container : " + container );
+				let extData = [];
+				switch ( container ) {
+					case "EXTERN_DATA_SUN":
+						/*
+						Spezifikation : contains EXTERN_DATA (length 7) and EXTERN_DATA_LEN =7 /
+										Byte 1-2: uint16, Sonnenleistung in [W] /
+										Byte 3-6: uint32, Sonnenenergie in [Wh] /
+										Byte 7: uint8, Sonnenmenge in [%] /
+						Beispiel      : 00 00 3E 95 00 00 64 00
+						Achtung       : entgegen der Spezifikation werden 8 Byte geliefert
+						*/
+						extData = token.content.split( " " );
+						this.log.silly( "EXTERN_DATA_SUN : " + JSON.stringify( extData ) );
+						this.log.silly( "SunPower[W] : " + parseInt( extData[1]+extData[2],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_SUN.SunPower",parseInt( extData[1]+extData[0],16 ),true );
+						/*this.log.silly( "SunEnergy[Wh] : " + parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_SUN.SunEnergy",parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) ,true );
+						this.log.silly( "SunAmount[%] : " + parseInt( extData[6],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_SUN.SunAmount",parseInt( extData[6],16 ),true );*/
+						break;
+					case "EXTERN_DATA_NET":
+						/*
+						Spezifikation : contains EXTERN_DATA (length 7) and EXTERN_DATA_LEN =7 /
+										Byte 1-2: uint16, Netzleistung in [W] /
+										Byte 3-6: uint32, Netzenergie in [Wh] /
+										Byte 7: uint8, Netzmenge in [%] /
+						Beispiel      : 00 00 99 F0 03 00 00 00
+						*/
+						extData = token.content.split( " " );
+						this.log.silly( "EXTERN_DATA_NET : " + JSON.stringify( extData ) );
+						this.log.silly( "NetPower[W] : " + parseInt( extData[1]+extData[2],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_NET.NetPower",parseInt( extData[1]+extData[0],16 ),true );
+						/*this.log.silly( "NetEnergy[Wh] : " + parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_NET.NetEnergy",parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) ,true );
+						this.log.silly( "NetAmount[%] : " + parseInt( extData[6],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_NET.NetAmount",parseInt( extData[6],16 ),true );*/
+						break;
+					case "EXTERN_DATA_ALL":
+						/*
+						Spezifikation : contains EXTERN_DATA (length 7) and EXTERN_DATA_LEN =7 /
+										Byte 1-2: uint16, Gesamtleistung in [W] /
+										Byte 3-6: uint32, Gesamtenergie in [Wh] /
+										Byte 7: uint8, Gesamtmenge in [%] /
+						Beispiel      : 00 00 D7 85 04 00 00 64
+						*/
+						extData = token.content.split( " " );
+						this.log.silly( "EXTERN_DATA_ALL : " + JSON.stringify( extData ) );
+						this.log.silly( "TotalPower[W] : " + parseInt( extData[1]+extData[2],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALL.AllPower",parseInt( extData[1]+extData[0],16 ),true );
+						/*this.log.silly( "TotalEnergy[Wh] : " + parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALL.AllEnergy",parseInt( extData[2]+extData[3]+extData[4]+extData[5],16 ) ,true );
+						this.log.silly( "TotalAmount[%] : " + parseInt( extData[6],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALL.AllAmount",parseInt( extData[6],16 ),true );*/
+						break;
+					case "EXTERN_DATA_ALG":
+						/*
+						Spezifikation : contains EXTERN_DATA (length 7) and EXTERN_DATA_LEN =7 /
+										Byte 1: uint8, PreCharge in [%] /
+										Byte 2: uint8, 1: Sonnenmode, 0: Misch. / 3 = ????
+										Byte 3: uint8, 1: Auto lädt, 0: lädt nicht / Begrenzung der Ladeleistung!
+										Byte 4: uint8, 1: Typ2 verriegelt, 0: entr. /
+										Byte 5: uint8, Anzahl akt. Phasen [0-3] /
+										Byte 6: uint4 low, 1: Schuko belegt / uint4 high, 1: Schuko an  /
+						Erfahrung	  : Byte 2: uint8, Anzahl Phasen - OK
+										Byte 3: Sonnenmodus - Bit 7 = Ja/Nein - OK
+										Byte 4: Ladeleistung - OK
+						Beispiel      : 64 03 80 0A 00 00 00 00
+						*/
+						extData = token.content.split( " " );
+						this.log.silly( "EXTERN_DATA_ALG : " + JSON.stringify( extData ) );
+
+						// Byte 1 SOC/Ladezustand oder PreCharge?
+						/*
+						this.log.debug( "PreCharge[%] : " + parseInt( extData[0],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALG.Precharge",parseInt( extData[0],16 ),true );
+						*/
+
+						// Byte 2 Aktive Phasen - OK
+						this.log.silly( "ActivePhases : " + parseInt( extData[1],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALG.ActivePhases",parseInt( extData[1],16 ),true );
+
+						// Byte 3
+						// 128, Bit 7 = Ja/Nein - Sonnemodus - OK
+						//  64, Bit 6 = Ja/Nein - Typ2Locked
+						//  32, Bit 5 = Ja/Nein - CarLoading
+						this.log.debug( "WB-Status : " + parseInt( extData[1],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALG.SunMode",( parseInt( extData[2],16 ) & 128 ) == 128 ? 1:2,true );
+						this.setState( wbPath + ".Control.SunMode",( parseInt( extData[2],16 ) & 128 ) == 128 ? 1:2,true );
+						this.log.debug( "CarLoadingCanceled : " + ( ( parseInt( extData[2],16 ) & 64 ) == 64 ? 1:0 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALG.CarLoadingCanceled",( parseInt( extData[2],16 ) & 64 ) == 64 ? 1:0,true );
+						this.log.debug( "CarLoading : " + ( ( parseInt( extData[2],16 ) & 32 ) == 32 ? 1:0 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALG.CarLoading",( parseInt( extData[2],16 ) & 32 ) == 32 ? 1:0,true );
+						this.log.debug( "Typ2Locked : " + ( ( parseInt( extData[2],16 ) & 8 ) == 8 ? 1:0 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALG.Typ2Locked",( parseInt( extData[2],16 ) & 8 ) == 8 ? 1:0,true );
+
+						//Byte 4 : Ladeleistung - OK bei DEVICE_NAME "Easy Connect"
+						this.log.debug( "PowerLimitation : " + parseInt( extData[3],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALG.PowerLimitation",parseInt( extData[3],16 ),true );
+						this.setState( wbPath + ".Control.PowerLimitation",parseInt( extData[3],16 ),true );
+
+						// Byte 5
+
+						// Byte 6
+						/*this.log.debug( "SchukoConnected : " + parseInt( extData[5],16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALG.SchukoConnected",parseInt( extData[5],16 ),true );
+						this.log.debug( "SchukoActive : " + parseInt( extData[5].substr( 4,4 ),16 ) );
+						this.setState( wbPath + ".EXTERN_DATA_ALG.SchukoActive",parseInt( extData[5].substr( 0,4 ),16 ),true );*/
+						break;
+					default:
+						break;
+				}
+			}
 		} );
 	}
 
@@ -1572,7 +2092,7 @@ class E3dcRscp extends utils.Adapter {
 			if ( rscpTag[token.content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_DAY" ) return;
 			const day = token.content[1].content;
 			const idleNode = ( type == 0 ) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
-			const dayNode = `${day.toString( ).padStart( 2, "0" )}-${dayOfWeek[day]}`;
+			const dayNode = `${day.toString().padStart( 2, "0" )}-${dayOfWeek[day]}`;
 			const newPath = `${path}${idleNode}.${dayNode}.`;
 			if ( !this.sendTupleTimeout[`EMS.${idleNode}.${dayNode}`] ) { // do not overwrite manual changes which are waiting to be sent
 				if ( rscpTag[token.content[2].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_ACTIVE" ) return;
@@ -1604,7 +2124,7 @@ class E3dcRscp extends utils.Adapter {
 			this.getState( `DB.${path}TIME_INTERVAL`, ( err, intervalObj ) => {
 				this.getState( `DB.${path}TIME_SPAN`, ( err, spanObj ) => {
 					let timeStart = 0;
-					if ( timeStartObj && timeStartObj.val ) { timeStart = stringToDate( timeStartObj.val.toString( ) ).getTime( ) / 1000; } // epoch seconds
+					if ( timeStartObj && timeStartObj.val ) { timeStart = stringToDate( timeStartObj.val.toString() ).getTime() / 1000; } // epoch seconds
 					let interval = 0;
 					if ( intervalObj && intervalObj.val ) { interval = Number( intervalObj.val ); }
 					let span = 0;
@@ -1612,13 +2132,13 @@ class E3dcRscp extends utils.Adapter {
 					let count = 0;
 					let oPath = "";
 					let oRole = "";
-					const scale = path.match( /HISTORY_DATA_([A-Z]+)[.]/ )[1].toLowerCase( );
+					const scale = path.match( /HISTORY_DATA_([A-Z]+)[.]/ )[1].toLowerCase();
 					tree.forEach( token => {
 						if ( rscpTag[token.tag].TagNameGlobal == "TAG_DB_SUM_CONTAINER" ) {
 							oPath = `${path}SUM.`;
 							oRole = `calendar.${scale}`;
 						} else if ( rscpTag[token.tag].TagNameGlobal == "TAG_DB_VALUE_CONTAINER" ) {
-							oPath = `${path}VALUE_${count.toString( ).padStart( 2, "0" )}.`;
+							oPath = `${path}VALUE_${count.toString().padStart( 2, "0" )}.`;
 							oRole = `calendar.split.${scale}`;
 							count++;
 							const graphIndex = Number( token.content[0].content );
@@ -1641,7 +2161,7 @@ class E3dcRscp extends utils.Adapter {
 
 	// Delete VALUE_x object branches for a certain x, x+1, ...
 	deleteValueObjects( count, path ) {
-		const id = `${this.common.name}.${this.instance}.DB.${path}VALUE_${count.toString( ).padStart( 2, "0" )}`;
+		const id = `${this.common.name}.${this.instance}.DB.${path}VALUE_${count.toString().padStart( 2, "0" )}`;
 		//this.log.silly(`deleteValueObjects: count=${count}, id=${id}`);
 		this.getForeignObject( id, ( err, obj ) => {
 			if ( obj ) {
@@ -1661,7 +2181,7 @@ class E3dcRscp extends utils.Adapter {
 		return result;
 	}
 
-	clearAllIntervals( ) {
+	clearAllIntervals() {
 		if ( this.dataPollingTimerS ) clearInterval( this.dataPollingTimerS );
 		if ( this.dataPollingTimerM ) clearInterval( this.dataPollingTimerM );
 		if ( this.dataPollingTimerL ) clearInterval( this.dataPollingTimerL );
@@ -1678,9 +2198,9 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	/**
-     * Is called when databases are connected and adapter received configuration.
-     */
-	async onReady( ) {
+	 * Is called when databases are connected and adapter received configuration.
+	 */
+	async onReady() {
 		// Statically, we define only one device per supported RSCP namespace,
 		// plus some setter objects which would not appear before first setting.
 		// The rest of the object tree is defined dynamically.
@@ -1840,99 +2360,6 @@ class E3dcRscp extends utils.Adapter {
 				native: {},
 			} );
 		}
-		if ( this.config.query_wb ) {
-			await this.setObjectNotExistsAsync( "WB", {
-				type: "device",
-				common: {
-					name: systemDictionary["WB"][this.language],
-					role: "wallbox",
-				},
-				native: {},
-			} );
-			// Just support one Wallbox with Index 0
-			const wbPath = "WB.WB_0";
-			await this.setObjectNotExistsAsync( wbPath + ".SUNMODE", {
-				type: "state",
-				common: {
-					name: systemDictionary["SUNMODE"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "",
-					states: {
-						"1": "SUNMODE",
-						"2": "MIXEDMODE"
-					},
-					def: "1"
-				},
-				native: {},
-			} );
-			await this.setObjectNotExistsAsync( wbPath + ".POWER_LIMITATION", {
-				type: "state",
-				common: {
-					name: systemDictionary["POWER_LIMITATION"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "A",
-					def: "10"
-				},
-				native: {},
-			} );
-			await this.setObjectNotExistsAsync( wbPath + ".PRECHARGE", {
-				type: "state",
-				common: {
-					name: systemDictionary["PRECHARGE"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "",
-					states: {
-						"1": "+5%",
-						"2": "-5%"
-					},
-					def: "1"
-				},
-				native: {},
-			} );
-			await this.setObjectNotExistsAsync( wbPath + ".TOGGLE_PHASES", {
-				type: "state",
-				common: {
-					name: systemDictionary["TOGGLE_PHASES"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "",
-					states: {
-						"0": "NO",
-						"1": "YES"
-					},
-					def: "0"
-				},
-				native: {},
-			} );
-			await this.setObjectNotExistsAsync( wbPath + ".ABORT_CHARGING_TYP2", {
-				type: "state",
-				common: {
-					name: systemDictionary["ABORT_CHARGING_TYP2"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "",
-					states: {
-						"0": "NO",
-						"1": "YES"
-					},
-					def: "0"
-				},
-				native: {},
-			} );
-		}
 		if ( this.config.query_db ) {
 			await this.setObjectNotExistsAsync( "DB", {
 				type: "device",
@@ -1947,7 +2374,7 @@ class E3dcRscp extends utils.Adapter {
 					type: "channel",
 					common: {
 						name: systemDictionary[`HISTORY_DATA_${scale}`][this.language],
-						role: `calendar.${scale.toLowerCase( )}`,
+						role: `calendar.${scale.toLowerCase()}`,
 					},
 					native: {},
 				} );
@@ -1987,12 +2414,12 @@ class E3dcRscp extends utils.Adapter {
 					native: {},
 				} );
 			}
-			const now = new Date( );
-			let d = new Date( now.getFullYear( ), now.getMonth( ), now.getDate( ), 0, 0, 0, 0 );
+			const now = new Date();
+			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
 			this.setState( "DB.HISTORY_DATA_DAY.TIME_START", dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_DAY.TIME_INTERVAL", 3600 / 4, true );
 			this.setState( "DB.HISTORY_DATA_DAY.TIME_SPAN", 3600 * 6, true );
-			d = new Date( d.getTime( ) - ( d.getDay( ) + 6 ) % 7 * 1000 * 3600 * 24 );
+			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
 			this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_WEEK.TIME_INTERVAL", 3600 * 4, true );
 			this.setState( "DB.HISTORY_DATA_WEEK.TIME_SPAN", 3600 * 24 * 7, true );
@@ -2014,7 +2441,7 @@ class E3dcRscp extends utils.Adapter {
 			if ( obj && obj.native && obj.native.secret ) {
 				this.config.rscp_password = this.decryptPassword( obj.native.secret, this.config.rscp_password );
 				this.config.portal_password = this.decryptPassword( obj.native.secret, this.config.portal_password );
-				this.initChannel( );
+				this.initChannel();
 			} else {
 				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
 			}
@@ -2026,27 +2453,27 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	/**
-     * Is called when adapter shuts down - callback has to be called under any circumstances!
-     * @param {() => void} callback
-     */
+	 * Is called when adapter shuts down - callback has to be called under any circumstances!
+	 * @param {() => void} callback
+	 */
 	onUnload( callback ) {
 		try {
 			// Here you must clear all timeouts or intervals that may still be active
-			this.clearAllIntervals( );
-			this.tcpConnection.end( );
-			this.tcpConnection.destroy( );
+			this.clearAllIntervals();
+			this.tcpConnection.end();
+			this.tcpConnection.destroy();
 			this.setState( "RSCP.AUTHENTICATION", 0, true );
-			callback( );
+			callback();
 		} catch ( e ) {
-			callback( );
+			callback();
 		}
 	}
 
 	/**
-     * Is called if a subscribed state change
-     * @param {string} id
-     * @param {ioBroker.State | null | undefined} state
-     */
+	 * Is called if a subscribed state change
+	 * @param {string} id
+	 * @param {ioBroker.State | null | undefined} state
+	 */
 	onStateChange( id, state ) {
 		if ( state ) {
 			this.log.debug( `state ${id} changed: ${state.val} (ack = ${state.ack})` );
@@ -2067,8 +2494,10 @@ class E3dcRscp extends utils.Adapter {
 					this.getState( "SYS.RESTART_APPLICATION", ( err, restart ) => {
 						this.queueSysRestartApplication( restart ? restart.val : false );
 					} );
-				} else if ( id.includes( ".WB.WB_0." ) ) {
+				} else if ( id.includes( ".WB." ) ) {
+					this.log.debug( "WB changed" );
 					this.queueWbSetData( id );
+					this.queueWbRequestExternData( "" );
 				} else if ( id.includes( "IDLE_PERIOD" ) ) {
 					this.queueSetIdlePeriod( id );
 				} else if ( id.includes( "HISTORY_DATA" ) ) {
@@ -2093,12 +2522,12 @@ class E3dcRscp extends utils.Adapter {
 if ( module.parent ) {
 	// Export the constructor in compact mode
 	/**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
-     */
+	 * @param {Partial<utils.AdapterOptions>} [options={}]
+	 */
 	module.exports = ( options ) => new E3dcRscp( options );
 } else {
 	// otherwise start the instance directly
-	const ad = new E3dcRscp( );
+	const ad = new E3dcRscp();
 }
 
 //
@@ -2116,7 +2545,7 @@ function dumpRscpFrame( buffer ) {
 		// Loop 1: hex
 		for ( block = 0; block < bpl && ( line * bpl + block ) * bpb < buffer.length; block++ ) {
 			for ( i = 0; i < bpb && ( line * bpl + block ) * bpb + i < buffer.length; i++ ) {
-				result += ( "0" + buffer.readUInt8( ( line * bpl + block ) * bpb + i ).toString( 16 ) ).slice( -2 ).toUpperCase( ) + " ";
+				result += ( "0" + buffer.readUInt8( ( line * bpl + block ) * bpb + i ).toString( 16 ) ).slice( -2 ).toUpperCase() + " ";
 			}
 			result += "  ";
 		}
@@ -2144,10 +2573,10 @@ function parseRscpToken( buffer, pos, text ) {
 	const typeName = rscpType[typeCode];
 	const len = buffer.readUInt16LE( pos + 5 );
 	if ( !rscpTag[tagCode] || buffer.length < pos + 7 + len ) {
-		text.content += ` - invalid tag: 0x${tagCode.toString( 16 ).toUpperCase( ).padStart( 2, "0" )}`;
+		text.content += ` - invalid tag: 0x${tagCode.toString( 16 ).toUpperCase().padStart( 2, "0" )}`;
 		return buffer.length;
 	}
-	text.content += `${rscpTag[tagCode].TagNameGlobal} - type: 0x${typeCode.toString( 16 ).toUpperCase( ).padStart( 2, "0" )} - ${rscpType[typeCode]} - length: ${len} `;
+	text.content += `${rscpTag[tagCode].TagNameGlobal} - type: 0x${typeCode.toString( 16 ).toUpperCase().padStart( 2, "0" )} - ${rscpType[typeCode]} - length: ${len} `;
 	switch ( typeName ) {
 		case "None":
 			if ( len > 0 ) text.content += `CAUTION: length of data is ${len} `;
@@ -2168,7 +2597,7 @@ function parseRscpToken( buffer, pos, text ) {
 			if ( buffer.readUInt8( pos + 7 ) > 31 && buffer.readUInt8( pos + 7 ) < 127 && ( typeName == "Char8" || typeName == "UChar8" ) ) {
 				text.content += `value: ${buffer.toString( "utf8", pos + 7, pos + 8 )} `;
 			} else {
-				text.content += `value: 0x${buffer.readUInt8( pos + 7 ).toString( 16 ).toUpperCase( ).padStart( 2, "0" )} `;
+				text.content += `value: 0x${buffer.readUInt8( pos + 7 ).toString( 16 ).toUpperCase().padStart( 2, "0" )} `;
 			}
 			return 7 + len;
 		case "Int16":
@@ -2209,13 +2638,13 @@ function parseRscpToken( buffer, pos, text ) {
 
 function printRscpFrame( buffer ) {
 	const result = { content: "" };
-	const magic = buffer.toString( "hex", 0, 2 ).toUpperCase( );
+	const magic = buffer.toString( "hex", 0, 2 ).toUpperCase();
 	if ( magic == "E3DC" ) {
 		result.content += `magic: >${magic}< is OK `;
 	} else {
 		result.content += `magic: >${magic}< is WRONG `;
 	}
-	const ctrl = buffer.toString( "hex", 2, 4 ).toUpperCase( );
+	const ctrl = buffer.toString( "hex", 2, 4 ).toUpperCase();
 	switch ( ctrl ) {
 		case "0010":
 			result.content += ` - ctrl: >${ctrl}< is OK - Version 1, no CRC `;
@@ -2286,7 +2715,7 @@ function getSetTags( id ) {
 // Otherwise, round so that the result has <s> digits in total: <int-digits> + <fraction-digits> = <s>.
 function roundForReadability( n ) {
 	const s = 4; // number of significant digits
-	const d = Math.abs( Math.round( n ) ).toString( ).length;
+	const d = Math.abs( Math.round( n ) ).toString().length;
 	if ( d >= s ) {
 		return Math.round( n );
 	} else {
@@ -2296,18 +2725,18 @@ function roundForReadability( n ) {
 }
 
 function toHex( d ) {
-	return  ( "0"+( Number( d ).toString( 16 ) ) ).slice( -2 ).toUpperCase();
+	return ( "0" + ( Number( d ).toString( 16 ) ) ).slice( -2 ).toUpperCase();
 }
 
 // Timestamps are stringified like "2022-01-30 12:00:00.000"
 function dateToString( date ) {
-	const year = date.getFullYear( ).toString( ).padStart( 4, "0" );
-	const month = ( date.getMonth( ) + 1 ).toString( ).padStart( 2, "0" );
-	const day = date.getDate( ).toString( ).padStart( 2, "0" );
-	const hour = date.getHours( ).toString( ).padStart( 2, "0" );
-	const minute = date.getMinutes( ).toString( ).padStart( 2, "0" );
-	const second = date.getSeconds( ).toString( ).padStart( 2, "0" );
-	const ms = date.getMilliseconds( ).toString( ).padStart( 3, "0" );
+	const year = date.getFullYear().toString().padStart( 4, "0" );
+	const month = ( date.getMonth() + 1 ).toString().padStart( 2, "0" );
+	const day = date.getDate().toString().padStart( 2, "0" );
+	const hour = date.getHours().toString().padStart( 2, "0" );
+	const minute = date.getMinutes().toString().padStart( 2, "0" );
+	const second = date.getSeconds().toString().padStart( 2, "0" );
+	const ms = date.getMilliseconds().toString().padStart( 3, "0" );
 	return `${year}-${month}-${day} ${hour}:${minute}:${second}.${ms}`;
 }
 // Missing seconds/milliseconds will be set to zero - minimal valid string is like "2021-1-1 0:0"
@@ -2319,8 +2748,8 @@ function stringToDate( string ) {
 		const ms = found[7] ? Number( found[7] ) : 0;
 		return new Date( Number( found[1] ), Number( found[2] ) - 1, Number( found[3] ), Number( found[4] ), Number( found[5] ), second, ms );
 	} else {
-		const now = new Date( );
-		return new Date( now.getFullYear( ), now.getMonth( ), now.getDate( ), 0, 0, 0, 0 );
+		const now = new Date();
+		return new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
 	}
 }
 
@@ -2329,9 +2758,9 @@ function stringToDate( string ) {
 function bufferToString( buf ) {
 	let str = "";
 	for ( const x of buf ) {
-		str += x.toString( 16 ).padStart( 2, "0" ).toUpperCase( ) + " ";
+		str += x.toString( 16 ).padStart( 2, "0" ).toUpperCase() + " ";
 	}
-	return str.trim( );
+	return str.trim();
 }
 function stringToBuffer( str ) {
 	const arr = [];
