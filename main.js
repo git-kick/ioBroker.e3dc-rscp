@@ -30,11 +30,6 @@ for ( const i in rscpTag ) rscpTagCode[rscpTag[i].TagNameGlobal] = i;
 let wb        = {};
 const wallbox = require( "./lib/wallbox" );
 
-const rscpBool = {
-	0: "NO",
-	1: "YES",
-};
-
 const rscpType = {
 	0x00: "None",
 	0x01: "Bool",
@@ -162,34 +157,7 @@ const rscpEmsSetPowerMode = {
 	3: "CHARGE",
 	4: "GRID_CHARGE",
 };
-const rscpWbMode = {
-	0: "NONE",
-	8: "FINISHED_LOADING",
-	128: "LOADING",
-	144: "NOT_LOADING",
-};
-
-const rscpWbTyp2Locked = {
-	0: "UNLOCKED",
-	1: "LOCKED",
-	16: "NOT_CONNECTED"
-};
-
-const rscpWbSunmode = {
-	"1": "SUNMODE",
-	"2": "MIXEDMODE",
-};
-
-const rscpWbPrecharge = {
-	"1": "+5%",
-	"2": "-5%",
-};
-
-
-const rscpWBActivePhases = {
-	1: "1-Phase",
-	3: "3-Phase",
-};
+const rscpWbMode = wb.rscpWbMode;
 
 const rscpActivePhases = {
 	0: "PHASE_000",
