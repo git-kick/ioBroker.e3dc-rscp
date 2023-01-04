@@ -162,16 +162,34 @@ const rscpEmsSetPowerMode = {
 	3: "CHARGE",
 	4: "GRID_CHARGE",
 };
-const rscpWbMode = wb.rscpWbMode;
+const rscpWbMode = {
+	0: "NONE",
+	8: "FINISHED_LOADING",
+	128: "LOADING",
+	144: "NOT_LOADING",
+};
 
-const rscpWbTyp2Locked = wb.rscpWbTyp2Locked;
+const rscpWbTyp2Locked = {
+	0: "UNLOCKED",
+	1: "LOCKED",
+	16: "NOT_CONNECTED"
+};
 
-const rscpWbSunmode = wb.rscpWbSunmode;
+const rscpWbSunmode = {
+	"1": "SUNMODE",
+	"2": "MIXEDMODE",
+};
 
-const rscpWbPrecharge = wb.rscpWbPrecharge;
+const rscpWbPrecharge = {
+	"1": "+5%",
+	"2": "-5%",
+};
 
 
-const rscpWBActivePhases = wb.rscpWBActivePhases;
+const rscpWBActivePhases = {
+	1: "1-Phase",
+	3: "3-Phase",
+};
 
 const rscpActivePhases = {
 	0: "PHASE_000",
