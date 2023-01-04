@@ -6,7 +6,11 @@ const fs = require( "fs" );
 const path = require( "path" );
 // eslint-disable-next-line prefer-const
 let systemDictionary = {};
+let ad = {};
 eval( fs.readFileSync( path.join( __dirname, "/admin/words.js" ) ).toString() );
+
+const tools = require( "./lib/tools" );
+
 
 const dayOfWeek = [
 	"Monday",
@@ -22,6 +26,14 @@ const dayOfWeek = [
 const rscpTag = require( path.join( __dirname, "/lib/RscpTags.json" ) );
 const rscpTagCode = {}; // maps string to code
 for ( const i in rscpTag ) rscpTagCode[rscpTag[i].TagNameGlobal] = i;
+
+let wb        = {};
+const wallbox = require( "./lib/wallbox" );
+
+const rscpBool = {
+	0: "NO",
+	1: "YES",
+};
 
 const rscpType = {
 	0x00: "None",
@@ -150,38 +162,16 @@ const rscpEmsSetPowerMode = {
 	3: "CHARGE",
 	4: "GRID_CHARGE",
 };
-const rscpWbMode = {
-	0: "NONE",
-	8: "FINISHED_LOADING",
-	128: "LOADING",
-	144: "NOT_LOADING",
-};
+const rscpWbMode = wb.rscpWbMode;
 
-const rscpWbTyp2Locked = {
-	0: "UNLOCKED",
-	1: "LOCKED",
-	16: "NOT_CONNECTED"
-};
+const rscpWbTyp2Locked = wb.rscpWbTyp2Locked;
 
-const rscpWbSunmode = {
-	"1": "SUNMODE",
-	"2": "MIXEDMODE",
-};
+const rscpWbSunmode = wb.rscpWbSunmode;
 
-const rscpWbPrecharge = {
-	"1": "+5%",
-	"2": "-5%",
-};
+const rscpWbPrecharge = wb.rscpWbPrecharge;
 
-const rscpBool = {
-	0: "NO",
-	1: "YES",
-};
 
-const rscpWBActivePhases = {
-	1: "1-Phase",
-	3: "3-Phase",
-};
+const rscpWBActivePhases = wb.rscpWBActivePhases;
 
 const rscpActivePhases = {
 	0: "PHASE_000",
@@ -485,6 +475,7 @@ class E3dcRscp extends utils.Adapter {
 		this.tcpConnection = new Net.Socket();
 		this.inBuffer = null;
 		this.reconnectTimeout = null;
+		wb = new wallbox( {}, this, systemDictionary );
 	}
 
 	// Create channel to E3/DC: encapsulating TCP connection, encryption, message queuing
@@ -645,8 +636,8 @@ class E3dcRscp extends utils.Adapter {
 				case "Bitfield":
 				case "ByteArray":
 					if ( typeof value != "string" ) value = "";
-					this.frame.writeUInt16LE( stringToBuffer( value ).length, this.frame.length - 2 );
-					this.frame = Buffer.concat( [this.frame, stringToBuffer( value )] );
+					this.frame.writeUInt16LE( tools.stringToBuffer( value ).length, this.frame.length - 2 );
+					this.frame = Buffer.concat( [this.frame, tools.stringToBuffer( value )] );
 					break;
 				case "Char8":
 				case "UChar8":
@@ -966,68 +957,6 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
-	queueWbRequestData( sml ) {
-		this.clearFrame();
-		this.addTagtoFrame( "TAG_WB_REQ_CONNECTED_DEVICES", sml );
-		for ( let i = 0; i <= this.maxIndex["WB"]; i++ ) {
-			const pos = this.startContainer( "TAG_WB_REQ_DATA" );
-			this.addTagtoFrame( "TAG_WB_INDEX", "", i );
-			this.addTagtoFrame( "TAG_WB_REQ_STATUS", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_ERROR_CODE", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_MODE", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_ID", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_NAME", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_STATE", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_APP_SOFTWARE", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_BOOTLOADER_SOFTWARE", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_HW_VERSION", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_FLASH_VERSION", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_ENERGY_ALL", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_ENERGY_SOLAR", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_SOC", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_POWER_L1", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_POWER_L2", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_POWER_L3", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ACTIVE_PHASES", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_MODE", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ENERGY_L1", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ENERGY_L2", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ENERGY_L3", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_DEVICE_ID", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ERROR_CODE", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_FIRMWARE_VERSION", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_MAX_PHASE_POWER", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_INFOS", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_WARNINGS", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_ERRORS", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_TEMP_1", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_TEMP_2", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_SUN", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_NET", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALL", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALG", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PARAM_1", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_PARAM_2", sml );
-			this.endContainer( pos );
-		}
-		this.pushFrame();
-	}
-
-	queueWbRequestExternData( sml ) {
-		this.clearFrame();
-		this.addTagtoFrame( "TAG_WB_REQ_CONNECTED_DEVICES", sml );
-		for ( let i = 0; i <= this.maxIndex["WB"]; i++ ) {
-			const pos = this.startContainer( "TAG_WB_REQ_DATA" );
-			this.addTagtoFrame( "TAG_WB_INDEX", "", i );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_SUN", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_NET", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALL", sml );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALG", sml );
-			this.endContainer( pos );
-		}
-		this.pushFrame();
-	}
-
 	// Only used for interface exploration:
 	queueDbRequestData( sml ) {
 		this.clearFrame();
@@ -1037,90 +966,6 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_DB_REQ_HISTORY_TIME_SPAN", "", 86400 );
 		this.endContainer( pos );
 		this.pushFrame();
-	}
-
-	// Set Wallbox Data
-	queueWbSetData( id ) {
-		this.log.silly( "State changed: " + id );
-		const baseId = id.substr( 0, id.lastIndexOf( "." ) );
-		this.log.silly( "baseId: " + baseId );
-		// Expects EXTERN_DATA (length 6) and EXTERN_DATA_LEN =6 /
-		// Byte 1: 1-Sonnenmode / 2-Mischmode /
-		// Byte 2: Strombegrenzung für alle  / Modes, [1 ? 32] A /
-		// Byte 3:  PreCharge (1: +5% / 2: -5%) /numPhases
-		// Byte 4: > 0: Anzahl Phasen tauschen  /
-		// Byte 5: > 0: Typ2, Laden abbrechen /
-		// Byte 6: > 0: Schuko, Best�tigung für ?AN?  /
-		// SUNMODE
-		this.getState( baseId + ".SunMode", ( err, sunmodeState ) => {
-			if ( err ) {
-				this.log.error( err.message );
-			}
-			const sunmodeVal = ( sunmodeState ? sunmodeState.val : 0 );
-			const sunmode = toHex( sunmodeVal );
-			this.log.silly( "sunmode: " + sunmode );
-			this.setState( baseId + ".SunMode", sunmodeVal, true );
-			// Power_Limitation
-			this.getState( baseId + ".PowerLimitation", ( err, powerLimitationState ) => {
-				if ( err ) {
-					this.log.error( err.message );
-				}
-				const powerLimitationVal = ( powerLimitationState ? powerLimitationState.val : 10 );
-				const powerLimitation = toHex( powerLimitationVal );
-				this.log.silly( "powerLimitationVal: " + powerLimitation );
-				this.setState( baseId + ".PowerLimitation", powerLimitationVal, true );
-				// Precharge
-				this.getState( baseId + ".Precharge", ( err, prechargeState ) => {
-					if ( err ) {
-						this.log.error( err.message );
-					}
-					const prechargeVal = ( prechargeState ? prechargeState.val : 10 );
-					const precharge = toHex( prechargeVal );
-					this.log.silly( "prechargeVal: " + precharge );
-					this.setState( baseId + ".Precharge", prechargeVal, true );
-					// Toggle Phases 1->3, 3->1
-					this.getState( baseId + ".TogglePhases", ( err, togglePhasesState ) => {
-						if ( err ) {
-							this.log.error( err.message );
-						}
-						const togglePhasesVal = ( togglePhasesState ? togglePhasesState.val : 0 );
-						const togglePhases = toHex( togglePhasesVal );
-						this.log.silly( "togglePhasesVal: " + togglePhasesVal );
-						// Reset toggle phases
-						this.setState( baseId + ".TogglePhases", 0, true );
-						// Abort Charging Typ2 Plug
-						this.getState( baseId + ".ToggleChargingTyp2", ( err, abortChargingState ) => {
-							if ( err ) {
-								this.log.error( err.message );
-							}
-							const abortChargingVal = ( abortChargingState ? abortChargingState.val : 0 );
-							const abortCharging = toHex( abortChargingVal );
-							this.log.silly( "abortChargingVal: " + abortChargingVal );
-							// reset abort charging
-							this.setState( baseId + ".ToggleChargingTyp2", 0, true );
-							// schuko unklar, zunächst ignorieren
-							const schuko = "00";
-							const str = sunmode + " " + powerLimitation + " " + precharge + " " + togglePhases + " " + abortCharging + " " + schuko;
-							this.log.silly( "String: " + str ); //ToDo
-							const buf = stringToBuffer( str );
-							// Construct Frame
-							this.clearFrame();
-							const c1 = this.startContainer( "TAG_WB_REQ_DATA" );
-							this.addTagtoFrame( "TAG_WB_INDEX", "", 0 ); // Index der Wallbox = 0
-							const c2 = this.startContainer( "TAG_WB_REQ_SET_EXTERN" );
-							this.addTagtoFrame( "TAG_WB_EXTERN_DATA", "", str );
-							this.log.silly( "Buffer : " + buf ); //ToDo
-							this.addTagtoFrame( "TAG_WB_EXTERN_DATA_LEN", "", 6 ); // Länge des bytearray
-							this.endContainer( c2 );
-							this.endContainer( c1 );
-							this.pushFrame( c1 );
-							this.log.silly( "WB-Frame : " + printRscpFrame( this.frame ) ); //ToDo
-
-						} );
-					} );
-				} );
-			} );
-		} );
 	}
 
 	queueSetValue( globalId, value ) {
@@ -1209,8 +1054,8 @@ class E3dcRscp extends utils.Adapter {
 								this.sendTupleTimeout[prefix] = null;
 								let d = new Date();
 								if ( timeStart && timeStart.val ) {
-									d = stringToDate( timeStart.val.toString() );
-									this.setState( `${nameSpace}.${shortTag}.TIME_START`, dateToString( d ), true ); // ack, and format time string
+									d = tools.stringToDate( timeStart.val.toString() );
+									this.setState( `${nameSpace}.${shortTag}.TIME_START`, tools.dateToString( d ), true ); // ack, and format time string
 								}
 								let i = 0;
 								if ( interval && interval.val ) {
@@ -1262,7 +1107,7 @@ class E3dcRscp extends utils.Adapter {
 		if ( this.config.query_bat ) this.queueBatRequestData( sml );
 		if ( this.config.query_pvi ) this.queuePviRequestData( sml );
 		if ( this.config.query_sys ) this.queueSysRequestData( sml );
-		if ( this.config.query_wb ) this.queueWbRequestData( sml );
+		if ( this.config.query_wb ) wb.queueWbRequestData( sml );
 		this.sendFrameFIFO();
 	}
 
@@ -1334,7 +1179,7 @@ class E3dcRscp extends utils.Adapter {
 						break;
 					case "BitField":
 					case "ByteArray":
-						value = bufferToString( buffer.slice( start + 7, start + 7 + len ) );
+						value = tools.bufferToString( buffer.slice( start + 7, start + 7 + len ) );
 						break;
 					case "Char8":
 						value = buffer.readInt8( start + 7 );
@@ -1364,10 +1209,10 @@ class E3dcRscp extends utils.Adapter {
 						value = buffer.readBigUInt64LE( start + 7 ).toString(); // setState does not accept BigInt, so use string representation
 						break;
 					case "Double64":
-						value = roundForReadability( buffer.readDoubleLE( start + 7 ) );
+						value = tools.roundForReadability( buffer.readDoubleLE( start + 7 ) );
 						break;
 					case "Float32":
-						value = roundForReadability( buffer.readFloatLE( start + 7 ) );
+						value = tools.roundForReadability( buffer.readFloatLE( start + 7 ) );
 						break;
 					case "Timestamp":
 						value = Math.round( Number( buffer.readBigUInt64LE( start + 7 ) ) / 1000 ); // setState does not accept BigInt, so convert to seconds
@@ -1452,7 +1297,7 @@ class E3dcRscp extends utils.Adapter {
 					this.storeValue( nameSpace, pathNew + "SYS_SPECS.", token.content[1].content, "Int32", token.content[2].content, token.content[1].content, sysSpecUnits[token.content[1].content] );
 					this.extendObject( `EMS.SYS_SPECS`, { type: "channel", common: { role: "info" } } );
 				} else if ( shortId.includes( "WB.EXTERN_DATA_" ) && token.content.length == 2 ) {
-					this.storeWbExternData( shortId, token.content, pathNew );
+					wb.storeWbExternData( shortId, token.content, pathNew );
 				} else if ( shortId == "EMS.GET_IDLE_PERIODS" ) {
 					this.storeIdlePeriods( token.content, pathNew );
 				} else if ( shortId.startsWith( "DB.HISTORY_DATA_" ) ) {
@@ -1561,7 +1406,7 @@ class E3dcRscp extends utils.Adapter {
 			newTypeName = "Bool";
 		}
 		if ( castToTimestampIds.includes( shortId ) ) {
-			newValue = dateToString( new Date( Number( newValue ) ) );
+			newValue = tools.dateToString( new Date( Number( newValue ) ) );
 			newTypeName = "Timestamp";
 		}
 		// if( typeName != newTypeName || value != newValue ) this.log.silly(`adjustTypeAndValue(${shortId},${typeName},${value}}) returns [${newTypeName},${newValue}]`);
@@ -1605,279 +1450,6 @@ class E3dcRscp extends utils.Adapter {
 		} );
 	}
 
-	storeWbExternData( shortId, tree, path ) {
-		this.log.silly( "ExternData ShortId : " + shortId + " Path : " + path + " Tree : " + printTree( tree ) );
-		const wbPath = "WB."+path.split( "." )[0];
-		this.log.silly( "ExternData wbPath : " + wbPath );
-		if ( this.config.query_wb ) {
-			this.setObjectNotExists( "WB", {
-				type: "device",
-				common: {
-					name: systemDictionary["WB"][this.language],
-					role: "wallbox",
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".Control.SunMode", {
-				type: "state",
-				common: {
-					name: systemDictionary["SunMode"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "",
-					states: rscpWbSunmode,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".Control.PowerLimitation", {
-				type: "state",
-				common: {
-					name: systemDictionary["PowerLimitation"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "A",
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".Control.TogglePhases", {
-				type: "state",
-				common: {
-					name: systemDictionary["TogglePhases"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "",
-					states: rscpBool,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".Control.ToggleChargingTyp2", {
-				type: "state",
-				common: {
-					name: systemDictionary["ToggleChargingTyp2"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: true,
-					unit: "",
-					states: rscpBool,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_SUN.SunPower", {
-				type: "state",
-				common: {
-					name: systemDictionary["SunPower"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "W",
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_NET.NetPower", {
-				type: "state",
-				common: {
-					name: systemDictionary["NetPower"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "W",
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALL.AllPower", {
-				type: "state",
-				common: {
-					name: systemDictionary["AllPower"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "W",
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.CarLoading", {
-				type: "state",
-				common: {
-					name: systemDictionary["CarLoading"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "",
-					states: rscpBool,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.CarLoadingCanceled", {
-				type: "state",
-				common: {
-					name: systemDictionary["CarLoadingCanceled"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "",
-					states: rscpBool,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.Typ2Locked", {
-				type: "state",
-				common: {
-					name: systemDictionary["Typ2Locked"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "",
-					states: rscpWbTyp2Locked,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.ActivePhases", {
-				type: "state",
-				common: {
-					name: systemDictionary["ActivePhases"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "",
-					states: rscpWBActivePhases,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.SunMode", {
-				type: "state",
-				common: {
-					name: systemDictionary["SunMode"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "",
-					states: rscpWbSunmode,
-					def: 0
-				},
-				native: {},
-			} );
-			this.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.PowerLimitation", {
-				type: "state",
-				common: {
-					name: systemDictionary["PowerLimitation"][this.language],
-					type: "number",
-					role: "value",
-					read: true,
-					write: false,
-					unit: "A",
-					def: 0
-				},
-				native: {},
-			} );
-		}
-		let container = "";
-		tree.forEach( token => {
-			this.log.silly( "ExternData Token : " + JSON.stringify( token ) );
-			const tag = shortId.split( "." )[1];
-			if ( rscpTag[token.tag].DataType == "Container" ) {
-				this.log.silly( "Container : " + container );
-			}
-			if ( rscpTag[token.tag].TagNameGlobal in ["TAG_WB_EXTERN_DATA_SUN", "TAG_WB_EXTERN_DATA_NET", "TAG_WB_EXTERN_DATA_ALL", "TAG_WB_EXTERN_DATA_ALG"] ) {
-				this.extendObject( "WB." + path + tag, { type: "channel", common: { role: "value" } } );
-			}
-			if ( rscpTag[token.tag].TagNameGlobal == "TAG_WB_EXTERN_DATA" ) {
-				this.log.silly( "ExternData fullPath : " + wbPath + "." + tag + ".EXTERN_DATA" );
-				this.setObjectNotExists( wbPath + "." + tag + ".EXTERN_DATA", {
-					type: "state",
-					common: {
-						name: systemDictionary["EXTERN_DATA"][this.language],
-						type: "string",
-						role: "value",
-						read: true,
-						write: false,
-						unit: "",
-						def: ""
-					},
-					native: {},
-				} );
-				this.setState( wbPath + "." + tag + ".EXTERN_DATA", token.content, true );
-				this.log.silly( "ExternData shortId : " + shortId );
-				this.log.silly( "ExternData Content : " + token.content );
-				container = shortId.split( "." )[1];
-				this.log.silly( "Container : " + container );
-				let extData = [];
-				switch ( container ) {
-					case "EXTERN_DATA_SUN":
-						extData = token.content.split( " " );
-						this.log.silly( "EXTERN_DATA_SUN : " + JSON.stringify( extData ) );
-						this.log.silly( "SunPower[W] : " + parseInt( extData[1]+extData[2],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_SUN.SunPower",parseInt( extData[1]+extData[0],16 ),true );
-						break;
-					case "EXTERN_DATA_NET":
-						extData = token.content.split( " " );
-						this.log.silly( "EXTERN_DATA_NET : " + JSON.stringify( extData ) );
-						this.log.silly( "NetPower[W] : " + parseInt( extData[1]+extData[2],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_NET.NetPower",parseInt( extData[1]+extData[0],16 ),true );
-						break;
-					case "EXTERN_DATA_ALL":
-						extData = token.content.split( " " );
-						this.log.silly( "EXTERN_DATA_ALL : " + JSON.stringify( extData ) );
-						this.log.silly( "TotalPower[W] : " + parseInt( extData[1]+extData[2],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALL.AllPower",parseInt( extData[1]+extData[0],16 ),true );
-						break;
-					case "EXTERN_DATA_ALG":
-						extData = token.content.split( " " );
-						this.log.silly( "EXTERN_DATA_ALG : " + JSON.stringify( extData ) );
-
-						// Byte 2 Aktive Phasen
-						this.log.silly( "ActivePhases : " + parseInt( extData[1],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALG.ActivePhases",parseInt( extData[1],16 ),true );
-
-						// Byte 3 WB-Status
-						this.log.silly( "WB-Status : " + parseInt( extData[1],16 ) );
-						this.log.silly( "SunMode : " + ( ( parseInt( extData[2],16 ) & 128 ) == 128 ? 1:2 ) ) ;
-						this.setState( wbPath + ".EXTERN_DATA_ALG.SunMode",( parseInt( extData[2],16 ) & 128 ) == 128 ? 1:2,true );
-						this.setState( wbPath + ".Control.SunMode",( parseInt( extData[2],16 ) & 128 ) == 128 ? 1:2,true );
-						this.log.silly( "CarLoadingCanceled : " + ( ( parseInt( extData[2],16 ) & 64 ) == 64 ? 1:0 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALG.CarLoadingCanceled",( parseInt( extData[2],16 ) & 64 ) == 64 ? 1:0,true );
-						this.log.silly( "CarLoading : " + ( ( parseInt( extData[2],16 ) & 32 ) == 32 ? 1:0 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALG.CarLoading",( parseInt( extData[2],16 ) & 32 ) == 32 ? 1:0,true );
-						this.log.silly( "Typ2Locked : " + ( ( parseInt( extData[2],16 ) & 8 ) == 8 ? 1:0 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALG.Typ2Locked",( parseInt( extData[2],16 ) & 8 ) == 8 ? 1:0,true );
-
-						//Byte 4 : Ladeleistung - OK bei DEVICE_NAME "Easy Connect"
-						this.log.silly( "PowerLimitation : " + parseInt( extData[3],16 ) );
-						this.setState( wbPath + ".EXTERN_DATA_ALG.PowerLimitation",parseInt( extData[3],16 ),true );
-						this.setState( wbPath + ".Control.PowerLimitation",parseInt( extData[3],16 ),true );
-						break;
-					default:
-						break;
-				}
-			}
-		} );
-	}
-
 	storeIdlePeriods( tree, path ) {
 		tree.forEach( token => {
 			if ( rscpTag[token.tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD" || token.content.length != 5 ) return;
@@ -1918,7 +1490,7 @@ class E3dcRscp extends utils.Adapter {
 			this.getState( `DB.${path}TIME_INTERVAL`, ( err, intervalObj ) => {
 				this.getState( `DB.${path}TIME_SPAN`, ( err, spanObj ) => {
 					let timeStart = 0;
-					if ( timeStartObj && timeStartObj.val ) { timeStart = stringToDate( timeStartObj.val.toString() ).getTime() / 1000; } // epoch seconds
+					if ( timeStartObj && timeStartObj.val ) { timeStart = tools.stringToDate( timeStartObj.val.toString() ).getTime() / 1000; } // epoch seconds
 					let interval = 0;
 					if ( intervalObj && intervalObj.val ) { interval = Number( intervalObj.val ); }
 					let span = 0;
@@ -1937,7 +1509,7 @@ class E3dcRscp extends utils.Adapter {
 							count++;
 							const graphIndex = Number( token.content[0].content );
 							const timeStamp = new Date( ( timeStart + graphIndex * interval ) * 1000 );
-							this.storeValue( "DB", oPath, "TIMESTAMP", "CString", dateToString( timeStamp ), "TIMESTAMP" );
+							this.storeValue( "DB", oPath, "TIMESTAMP", "CString", tools.dateToString( timeStamp ), "TIMESTAMP" );
 						} else {
 							this.log.debug( `storeHistoryData: ignoring unexpected tag ${rscpTag[token.tag].TagNameGlobal}` );
 							return; // next token
@@ -2210,19 +1782,19 @@ class E3dcRscp extends utils.Adapter {
 			}
 			const now = new Date();
 			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
-			this.setState( "DB.HISTORY_DATA_DAY.TIME_START", dateToString( d ), true );
+			this.setState( "DB.HISTORY_DATA_DAY.TIME_START", tools.dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_DAY.TIME_INTERVAL", 3600 / 4, true );
 			this.setState( "DB.HISTORY_DATA_DAY.TIME_SPAN", 3600 * 6, true );
 			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
-			this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", dateToString( d ), true );
+			this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", tools.dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_WEEK.TIME_INTERVAL", 3600 * 4, true );
 			this.setState( "DB.HISTORY_DATA_WEEK.TIME_SPAN", 3600 * 24 * 7, true );
 			d.setDate( 1 );
-			this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", dateToString( d ), true );
+			this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", tools.dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_MONTH.TIME_INTERVAL", 3600 * 24, true );
 			this.setState( "DB.HISTORY_DATA_MONTH.TIME_SPAN", 3600 * 24 * 31, true );
 			d.setMonth( 0 );
-			this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", dateToString( d ), true );
+			this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", tools.dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600 * 24 * 30, true );
 			this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600 * 24 * 365, true );
 		}
@@ -2290,8 +1862,8 @@ class E3dcRscp extends utils.Adapter {
 					} );
 				} else if ( id.includes( ".WB." ) ) {
 					this.log.debug( "WB changed" );
-					this.queueWbSetData( id );
-					this.queueWbRequestExternData( "" );
+					wb.queueWbSetData( id );
+					wb.queueWbRequestExternData( "" );
 				} else if ( id.includes( "IDLE_PERIOD" ) ) {
 					this.queueSetIdlePeriod( id );
 				} else if ( id.includes( "HISTORY_DATA" ) ) {
@@ -2321,7 +1893,7 @@ if ( module.parent ) {
 	module.exports = ( options ) => new E3dcRscp( options );
 } else {
 	// otherwise start the instance directly
-	const ad = new E3dcRscp();
+	ad = new E3dcRscp();
 }
 
 //
@@ -2383,7 +1955,7 @@ function parseRscpToken( buffer, pos, text ) {
 			return 7 + len;
 		case "Bitfield":
 		case "ByteArray":
-			text.content += `value: ${bufferToString( buffer.slice( pos + 7, pos + 7 + len ) )} `;
+			text.content += `value: ${tools.bufferToString( buffer.slice( pos + 7, pos + 7 + len ) )} `;
 			return 7 + len;
 		case "Char8":
 		case "UChar8":
@@ -2501,66 +2073,4 @@ function getSetTags( id ) {
 		}
 		return result;
 	}
-}
-
-
-// Round numerical values for better readability
-// If the integer part is has more digits than <s>, then just round to integer.
-// Otherwise, round so that the result has <s> digits in total: <int-digits> + <fraction-digits> = <s>.
-function roundForReadability( n ) {
-	const s = 4; // number of significant digits
-	const d = Math.abs( Math.round( n ) ).toString().length;
-	if ( d >= s ) {
-		return Math.round( n );
-	} else {
-		const p = Math.pow( 10, s - d );
-		return Math.round( n * p ) / p;
-	}
-}
-
-function toHex( d ) {
-	return ( "0" + ( Number( d ).toString( 16 ) ) ).slice( -2 ).toUpperCase();
-}
-
-// Timestamps are stringified like "2022-01-30 12:00:00.000"
-function dateToString( date ) {
-	const year = date.getFullYear().toString().padStart( 4, "0" );
-	const month = ( date.getMonth() + 1 ).toString().padStart( 2, "0" );
-	const day = date.getDate().toString().padStart( 2, "0" );
-	const hour = date.getHours().toString().padStart( 2, "0" );
-	const minute = date.getMinutes().toString().padStart( 2, "0" );
-	const second = date.getSeconds().toString().padStart( 2, "0" );
-	const ms = date.getMilliseconds().toString().padStart( 3, "0" );
-	return `${year}-${month}-${day} ${hour}:${minute}:${second}.${ms}`;
-}
-// Missing seconds/milliseconds will be set to zero - minimal valid string is like "2021-1-1 0:0"
-// If no match is found, return "today midnight"
-function stringToDate( string ) {
-	const found = string.match( /(\d\d\d\d)-(\d\d?)-(\d\d?) (\d\d?):(\d\d?)(?::(\d\d?)(?:\.(\d\d?\d?))?)?/ );
-	if ( found ) {
-		const second = found[6] ? Number( found[6] ) : 0;
-		const ms = found[7] ? Number( found[7] ) : 0;
-		return new Date( Number( found[1] ), Number( found[2] ) - 1, Number( found[3] ), Number( found[4] ), Number( found[5] ), second, ms );
-	} else {
-		const now = new Date();
-		return new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
-	}
-}
-
-// Convert Buffer to/from human readable string, e.g. 4 byte like "F0 12 FF 00"
-// Also used to display RSCP ByteArray/BitString types
-function bufferToString( buf ) {
-	let str = "";
-	for ( const x of buf ) {
-		str += x.toString( 16 ).padStart( 2, "0" ).toUpperCase() + " ";
-	}
-	return str.trim();
-}
-function stringToBuffer( str ) {
-	const arr = [];
-	//	str.split(" ").array.forEach(element => {
-	str.split( " " ).forEach( element => {
-		arr.push( Number( `0x${element}` ) );
-	} );
-	return Buffer.from( arr );
 }
