@@ -1,4 +1,4 @@
-const tools = require( "../lib/tools" );
+const helper = require( "./helper" );
 
 const rscpWbTyp2Locked = {
 	0: "UNLOCKED",
@@ -27,7 +27,7 @@ class wallbox {
 		this.settings     = settings || {};
 		this.adapter = adapter;
 		this.systemDictionary = systemDictionary;
-		this.rscpTag = require( "./RscpTags.json" ) ;
+		this.rscpTag = require( "./lib/RscpTags.json" ) ;
 	}
 
 	queueWbRequestData( sml ) {
@@ -109,7 +109,7 @@ class wallbox {
 				this.adapter.log.error( err.message );
 			}
 			const sunmodeVal = ( sunmodeState ? sunmodeState.val : 0 );
-			const sunmode = tools.toHex( sunmodeVal );
+			const sunmode = helper.toHex( sunmodeVal );
 			this.adapter.log.silly( "sunmode: " + sunmode );
 			this.adapter.setState( baseId + ".SunMode", sunmodeVal, true );
 			// Power_Limitation
@@ -118,7 +118,7 @@ class wallbox {
 					this.adapter.log.error( err.message );
 				}
 				const powerLimitationVal = ( powerLimitationState ? powerLimitationState.val : 10 );
-				const powerLimitation = tools.toHex( powerLimitationVal );
+				const powerLimitation = helper.toHex( powerLimitationVal );
 				this.adapter.log.silly( "powerLimitationVal: " + powerLimitation );
 				this.adapter.setState( baseId + ".PowerLimitation", powerLimitationVal, true );
 				// Precharge
@@ -127,7 +127,7 @@ class wallbox {
 						this.adapter.log.error( err.message );
 					}
 					const prechargeVal = ( prechargeState ? prechargeState.val : 10 );
-					const precharge = tools.toHex( prechargeVal );
+					const precharge = helper.toHex( prechargeVal );
 					this.adapter.log.silly( "prechargeVal: " + precharge );
 					this.adapter.setState( baseId + ".Precharge", prechargeVal, true );
 					// Toggle Phases 1->3, 3->1
@@ -136,7 +136,7 @@ class wallbox {
 							this.adapter.log.error( err.message );
 						}
 						const togglePhasesVal = ( togglePhasesState ? togglePhasesState.val : 0 );
-						const togglePhases = tools.toHex( togglePhasesVal );
+						const togglePhases = helper.toHex( togglePhasesVal );
 						this.adapter.log.silly( "togglePhasesVal: " + togglePhasesVal );
 						// Reset toggle phases
 						this.adapter.setState( baseId + ".TogglePhases", 0, true );
@@ -146,7 +146,7 @@ class wallbox {
 								this.adapter.log.error( err.message );
 							}
 							const abortChargingVal = ( abortChargingState ? abortChargingState.val : 0 );
-							const abortCharging = tools.toHex( abortChargingVal );
+							const abortCharging = helper.toHex( abortChargingVal );
 							this.adapter.log.silly( "abortChargingVal: " + abortChargingVal );
 							// reset abort charging
 							this.adapter.setState( baseId + ".ToggleChargingTyp2", 0, true );
@@ -154,7 +154,7 @@ class wallbox {
 							const schuko = "00";
 							const str = sunmode + " " + powerLimitation + " " + precharge + " " + togglePhases + " " + abortCharging + " " + schuko;
 							this.adapter.log.silly( "String: " + str ); //ToDo
-							const buf = tools.stringToBuffer( str );
+							const buf = helper.stringToBuffer( str );
 							// Construct Frame
 							this.adapter.clearFrame();
 							const c1 = this.adapter.startContainer( "TAG_WB_REQ_DATA" );
