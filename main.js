@@ -10,6 +10,7 @@ let ad = {};
 eval( fs.readFileSync( path.join( __dirname, "/admin/words.js" ) ).toString() );
 
 const tools = require( "./lib/tools" );
+const helper = require( "./helper" );
 
 
 const dayOfWeek = [
@@ -28,7 +29,7 @@ const rscpTagCode = {}; // maps string to code
 for ( const i in rscpTag ) rscpTagCode[rscpTag[i].TagNameGlobal] = i;
 
 let wb        = {};
-const wallbox = require( "./lib/wallbox" );
+const wallbox = require( "./wallbox" );
 
 const rscpType = {
 	0x00: "None",
@@ -622,8 +623,8 @@ class E3dcRscp extends utils.Adapter {
 				case "Bitfield":
 				case "ByteArray":
 					if ( typeof value != "string" ) value = "";
-					this.frame.writeUInt16LE( tools.stringToBuffer( value ).length, this.frame.length - 2 );
-					this.frame = Buffer.concat( [this.frame, tools.stringToBuffer( value )] );
+					this.frame.writeUInt16LE( helper.stringToBuffer( value ).length, this.frame.length - 2 );
+					this.frame = Buffer.concat( [this.frame, helper.stringToBuffer( value )] );
 					break;
 				case "Char8":
 				case "UChar8":
@@ -1040,8 +1041,8 @@ class E3dcRscp extends utils.Adapter {
 								this.sendTupleTimeout[prefix] = null;
 								let d = new Date();
 								if ( timeStart && timeStart.val ) {
-									d = tools.stringToDate( timeStart.val.toString() );
-									this.setState( `${nameSpace}.${shortTag}.TIME_START`, tools.dateToString( d ), true ); // ack, and format time string
+									d = helper.stringToDate( timeStart.val.toString() );
+									this.setState( `${nameSpace}.${shortTag}.TIME_START`, helper.dateToString( d ), true ); // ack, and format time string
 								}
 								let i = 0;
 								if ( interval && interval.val ) {
@@ -1165,7 +1166,7 @@ class E3dcRscp extends utils.Adapter {
 						break;
 					case "BitField":
 					case "ByteArray":
-						value = tools.bufferToString( buffer.slice( start + 7, start + 7 + len ) );
+						value = helper.bufferToString( buffer.slice( start + 7, start + 7 + len ) );
 						break;
 					case "Char8":
 						value = buffer.readInt8( start + 7 );
@@ -1195,10 +1196,10 @@ class E3dcRscp extends utils.Adapter {
 						value = buffer.readBigUInt64LE( start + 7 ).toString(); // setState does not accept BigInt, so use string representation
 						break;
 					case "Double64":
-						value = tools.roundForReadability( buffer.readDoubleLE( start + 7 ) );
+						value = helper.roundForReadability( buffer.readDoubleLE( start + 7 ) );
 						break;
 					case "Float32":
-						value = tools.roundForReadability( buffer.readFloatLE( start + 7 ) );
+						value = helper.roundForReadability( buffer.readFloatLE( start + 7 ) );
 						break;
 					case "Timestamp":
 						value = Math.round( Number( buffer.readBigUInt64LE( start + 7 ) ) / 1000 ); // setState does not accept BigInt, so convert to seconds
@@ -1392,7 +1393,7 @@ class E3dcRscp extends utils.Adapter {
 			newTypeName = "Bool";
 		}
 		if ( castToTimestampIds.includes( shortId ) ) {
-			newValue = tools.dateToString( new Date( Number( newValue ) ) );
+			newValue = helper.dateToString( new Date( Number( newValue ) ) );
 			newTypeName = "Timestamp";
 		}
 		// if( typeName != newTypeName || value != newValue ) this.log.silly(`adjustTypeAndValue(${shortId},${typeName},${value}}) returns [${newTypeName},${newValue}]`);
@@ -1476,7 +1477,7 @@ class E3dcRscp extends utils.Adapter {
 			this.getState( `DB.${path}TIME_INTERVAL`, ( err, intervalObj ) => {
 				this.getState( `DB.${path}TIME_SPAN`, ( err, spanObj ) => {
 					let timeStart = 0;
-					if ( timeStartObj && timeStartObj.val ) { timeStart = tools.stringToDate( timeStartObj.val.toString() ).getTime() / 1000; } // epoch seconds
+					if ( timeStartObj && timeStartObj.val ) { timeStart = helper.stringToDate( timeStartObj.val.toString() ).getTime() / 1000; } // epoch seconds
 					let interval = 0;
 					if ( intervalObj && intervalObj.val ) { interval = Number( intervalObj.val ); }
 					let span = 0;
@@ -1495,7 +1496,7 @@ class E3dcRscp extends utils.Adapter {
 							count++;
 							const graphIndex = Number( token.content[0].content );
 							const timeStamp = new Date( ( timeStart + graphIndex * interval ) * 1000 );
-							this.storeValue( "DB", oPath, "TIMESTAMP", "CString", tools.dateToString( timeStamp ), "TIMESTAMP" );
+							this.storeValue( "DB", oPath, "TIMESTAMP", "CString", helper.dateToString( timeStamp ), "TIMESTAMP" );
 						} else {
 							this.log.debug( `storeHistoryData: ignoring unexpected tag ${rscpTag[token.tag].TagNameGlobal}` );
 							return; // next token
@@ -1768,19 +1769,19 @@ class E3dcRscp extends utils.Adapter {
 			}
 			const now = new Date();
 			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
-			this.setState( "DB.HISTORY_DATA_DAY.TIME_START", tools.dateToString( d ), true );
+			this.setState( "DB.HISTORY_DATA_DAY.TIME_START", helper.dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_DAY.TIME_INTERVAL", 3600 / 4, true );
 			this.setState( "DB.HISTORY_DATA_DAY.TIME_SPAN", 3600 * 6, true );
 			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
-			this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", tools.dateToString( d ), true );
+			this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", helper.dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_WEEK.TIME_INTERVAL", 3600 * 4, true );
 			this.setState( "DB.HISTORY_DATA_WEEK.TIME_SPAN", 3600 * 24 * 7, true );
 			d.setDate( 1 );
-			this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", tools.dateToString( d ), true );
+			this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", helper.dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_MONTH.TIME_INTERVAL", 3600 * 24, true );
 			this.setState( "DB.HISTORY_DATA_MONTH.TIME_SPAN", 3600 * 24 * 31, true );
 			d.setMonth( 0 );
-			this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", tools.dateToString( d ), true );
+			this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", helper.dateToString( d ), true );
 			this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600 * 24 * 30, true );
 			this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600 * 24 * 365, true );
 		}
@@ -1941,7 +1942,7 @@ function parseRscpToken( buffer, pos, text ) {
 			return 7 + len;
 		case "Bitfield":
 		case "ByteArray":
-			text.content += `value: ${tools.bufferToString( buffer.slice( pos + 7, pos + 7 + len ) )} `;
+			text.content += `value: ${helper.bufferToString( buffer.slice( pos + 7, pos + 7 + len ) )} `;
 			return 7 + len;
 		case "Char8":
 		case "UChar8":
