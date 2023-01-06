@@ -509,7 +509,7 @@ class E3dcRscp extends utils.Adapter {
 				if ( rscpTag[receivedFrame.readUInt32LE( 18 )] ) this.log.silly( rscpTag[receivedFrame.readUInt32LE( 18 )].TagNameGlobal );
 				if ( this.decryptionIV ) this.inBuffer.copy( this.decryptionIV, 0, this.inBuffer.length - BLOCK_SIZE ); // last encrypted block will be used as IV for next frame
 				this.log.silly( `IN: ${printRscpFrame( receivedFrame )}` );
-				//this.log.debug( dumpRscpFrame(receivedFrame) );// change back
+				//this.log.silly( dumpRscpFrame(receivedFrame) );
 				this.processFrame( receivedFrame );
 				this.sendFrameFIFO();
 				this.inBuffer = null;
@@ -1850,7 +1850,6 @@ class E3dcRscp extends utils.Adapter {
 				} else if ( id.includes( ".WB." ) ) {
 					this.log.debug( "WB changed" );
 					wb.queueWbSetData( id );
-					wb.queueWbRequestExternData( "" );
 				} else if ( id.includes( "IDLE_PERIOD" ) ) {
 					this.queueSetIdlePeriod( id );
 				} else if ( id.includes( "HISTORY_DATA" ) ) {
