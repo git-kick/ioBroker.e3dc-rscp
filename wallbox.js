@@ -1,6 +1,17 @@
+/**
+ * Wallbox setter and getter.
+ *
+ * Due to large main.js file, wallbox functionality was put in this separate file.
+ *
+ * @link   https://github.com/ka-vaNu/ioBroker.e3dc-rscp/tree/Support-Wallbox
+ * @file   This files defines the wallbox class.
+ * @author ka-vaNu.
+ * @since  1.1.0
+ */
+
 const helper = require( "./helper" );
 
-const rscpWbTyp2Locked = {
+const rscpWbType2Locked = {
 	0: "UNLOCKED",
 	1: "LOCKED",
 	16: "NOT_CONNECTED"
@@ -11,7 +22,7 @@ const rscpWbSunmode = {
 	"2": "MIXEDMODE",
 };
 
-const rscpWBActivePhases = {
+const rscpWbActivePhases = {
 	1: "1-Phase",
 	3: "3-Phase",
 };
@@ -104,7 +115,7 @@ class wallbox {
 		// Byte 2: Strombegrenzung für alle  / Modes, [1 ? 32] A /
 		// Byte 3:  PreCharge (1: +5% / 2: -5%) /numPhases
 		// Byte 4: > 0: Anzahl Phasen tauschen  /
-		// Byte 5: > 0: Typ2, Laden abbrechen /
+		// Byte 5: > 0: Typ 2, Laden abbrechen /
 		// Byte 6: > 0: Schuko, Best�tigung für ?AN?  /
 		// SUNMODE
 		switch ( tag ) {
@@ -160,9 +171,9 @@ class wallbox {
 					this.buildWbExternData( "00 00 00 " + togglePhases + " 00 00 " );
 				} );
 				break;
-			case "ToggleChargingTyp2":
-				// Abort Charging Typ2 Plug
-				this.adapter.getState( baseId + ".ToggleChargingTyp2", ( err, abortChargingState ) => {
+			case "ToggleChargingType2":
+				// Abort Charging Type 2 Plug
+				this.adapter.getState( baseId + ".ToggleChargingType2", ( err, abortChargingState ) => {
 					if ( err ) {
 						this.adapter.log.error( err.message );
 					}
@@ -170,7 +181,7 @@ class wallbox {
 					const abortCharging = helper.toHex( abortChargingVal );
 					this.adapter.log.silly( "abortChargingVal: " + abortChargingVal );
 					// reset abort charging
-					this.adapter.setState( baseId + ".ToggleChargingTyp2", 0, true );
+					this.adapter.setState( baseId + ".ToggleChargingType2", 0, true );
 					this.buildWbExternData( "00 00 00 00 " + abortCharging + " 00 " );
 				} );
 				break;
@@ -251,14 +262,14 @@ class wallbox {
 						case "EXTERN_DATA_NET":
 							extData = token.content.split( " " );
 							this.adapter.log.silly( lp + "EXTERN_DATA_NET : " + JSON.stringify( extData ) );
-							this.adapter.log.silly( lp + "NetPower[W] : " + parseInt( extData[1] + extData[2], 16 ) );
-							this.adapter.setState( wbPath + ".EXTERN_DATA_NET.NetPower", parseInt( extData[1] + extData[0], 16 ), true );
+							this.adapter.log.silly( lp + "GridPower[W] : " + parseInt( extData[1] + extData[2], 16 ) );
+							this.adapter.setState( wbPath + ".EXTERN_DATA_NET.GridPower", parseInt( extData[1] + extData[0], 16 ), true );
 							break;
 						case "EXTERN_DATA_ALL":
 							extData = token.content.split( " " );
 							this.adapter.log.silly( lp + "EXTERN_DATA_ALL : " + JSON.stringify( extData ) );
 							this.adapter.log.silly( lp + "TotalPower[W] : " + parseInt( extData[1] + extData[2], 16 ) );
-							this.adapter.setState( wbPath + ".EXTERN_DATA_ALL.AllPower", parseInt( extData[1] + extData[0], 16 ), true );
+							this.adapter.setState( wbPath + ".EXTERN_DATA_ALL.TotalPower", parseInt( extData[1] + extData[0], 16 ), true );
 							break;
 						case "EXTERN_DATA_ALG":
 							extData = token.content.split( " " );
@@ -279,16 +290,16 @@ class wallbox {
 							this.adapter.log.silly( lp + "SunMode : " + ( ( parseInt( extData[2], 16 ) & 128 ) == 128 ? 1 : 2 ) );
 							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.SunMode", ( parseInt( extData[2], 16 ) & 128 ) == 128 ? 1 : 2, true );
 							this.adapter.setState( wbPath + ".Control.SunMode", ( parseInt( extData[2], 16 ) & 128 ) == 128 ? 1 : 2, true );
-							// Bit 6 - Wert 64  - Loading canceled
-							this.adapter.log.silly( lp + "CarLoadingCanceled : " + ( ( parseInt( extData[2], 16 ) & 64 ) == 64 ? 1 : 0 ) );
-							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.CarLoadingCanceled", ( parseInt( extData[2], 16 ) & 64 ) == 64 ? 1 : 0, true );
-							// Bit 5 - Wert 32  - Loading
-							this.adapter.log.silly( lp + "CarLoading : " + ( ( parseInt( extData[2], 16 ) & 32 ) == 32 ? 1 : 0 ) );
-							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.CarLoading", ( parseInt( extData[2], 16 ) & 32 ) == 32 ? 1 : 0, true );
+							// Bit 6 - Wert 64  - Charging canceled
+							this.adapter.log.silly( lp + "CarChargingCanceled : " + ( ( parseInt( extData[2], 16 ) & 64 ) == 64 ? 1 : 0 ) );
+							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.CarChargingCanceled", ( parseInt( extData[2], 16 ) & 64 ) == 64 ? 1 : 0, true );
+							// Bit 5 - Wert 32  - Charging
+							this.adapter.log.silly( lp + "CarCharging : " + ( ( parseInt( extData[2], 16 ) & 32 ) == 32 ? 1 : 0 ) );
+							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.CarCharging", ( parseInt( extData[2], 16 ) & 32 ) == 32 ? 1 : 0, true );
 							// Bit 4 ist immer 0
 							// Bit 3 - Wert 8   - Locked
-							this.adapter.log.silly( lp + "Typ2Locked : " + ( ( parseInt( extData[2], 16 ) & 8 ) == 8 ? 1 : 0 ) );
-							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.Typ2Locked", ( parseInt( extData[2], 16 ) & 8 ) == 8 ? 1 : 0, true );
+							this.adapter.log.silly( lp + "Type2Locked : " + ( ( parseInt( extData[2], 16 ) & 8 ) == 8 ? 1 : 0 ) );
+							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.Type2Locked", ( parseInt( extData[2], 16 ) & 8 ) == 8 ? 1 : 0, true );
 							// Bit 3,2,1 sind immer 0
 
 							// Byte 4 : Ladeleistung - OK bei DEVICE_NAME "Easy Connect"
@@ -354,10 +365,10 @@ class wallbox {
 			},
 			native: {},
 		} );
-		this.adapter.setObjectNotExists( wbPath + ".Control.ToggleChargingTyp2", {
+		this.adapter.setObjectNotExists( wbPath + ".Control.ToggleChargingType2", {
 			type: "state",
 			common: {
-				name: this.systemDictionary["ToggleChargingTyp2"][this.adapter.language],
+				name: this.systemDictionary["ToggleChargingType2"][this.adapter.language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -381,10 +392,10 @@ class wallbox {
 			},
 			native: {},
 		} );
-		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_NET.NetPower", {
+		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_NET.GridPower", {
 			type: "state",
 			common: {
-				name: this.systemDictionary["NetPower"][this.adapter.language],
+				name: this.systemDictionary["GridPower"][this.adapter.language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -394,10 +405,10 @@ class wallbox {
 			},
 			native: {},
 		} );
-		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_ALL.AllPower", {
+		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_ALL.TotalPower", {
 			type: "state",
 			common: {
-				name: this.systemDictionary["AllPower"][this.adapter.language],
+				name: this.systemDictionary["TotalPower"][this.adapter.language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -407,10 +418,10 @@ class wallbox {
 			},
 			native: {},
 		} );
-		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.CarLoading", {
+		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.CarCharging", {
 			type: "state",
 			common: {
-				name: this.systemDictionary["CarLoading"][this.adapter.language],
+				name: this.systemDictionary["CarCharging"][this.adapter.language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -421,10 +432,10 @@ class wallbox {
 			},
 			native: {},
 		} );
-		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.CarLoadingCanceled", {
+		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.CarChargingCanceled", {
 			type: "state",
 			common: {
-				name: this.systemDictionary["CarLoadingCanceled"][this.adapter.language],
+				name: this.systemDictionary["CarChargingCanceled"][this.adapter.language],
 				type: "number",
 				role: "value",
 				read: true,
@@ -435,16 +446,16 @@ class wallbox {
 			},
 			native: {},
 		} );
-		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.Typ2Locked", {
+		this.adapter.setObjectNotExists( wbPath + ".EXTERN_DATA_ALG.Type2Locked", {
 			type: "state",
 			common: {
-				name: this.systemDictionary["Typ2Locked"][this.adapter.language],
+				name: this.systemDictionary["Type2Locked"][this.adapter.language],
 				type: "number",
 				role: "value",
 				read: true,
 				write: false,
 				unit: "",
-				states: rscpWbTyp2Locked,
+				states: rscpWbType2Locked,
 				def: 0
 			},
 			native: {},
@@ -458,7 +469,7 @@ class wallbox {
 				read: true,
 				write: false,
 				unit: "",
-				states: rscpWBActivePhases,
+				states: rscpWbActivePhases,
 				def: 0
 			},
 			native: {},

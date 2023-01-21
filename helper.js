@@ -1,4 +1,15 @@
+/**
+ * Helper functions.
+ *
+ * Helper functions used by different classes.
+ *
+ * @link   https://github.com/git-kick/ioBroker.e3dc-rscp
+ * @file   This files defines several helper functions.
+ * @author git-kick.
+ * @since  1.1.0
+ */
 
+// convert decimal number (mod 256) to 2-digit upper-case hex string
 function toHex( d ) {
 	return ( "0" + ( Number( d ).toString( 16 ) ) ).slice( -2 ).toUpperCase();
 }
@@ -28,6 +39,7 @@ function dateToString( date ) {
 	const ms = date.getMilliseconds().toString().padStart( 3, "0" );
 	return `${year}-${month}-${day} ${hour}:${minute}:${second}.${ms}`;
 }
+
 // Missing seconds/milliseconds will be set to zero - minimal valid string is like "2021-1-1 0:0"
 // If no match is found, return "today midnight"
 function stringToDate( string ) {

@@ -1,3 +1,14 @@
+/**
+ * ioBroker adapter for E3/DC devices.
+ *
+ * Control your E3/DC power station using the proprietary RSCP protocol which allows for reading state values and also setting control parameters, e.g. the charge power limit. This is the advantage of RSCP compared to the standard Modbus, which is only for reading values. If you have no need to write values, have a look at the (simpler) Modbus adapter.
+ *
+ * @link   https://github.com/git-kick/ioBroker.e3dc-rscp
+ * @file   This files defines the E3dcRscp class.
+ * @author git-kick.
+ * @since  1.0.0
+ */
+
 /* eslint-disable no-unused-vars */
 "use strict";
 
@@ -11,6 +22,9 @@ eval( fs.readFileSync( path.join( __dirname, "/admin/words.js" ) ).toString() );
 
 const tools = require( "./lib/tools" );
 const helper = require( "./helper" );
+
+let wb = {};
+const wallbox = require( "./wallbox" );
 
 const dayOfWeek = [
 	"Monday",
@@ -27,8 +41,6 @@ const rscpTag = require( path.join( __dirname, "/lib/RscpTags.json" ) );
 const rscpTagCode = {}; // maps string to code
 for ( const i in rscpTag ) rscpTagCode[rscpTag[i].TagNameGlobal] = i;
 
-let wb        = {};
-const wallbox = require( "./wallbox" );
 
 const rscpType = {
 	0x00: "None",
@@ -461,7 +473,6 @@ class E3dcRscp extends utils.Adapter {
 		this.tcpConnection = new Net.Socket();
 		this.inBuffer = null;
 		this.reconnectTimeout = null;
-		wb = new wallbox( {}, this, systemDictionary );
 	}
 
 	// Create channel to E3/DC: encapsulating TCP connection, encryption, message queuing
@@ -1831,7 +1842,9 @@ class E3dcRscp extends utils.Adapter {
 			this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600 * 24 * 30, true );
 			this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600 * 24 * 365, true );
 		}
-
+		if ( this.config.query_db ) {
+			wb = new wallbox( {}, this, systemDictionary );
+		}
 
 		// Initialize your adapter here
 		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.portal_user}, ${this.config.polling_interval_short}, ${this.config.polling_interval_medium}, ${this.config.polling_interval_long}, ${this.config.setpower_interval})` );
@@ -1987,7 +2000,7 @@ function parseRscpToken( buffer, pos, text ) {
 			return 7+len;
 		case "Bitfield":
 		case "ByteArray":
-			text.content += `value: ${bufferToString( buffer.slice( pos+7,pos+7+len ) )} `;
+			text.content += `value: ${helper.bufferToString( buffer.slice( pos+7,pos+7+len ) )} `;
 			return 7+len;
 		case "Char8":
 		case "UChar8":

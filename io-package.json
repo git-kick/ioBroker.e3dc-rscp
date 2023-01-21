@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.0.8",
+        "version": "1.1.0",
         "news": {
+            "1.1.0": {
+                "en": "Support for Wallboxes",
+                "de": "Wallbox-Unterstützung",
+                "ru": "Опора для настенных коробок",
+                "pt": "Suporte para Wallboxes",
+                "nl": "Ondersteuning voor Wallboxes",
+                "fr": "Prise en charge des boîtes murales",
+                "it": "Supporto per Wallbox",
+                "es": "Soporte para Cajas murales",
+                "pl": "Wsparcie dla Wallboxów",
+                "zh-cn": "支持墙箱"
+            },
             "1.0.8": {
                 "en": "Fixed polling e3dc-rscp.0.EP.PARAM_0.*",
                 "de": "Stoppende Abfrage für e3dc-rscp.0.EP.PARAM_0.* behoben",
