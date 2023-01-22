@@ -23,7 +23,7 @@ eval( fs.readFileSync( path.join( __dirname, "/admin/words.js" ) ).toString() );
 const helper = require( path.join( __dirname,"/helper.js" ) );
 
 let wb = {};
-const wallbox = require( "./wallbox" );
+const wallbox = require( path.join( __dirname,"/wallbox.js" ) );
 
 const dayOfWeek = [
 	"Monday",
