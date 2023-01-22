@@ -78,5 +78,5 @@ module.exports = {
 	dateToString,
 	stringToDate,
 	bufferToString,
-	stringToBuffer
+	stringToBuffer,
 };
