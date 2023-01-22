@@ -20,7 +20,6 @@ let systemDictionary = {};
 let ad = {};
 eval( fs.readFileSync( path.join( __dirname, "/admin/words.js" ) ).toString() );
 
-const tools = require( "./lib/tools" );
 const helper = require( "./helper" );
 
 let wb = {};
