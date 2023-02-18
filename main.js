@@ -1841,7 +1841,7 @@ class E3dcRscp extends utils.Adapter {
 			this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600 * 24 * 30, true );
 			this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600 * 24 * 365, true );
 		}
-		if ( this.config.query_db ) {
+		if ( this.config.query_wb ) {
 			wb = new wallbox( {}, this, systemDictionary );
 		}
 
