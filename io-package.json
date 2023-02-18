@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.1.0",
+        "version": "1.1.1",
         "news": {
+            "1.1.1": {
+                "en": "Fixed wallbox object creation",
+                "de": "Korrektur beim Anlagen des Wallbox-Objekts",
+                "ru": "Исправлено создание объекта wallbox",
+                "pt": "Criação de objectos wallbox fixos",
+                "nl": "Vaste wallbox object creatie",
+                "fr": "Création d'objets wallbox fixe",
+                "it": "Creazione di oggetti wallbox fissi",
+                "es": "Creación de objetos wallbox fijos",
+                "pl": "Naprawiono tworzenie obiektów wallbox",
+                "zh-cn": "固定wallbox对象创建"
+            },
             "1.1.0": {
                 "en": "Support for Wallboxes",
                 "de": "Wallbox-Unterstützung",
