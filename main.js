@@ -1987,6 +1987,10 @@ function parseRscpToken( buffer, pos, text ) {
 		return buffer.length;
 	}
 	text.content += `${rscpTag[tagCode].TagNameGlobal} - type: 0x${typeCode.toString( 16 ).toUpperCase().padStart( 2,"0" )} - ${rscpType[typeCode]} - length: ${len} `;
+	if( ["AUTHENTICATION_USER","AUTHENTICATION_PASSWORD"].includes( rscpTag[tagCode].TagName ) ) {
+		text.content += "value: ***hidden***"; // do not log cleartext credentials
+		return 7+len;
+	}
 	switch( typeName ) {
 		case "None":
 			if ( len > 0 ) text.content += `CAUTION: length of data is ${len} `;

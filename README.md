@@ -369,7 +369,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * WB Control.* no longer updated by rscp response - [PR #144](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/144)
 
 (git-kick)
-*
+* Avoid cleartext password in silly log.
+
 ## Changelog
 ### 1.1.1
 (ka-vaNu)
