@@ -289,7 +289,6 @@ class wallbox {
 							// Bit 7 - Wert 128 - Sonnenmodus / Mixedmode
 							this.adapter.log.silly( lp + "SunMode : " + ( ( parseInt( extData[2], 16 ) & 128 ) == 128 ? 1 : 2 ) );
 							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.SunMode", ( parseInt( extData[2], 16 ) & 128 ) == 128 ? 1 : 2, true );
-							this.adapter.setState( wbPath + ".Control.SunMode", ( parseInt( extData[2], 16 ) & 128 ) == 128 ? 1 : 2, true );
 							// Bit 6 - Wert 64  - Charging canceled
 							this.adapter.log.silly( lp + "CarChargingCanceled : " + ( ( parseInt( extData[2], 16 ) & 64 ) == 64 ? 1 : 0 ) );
 							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.CarChargingCanceled", ( parseInt( extData[2], 16 ) & 64 ) == 64 ? 1 : 0, true );
@@ -305,7 +304,6 @@ class wallbox {
 							// Byte 4 : Ladeleistung - OK bei DEVICE_NAME "Easy Connect"
 							this.adapter.log.silly( lp + "PowerLimitation : " + parseInt( extData[3], 16 ) );
 							this.adapter.setState( wbPath + ".EXTERN_DATA_ALG.PowerLimitation", parseInt( extData[3], 16 ), true );
-							this.adapter.setState( wbPath + ".Control.PowerLimitation", parseInt( extData[3], 16 ), true );
 							break;
 						default:
 							break;
