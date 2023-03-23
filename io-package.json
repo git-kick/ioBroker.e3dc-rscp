@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.1.1",
+        "version": "1.1.2",
         "news": {
+            "1.1.2": {
+                "en": "Fixed wallbox Control.* updates",
+                "de": "Korrektur beim Aktualisieren der Wallbox Control.* Werte",
+                "ru": "Исправлено управление wallbox. * обновления",
+                "pt": "Controlo fixo da caixa de parede.* actualizacao",
+                "nl": "Vaste wallbox controle.* update",
+                "fr": "Contrôle fixe de la wallbox.* mettre",
+                "it": "Controllo wallbox fisso.* aggiornare",
+                "es": "Control fijo de caja de pared.* actualizar",
+                "pl": "Naprawiono sterowanie wallbox.* aktualizacje",
+                "zh-cn": "固定wallbox控制。*更新"
+            },
             "1.1.1": {
                 "en": "Fixed wallbox object creation",
                 "de": "Korrektur beim Anlagen des Wallbox-Objekts",
