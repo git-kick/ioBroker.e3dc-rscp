@@ -162,7 +162,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   <tr>
     <td>INFO</td>
     <td>Information</td>
-    <td>not supported (yet)</td>
+    <td>supported read-only, setter tags not implemeted (yet)</td>
   </tr>
   <tr>
     <td>EP</td>
@@ -364,6 +364,11 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+### 1.2.0
+
+(git-kick)
+* Added INFO namespace, but so far without setter tags - [Issue #149](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/149)
+
 ### 1.1.2
 (ka-vaNu)
 * WB Control.* no longer updated by rscp response - [PR #144](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/144)
