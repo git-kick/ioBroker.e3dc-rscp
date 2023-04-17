@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.1.2",
+        "version": "1.2.0",
         "news": {
+            "1.2.0": {
+                "en": "Added INFO namespace",
+                "de": "INFO Namespace hinzugefügt",
+                "ru": "Добавлено информационное пространство имен",
+                "pt": "Adicionado info namespace",
+                "nl": "Toegevoegde INFO naamruimte",
+                "fr": "Espace de noms d'INFORMATIONS ajouté",
+                "it": "Spazio dei nomi INFO aggiunto",
+                "es": "Espacio de nombres de INFORMACIÓN agregado",
+                "pl": "Dodano przestrzeń nazw informacji",
+                "zh-cn": "添加信息命名空间"
+            },
             "1.1.2": {
                 "en": "Fixed wallbox Control.* updates",
                 "de": "Korrektur beim Aktualisieren der Wallbox Control.* Werte",
@@ -773,6 +785,74 @@
             {
                 "tag": "TAG_WB_REQ_PARAM_2",
                 "interval": "M"
+            },
+            {
+                "tag": "TAG_INFO_REQ_SERIAL_NUMBER",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_PRODUCTION_DATE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_MODULES_SW_VERSIONS",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_A35_SERIAL_NUMBER",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_IP_ADDRESS",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_SUBNET_MASK",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_MAC_ADDRESS",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_GATEWAY",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_DNS",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_DHCP_STATUS",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_TIME",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_INFO_REQ_UTC_TIME",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_INFO_REQ_TIME_ZONE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_SW_RELEASE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_GUI_TARGET",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_GET_FACILITY",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_INFO_REQ_GET_FS_USAGE",
+                "interval": "L"
             }
         ],
         "polling_interval_short": 30,
@@ -786,6 +866,7 @@
         "query_pvi": "true",
         "query_sys": "true",
         "query_wb": "true",
+        "query_info": "true",
         "query_db": "true"
     },
     "objects": [],
