@@ -697,10 +697,11 @@ class E3dcRscp extends utils.Adapter {
 					buf8.writeDoubleLE( value );
 					this.frame = Buffer.concat( [this.frame, buf8] );
 					break;
-				case "Timestamp": // NOTE: treating value as seconds - setting nanoseconds to zero
+				case "Timestamp": // NOTE: treating value as seconds (float)
 					if ( typeof value != "number" || value < 0 || value > Math.pow( 2, 64 ) - 1 ) value = 0;
 					this.frame.writeUInt16LE( 12, this.frame.length - 2 );
-					buf8.writeBigUInt64LE( BigInt( Math.round( value ) ) );
+					buf8.writeBigUInt64LE( BigInt( Math.floor( value ) ) );
+					buf4.writeUInt32LE( Math.round( ( value - Math.floor( value ) ) * 1000000 ) );
 					this.frame = Buffer.concat( [this.frame, buf8, new Uint8Array( [0x00,0x00,0x00,0x00] )] );
 					break;
 				default:
@@ -941,6 +942,37 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
+	queueInfoRequestData( sml ) {
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_INFO_REQ_SERIAL_NUMBER", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_PRODUCTION_DATE", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_MODULES_SW_VERSIONS", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_A35_SERIAL_NUMBER", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_IP_ADDRESS", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_SUBNET_MASK", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_MAC_ADDRESS", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_GATEWAY", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_DNS", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_DHCP_STATUS", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_TIME", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_UTC_TIME", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_TIME_ZONE", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_SW_RELEASE", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_GUI_TARGET", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_GET_FACILITY", sml );
+		this.addTagtoFrame( "TAG_INFO_REQ_GET_FS_USAGE", sml );
+
+		// REQ_INFO is just a shortcut for REQ_SERIAL_NUMBER, REQ_MAC_ADDRESS, REQ_PRODUCTION_DATE; but it's buggy, delivers invalid PRODUCTION_DATE
+		// this.addTagtoFrame( "TAG_INFO_REQ_INFO", sml );
+
+		// The following requests all end up in "access denied":
+		// this.addTagtoFrame( "TAG_INFO_REQ_PLATFORM_TYPE", sml );
+		// this.addTagtoFrame( "TAG_INFO_REQ_IS_CALIBRATED", sml );
+		// this.addTagtoFrame( "TAG_INFO_REQ_CALIBRATION_CHECK", sml );
+		// this.addTagtoFrame( "TAG_INFO_REQ_HW_TIME", sml );
+		this.pushFrame();
+	}
+
 	queueEpRequestData( sml ) {
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH", sml );
@@ -1149,6 +1181,7 @@ class E3dcRscp extends utils.Adapter {
 		if ( this.config.query_bat ) this.queueBatRequestData( sml );
 		if ( this.config.query_pvi ) this.queuePviRequestData( sml );
 		if ( this.config.query_sys ) this.queueSysRequestData( sml );
+		if ( this.config.query_info ) this.queueInfoRequestData( sml );
 		if ( this.config.query_wb ) wb.queueWbRequestData( sml );
 		this.sendFrameFIFO();
 	}
@@ -1257,7 +1290,8 @@ class E3dcRscp extends utils.Adapter {
 						value = helper.roundForReadability( buffer.readFloatLE( start + 7 ) );
 						break;
 					case "Timestamp":
-						value = Math.round( Number( buffer.readBigUInt64LE( start + 7 ) ) / 1000 ); // setState does not accept BigInt, so convert to seconds
+						//value = Math.round( Number( buffer.readBigUInt64LE( start + 7 ) ) / 1000 ); // setState does not accept BigInt, so convert to seconds
+						value = helper.dateToString( new Date( ( Number( buffer.readBigUInt64LE( start+7 ) ) + buffer.readUInt32LE( start+7+8 ) / 1000000 ) * 1000 ) );
 						break;
 					case "Error":
 						value = buffer.readUInt32LE( start + 7 );
@@ -1338,6 +1372,9 @@ class E3dcRscp extends utils.Adapter {
 				if ( shortId == "EMS.SYS_SPEC" && token.content.length == 3 ) {
 					this.storeValue( nameSpace, pathNew + "SYS_SPECS.", token.content[1].content, "Int32", token.content[2].content, token.content[1].content, sysSpecUnits[token.content[1].content] );
 					this.extendObject( `EMS.SYS_SPECS`, { type: "channel", common: { role: "info" } } );
+				} else if ( shortId == "INFO.MODULE_SW_VERSION" && token.content.length == 2 ) {
+					this.storeValue( nameSpace, pathNew + "MODULE_SW_VERSION.", token.content[0].content, "CString", token.content[1].content, token.content[0].content );
+					this.extendObject( `INFO.MODULE_SW_VERSION`, { type: "channel", common: { role: "info" } } );
 				} else if ( shortId.includes( "WB.EXTERN_DATA_" ) && token.content.length == 2 ) {
 					wb.storeWbExternData( shortId, token.content, pathNew );
 				} else if ( shortId == "EMS.GET_IDLE_PERIODS" ) {
@@ -1470,7 +1507,7 @@ class E3dcRscp extends utils.Adapter {
 		if ( oUnit == "" && rscpTag[rscpTagCode[`TAG_${nameSpace}_${tagName}`]] ) {
 			oUnit = rscpTag[rscpTagCode[`TAG_${nameSpace}_${tagName}`]].Unit;
 		}
-		const oName = systemDictionary[dictionaryIndex] ? systemDictionary[dictionaryIndex][this.language] : "***UNDEFINED_NAME***";
+		const oName = systemDictionary[dictionaryIndex] ? systemDictionary[dictionaryIndex][this.language] : dictionaryIndex;
 		this.setObjectNotExists( oId, {
 			type: "state",
 			common: {
@@ -1659,6 +1696,16 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		} );
+		if( this.config.query_info ) {
+			await this.setObjectNotExistsAsync( "INFO", {
+				type: "device",
+				common: {
+					name: systemDictionary["INFO"][this.language],
+					role: "device.information",
+				},
+				native: {},
+			} );
+		}
 		if( this.config.query_bat ) {
 			await this.setObjectNotExistsAsync( "BAT", {
 				type: "device",

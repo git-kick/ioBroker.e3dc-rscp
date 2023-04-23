@@ -7,6 +7,12 @@ It was developed looking at E3/DC's [sample application](http://s10.e3dc.com/dok
 
 The sample application package also contains the official tag lists, which are necessary to interpret RSCP frames semantically.
 
+### Timestamp Handling
+
+* RSCP: 8 byte BigInt [seconds], 4 byte Int [nanoseconds]
+* internal processing is done via Float [seconds] and Date
+* ioBroker object tree: human readable String like "2022-01-30 12:00:00.000"
+
 ### DB Namespace Semantics
 
 In the DB namespace, time series can be requested from E3/DC:
@@ -49,7 +55,8 @@ Observations:
 * Typically, the first data value is at TIME_START + TIME_INTERVAL/2
 * One additional value is (always?) transmitted at the end of TIME_SPAN.
 
-**The rest of this Developer manual will be modified/removed when processed and done, respectively.**
+#
+## The rest of this Developer manual will be modified/removed when processed and done, respectively.
 
 ### Best Practices
 We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
