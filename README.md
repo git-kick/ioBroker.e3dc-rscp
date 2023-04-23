@@ -395,6 +395,11 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+### 1.2.1
+
+(git-kick)
+* Fixed representation of EMS.EPTEST_NEXT_TESTSTART in object tree.
+
 ### 1.2.0
 
 __MODIFIED ADAPTER SETTINGS - do not re-use settings stored in *.json__
