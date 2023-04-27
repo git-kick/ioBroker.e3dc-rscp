@@ -402,6 +402,7 @@ __MODIFIED ADAPTER SETTINGS - do not re-use settings stored in *.json__
 (git-kick)
 * Added INFO namespace REQ tags (no SET tags yet) - [Issue #149](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/149)
 * Fixed representation of EMS.EPTEST_NEXT_TESTSTART in object tree.
+* Fixed out of range exceptions upon TCP/IP noise (i.e., if a frame has inconsistent length, then stop processing it.)
 * Added two README.md sections: "Reuse of adapter configuration", "Issues and feature requests"
 
 ### 1.2.0 - DEPRECATED - DO NOT INSTALL -

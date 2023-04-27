@@ -1333,12 +1333,14 @@ class E3dcRscp extends utils.Adapter {
 			this.log.warn( `Received message with inconsistent length: ${buffer.length} vs ${18 + dataLength + ( hasCrc ? 4 : 0 )}` );
 			this.log.debug( `IN: ${printRscpFrame( buffer )}` );
 			this.log.silly( dumpRscpFrame( buffer ) );
+		} else {
+			if( hasCrc && ( CRC32.buf( buffer.slice( 0,18+dataLength ) ) != buffer.readInt32LE( 18+dataLength ) )  ) {
+				this.log.warn( `Received message with invalid CRC-32: 0x${CRC32.buf( buffer.slice( 0,18+dataLength ) ).toString( 16 )} vs 0x${buffer.readUInt32LE( 18+dataLength ).toString( 16 )} - dataLength = ${dataLength}` );
+				this.log.silly( dumpRscpFrame( buffer ) );
+			} else {
+				this.processTree( this.parseTlv( buffer, 18, 18 + dataLength ), "" );
+			}
 		}
-		if( hasCrc && ( CRC32.buf( buffer.slice( 0,18+dataLength ) ) != buffer.readInt32LE( 18+dataLength ) )  ) {
-			this.log.warn( `Received message with invalid CRC-32: 0x${CRC32.buf( buffer.slice( 0,18+dataLength ) ).toString( 16 )} vs 0x${buffer.readUInt32LE( 18+dataLength ).toString( 16 )} - dataLength = ${dataLength}` );
-			this.log.silly( dumpRscpFrame( buffer ) );
-		}
-		this.processTree( this.parseTlv( buffer, 18, 18 + dataLength ), "" );
 	}
 
 	// Process a (sub)tree of TLV data:
