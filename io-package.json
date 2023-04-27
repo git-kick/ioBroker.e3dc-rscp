@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.2.0",
+        "version": "1.2.1",
         "news": {
-            "1.2.0": {
+            "1.2.1": {
                 "en": "Added INFO namespace",
                 "de": "INFO Namespace hinzugefügt",
                 "ru": "Добавлено информационное пространство имен",
@@ -14,6 +14,18 @@
                 "es": "Espacio de nombres de INFORMACIÓN agregado",
                 "pl": "Dodano przestrzeń nazw informacji",
                 "zh-cn": "添加信息命名空间"
+            },
+            "1.2.0": {
+                "en": "Deprecated - do not install",
+                "de": "Veraltet - nicht installieren",
+                "ru": "Устарело - не устанавливать",
+                "pt": "Obsoleto - não instalar",
+                "nl": "Verouderd - niet installeren",
+                "fr": "Obsolète - ne pas installer",
+                "it": "Deprecato - non installare",
+                "es": "Obsoleto - no instalar",
+                "pl": "Przestarzałe - nie instaluj",
+                "zh-cn": "弃用-不要安装"
             },
             "1.1.2": {
                 "en": "Fixed wallbox Control.* updates",

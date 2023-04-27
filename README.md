@@ -395,18 +395,16 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-### 1.2.1 - UNDER CONSTRUCTION -
-
-(git-kick)
-* Fixed representation of EMS.EPTEST_NEXT_TESTSTART in object tree.
-
-### 1.2.0 - DEPRECATED - DO NOT INSTALL -
+### 1.2.1
 
 __MODIFIED ADAPTER SETTINGS - do not re-use settings stored in *.json__
 
 (git-kick)
 * Added INFO namespace REQ tags (no SET tags yet) - [Issue #149](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/149)
+* Fixed representation of EMS.EPTEST_NEXT_TESTSTART in object tree.
 * Added two README.md sections: "Reuse of adapter configuration", "Issues and feature requests"
+
+### 1.2.0 - DEPRECATED - DO NOT INSTALL -
 
 ### 1.1.2
 (ka-vaNu)
