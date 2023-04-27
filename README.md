@@ -104,7 +104,7 @@ Here is what to configure when creating a new instance of the adapter. Settings 
 ### Reuse of adapter configuration
 You can use the built-in "save"/"load"-Buttons in the Instance Settings to save your adapter settings in a json-file and load it from there, e.g. after you did a completely new ioBroker installation.
 
-But: in some situations the reuse of adapter configuration will lead to unexpected behavior. In cases where a new adapter version introduces new parameters like new lines in the Polling Interval list, reloading settings from an older json file will delete those new parameters. **This is why it's generally recommended to start with blank settings and re-enter them at least for every new minor version Y (x.Y.z):** 
+But: in some situations the reuse of adapter configuration will lead to unexpected behavior. In cases where a new adapter version introduces new parameters, e.g. new lines in the Polling Interval list, reloading settings from an older json file will delete those new parameters. **This is why it's generally recommended to start with blank settings and re-enter them at least for every new major (X) or minor (Y) version (X.Y.z):** 
 1. Delete e3dc-rscp instance
 2. Create a new e3dc-rscp instance
 3. Enter settings manually (do *not* load settings from a json file)
