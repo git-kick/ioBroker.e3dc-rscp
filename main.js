@@ -607,7 +607,7 @@ class E3dcRscp extends utils.Adapter {
 			this.log.warn( `${tag} has no assigned polling interval  - assuming 'M' - please check io-package.json` );
 			this.pollingInterval[tagCode] = "M";
 		}
-		if ( sml == "" || this.pollingInterval[tagCode] == sml ) {
+		if ( this.pollingInterval[tagCode] != "N" && ( sml == "" || sml == this.pollingInterval[tagCode] ) ) {
 			const typeCode = parseInt( rscpTag[tagCode].DataTypeHex, 16 );
 			const buf1 = Buffer.alloc( 1 );
 			const buf2 = Buffer.alloc( 2 );
