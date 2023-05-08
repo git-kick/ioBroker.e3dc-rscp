@@ -130,7 +130,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>partially supported</td>
   </tr>
   <tr>
-    <td>PVI</td>
+    <td>PVI (*)</td>
     <td>Photovoltaic Inverter</td>
     <td>supported</td>
   </tr>
@@ -195,6 +195,9 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>supported</td>
   </tr>
 </table> 
+
+Note (*): it seems that the E3/DC RSCP interface provides PVI values only *intermittently*, see discussion in [Issue #148](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/148). Over Modbus, results are better; but this is an issue the adapter cannot solve.
+
 
 ### Writeable RSCP tags
  <table>
