@@ -1314,7 +1314,7 @@ class E3dcRscp extends utils.Adapter {
 	processFrame( buffer ) {
 		const magic = buffer.toString( "hex",0,2 ).toUpperCase();
 		if( magic != "E3DC" ) {
-			this.log.warn( `Received message with invalid MAGIC: >${magic}<` );
+			this.log.debug( `Received message with invalid MAGIC: >${magic}<` );
 		}
 		const ctrl = buffer.toString( "hex",2,4 ).toUpperCase();
 		let hasCrc = false;
@@ -1326,16 +1326,16 @@ class E3dcRscp extends utils.Adapter {
 				hasCrc = true;
 				break;
 			default:
-				this.log.warn( `Received message with invalid CTRL: >${ctrl}<` );
+				this.log.debug( `Received message with invalid CTRL: >${ctrl}<` );
 		}
 		const dataLength = buffer.readUInt16LE( 16 );
 		if( buffer.length < 18 + dataLength + ( hasCrc ? 4 : 0 ) ) {
-			this.log.warn( `Received message with inconsistent length: ${buffer.length} vs ${18 + dataLength + ( hasCrc ? 4 : 0 )}` );
+			this.log.debug( `Received message with inconsistent length: ${buffer.length} vs ${18 + dataLength + ( hasCrc ? 4 : 0 )}` );
 			this.log.debug( `IN: ${printRscpFrame( buffer )}` );
 			this.log.silly( dumpRscpFrame( buffer ) );
 		} else {
 			if( hasCrc && ( CRC32.buf( buffer.slice( 0,18+dataLength ) ) != buffer.readInt32LE( 18+dataLength ) )  ) {
-				this.log.warn( `Received message with invalid CRC-32: 0x${CRC32.buf( buffer.slice( 0,18+dataLength ) ).toString( 16 )} vs 0x${buffer.readUInt32LE( 18+dataLength ).toString( 16 )} - dataLength = ${dataLength}` );
+				this.log.debug( `Received message with invalid CRC-32: 0x${CRC32.buf( buffer.slice( 0,18+dataLength ) ).toString( 16 )} vs 0x${buffer.readUInt32LE( 18+dataLength ).toString( 16 )} - dataLength = ${dataLength}` );
 				this.log.silly( dumpRscpFrame( buffer ) );
 			} else {
 				this.processTree( this.parseTlv( buffer, 18, 18 + dataLength ), "" );

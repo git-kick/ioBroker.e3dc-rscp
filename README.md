@@ -402,6 +402,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### 1.2.2
 (git-kick)
 * Fixed TAG_PVI_REQ_FREQUENCY_UNDER_OVER warning with polling interval 'N' - [Issue #157](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/157)
+* Log "warn - received message with incalid ..." reclassified to 'debug' - [Issue #159](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/159)
 
 ### 1.2.1
 __MODIFIED ADAPTER SETTINGS - do not re-use settings stored in *.json__
