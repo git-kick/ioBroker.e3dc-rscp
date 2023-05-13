@@ -576,6 +576,11 @@ class E3dcRscp extends utils.Adapter {
 		this.config.polling_intervals.forEach( element => {
 			this.pollingInterval[rscpTagCode[element.tag]] = element.interval;
 		} );
+
+		// Provoke error for testing Sentry
+		// @ts-ignore
+		// eslint-disable-next-line no-undef
+		//huhu();
 	}
 
 	reconnectChannel() {
