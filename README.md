@@ -412,7 +412,7 @@ __MODIFIED ADAPTER SETTINGS - do not re-use settings stored in *.json__
 * Fixed out of range exceptions upon TCP/IP noise (i.e., if a frame has inconsistent length, then stop processing it.)
 * Added two README.md sections: "Reuse of adapter configuration", "Issues and feature requests"
 
-### 1.2.0 - DEPRECATED - DO NOT INSTALL -
+### 1.2.0 - Deprecated - Do not install -
 
 ### 1.1.2
 (ka-vaNu)
