@@ -449,11 +449,12 @@ class E3dcRscp extends utils.Adapter {
 		this.queue = [];
 
 		// For keeping observed max. indexes, e.g. BAT.INDEX, DCB_COUNT etc.:
-		this.maxIndex = {}; // {path}
+		this.maxIndex = {}; // {path} - the biggest index with ok response, or 1 below the smallest index with error response
 
-		// For probing device count (upper bounds):
-		this.batProbes = 2; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
-		this.pviProbes = 3;
+		// For BAT and PVI, there is no COUNT request, so initialize maxIndex to a best guess upper bound.
+		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
+		this.maxIndex["BAT"] = 1; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
+		this.maxIndex["PVI"] = 2;
 
 		// For triggering the polling and setting requests:
 		this.dataPollingTimerS = null;
@@ -550,17 +551,11 @@ class E3dcRscp extends utils.Adapter {
 			this.reconnectChannel();
 		} );
 
-		// Find out number of BAT units:
-		this.log.debug( `Probing for BAT units - 0..${this.batProbes-1}.` );
-		if( this.config.query_bat ) this.queueBatProbe( this.batProbes );
-		// Find out number of PVI units and sensors:
-		this.log.debug( `Probing for PVI units - 0..${this.pviProbes-1}.` );
-		if( this.config.query_pvi ) this.queuePviProbe( this.pviProbes );
-		// Force some quick data requests for probing and building the object tree:
+		// Force some quick data requests for index probing and building up the object tree:
 		for( let i = 0; i < 5; i++ ) {
 			this.probingTimeout[i] = setTimeout( () => {
 				this.requestAllData( "" );
-			}, i * 1000 * 7 );
+			}, i * 1000 * 7 );  // every 7 seconds
 		}
 
 		this.dataPollingTimerS = setInterval( () => {
@@ -767,16 +762,6 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame( pos );
 	}
 
-	queueBatProbe( probes ) {
-		for ( let i = 0; i < probes; i++ ) {
-			this.clearFrame();
-			const pos = this.startContainer( "TAG_BAT_REQ_DATA" );
-			this.addTagtoFrame( "TAG_BAT_INDEX", "", i );
-			this.addTagtoFrame( "TAG_BAT_REQ_INFO", "" );
-			this.pushFrame( pos );
-		}
-	}
-
 	queueBatRequestData( sml ) {
 		for ( let i = 0; i <= this.maxIndex["BAT"]; i++ ) {
 			this.clearFrame();
@@ -811,18 +796,6 @@ class E3dcRscp extends utils.Adapter {
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", sml, j );
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", sml, j );
 			}
-			this.pushFrame( pos );
-		}
-	}
-
-	queuePviProbe( probes ) {
-		for ( let pviIndex = 0; pviIndex < probes; pviIndex++ ) {
-			this.clearFrame();
-			const pos = this.startContainer( "TAG_PVI_REQ_DATA" );
-			this.addTagtoFrame( "TAG_PVI_INDEX", "", pviIndex );
-			this.addTagtoFrame( "TAG_PVI_REQ_AC_MAX_PHASE_COUNT", "" );
-			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", "" );
-			this.addTagtoFrame( "TAG_PVI_REQ_DC_MAX_STRING_COUNT", "" );
 			this.pushFrame( pos );
 		}
 	}
@@ -1362,12 +1335,15 @@ class E3dcRscp extends utils.Adapter {
 			const shortId = `${nameSpace}.${tagName}`;
 			const typeName = rscpType[token.type];
 			if ( typeName == "Error" ) {
-				// Ignore ERRORs from BAT/PVI probe with out-of-range index
-				if ( shortId == "BAT.DATA" && this.batProbes-- > 0 ) continue;
-				if ( shortId == "PVI.REQ_DATA" && this.pviProbes-- > 0 ) continue;
 				if ( shortId == "EMS.SYS_SPEC_VALUE_INT" ) {
 					// Gently skip SYS_SPEC error values, just set to zero
 					this.storeValue( nameSpace, pathNew, tagName, "Int32", 0 );
+					continue;
+				}
+				if ( shortId == "BAT.DATA" && rscpError[token.content] == "RSCP_ERR_NOT_AVAILABLE" ) {
+					// This is an error response due to out-of-range BAT index, heuristically cut off the biggest one:
+					--this.maxIndex["BAT"];
+					this.log.info( `Adjusted BAT max. index to ${this.maxIndex["BAT"]}` );
 					continue;
 				}
 				if( ! ignoreIds.includes( shortId ) ) {
@@ -1379,6 +1355,12 @@ class E3dcRscp extends utils.Adapter {
 				if ( shortId == "EMS.SYS_SPEC" && token.content.length == 3 ) {
 					this.storeValue( nameSpace, pathNew + "SYS_SPECS.", token.content[1].content, "Int32", token.content[2].content, token.content[1].content, sysSpecUnits[token.content[1].content] );
 					this.extendObject( `EMS.SYS_SPECS`, { type: "channel", common: { role: "info" } } );
+				} else if ( shortId == "PVI.DATA" && token.content.length == 2 && rscpType[token.content[1].type] == "Error" && rscpError[token.content[1].content] == "RSCP_ERR_FORMAT" ) {
+					// This is an error response due to out-of-range PVI index
+					if( token.content[0].content - 1 < this.maxIndex["PVI"] ) {
+						this.maxIndex["PVI"] = token.content[0].content - 1;
+						this.log.info( `Adjusted PVI max. index to ${this.maxIndex["PVI"]}` );
+					}
 				} else if ( shortId == "INFO.MODULE_SW_VERSION" && token.content.length == 2 ) {
 					this.storeValue( nameSpace, pathNew + "MODULE_SW_VERSION.", token.content[0].content, "CString", token.content[1].content, token.content[0].content );
 					this.extendObject( `INFO.MODULE_SW_VERSION`, { type: "channel", common: { role: "info" } } );

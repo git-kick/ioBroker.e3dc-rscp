@@ -400,6 +400,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 (git-kick)
 * Fixed TAG_PVI_REQ_FREQUENCY_UNDER_OVER warning with polling interval 'N' - [Issue #157](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/157)
 * Log "warn - received message with invalid ..." reclassified to 'debug' - [Issue #159](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/159)
+* Revised BAT and PVI probing; now resilient with lost responses - [Issue #160](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/160)
 * Integrated Sentry plugin for crash reporting - see [documentation](https://github.com/ioBroker/plugin-sentry)
 
 ### 1.2.1
