@@ -805,6 +805,7 @@ class E3dcRscp extends utils.Adapter {
 			this.clearFrame();
 			const pos = this.startContainer( "TAG_PVI_REQ_DATA" );
 			this.addTagtoFrame( "TAG_PVI_INDEX", "", i );
+			this.addTagtoFrame( "TAG_PVI_REQ_DC_MAX_STRING_COUNT", "" );
 			this.addTagtoFrame( "TAG_PVI_REQ_TEMPERATURE_COUNT", sml );
 			this.addTagtoFrame( "TAG_PVI_REQ_TYPE", sml );
 			this.addTagtoFrame( "TAG_PVI_REQ_SERIAL_NUMBER", sml );
