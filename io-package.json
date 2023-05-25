@@ -4,16 +4,16 @@
         "version": "1.2.2",
         "news": {
             "1.2.2": {
-                "en": "Minor fixes",
-                "de": "Kleinere Fehlerbehebungen",
-                "ru": "Незначительные исправления",
-                "pt": "Pequenas correcções",
-                "nl": "Kleine correcties",
-                "fr": "Corrections mineures",
-                "it": "Correzioni minori",
-                "es": "Correcciones menores",
-                "pl": "Drobne poprawki",
-                "zh-cn": "小修正"
+                "en": "Resilient probing for BAT and PVI instances",
+                "de": "Robustes sondieren der BAT- und PVI-Anzahl",
+                "ru": "Устойчивое зондирование для экземпляров BAT и PVI",
+                "pt": "Sondagem resiliente para instâncias MTD e PVI",
+                "nl": "Veerkrachtig sonderen voor BAT-en PVI-instanties",
+                "fr": "Sondage résilient pour les instances BAT et PVI",
+                "it": "Sondaggio resiliente per istanze BAT e PVI",
+                "es": "Sondeo resiliente para instancias BAT y PVI",
+                "pl": "Odporne sondowanie dla instancji BAT i PVI",
+                "zh-cn": "BAT和PVI实例的弹性探测"
             },
             "1.2.1": {
                 "en": "Added INFO namespace",
