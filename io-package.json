@@ -13,7 +13,8 @@
                 "it": "Sondaggio resiliente per istanze BAT e PVI",
                 "es": "Sondeo resiliente para instancias BAT y PVI",
                 "pl": "Odporne sondowanie dla instancji BAT i PVI",
-                "zh-cn": "BAT和PVI实例的弹性探测"
+                "zh-cn": "BAT和PVI实例的弹性探测",
+                "uk": "Стійке зондування для примірників BAT і PVI"
             },
             "1.2.1": {
                 "en": "Added INFO namespace",
@@ -25,7 +26,8 @@
                 "it": "Spazio dei nomi INFO aggiunto",
                 "es": "Espacio de nombres de INFORMACIÓN agregado",
                 "pl": "Dodano przestrzeń nazw informacji",
-                "zh-cn": "添加信息命名空间"
+                "zh-cn": "添加信息命名空间",
+                "uk": "Додано простір імен INFO"
             },
             "1.2.0": {
                 "en": "Deprecated - do not install",
@@ -37,7 +39,8 @@
                 "it": "Deprecato - non installare",
                 "es": "Obsoleto - no instalar",
                 "pl": "Przestarzałe - nie instaluj",
-                "zh-cn": "弃用-不要安装"
+                "zh-cn": "弃用-不要安装",
+                "uk": "Застаріле - не встановлювати"
             },
             "1.1.2": {
                 "en": "Fixed wallbox Control.* updates",
@@ -49,7 +52,8 @@
                 "it": "Controllo wallbox fisso.* aggiornare",
                 "es": "Control fijo de caja de pared.* actualizar",
                 "pl": "Naprawiono sterowanie wallbox.* aktualizacje",
-                "zh-cn": "固定wallbox控制。*更新"
+                "zh-cn": "固定wallbox控制。*更新",
+                "uk": "Виправлено оновлення Wallbox Control.*"
             },
             "1.1.1": {
                 "en": "Fixed wallbox object creation",
@@ -61,7 +65,8 @@
                 "it": "Creazione di oggetti wallbox fissi",
                 "es": "Creación de objetos wallbox fijos",
                 "pl": "Naprawiono tworzenie obiektów wallbox",
-                "zh-cn": "固定wallbox对象创建"
+                "zh-cn": "固定wallbox对象创建",
+                "uk": "Виправлено створення об’єкта wallbox"
             },
             "1.1.0": {
                 "en": "Support for Wallboxes",
@@ -73,7 +78,8 @@
                 "it": "Supporto per Wallbox",
                 "es": "Soporte para Cajas murales",
                 "pl": "Wsparcie dla Wallboxów",
-                "zh-cn": "支持墙箱"
+                "zh-cn": "支持墙箱",
+                "uk": "Підтримка Wallbox"
             },
             "1.0.8": {
                 "en": "Fixed polling e3dc-rscp.0.EP.PARAM_0.*",
@@ -85,7 +91,8 @@
                 "it": "Risolto il problema con il polling e3dc-rscp.0.EP.PARAM_0.*",
                 "es": "Sondeo fijo e3dc-rscp.0.EP.PARAM_0.*",
                 "pl": "Naprawiono odpytywanie e3dc-rscp.0.EP.PARAM_0.*",
-                "zh-cn": "固定轮询 e3dc-rscp.0.EP.PARAM_0.*"
+                "zh-cn": "固定轮询 e3dc-rscp.0.EP.PARAM_0.*",
+                "uk": "Виправлено опитування e3dc-rscp.0.EP.PARAM_0.*"
             },
             "1.0.7": {
                 "en": "Fixed DB object handling",
@@ -97,7 +104,8 @@
                 "it": "Risolto il problema con la gestione degli oggetti DB",
                 "es": "Manejo fijo de objetos DB",
                 "pl": "Naprawiono obsługę obiektów DB",
-                "zh-cn": "固定数据库对象处理"
+                "zh-cn": "固定数据库对象处理",
+                "uk": "Виправлено обробку об'єктів БД"
             },
             "1.0.6": {
                 "en": "Minor fixes",
@@ -109,7 +117,8 @@
                 "it": "Correzioni minori",
                 "es": "Correcciones menores",
                 "pl": "Drobne poprawki",
-                "zh-cn": "小修正"
+                "zh-cn": "小修正",
+                "uk": "Незначні виправлення"
             },
             "1.0.5": {
                 "en": "Fixed SET_POWER timing issue",
@@ -121,7 +130,8 @@
                 "it": "Risolto il problema di temporizzazione SET_POWER",
                 "es": "Solucionado el problema de temporización SET_POWER",
                 "pl": "Naprawiono problem z synchronizacją SET_POWER",
-                "zh-cn": "修正SET_POWER定时问题"
+                "zh-cn": "修正SET_POWER定时问题",
+                "uk": "Виправлено проблему синхронізації SET_POWER"
             },
             "1.0.4": {
                 "en": "Minor fixes",
@@ -133,7 +143,8 @@
                 "it": "Correzioni minori",
                 "es": "Correcciones menores",
                 "pl": "Drobne poprawki",
-                "zh-cn": "小修正"
+                "zh-cn": "小修正",
+                "uk": "Незначні виправлення"
             },
             "1.0.3": {
                 "en": "Minor fixes",
@@ -145,7 +156,8 @@
                 "it": "Correzioni minori",
                 "es": "Correcciones menores",
                 "pl": "Drobne poprawki",
-                "zh-cn": "小修正"
+                "zh-cn": "小修正",
+                "uk": "Незначні виправлення"
             },
             "1.0.2": {
                 "en": "Added SYS namespace (experimental)",
@@ -157,7 +169,8 @@
                 "it": "Aggiunto lo spazio dei nomi SYS (sperimentale)",
                 "es": "Espacio de nombres de sistema añadido (experimental)",
                 "pl": "Dodano przestrzeń nazw SYS (eksperymentalne)",
-                "zh-cn": "添加SYS命名空间（实验）"
+                "zh-cn": "添加SYS命名空间（实验）",
+                "uk": "Додано простір імен SYS (експериментальний)"
             },
             "1.0.1": {
                 "en": "Minor technical fixes (CVE/Sentry)",
@@ -169,7 +182,8 @@
                 "it": "Correzioni tecniche minori (CVE / Sentry)",
                 "es": "Correcciones técnicas menores (CVE / Sentry)",
                 "pl": "Drobne poprawki techniczne (CVE / Sentry)",
-                "zh-cn": "次要技术修复（CVE/Sentry）"
+                "zh-cn": "次要技术修复（CVE/Sentry）",
+                "uk": "Незначні технічні виправлення (CVE/Sentry)"
             },
             "1.0.0": {
                 "en": "Initial public release",
@@ -181,7 +195,8 @@
                 "it": "Rilascio pubblico iniziale",
                 "es": "Lanzamiento inicial",
                 "pl": "Pierwsze publiczne wydanie",
-                "zh-cn": "首次公开发行"
+                "zh-cn": "首次公开发行",
+                "uk": "Початковий публічний випуск"
             }
         },
         "title": "E3/DC RSCP",
@@ -195,7 +210,8 @@
             "it": "E3/DC RSCP",
             "es": "E3/DC RSCP",
             "pl": "E3/DC RSCP",
-            "zh-cn": "E3/DC RSCP"
+            "zh-cn": "E3/DC RSCP",
+            "uk": "E3/DC RSCP"
         },
         "desc": {
             "en": "Control E3/DC power station using RSCP protocol",
@@ -207,7 +223,8 @@
             "it": "Controllare la centrale E3/DC utilizzando il protocollo RSCP",
             "es": "Control de la central eléctrica E3/DC mediante protocolo RSCP",
             "pl": "Sterowanie elektrownią E3/DC za pomocą protokołu RSCP",
-            "zh-cn": "使用RSCP协议控制E3/DC电站"
+            "zh-cn": "使用RSCP协议控制E3/DC电站",
+            "uk": "Керуйте електростанцією E3/DC за допомогою протоколу RSCP"
         },
         "authors": [
             "Ulrich Kick <iobroker@kick-web.de>"

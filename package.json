@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@alcalzone/release-script": "^2.2.1",
+    "@iobroker/adapter-dev": "^1.2.0",
     "@iobroker/testing": "^2.5.4",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7.1.4",
@@ -71,7 +72,8 @@
     "test": "npm run test:js && npm run test:package",
     "check": "tsc --noEmit -p tsconfig.check.json",
     "lint": "eslint",
-    "release": "release-script"
+    "release": "release-script",
+    "translate": "translate-adapter"
   },
   "bugs": {
     "url": "https://github.com/git-kick/ioBroker.e3dc-rscp/issues"
