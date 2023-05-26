@@ -396,6 +396,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 1.2.3 - UNDER CONSTRUCTION - 
+(git-kick)
+* Added testing with Node 18 and Node 20  - [Issue #165](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/165)
+
 ### 1.2.2
 (git-kick)
 * Fixed TAG_PVI_REQ_FREQUENCY_UNDER_OVER warning with polling interval 'N' - [Issue #157](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/157)
