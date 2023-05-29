@@ -27,7 +27,8 @@
     "crc-32": "^1.2.0",
     "html-to-text": "^8.0.0",
     "net": "^1.0.2",
-    "rijndael-js": "^2.0.0"
+    "rijndael-js": "^2.0.0",
+    "source-map-resolve": "^0.6.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^2.2.1",
