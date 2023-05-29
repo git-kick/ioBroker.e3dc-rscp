@@ -4,17 +4,17 @@
         "version": "1.2.3",
         "news": {
             "1.2.3": {
-                "en": "Minor corrections and fixes",
-                "de": "Kleinere Korrekturen und Korrekturen",
-                "ru": "Мелкие исправления и исправления",
-                "pt": "Pequenas correções e correções",
-                "nl": "Kleine correcties en fixes",
-                "fr": "Corrections et corrections mineures",
-                "it": "Piccole correzioni e correzioni",
-                "es": "Correcciones menores y correcciones",
-                "pl": "Drobne poprawki i poprawki",
-                "uk": "Дрібні виправлення та виправлення",
-                "zh-cn": "小的更正和修复"
+                "en": "Minor fixes",
+                "de": "Kleinere Korrekturen",
+                "ru": "Мелкие исправления",
+                "pt": "Pequenas correções",
+                "nl": "Kleine reparaties",
+                "fr": "Corrections mineures",
+                "it": "Correzioni minori",
+                "es": "Correcciones menores",
+                "pl": "Drobne poprawki",
+                "uk": "Незначні виправлення",
+                "zh-cn": "小修复"
             },
             "1.2.2": {
                 "en": "Resilient probing for BAT and PVI instances",
