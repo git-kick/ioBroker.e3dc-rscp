@@ -389,6 +389,12 @@ const ignoreIndexIds = [
 	"WB.EXTERN_RSP_PARAM_1",
 	"WB.EXTERN_RSP_PARAM_2",
 ];
+// Some of the tags are unavailable on some E3/DC devices.
+// For those, automatically stop polling after the first RSCP_ERR_NOT_AVAILABLE response:
+const stopPollingIds = [
+	"PVI.REQ_FREQUENCY_UNDER_OVER",
+	"PVI.REQ_VOLTAGE_MONITORING"
+];
 // For SYS_SPECs, names and values are transmitted over Interface, i.e. they are not in rscpTags[]
 // Therefore we list the SYS_SPEC units here:
 const sysSpecUnits = {
@@ -1330,9 +1336,10 @@ class E3dcRscp extends utils.Adapter {
 		const multipleValueIndex = {};
 		for ( const i in tree ) {
 			const token = tree[i];
-			const tagName = rscpTag[token.tag].TagName;
+			const tag = token.tag;
+			const tagName = rscpTag[tag].TagName;
 			let tagNameNew = tagName;
-			const nameSpace = rscpTag[token.tag].NameSpace;
+			const nameSpace = rscpTag[tag].NameSpace;
 			const shortId = `${nameSpace}.${tagName}`;
 			const typeName = rscpType[token.type];
 			if ( typeName == "Error" ) {
@@ -1345,6 +1352,11 @@ class E3dcRscp extends utils.Adapter {
 					// This is an error response due to out-of-range BAT index, heuristically cut off the biggest one:
 					--this.maxIndex["BAT"];
 					this.log.info( `Adjusted BAT max. index to ${this.maxIndex["BAT"]}` );
+					continue;
+				}
+				if ( stopPollingIds.includes( shortId ) && rscpError[token.content] == "RSCP_ERR_NOT_AVAILABLE" ) {
+					this.pollingInterval[tag] = "N";
+					this.log.info( `Device reports that ${shortId} is not available - setting polling interval to 'N'` );
 					continue;
 				}
 				if( ! ignoreIds.includes( shortId ) ) {
@@ -1446,7 +1458,6 @@ class E3dcRscp extends utils.Adapter {
 					}
 					continue;
 				}
-
 				// Handle mapping between "receive" tag names and "set" tag names:
 				let targetStateMatch = null;
 				if( mapReceivedIdToState[shortId] ) {
