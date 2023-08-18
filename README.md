@@ -398,7 +398,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
-### 1.2.3 - UNDER CONSTRUCTION - 
+### 1.2.3
 (git-kick)
 * Added testing with Node 18 and Node 20 - [Issue #165](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/165)
 * Upgraded to new translations, adding "uk" language - [Issue #166](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/166)

@@ -4,17 +4,17 @@
         "version": "1.2.3",
         "news": {
             "1.2.3": {
-                "en": "Minor fixes",
-                "de": "Kleinere Korrekturen",
-                "ru": "Мелкие исправления",
-                "pt": "Pequenas correções",
-                "nl": "Kleine reparaties",
-                "fr": "Corrections mineures",
-                "it": "Correzioni minori",
-                "es": "Correcciones menores",
-                "pl": "Drobne poprawki",
-                "uk": "Незначні виправлення",
-                "zh-cn": "小修复"
+                "en": "Stop polling 'non-responsive' tags",
+                "de": "Stoppe das Abfragen von 'unbeantworteten' Tags",
+                "ru": "Остановить опрос «не отвечающих» тегов",
+                "pt": "Parar de pesquisar tags 'não responsivas'",
+                "nl": "Stop met het pollen van 'niet-reagerende' tags",
+                "fr": "Arrêter d'interroger les tags \"non réactifs\"",
+                "it": "Interrompi il polling dei tag \"non reattivi\".",
+                "es": "Dejar de sondear las etiquetas 'no receptivas'",
+                "pl": "Przestań sondować tagi „niereagujące”.",
+                "uk": "Припинити опитування тегів \"не відповідає\".",
+                "zh-cn": "停止轮询“无响应”标签"
             },
             "1.2.2": {
                 "en": "Resilient probing for BAT and PVI instances",
