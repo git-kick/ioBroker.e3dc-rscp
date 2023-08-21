@@ -1658,7 +1658,7 @@ class E3dcRscp extends utils.Adapter {
 		// For some objects, we use setObjectNotExists instead of setObjectNotExistsAsync
 		// to avoid "has no existing objects" warning in the adapter log
 		//
-		await this.setObjectNotExists( "info", {
+		await this.setObjectNotExistsAsync( "info", {
 			type: "channel",
 			common: {
 				name: systemDictionary["Information"][this.language],
@@ -1666,7 +1666,7 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		} );
-		await this.setObjectNotExists( "info.connection", {
+		await this.setObjectNotExistsAsync( "info.connection", {
 			type: "state",
 			common: {
 				name: systemDictionary["Connected"][this.language],
@@ -1677,7 +1677,7 @@ class E3dcRscp extends utils.Adapter {
 			},
 			native: {},
 		} );
-		await this.setObjectNotExists( "RSCP", {
+		await this.setObjectNotExistsAsync( "RSCP", {
 			type: "device",
 			common: {
 				name: systemDictionary["RSCP"][this.language],
@@ -1872,21 +1872,21 @@ class E3dcRscp extends utils.Adapter {
 			}
 			const now = new Date();
 			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
-			this.setState( "DB.HISTORY_DATA_DAY.TIME_START", helper.dateToString( d ), true );
-			this.setState( "DB.HISTORY_DATA_DAY.TIME_INTERVAL", 3600 / 4, true );
-			this.setState( "DB.HISTORY_DATA_DAY.TIME_SPAN", 3600 * 6, true );
+			await this.setState( "DB.HISTORY_DATA_DAY.TIME_START", helper.dateToString( d ), true );
+			await this.setState( "DB.HISTORY_DATA_DAY.TIME_INTERVAL", 3600 / 4, true );
+			await this.setState( "DB.HISTORY_DATA_DAY.TIME_SPAN", 3600 * 6, true );
 			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
-			this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", helper.dateToString( d ), true );
-			this.setState( "DB.HISTORY_DATA_WEEK.TIME_INTERVAL", 3600 * 4, true );
-			this.setState( "DB.HISTORY_DATA_WEEK.TIME_SPAN", 3600 * 24 * 7, true );
+			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", helper.dateToString( d ), true );
+			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_INTERVAL", 3600 * 4, true );
+			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_SPAN", 3600 * 24 * 7, true );
 			d.setDate( 1 );
-			this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", helper.dateToString( d ), true );
-			this.setState( "DB.HISTORY_DATA_MONTH.TIME_INTERVAL", 3600 * 24, true );
-			this.setState( "DB.HISTORY_DATA_MONTH.TIME_SPAN", 3600 * 24 * 31, true );
+			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", helper.dateToString( d ), true );
+			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_INTERVAL", 3600 * 24, true );
+			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_SPAN", 3600 * 24 * 31, true );
 			d.setMonth( 0 );
-			this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", helper.dateToString( d ), true );
-			this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600 * 24 * 30, true );
-			this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600 * 24 * 365, true );
+			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", helper.dateToString( d ), true );
+			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600 * 24 * 30, true );
+			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600 * 24 * 365, true );
 		}
 		if ( this.config.query_wb ) {
 			wb = new wallbox( {}, this, systemDictionary );
