@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.2.3",
+        "version": "1.2.4",
         "news": {
+            "1.2.4": {
+                "en": "Under construction",
+                "de": "In Arbeit",
+                "ru": "В разработке",
+                "pt": "Em construção",
+                "nl": "In opbouw",
+                "fr": "En cours de construction",
+                "it": "In costruzione",
+                "es": "Bajo construcción",
+                "pl": "W budowie",
+                "uk": "У розробці",
+                "zh-cn": "建设中"
+            },
             "1.2.3": {
                 "en": "Stop polling 'non-responsive' tags",
                 "de": "Stoppe das Abfragen von 'unbeantworteten' Tags",
