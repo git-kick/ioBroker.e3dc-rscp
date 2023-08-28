@@ -400,6 +400,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### 1.2.4
 (git-kick)
 * Fixed onReady() async calls causing (very rare) unhandled exceptions - [Issue #178](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/178)
+* Handle NOENT exception if words.js is unavailable - [Issue #180](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/180)
 
 ### 1.2.3
 (git-kick)
