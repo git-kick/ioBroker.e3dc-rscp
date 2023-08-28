@@ -18,7 +18,6 @@ const path = require( "path" );
 // eslint-disable-next-line prefer-const
 let systemDictionary = {};
 let ad = {};
-eval( fs.readFileSync( path.join( __dirname, "/admin/words.js" ) ).toString() );
 
 const helper = require( path.join( __dirname,"/helper.js" ) );
 
@@ -1655,6 +1654,12 @@ class E3dcRscp extends utils.Adapter {
 		this.getForeignObject( "system.config", ( err, systemConfig ) => {
 			if( systemConfig ) this.language = systemConfig.common.language;
 		} );
+		try {
+			eval( fs.readFileSync( path.join( __dirname, "/admin/words.js" ) ).toString() );
+		} catch( e ) {
+			// For exit codes see https://github.com/ioBroker/adapter-core/blob/master/src/exitCodes.ts
+			this.terminate( "Error while reading systemDictionary: " + e, 29 );
+		}
 		// For some objects, we use setObjectNotExists instead of setObjectNotExistsAsync
 		// to avoid "has no existing objects" warning in the adapter log
 		//

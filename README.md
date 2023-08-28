@@ -406,6 +406,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 (git-kick)
 * Fixed onReady() async calls causing (very rare) unhandled exceptions - [Issue #178](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/178)
 * Added config switch lazy_setstate  - [Issue #180](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/180). The adapter is now capable of updating State.ts according to convention (also when the value was unchanged). **Note** that the default ist "false" (i.e. no setState() call as long as value remains unchanged) in order to avoid a breaking chage for users with small hardware. 
+* Handle NOENT exception if words.js is unavailable - [Issue #180](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/180)
 
 ### 1.2.3
 (git-kick)
