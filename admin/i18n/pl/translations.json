@@ -310,6 +310,7 @@
     "e3dc_port": "Port E3/DC",
     "hybridModeSupported": "Tryb hybrydowy obsługiwane",
     "installedBatteryCapacity": "Zainstalowana pojemność baterii [Wh]",
+    "lazy_setstate": "Leniwe wywoływanie funkcji setState().",
     "maxAcPower": "Maksymalna moc AC [W]",
     "maxBatChargePower": "Maksymalna moc ładowania baterii [W]",
     "maxBatDischargPower": "Maksymalna moc rozładowania akumulatora [W]",
@@ -347,6 +348,7 @@
     "startDischargeDefault": "Start rozładowanie domyślne [W]",
     "title_connection": "Konfiguracja połączenia E3 / DC",
     "title_intervals": "Ustawianie przedziałów czasowych dla zapytania i ponownego wysyłania",
+    "title_misc": "Różnorodny",
     "title_namespaces": "Wybierz przestrzenie nazw E3 / DC do odpytywania danych",
     "title_polling_intervals": "Dostrajanie interwałów ankietowych danych"
 }

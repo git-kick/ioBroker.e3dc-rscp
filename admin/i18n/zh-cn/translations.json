@@ -310,6 +310,7 @@
     "e3dc_port": "E3/DC端口",
     "hybridModeSupported": "支持混合模式",
     "installedBatteryCapacity": "电池装机容量[Wh]",
+    "lazy_setstate": "惰性 setState() 调用",
     "maxAcPower": "最大交流电力[W]",
     "maxBatChargePower": "最大战斗充电功率[W]",
     "maxBatDischargPower": "最大电池放电功率[W]",
@@ -347,6 +348,7 @@
     "startDischargeDefault": "启动放电默认值[W]",
     "title_connection": "设置E3/DC连接",
     "title_intervals": "设置查询和重新发送的时间间隔",
+    "title_misc": "各种各样的",
     "title_namespaces": "选择E3/DC命名空间以查询数据",
     "title_polling_intervals": "微调数据轮询间隔"
 }

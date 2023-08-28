@@ -310,6 +310,7 @@
     "e3dc_port": "E3/DC-poort",
     "hybridModeSupported": "Hybride modus ondersteund",
     "installedBatteryCapacity": "Geïnstalleerde batterijcapaciteit [Wh]",
+    "lazy_setstate": "Luie setState() aanroep",
     "maxAcPower": "Maximaal WISSELSTROOMVERMOGEN [W]",
     "maxBatChargePower": "Maximaal slagvermogen [W]",
     "maxBatDischargPower": "Maximaal batterijontladingsvermogen [W]",
@@ -347,6 +348,7 @@
     "startDischargeDefault": "Begin ontlading standaard [W]",
     "title_connection": "E3/DC verbinding instellen",
     "title_intervals": "Tijdintervallen instellen voor opvragen en opnieuw verzenden",
+    "title_misc": "Gemengd",
     "title_namespaces": "Selecteer E3 / DC-naamruimten om gegevens op te vragen",
     "title_polling_intervals": "Fijnafstellen van data polling intervallen"
 }
