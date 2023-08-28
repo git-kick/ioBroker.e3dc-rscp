@@ -1522,7 +1522,7 @@ class E3dcRscp extends utils.Adapter {
 			native: {},
 		}, () => {
 			this.getState( oId, ( err,obj ) => {
-				if( !( obj && obj.val == value && obj.ack ) ) {
+				if( !( obj && obj.ack && obj.val == value && this.config.lazy_setstate ) ) {
 					this.setState( oId, value, true );
 				}
 			} );

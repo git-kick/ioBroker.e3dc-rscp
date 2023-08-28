@@ -310,6 +310,7 @@
     "e3dc_port": "Port E3/CC",
     "hybridModeSupported": "Mode hybride pris en charge",
     "installedBatteryCapacity": "Capacité de la batterie installée [Wh]",
+    "lazy_setstate": "Appel paresseux de setState()",
     "maxAcPower": "Puissance CA maximale [W]",
     "maxBatChargePower": "Puissance de charge maximale de la batterie [W]",
     "maxBatDischargPower": "Puissance de décharge maximale de la batterie [W]",
@@ -347,6 +348,7 @@
     "startDischargeDefault": "Démarrer la décharge par défaut [W]",
     "title_connection": "Configuration de la connexion E3 / DC",
     "title_intervals": "Définir des intervalles de temps pour la requête et le renvoi",
+    "title_misc": "Divers",
     "title_namespaces": "Sélectionnez les espaces de noms E3/DC pour interroger les données",
     "title_polling_intervals": "Affiner les intervalles d'interrogation des données"
 }

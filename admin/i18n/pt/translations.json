@@ -310,6 +310,7 @@
     "e3dc_port": "Porto E3/DC",
     "hybridModeSupported": "Modo híbrido suportado",
     "installedBatteryCapacity": "Capacidade instalada da bateria [Wh]",
+    "lazy_setstate": "Chamada preguiçosa de setState()",
     "maxAcPower": "Potência máxima de CORRENTE ALTERNADA [W]",
     "maxBatChargePower": "Potência máxima de carga de guerra [W]",
     "maxBatDischargPower": "Potência máxima de descarga da bateria [W]",
@@ -347,6 +348,7 @@
     "startDischargeDefault": "Iniciar a predefinição da descarga [W]",
     "title_connection": "Configurar a ligação E3 / DC",
     "title_intervals": "Definir os intervalos de tempo para a pesquisa e a revenda",
+    "title_misc": "Diversos",
     "title_namespaces": "Seleccione os espaços de nomes E3/DC para onde procurar os dados",
     "title_polling_intervals": "Intervalos de sondagem de dados de afinação fina"
 }

@@ -926,6 +926,7 @@
                 "interval": "L"
             }
         ],
+        "lazy_setstate": true,
         "polling_interval_short": 30,
         "polling_interval_medium": 5,
         "polling_interval_long": 12,

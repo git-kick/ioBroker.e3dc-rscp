@@ -310,6 +310,7 @@
     "e3dc_port": "Порт E3/DC",
     "hybridModeSupported": "Підтримується гібридний режим",
     "installedBatteryCapacity": "Встановлена ​​ємність акумулятора",
+    "lazy_setstate": "Ледачий виклик setState().",
     "maxAcPower": "Максимальна потужність змінного струму",
     "maxBatChargePower": "Максимальна потужність заряду батареї",
     "maxBatDischargPower": "Максимальна потужність розряду акумулятора",
@@ -347,6 +348,7 @@
     "startDischargeDefault": "Почати розрядку за замовчуванням",
     "title_connection": "Налаштуйте підключення E3/DC",
     "title_intervals": "Встановіть часові інтервали для відправки",
+    "title_misc": "Різне",
     "title_namespaces": "Виберіть простори імен E3/DC для запиту даних",
     "title_polling_intervals": "Встановити інтервали опитування даних"
 }

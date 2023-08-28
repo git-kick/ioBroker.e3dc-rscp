@@ -310,6 +310,7 @@
     "e3dc_port": "E3/DC Port",
     "hybridModeSupported": "Hybrid-Modus unterstützt",
     "installedBatteryCapacity": "Installierte Batteriekapazität",
+    "lazy_setstate": "setState()-Aufruf nur bei Änderung",
     "maxAcPower": "Maximale AC-Leistung",
     "maxBatChargePower": "Maximale Batterieladeleistung",
     "maxBatDischargPower": "Maximale Batterieentladeleistung",
@@ -347,6 +348,7 @@
     "startDischargeDefault": "Anfängliche Entladeleistung Standard",
     "title_connection": "E3/DC-Verbindung",
     "title_intervals": "Zeitintervalle für Senden",
+    "title_misc": "Verschiedenes",
     "title_namespaces": "Auswahl der E3/DC-Namespaces, für die Daten abgefragt werden",
     "title_polling_intervals": "Einstellung der Abfrageintervalle"
 }

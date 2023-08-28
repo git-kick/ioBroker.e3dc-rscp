@@ -70,12 +70,17 @@ Here is what to configure when creating a new instance of the adapter. Settings 
   </tr>
   <tr>
     <td>Tuple sending delay [s]</td>
-    <td>Define how long ioBroker will wait before writing idle period or data history changes to E3/DC. Purpose is to merge several subsequent changes into one single call. A dedicated timeout is set/reset upon every change concerning the values within one idle period or one data history scale, resepectively; changes are only transmitted after the timeout is over. This applies to EMS.IDLE_PERIODS_* and DB.HISTORY_DATA_*</td>
+    <td>Define how long ioBroker will wait before writing idle period or data history changes to E3/DC. Purpose is to merge several subsequent changes into one single call. A dedicated timeout is set/reset upon every change concerning the values within one idle period or one data history scale, resepectively; changes are only transmitted after the timeout is   <tr>
+    <td>Lazy SetState() [true/false]</td>
+    <td>If true (default), the adapter will write to ioBroker States only when values have changed - this reduces workload, better for smaller hardware. Set this option to false and the adapter will call setState() after every polling iterval, also for unchanged values - better if you have an application depending on regular State.ts updates. </td>
+  </tr>
+over. This applies to EMS.IDLE_PERIODS_* and DB.HISTORY_DATA_*</td>
   </tr>
   <tr>
     <td>Checkbox for each E3/DC namespace</td>
     <td>Data will be requested only for checked namespaces.</td>
   </tr>
+
 </table>
 
 ### Tab "Polling intervals"
@@ -400,6 +405,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### 1.2.4
 (git-kick)
 * Fixed onReady() async calls causing (very rare) unhandled exceptions - [Issue #178](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/178)
+* Added config switch lazy_setstate  - [Issue #180](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/180). The adapter is now capable of updating State.ts according to convention (also when the value was unchanged). **Note** that the default ist "false" (i.e. no setState() call as long as value remains unchanged) in order to avoid a breaking chage for users with small hardware. 
 * Handle NOENT exception if words.js is unavailable - [Issue #180](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/180)
 
 ### 1.2.3

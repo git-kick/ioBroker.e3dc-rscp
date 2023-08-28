@@ -310,6 +310,7 @@
     "e3dc_port": "E3/DC port",
     "hybridModeSupported": "Hybrid mode supported",
     "installedBatteryCapacity": "Installed battery capacity",
+    "lazy_setstate": "Lazy setState() calling",
     "maxAcPower": "Maximum AC power",
     "maxBatChargePower": "Maximum batttery charge power",
     "maxBatDischargPower": "Maximum battery discharge power",
@@ -347,6 +348,7 @@
     "startDischargeDefault": "Start discharge default",
     "title_connection": "Setup E3/DC connection",
     "title_intervals": "Set time intervals for sending",
+    "title_misc": "Miscellaneous",
     "title_namespaces": "Select E3/DC namespaces to query data for",
     "title_polling_intervals": "Set data polling intervals"
 }
