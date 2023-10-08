@@ -248,6 +248,7 @@
     "RSOC_REAL": "SOC real calculado [%]",
     "SELF_CONSUMPTION": "Consumo próprio [%]",
     "SERIAL_NUMBER": "Serie",
+    "SET_MANUAL_CHARGE_ENERGY": "Energia de carregamento manual",
     "SET_POWER": "Activar a potência [W]",
     "SET_POWER_MODE": "Modo de potência (saída)",
     "SET_POWER_VALUE": "Ligar a energia (outbound) [W]",

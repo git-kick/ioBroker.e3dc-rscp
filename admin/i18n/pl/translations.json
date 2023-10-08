@@ -248,6 +248,7 @@
     "RSOC_REAL": "Obliczone rzeczywiste SOC [%]",
     "SELF_CONSUMPTION": "Zużycie własne [%]",
     "SERIAL_NUMBER": "Numer seryjny",
+    "SET_MANUAL_CHARGE_ENERGY": "Ręczne ładowanie energii",
     "SET_POWER": "Moc zestawu [W]",
     "SET_POWER_MODE": "Tryb zasilania (wyjście)",
     "SET_POWER_VALUE": "Moc nastawcza (wyjściowa) [W]",

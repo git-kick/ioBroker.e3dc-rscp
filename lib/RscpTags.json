@@ -2765,7 +2765,7 @@
 		"DataType": "UInt32",
 		"DataTypeHex": "0x07",
 		"UserLevel": "USER",
-		"Unit": "",
+		"Unit": "Wh",
 		"Description": "Manuelle Ladung starten"
 	},
 	"16777360": {
