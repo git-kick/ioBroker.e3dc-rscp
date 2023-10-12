@@ -289,6 +289,7 @@ const mapChangedIdToSetTags = {
 	"EMS.POWERSAVE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWERSAVE_ENABLED"],
 	"EMS.POWER_LIMITS_USED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWER_LIMITS_USED"],
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED"],
+	"EMS.SET_WB_DISCHARGE_BAT_UNTIL": [],
 	"EMS.SET_POWER_MODE": [],
 	"EMS.SET_POWER_VALUE": [],
 	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
@@ -364,6 +365,7 @@ const ignoreIds = [
 	"EMS.MANUAL_CHARGE_LASTSTART", // invalid Timestamp value
 	"EMS.SYS_SPEC_INDEX",
 	"EMS.SET_IDLE_PERIODS",
+	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  // Response is always "true", not usable for state with unit "%"
 	"BAT.UNDEFINED",
 	"BAT.INTERNAL_CURRENT_AVG30",
 	"BAT.INTERNAL_MTV_AVG30",
@@ -874,6 +876,7 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_USER_DISCHARGE_LIMIT", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_WB_DISCHARGE_BAT_UNTIL", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS", sml );
@@ -919,6 +922,16 @@ class E3dcRscp extends utils.Adapter {
 			this.setPowerTimer = null; // nullify to enable "is timer running" check
 		}
 	}
+
+	queueEmsSetWbDischargeUntil( limit ) {
+		this.log.debug( `queueEmsSetWbDischargeUntil( ${limit} )` );
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_EMS_REQ_SET_WB_DISCHARGE_BAT_UNTIL", "", limit );
+		this.pushFrame( );
+		// Acknowledge SET_WB_DISCHARGE_BAT_UNTIL
+		this.setState( "EMS.SET_WB_DISCHARGE_BAT_UNTIL", limit, true );
+	}
+
 
 	queueSysRequestData( sml ) {
 		this.clearFrame();
@@ -1787,6 +1800,18 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+			await this.setObjectNotExistsAsync( "EMS.SET_WB_DISCHARGE_BAT_UNTIL", {
+				type: "state",
+				common: {
+					name: systemDictionary["SET_WB_DISCHARGE_BAT_UNTIL"][this.language],
+					type: "number",
+					role: "value",
+					read: false,
+					write: true,
+					states: "",
+				},
+				native: {},
+			} );
 		}
 		if( this.config.query_sys ) {
 			await this.setObjectNotExistsAsync( "SYS", {
@@ -1956,6 +1981,10 @@ class E3dcRscp extends utils.Adapter {
 				} else if ( id.endsWith( "SYS.RESTART_APPLICATION" ) ) {
 					this.getState( "SYS.RESTART_APPLICATION", ( err, restart ) => {
 						this.queueSysRestartApplication( restart ? restart.val : false );
+					} );
+				} else if ( id.endsWith( "EMS.SET_WB_DISCHARGE_BAT_UNTIL" ) ) {
+					this.getState( "EMS.SET_WB_DISCHARGE_BAT_UNTIL", ( err, limit ) => {
+						this.queueEmsSetWbDischargeUntil( limit ? limit.val : 0 );
 					} );
 				} else if ( id.includes( ".WB." ) ) {
 					this.log.debug( "WB changed" );

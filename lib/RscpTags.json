@@ -14597,5 +14597,57 @@
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Gerät im Service"
+	},
+	"16777853": {
+		"TagHex": "0x0100027D",
+		"TagName": "REQ_GET_WB_DISCHARGE_BAT_UNTIL",
+		"TagNameGlobal": "TAG_EMS_REQ_GET_WB_DISCHARGE_BAT_UNTIL",
+		"DataTagHex": "0x00027D",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "UChar8",
+		"DataTypeHex": "0x03",
+		"UserLevel": "USER",
+		"Unit": "",
+		"Description": "imported from pvtom/rscp2mqtt"
+	},
+	"25166461": {
+		"TagHex": "0x0180027D",
+		"TagName": "WB_DISCHARGE_BAT_UNTIL",
+		"TagNameGlobal": "TAG_EMS_GET_WB_DISCHARGE_BAT_UNTIL",
+		"DataTagHex": "0x80027D",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "UChar8",
+		"DataTypeHex": "0x03",
+		"UserLevel": "USER",
+		"Unit": "%",
+		"Description": "imported from pvtom/rscp2mqtt"
+	},
+	"16777852": {
+		"TagHex": "0x0100027C",
+		"TagName": "REQ_SET_WB_DISCHARGE_BAT_UNTIL",
+		"TagNameGlobal": "TAG_EMS_REQ_SET_WB_DISCHARGE_BAT_UNTIL",
+		"DataTagHex": "0x00027C",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "UChar8",
+		"DataTypeHex": "0x03",
+		"UserLevel": "USER",
+		"Unit": "",
+		"Description": "imported from pvtom/rscp2mqtt"
+	},
+	"25166460": {
+		"TagHex": "0x0180027C",
+		"TagName": "SET_WB_DISCHARGE_BAT_UNTIL",
+		"TagNameGlobal": "TAG_EMS_SET_WB_DISCHARGE_BAT_UNTIL",
+		"DataTagHex": "0x80027D",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "UChar8",
+		"DataTypeHex": "0x03",
+		"UserLevel": "USER",
+		"Unit": "%",
+		"Description": "imported from pvtom/rscp2mqtt"
 	}
 }

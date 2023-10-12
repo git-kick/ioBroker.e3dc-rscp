@@ -260,6 +260,12 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>Charging power [W]; usually propagates to SET_POWER</td>
   </tr>
   <tr>
+    <td>EMS</td>
+    <td>SET_WB_DISCHARGE_BAT_UNTIL</td>
+    <td>number</td>
+    <td>Percentage up to which the wallbox may discharge the battery</td>
+  </tr>
+  <tr>
     <td>EMS (1)</td>
     <td>IDLE_PERIOD_ACTIVE</td>
     <td>boolean</td>
