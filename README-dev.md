@@ -57,7 +57,7 @@ Observations:
 
 ## API-Documentation
 
-# Original sources
+### Original sources
 
 The S10 portal contains basic documentation
 
@@ -65,7 +65,7 @@ The S10 portal contains basic documentation
 * [RscpExample](https://s10.e3dc.com/s10/module/download/get.php?id=1626) contains RSCP-Tags-Official.xlsm
 * [Documentation of RscpExample](https://s10.e3dc.com/s10/module/download/get.php?id=280)
 
-# Additional sources
+### Additional sources
 
 In addition, the following projects, among others, deal with the RSCP interface:
 
