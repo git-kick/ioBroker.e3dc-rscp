@@ -261,9 +261,27 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>EMS</td>
+    <td>SET_BATTERY_BEFORE_CAR_MODE</td>
+    <td>boolean</td>
+    <td>Prioritising battery charging before wallbox</td>
+  </tr>  
+  <tr>
+    <td>EMS</td>
+    <td>SET_BATTERY_TO_CAR_MODE</td>
+    <td>boolean</td>
+    <td>Battery discharge by wallbox in sun mode</td>
+  </tr>  
+  <tr>
+    <td>EMS</td>
     <td>SET_WB_DISCHARGE_BAT_UNTIL</td>
     <td>number</td>
     <td>Percentage up to which the wallbox may discharge the battery</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>SET_WB_ENFORCE_POWER_ASSIGNMENT</td>
+    <td>boolean</td>
+    <td>Prevent battery discharge through wall box in mixing mode, true=forbidden, false=allowed</td>
   </tr>
   <tr>
     <td>EMS (1)</td>

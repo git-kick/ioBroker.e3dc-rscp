@@ -290,6 +290,9 @@ const mapChangedIdToSetTags = {
 	"EMS.POWER_LIMITS_USED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWER_LIMITS_USED"],
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED"],
 	"EMS.SET_WB_DISCHARGE_BAT_UNTIL": [],
+	"EMS.SET_BATTERY_TO_CAR_MODE": [],
+	"EMS.SET_WB_ENFORCE_POWER_ASSIGNMENT": [],
+	"EMS.SET_BATTERY_BEFORE_CAR_MODE": [],
 	"EMS.SET_POWER_MODE": [],
 	"EMS.SET_POWER_VALUE": [],
 	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
@@ -365,7 +368,10 @@ const ignoreIds = [
 	"EMS.MANUAL_CHARGE_LASTSTART", // invalid Timestamp value
 	"EMS.SYS_SPEC_INDEX",
 	"EMS.SET_IDLE_PERIODS",
-	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  // Response is always "true", not usable for state with unit "%"
+	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  	// Response is always "true", not usable for state with unit "%"
+	"EMS.SET_BATTERY_TO_CAR_MODE",		// Response is set to EMS.BATTERY_TO_CAR_MODE
+	"EMS.SET_WB_ENFORCE_POWER_ASSIGNMENT", //Response is set to EMS.WB_ENFORCE_POWER_ASSIGNMENT
+	"EMS.SET_BATTERY_BEFORE_CAR_MODE",		//Response is set to EMS.BATTERY_BEFORE_CAR_MODE
 	"BAT.UNDEFINED",
 	"BAT.INTERNAL_CURRENT_AVG30",
 	"BAT.INTERNAL_MTV_AVG30",
@@ -877,6 +883,7 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_WB_DISCHARGE_BAT_UNTIL", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_WALLBOX_ENFORCE_POWER_ASSIGNMENT", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS", sml );
@@ -927,9 +934,47 @@ class E3dcRscp extends utils.Adapter {
 		this.log.debug( `queueEmsSetWbDischargeUntil( ${limit} )` );
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_WB_DISCHARGE_BAT_UNTIL", "", limit );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_WB_DISCHARGE_BAT_UNTIL", "S" );
 		this.pushFrame( );
 		// Acknowledge SET_WB_DISCHARGE_BAT_UNTIL
 		this.setState( "EMS.SET_WB_DISCHARGE_BAT_UNTIL", limit, true );
+	}
+
+
+	queueEmsSetBatt2CarMode( b2c ) {
+		this.log.debug( `queueEmsSetBatt2CarMode( ${b2c} )` );
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_EMS_REQ_SET_BATTERY_TO_CAR_MODE", "", b2c );
+		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_TO_CAR_MODE", "S" );
+		this.pushFrame( );
+		// Acknowledge SET_BATTERY_TO_CAR_MODE
+		this.setState( "EMS.SET_BATTERY_TO_CAR_MODE", b2c, true );
+	}
+
+
+	queueEmsEnforceWBPowerAssignment( b2cMixedMode ) {
+		// Empty battery in mixedmode
+		this.log.debug( `queueEmsEnforceWBPowerAssignment( ${b2cMixedMode} )` );
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_EMS_REQ_SET_WALLBOX_ENFORCE_POWER_ASSIGNMENT", "", b2cMixedMode );
+		this.pushFrame( );
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_WALLBOX_ENFORCE_POWER_ASSIGNMENT", "S" );
+		this.pushFrame( );
+		// Acknowledge SET_WB_DISCHARGE_BAT_UNTIL
+		this.setState( "EMS.SET_WB_ENFORCE_POWER_ASSIGNMENT", b2cMixedMode, true );
+	}
+
+
+	queueEmsSetBattBeforeCar( battBeforeCar ) {
+		// Empty battery in mixedmode
+		this.log.debug( `queueEmsSetBattBeforeCar( ${battBeforeCar} )` );
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_EMS_REQ_SET_BATTERY_BEFORE_CAR_MODE", "", battBeforeCar );
+		this.addTagtoFrame( "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE", "S" );
+		this.pushFrame( );
+		// Acknowledge SET_WB_DISCHARGE_BAT_UNTIL
+		this.setState( "EMS.SET_BATTERY_BEFORE_CAR_MODE", battBeforeCar, true );
 	}
 
 
@@ -1812,6 +1857,39 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+			await this.setObjectNotExistsAsync( "EMS.SET_BATTERY_TO_CAR_MODE", {
+				type: "state",
+				common: {
+					name: systemDictionary["SET_BATTERY_TO_CAR_MODE"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.SET_WB_ENFORCE_POWER_ASSIGNMENT", {
+				type: "state",
+				common: {
+					name: systemDictionary["SET_WB_ENFORCE_POWER_ASSIGNMENT"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.SET_BATTERY_BEFORE_CAR_MODE", {
+				type: "state",
+				common: {
+					name: systemDictionary["SET_BATTERY_BEFORE_CAR_MODE"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true
+				},
+				native: {},
+			} );
 		}
 		if( this.config.query_sys ) {
 			await this.setObjectNotExistsAsync( "SYS", {
@@ -1985,6 +2063,18 @@ class E3dcRscp extends utils.Adapter {
 				} else if ( id.endsWith( "EMS.SET_WB_DISCHARGE_BAT_UNTIL" ) ) {
 					this.getState( "EMS.SET_WB_DISCHARGE_BAT_UNTIL", ( err, limit ) => {
 						this.queueEmsSetWbDischargeUntil( limit ? limit.val : 0 );
+					} );
+				} else if ( id.endsWith( "EMS.SET_BATTERY_TO_CAR_MODE" ) ) {
+					this.getState( "EMS.SET_BATTERY_TO_CAR_MODE", ( err, b2c ) => {
+						this.queueEmsSetBatt2CarMode( b2c ? b2c.val : 0 );
+					} );
+				} else if ( id.endsWith( "EMS.SET_WB_ENFORCE_POWER_ASSIGNMENT" ) ) {
+					this.getState( "EMS.SET_WB_ENFORCE_POWER_ASSIGNMENT", ( err, b2cMixedMode ) => {
+						this.queueEmsEnforceWBPowerAssignment( b2cMixedMode ? b2cMixedMode.val : 0 );
+					} );
+				} else if ( id.endsWith( "EMS.SET_BATTERY_BEFORE_CAR_MODE" ) ) {
+					this.getState( "EMS.SET_BATTERY_BEFORE_CAR_MODE", ( err, battBeforeCar ) => {
+						this.queueEmsSetBattBeforeCar( battBeforeCar ? battBeforeCar.val : 0 );
 					} );
 				} else if ( id.includes( ".WB." ) ) {
 					this.log.debug( "WB changed" );
