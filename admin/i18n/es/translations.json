@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Umbral de monitoreo de voltaje inferior",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Umbral de monitoreo de voltaje superior",
     "WB": "Wallbox",
+    "WB_DISCHARGE_BAT_UNTIL": "Límite de descarga de la batería a través de la caja de pared",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "Prevenir la descarga de batería a través de la caja de pared en modo de mezcla",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Carga regulada por clima habilitada",
     "column_interval": "Intervalo de sondeo",
     "column_tag": "Nombre de la etiqueta de solicitud",

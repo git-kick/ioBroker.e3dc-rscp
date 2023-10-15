@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Limiar inferior de monitorização da tensão",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Limiar máximo de monitorização da tensão",
     "WB": "Caixa de parede",
+    "WB_DISCHARGE_BAT_UNTIL": "Limite de descarga da bateria através da caixa de parede",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "Impedir a descarga da bateria através da caixa de parede no modo de mistura",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Carga regulada pelo clima habilitada",
     "column_interval": "Intervalo",
     "column_tag": "Pedir o nome da marca",

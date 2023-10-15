@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Нижній поріг контролю напруги",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Верхній поріг контролю напруги",
     "WB": "Wallbox",
+    "WB_DISCHARGE_BAT_UNTIL": "Обмеження розряду акумулятора через стінку",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "Запобігання розряду акумулятора через настінний ящик в режимі змішування",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Увімкнено зарядку, що регулюється погодою",
     "column_interval": "Інтервал опитування",
     "column_tag": "Назва тегу запиту",

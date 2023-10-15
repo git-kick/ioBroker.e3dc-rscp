@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Spanning monitoring drempel bodem",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Spanningsbewakingsdrempel boven",
     "WB": "Wallbox",
+    "WB_DISCHARGE_BAT_UNTIL": "Batterij ontladingslimiet door de muurkast",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "Voorafgaande batterij ontlading door muurdoos in mixing",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Weer gereguleerd opladen ingeschakeld",
     "column_interval": "Peiling-interval",
     "column_tag": "Tagnaam aanvragen",

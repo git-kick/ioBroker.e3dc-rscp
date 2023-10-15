@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Нижний порог контроля напряжения",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Верхний порог контроля напряжения",
     "WB": "Настенный ящик",
+    "WB_DISCHARGE_BAT_UNTIL": "Лимит разрядки батареи через настенный ящик",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "Предотвратите разрядку батареи через коробку стены в режиме смешивания",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Включена плата с регулированием погодных условий",
     "column_interval": "Интервал опроса",
     "column_tag": "Имя тега запроса",

@@ -261,25 +261,25 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>EMS</td>
-    <td>SET_BATTERY_BEFORE_CAR_MODE</td>
+    <td>BATTERY_BEFORE_CAR_MODE</td>
     <td>boolean</td>
-    <td>Prioritising battery charging before wallbox</td>
+    <td>Charge battery before wallbox</td>
   </tr>  
   <tr>
     <td>EMS</td>
-    <td>SET_BATTERY_TO_CAR_MODE</td>
+    <td>BATTERY_TO_CAR_MODE</td>
     <td>boolean</td>
-    <td>Battery discharge by wallbox in sun mode</td>
+    <td>Discharge battery by wallbox in sun mode</td>
   </tr>  
   <tr>
     <td>EMS</td>
-    <td>SET_WB_DISCHARGE_BAT_UNTIL</td>
+    <td>WB_DISCHARGE_BAT_UNTIL</td>
     <td>number</td>
-    <td>Percentage up to which the wallbox may discharge the battery</td>
+    <td>Percentage down to which the wallbox may discharge the battery</td>
   </tr>
   <tr>
     <td>EMS</td>
-    <td>SET_WB_ENFORCE_POWER_ASSIGNMENT</td>
+    <td>WB_ENFORCE_POWER_ASSIGNMENT</td>
     <td>boolean</td>
     <td>Prevent battery discharge through wall box in mixing mode, true=forbidden, false=allowed</td>
   </tr>
@@ -427,10 +427,14 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 ### 1.2.4
+(ka-vaNu / git-kick)
+* Added setter functions for wallbox: BATTERY_BEFORE_CAR_MODE, BATTERY_TO_CAR_MODE, WB_DISCHARGE_BAT_UNTIL, WB_ENFORCE_POWER_ASSIGNMENT - [Issue #185](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/185)
+
 (git-kick)
 * Fixed onReady() async calls causing (very rare) unhandled exceptions - [Issue #178](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/178)
 * Handle ENOENT exception if words.js is unavailable - [Issue #180](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/180)
 * Added config switch lazy_setstate  - [Issue #174](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/174). The adapter is now capable of updating State.ts according to convention (also when the value was unchanged). **Note** that the default ist "false" (i.e. no setState() call as long as value remains unchanged) in order to avoid a breaking chage for users with small hardware. 
+* New chapter in [README-dev.md](https://github.com/git-kick/ioBroker.e3dc-rscp/blob/master/README-dev.md) describing how to add a standard setter tag to the adapter.
 
 ### 1.2.3
 (git-kick)

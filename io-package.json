@@ -450,6 +450,14 @@
                 "interval": "S"
             },
             {
+                "tag": "TAG_EMS_REQ_WB_DISCHARGE_BAT_UNTIL",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_WB_ENFORCE_POWER_ASSIGNMENT",
+                "interval": "M"
+            },
+            {
                 "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
                 "interval": "M"
             },

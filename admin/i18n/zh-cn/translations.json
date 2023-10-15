@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "电压监测阈值底部",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "电压监测阈值顶部",
     "WB": "壁装箱",
+    "WB_DISCHARGE_BAT_UNTIL": "B. 通过隔离墙的包袱",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "B. 通过挂图的预防电池的释放",
     "WEATHER_REGULATED_CHARGE_ENABLED": "启用天气调节收费",
     "column_interval": "轮询间隔",
     "column_tag": "请求标签名称",

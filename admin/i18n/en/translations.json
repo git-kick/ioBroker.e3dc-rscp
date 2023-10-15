@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Voltage monitoring threshold bottom",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Voltage monitoring threshold top",
     "WB": "Wallbox",
+    "WB_DISCHARGE_BAT_UNTIL": "Battery discharge limit through the wallbox",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "Prevent battery discharge through wall box in mixing mode",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Weather regulated charge enabled",
     "column_interval": "Polling interval",
     "column_tag": "Request tag name",

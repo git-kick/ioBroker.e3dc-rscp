@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Próg monitorowania napięcia dolny",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Próg monitorowania napięcia top",
     "WB": "Wallbox",
+    "WB_DISCHARGE_BAT_UNTIL": "Bateria ogranicza się do limitu przez ściankę",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "Bateria wyładowana przez pudełko mieszane",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Włączono ładowanie regulowane pogodowo",
     "column_interval": "Interwał sondażowy",
     "column_tag": "Poproś o nazwę tagu",

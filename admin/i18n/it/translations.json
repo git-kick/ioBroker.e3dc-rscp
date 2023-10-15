@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Monitoraggio della tensione soglia inferiore",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Monitoraggio della tensione soglia top",
     "WB": "Scatola da muro",
+    "WB_DISCHARGE_BAT_UNTIL": "Limite di scarica della batteria attraverso la scatola da parete",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "Evitare la scarica della batteria attraverso la scatola di parete in modalità di miscelazione",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Carica regolata dalle condizioni meteorologiche abilitata",
     "column_interval": "Intervallo di polling",
     "column_tag": "Richiesta nome tag",

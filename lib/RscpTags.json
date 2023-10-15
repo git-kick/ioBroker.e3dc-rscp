@@ -2510,7 +2510,7 @@
 	},
 	"16777334": {
 		"TagHex": "0x01000076",
-		"TagName": "SET_BATTERY_TO_CAR_MODE",
+		"TagName": "REQ_SET_BATTERY_TO_CAR_MODE",
 		"TagNameGlobal": "TAG_EMS_REQ_SET_BATTERY_TO_CAR_MODE",
 		"DataTagHex": "0x000076",
 		"NameSpace": "EMS",
@@ -2533,6 +2533,32 @@
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Statusabfrage des BatteryToCar Modus"
+	},
+	"16777336": {
+		"TagHex": "0x01000078",
+		"TagName": "REQ_SET_BATTERY_BEFORE_CAR_MODE",
+		"TagNameGlobal": "TAG_EMS_REQ_SET_BATTERY_BEFORE_CAR_MODE",
+		"DataTagHex": "0x000078",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "UChar8",
+		"DataTypeHex": "0x03",
+		"UserLevel": "USER",
+		"Unit": "",
+		"Description": "Aktiviert, deaktiviert den BatteryBeforeCar Modus"
+	},
+	"16777337": {
+		"TagHex": "0x01000079",
+		"TagName": "REQ_BATTERY_BEFORE_CAR_MODE",
+		"TagNameGlobal": "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE",
+		"DataTagHex": "0x000079",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "UChar8",
+		"DataTypeHex": "0x03",
+		"UserLevel": "USER",
+		"Unit": "",
+		"Description": "Statusabfrage des BatteryBeforeCar Modus"
 	},
 	"16777344": {
 		"TagHex": "0x01000080",
@@ -14548,8 +14574,8 @@
 	},
 	"16777853": {
 		"TagHex": "0x0100027D",
-		"TagName": "REQ_GET_WB_DISCHARGE_BAT_UNTIL",
-		"TagNameGlobal": "TAG_EMS_REQ_GET_WB_DISCHARGE_BAT_UNTIL",
+		"TagName": "REQ_WB_DISCHARGE_BAT_UNTIL",
+		"TagNameGlobal": "TAG_EMS_REQ_WB_DISCHARGE_BAT_UNTIL",
 		"DataTagHex": "0x00027D",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -14562,7 +14588,7 @@
 	"25166461": {
 		"TagHex": "0x0180027D",
 		"TagName": "WB_DISCHARGE_BAT_UNTIL",
-		"TagNameGlobal": "TAG_EMS_GET_WB_DISCHARGE_BAT_UNTIL",
+		"TagNameGlobal": "TAG_EMS_WB_DISCHARGE_BAT_UNTIL",
 		"DataTagHex": "0x80027D",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -14582,7 +14608,7 @@
 		"DataType": "UChar8",
 		"DataTypeHex": "0x03",
 		"UserLevel": "USER",
-		"Unit": "",
+		"Unit": "%",
 		"Description": "imported from pvtom/rscp2mqtt"
 	},
 	"25166460": {
@@ -14600,8 +14626,8 @@
 	},
 	"16777851": {
 		"TagHex": "0x0100027B",
-		"TagName": "REQ_GET_WALLBOX_ENFORCE_POWER_ASSIGNMENT",
-		"TagNameGlobal": "TAG_EMS_REQ_GET_WALLBOX_ENFORCE_POWER_ASSIGNMENT",
+		"TagName": "REQ_WB_ENFORCE_POWER_ASSIGNMENT",
+		"TagNameGlobal": "TAG_EMS_REQ_WB_ENFORCE_POWER_ASSIGNMENT",
 		"DataTagHex": "0x00027B",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -14614,7 +14640,7 @@
 	"25166459": {
 		"TagHex": "0x0180027B",
 		"TagName": "WB_ENFORCE_POWER_ASSIGNMENT",
-		"TagNameGlobal": "TAG_EMS_GET_WALLBOX_ENFORCE_POWER_ASSIGNMENT",
+		"TagNameGlobal": "TAG_EMS_WB_ENFORCE_POWER_ASSIGNMENT",
 		"DataTagHex": "0x80027B",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -14627,7 +14653,7 @@
 	"16777850": {
 		"TagHex": "0x0100027A",
 		"TagName": "REQ_SET_WB_ENFORCE_POWER_ASSIGNMENT",
-		"TagNameGlobal": "TAG_EMS_REQ_SET_WALLBOX_ENFORCE_POWER_ASSIGNMENT",
+		"TagNameGlobal": "TAG_EMS_REQ_SET_WB_ENFORCE_POWER_ASSIGNMENT",
 		"DataTagHex": "0x00027A",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -14640,7 +14666,7 @@
 	"25166458": {
 		"TagHex": "0x0180027A",
 		"TagName": "SET_WB_ENFORCE_POWER_ASSIGNMENT",
-		"TagNameGlobal": "TAG_EMS_SET_WALLBOX_ENFORCE_POWER_ASSIGNMENT",
+		"TagNameGlobal": "TAG_EMS_SET_WB_ENFORCE_POWER_ASSIGNMENT",
 		"DataTagHex": "0x80027A",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -14649,33 +14675,6 @@
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Batterieentladung durch Wallbox im Mischmodus unterbinden , erlaubt=false, unterbunden=true"
-	},
-
-	"16777336": {
-		"TagHex": "0x01000078",
-		"TagName": "REQ_SET_BATTERY_BEFORE_CAR_MODE",
-		"TagNameGlobal": "TAG_EMS_REQ_SET_BATTERY_BEFORE_CAR_MODE",
-		"DataTagHex": "0x000078",
-		"NameSpace": "EMS",
-		"NameSpaceHex": "0x01",
-		"DataType": "UChar8",
-		"DataTypeHex": "0x03",
-		"UserLevel": "USER",
-		"Unit": "",
-		"Description": "Aktiviert, deaktiviert den BatteryBeforeCar Modus"
-	},
-	"16777337": {
-		"TagHex": "0x01000079",
-		"TagName": "REQ_BATTERY_BEFORE_CAR_MODE",
-		"TagNameGlobal": "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE",
-		"DataTagHex": "0x000079",
-		"NameSpace": "EMS",
-		"NameSpaceHex": "0x01",
-		"DataType": "UChar8",
-		"DataTypeHex": "0x03",
-		"UserLevel": "USER",
-		"Unit": "",
-		"Description": "Statusabfrage des BatteryBeforeCar Modus"
 	},
 	"25165944": {
 		"TagHex": "0x01800078",

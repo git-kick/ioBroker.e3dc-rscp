@@ -302,6 +302,8 @@
     "VOLTAGE_MONITORING_THRESHOLD_BOTTOM": "Seuil de surveillance de la tension bas",
     "VOLTAGE_MONITORING_THRESHOLD_TOP": "Seuil de surveillance de tension haut",
     "WB": "Boîte Murale",
+    "WB_DISCHARGE_BAT_UNTIL": "Limite de décharge de la batterie à travers la boîte murale",
+    "WB_ENFORCE_POWER_ASSIGNMENT": "Prévenir la décharge de la batterie par boîte murale en mode mélange",
     "WEATHER_REGULATED_CHARGE_ENABLED": "Charge régulée par la météo activée",
     "column_interval": "Intervalle d'interrogation",
     "column_tag": "Nom de la balise de demande",
