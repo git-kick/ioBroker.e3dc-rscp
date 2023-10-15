@@ -55,6 +55,26 @@ Observations:
 * Typically, the first data value is at TIME_START + TIME_INTERVAL/2
 * One additional value is (always?) transmitted at the end of TIME_SPAN.
 
+## API-Documentation
+
+### Original sources
+
+The S10 portal contains basic documentation
+
+* [RSCP Short Description](https://s10.e3dc.com/s10/module/download/get.php?id=270)
+* [RscpExample](https://s10.e3dc.com/s10/module/download/get.php?id=1626) contains RSCP-Tags-Official.xlsm
+* [Documentation of RscpExample](https://s10.e3dc.com/s10/module/download/get.php?id=280)
+
+### Additional sources
+
+In addition, the following projects, among others, deal with the RSCP interface:
+
+* [RSCPGui](https://github.com/rxhan/RSCPGui) [MIT License](https://github.com/rxhan/RSCPGui/blob/master/LICENSE)
+* [rscp2mqtt](https://github.com/pvtom/rscp2mqtt) [MIT License](https://github.com/pvtom/rscp2mqtt/blob/main/LICENSE)
+* [E3dcGui](https://github.com/nischram/E3dcGui) no License found
+* [E3DC-Rscp](https://github.com/rellla/E3DC-Rscp) no License found
+* [S10history](https://github.com/RalfJL/S10history) no License found
+
 #
 ## The rest of this Developer manual will be modified/removed when processed and done, respectively.
 
