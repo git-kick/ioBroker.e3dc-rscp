@@ -1808,6 +1808,18 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+			await this.setObjectNotExistsAsync( "EMS.MANUAL_CHARGE_ENERGY", {
+				type: "state",
+				common: {
+					name: systemDictionary["MANUAL_CHARGE_ENERGY"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_START_MANUAL_CHARGE"]].Unit,
+				},
+				native: {},
+			} );
 			await this.setObjectNotExistsAsync( "EMS.BATTERY_BEFORE_CAR_MODE", {
 				type: "state",
 				common: {
@@ -1830,7 +1842,7 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
-      await this.setObjectNotExistsAsync( "EMS.WB_DISCHARGE_BAT_UNTIL", {
+			await this.setObjectNotExistsAsync( "EMS.WB_DISCHARGE_BAT_UNTIL", {
 				type: "state",
 				common: {
 					name: systemDictionary["WB_DISCHARGE_BAT_UNTIL"][this.language],
@@ -1838,19 +1850,7 @@ class E3dcRscp extends utils.Adapter {
 					role: "level",
 					read: false,
 					write: true,
-					unit: "%",
-				},
-				native: {},
-			} );
- 			await this.setObjectNotExistsAsync( "EMS.MANUAL_CHARGE_ENERGY", {
-				type: "state",
-				common: {
-				name: systemDictionary["MANUAL_CHARGE_ENERGY"][this.language],
-					type: "number",
-					role: "level",
-					read: false,
-					write: true,
-					unit: "Wh",
+					unit: rscpTag[rscpTagCode["TAG_EMS_WB_DISCHARGE_BAT_UNTIL"]].Unit,
 				},
 				native: {},
 			} );
@@ -1861,8 +1861,7 @@ class E3dcRscp extends utils.Adapter {
 					type: "boolean",
 					role: "switch",
 					read: false,
-					write: true
-					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_START_MANUAL_CHARGE"]].Unit,
+					write: true,
 				},
 				native: {},
 			} );

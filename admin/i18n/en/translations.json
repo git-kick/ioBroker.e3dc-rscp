@@ -249,7 +249,6 @@
     "RSOC_REAL": "Real state of charge",
     "SELF_CONSUMPTION": "Self consumption",
     "SERIAL_NUMBER": "Serial number",
-    "SET_MANUAL_CHARGE_ENERGY": "Manual charging energy",
     "SET_POWER": "Set power (received)",
     "SET_POWER_MODE": "Power mode (sent)",
     "SET_POWER_VALUE": "Set power (sent)",

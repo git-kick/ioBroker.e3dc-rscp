@@ -249,7 +249,6 @@
     "RSOC_REAL": "计算实际SOC[%]",
     "SELF_CONSUMPTION": "自我消耗[%]",
     "SERIAL_NUMBER": "序列号",
-    "SET_MANUAL_CHARGE_ENERGY": "手动充电能量",
     "SET_POWER": "设定功率[W]",
     "SET_POWER_MODE": "电源模式（出站）",
     "SET_POWER_VALUE": "设定功率(出站)[W]",
