@@ -289,6 +289,7 @@ const mapChangedIdToSetTags = {
 	"EMS.POWERSAVE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWERSAVE_ENABLED"],
 	"EMS.POWER_LIMITS_USED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWER_LIMITS_USED"],
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED"],
+	"EMS.MANUAL_CHARGE_ENERGY": ["", "TAG_EMS_REQ_START_MANUAL_CHARGE"],
 	"EMS.SET_POWER_MODE": [],
 	"EMS.SET_POWER_VALUE": [],
 	"EMS.BATTERY_TO_CAR_MODE": ["", "TAG_EMS_REQ_SET_BATTERY_TO_CAR_MODE"],
@@ -365,8 +366,7 @@ const stringIds = [
 const ignoreIds = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
-	"EMS.MANUAL_CHARGE_START_COUNTER", // invalid Int64 value
-	"EMS.MANUAL_CHARGE_LASTSTART", // invalid Timestamp value
+	"EMS.MANUAL_CHARGE_START_COUNTER", // returns Int64, seems to be the same timestamp as in MANUAL_CHARGE_LAST_START
 	"EMS.SYS_SPEC_INDEX",
 	"EMS.SET_IDLE_PERIODS",
 	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  	// Response is always "true", not usable for state with unit "%"
@@ -899,7 +899,7 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	sendEmsSetPower( mode, value ) {
-		this.log.debug( `queueEmsSetPower( ${mode}, ${value} )` );
+		this.log.debug( `sendEmsSetPower( ${mode}, ${value} )` );
 		this.clearFrame();
 		const pos = this.startContainer( "TAG_EMS_REQ_SET_POWER" );
 		this.addTagtoFrame( "TAG_EMS_REQ_SET_POWER_MODE", "", mode );
@@ -1465,6 +1465,19 @@ class E3dcRscp extends utils.Adapter {
 					}
 					continue;
 				}
+				// Use START_MANUAL_CHARGE response to acknowledge state EMS.MANUAL_CHARGE_ENERGY
+				if( shortId == "EMS.START_MANUAL_CHARGE" ) {
+					this.getState( "EMS.MANUAL_CHARGE_ENERGY", ( err, obj ) => {
+						this.setState( "EMS.MANUAL_CHARGE_ENERGY", obj ? obj.val : 0, true );
+					} );
+					continue;
+				}
+				// On EMS.MANUAL_CHARGE_ACTIVE == false, reset state EMS.MANUAL_CHARGE_ENERGY = 0
+				if( shortId == "EMS.MANUAL_CHARGE_ACTIVE" ) {
+					if( !token.content ) {
+						this.setState( "EMS.MANUAL_CHARGE_ENERGY", 0, true );
+					}
+				}
 				// Handle mapping between "receive" tag names and "set" tag names:
 				let targetStateMatch = null;
 				if( mapReceivedIdToState[shortId] ) {
@@ -1817,7 +1830,7 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
-			await this.setObjectNotExistsAsync( "EMS.WB_DISCHARGE_BAT_UNTIL", {
+      await this.setObjectNotExistsAsync( "EMS.WB_DISCHARGE_BAT_UNTIL", {
 				type: "state",
 				common: {
 					name: systemDictionary["WB_DISCHARGE_BAT_UNTIL"][this.language],
@@ -1829,6 +1842,18 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+ 			await this.setObjectNotExistsAsync( "EMS.MANUAL_CHARGE_ENERGY", {
+				type: "state",
+				common: {
+				name: systemDictionary["MANUAL_CHARGE_ENERGY"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: "Wh",
+				},
+				native: {},
+			} );
 			await this.setObjectNotExistsAsync( "EMS.WB_ENFORCE_POWER_ASSIGNMENT", {
 				type: "state",
 				common: {
@@ -1837,6 +1862,7 @@ class E3dcRscp extends utils.Adapter {
 					role: "switch",
 					read: false,
 					write: true
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_START_MANUAL_CHARGE"]].Unit,
 				},
 				native: {},
 			} );

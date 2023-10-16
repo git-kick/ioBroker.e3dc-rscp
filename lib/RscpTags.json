@@ -2765,7 +2765,7 @@
 		"DataType": "UInt32",
 		"DataTypeHex": "0x07",
 		"UserLevel": "USER",
-		"Unit": "",
+		"Unit": "Wh",
 		"Description": "Manuelle Ladung starten"
 	},
 	"16777360": {
@@ -3064,7 +3064,7 @@
 		"DataType": "UInt32",
 		"DataTypeHex": "0x07",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "Wh",
 		"Description": "Manuell geladene Energiemenge"
 	},
 	"16777555": {

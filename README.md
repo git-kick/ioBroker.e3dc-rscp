@@ -215,49 +215,55 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>EMS</td>
     <td>MAX_CHARGE_POWER</td>
     <td>number</td>
-    <td>Charge limit in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true"</td>
+    <td>Charge limit in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true".</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>MAX_DISCHARGE_POWER</td>
     <td>number</td>
-    <td>Discharge limit in [W] - NOTE: inffective unless POWER_LIMITS_USED is "true"</td>
+    <td>Discharge limit in [W] - NOTE: inffective unless POWER_LIMITS_USED is "true".</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>DISCHARGE_START_POWER</td>
     <td>number</td>
-    <td>Minimal battery discharge power in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true"</td>
+    <td>Minimal battery discharge power in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true".</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>POWERSAVE_ENABLED</td>
     <td>boolean</td>
-    <td>Powersave mode is enabled</td>
+    <td>Powersave mode is enabled.</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>POWERLIMITS_USED</td>
     <td>boolean</td>
-    <td>Power limits are used</td>
+    <td>Power limits are used.</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>WEATHER_REGULATED_CHARGE_ENABLED</td>
     <td>boolean</td>
-    <td>Weather regulated charging is enabled</td>
+    <td>Weather regulated charging is enabled.</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>SET_POWER_MODE</td>
     <td>states</td>
-    <td>Charging mode; usually propagates to MODE</td>
+    <td>Charging mode; usually propagates to MODE.</td>
   </tr>
   <tr>
     <td>EMS</td>
     <td>SET_POWER_VALUE</td>
     <td>number</td>
-    <td>Charging power [W]; usually propagates to SET_POWER</td>
+    <td>Charging power [W]; usually propagates to SET_POWER.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>MANUAL_CHARGE_ENERGY</td>
+    <td>number</td>
+    <td>Manual charging energy [Wh]; setting this value will start manual charge.</td>
   </tr>
   <tr>
     <td>EMS</td>
@@ -287,49 +293,49 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>EMS (1)</td>
     <td>IDLE_PERIOD_ACTIVE</td>
     <td>boolean</td>
-    <td>(de-)activate idle period (2)</td>
+    <td>(de-)activate idle period (2).</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
     <td>START_HOUR</td>
     <td>number</td>
-    <td>Start hour of idle period (2)</td>
+    <td>Start hour of idle period (2).</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
     <td>START_MINUTE</td>
     <td>number</td>
-    <td>Start minute of idle period (2)</td>
+    <td>Start minute of idle period (2).</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
     <td>END_HOUR</td>
     <td>number</td>
-    <td>End hour of idle period (2)</td>
+    <td>End hour of idle period (2).</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
     <td>END_MINUTE</td>
     <td>number</td>
-    <td>End minute of idle period (2)</td>
+    <td>End minute of idle period (2).</td>
   </tr>
   <tr>
     <td>DB (3)</td>
     <td>TIME_START</td>
     <td>string</td>
-    <td>Start of time range to request data for</td>
+    <td>Start of time range to request data for.</td>
   </tr>
   <tr>
     <td>DB (3)</td>
     <td>TIME_SPAN</td>
     <td>string</td>
-    <td>Length of time range to request data for (seconds)</td>
+    <td>Length of time range to request data for (seconds).</td>
   </tr>
   <tr>
     <td>DB (3)</td>
     <td>TIME_INTERVAL</td>
     <td>string</td>
-    <td>Interval between data points</td>
+    <td>Interval between data points.</td>
   </tr>
   <tr>
     <td>SYS</td>
@@ -433,6 +439,7 @@ __MODIFIED ADAPTER SETTINGS - do not re-use settings stored in *.json__
 * Added setter functions for wallbox: BATTERY_BEFORE_CAR_MODE, BATTERY_TO_CAR_MODE, WB_DISCHARGE_BAT_UNTIL, WB_ENFORCE_POWER_ASSIGNMENT - [Issue #185](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/185)
 
 (git-kick)
+* Added setter EMS.MANUAL_CHARGE_ENERGY  - [Issue #184](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/184)
 * Fixed onReady() async calls causing (very rare) unhandled exceptions - [Issue #178](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/178)
 * Handle ENOENT exception if words.js is unavailable - [Issue #180](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/180)
 * Added config switch lazy_setstate  - [Issue #174](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/174). The adapter is now capable of updating State.ts according to convention (also when the value was unchanged). **Note** that the default ist "false" (i.e. no setState() call as long as value remains unchanged) in order to avoid a breaking chage for users with small hardware. 
