@@ -278,10 +278,10 @@ const mapReceivedIdToState = {
 	"EMS.USER_CHARGE_LIMIT": { "*": "EMS.MAX_CHARGE_POWER" },
 	"EMS.USER_DISCHARGE_LIMIT": { "*": "EMS.MAX_DISCHARGE_POWER" },
 };
-// List of all writable states
-// For standard cases, define how to send a SET to E3/DC
-// key is state id (wildcards in path allowed)
-// value is [optional_container_global_tag, setter_global_tag]; value = [] for cases with special handling
+// List of all writable states and define how to send a corresponding SET to E3/DC
+// hash-key is the state id - '*' wildcards in path are allowed. This is the state the user will modify to trigger a change.
+// hash-value is [optional_container_global_tag, setter_global_tag]. This is the tag the adapter will send to the E3/DC device.
+// hash-value is [] (i.e. empty) for tags which are handled in a dedicated 'queue...' function
 const mapChangedIdToSetTags = {
 	"EMS.MAX_CHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_CHARGE_POWER"],
 	"EMS.MAX_DISCHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_DISCHARGE_POWER"],
@@ -292,6 +292,10 @@ const mapChangedIdToSetTags = {
 	"EMS.MANUAL_CHARGE_ENERGY": ["", "TAG_EMS_REQ_START_MANUAL_CHARGE"],
 	"EMS.SET_POWER_MODE": [],
 	"EMS.SET_POWER_VALUE": [],
+	"EMS.BATTERY_TO_CAR_MODE": ["", "TAG_EMS_REQ_SET_BATTERY_TO_CAR_MODE"],
+	"EMS.BATTERY_BEFORE_CAR_MODE": ["", "TAG_EMS_REQ_SET_BATTERY_BEFORE_CAR_MODE"],
+	"EMS.WB_DISCHARGE_BAT_UNTIL": ["", "TAG_EMS_REQ_SET_WB_DISCHARGE_BAT_UNTIL"],
+	"EMS.WB_ENFORCE_POWER_ASSIGNMENT": ["", "TAG_EMS_REQ_SET_WB_ENFORCE_POWER_ASSIGNMENT"],
 	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
 	"EMS.*.*.START_HOUR": [],
 	"EMS.*.*.START_MINUTE": [],
@@ -315,6 +319,7 @@ const castToBooleanIds = [
 	"EMS.hybridModeSupported",
 	"EMS.BATTERY_BEFORE_CAR_MODE",
 	"EMS.BATTERY_TO_CAR_MODE",
+	"EMS.WB_ENFORCE_POWER_ASSIGNMENT",
 	"EMS.EXT_SRC_AVAILABLE",
 	"SYS.IS_SYSTEM_REBOOTING",
 	"SYS.RESTART_APPLICATION",
@@ -364,6 +369,7 @@ const ignoreIds = [
 	"EMS.MANUAL_CHARGE_START_COUNTER", // returns Int64, seems to be the same timestamp as in MANUAL_CHARGE_LAST_START
 	"EMS.SYS_SPEC_INDEX",
 	"EMS.SET_IDLE_PERIODS",
+	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  	// Response is always "true", not usable for state with unit "%"
 	"BAT.UNDEFINED",
 	"BAT.INTERNAL_CURRENT_AVG30",
 	"BAT.INTERNAL_MTV_AVG30",
@@ -874,6 +880,8 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_USER_DISCHARGE_LIMIT", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_WB_DISCHARGE_BAT_UNTIL", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_WB_ENFORCE_POWER_ASSIGNMENT", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS", sml );
@@ -1809,6 +1817,51 @@ class E3dcRscp extends utils.Adapter {
 					read: false,
 					write: true,
 					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_START_MANUAL_CHARGE"]].Unit,
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.BATTERY_BEFORE_CAR_MODE", {
+				type: "state",
+				common: {
+					name: systemDictionary["BATTERY_BEFORE_CAR_MODE"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.BATTERY_TO_CAR_MODE", {
+				type: "state",
+				common: {
+					name: systemDictionary["BATTERY_TO_CAR_MODE"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.WB_DISCHARGE_BAT_UNTIL", {
+				type: "state",
+				common: {
+					name: systemDictionary["WB_DISCHARGE_BAT_UNTIL"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_WB_DISCHARGE_BAT_UNTIL"]].Unit,
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.WB_ENFORCE_POWER_ASSIGNMENT", {
+				type: "state",
+				common: {
+					name: systemDictionary["WB_ENFORCE_POWER_ASSIGNMENT"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true,
 				},
 				native: {},
 			} );

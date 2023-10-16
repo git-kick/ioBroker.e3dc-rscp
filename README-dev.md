@@ -55,6 +55,100 @@ Observations:
 * Typically, the first data value is at TIME_START + TIME_INTERVAL/2
 * One additional value is (always?) transmitted at the end of TIME_SPAN.
 
+## Introducing a new  setter tag
+While RSCP is not strictly built according to patterns, most of the settable attributes involve four tags, e.g. for EMS.WB_DISCHARGE_BAT_UNTIL we have
+
+* TAG_EMS_REQ_**WB_DISCHARGE_BAT_UNTIL** - request current value from E3/DC
+* TAG_EMS_**WB_DISCHARGE_BAT_UNTIL** - response: the requested value from E3/DC
+* TAG_EMS_REQ_SET_**WB_DISCHARGE_BAT_UNTIL** - request E3/DC to set the value
+* TAG_EMS_SET_**WB_DISCHARGE_BAT_UNTIL** - response: the value set in E3/DC
+
+Within ioBroker's object tree, all four tags will be represented in one object: `e3dc-rscp.0.EMS.WB_DISCHARGE_BAT_UNTIL`
+
+NOTE: the following describes how to handle the standard case as depicted above. Peculiarities like
+* container frames involved (e.g. EMS_MAX_CHARGE_POWER)
+* need to repeat requests to make E3/DC hold a value (e.g. SET_POWER)
+* nested structures (e.g. IDLE_PERIODS, DB.HISTORY)
+
+are not described here, but handled by dedicated code (e.g. a new `queue...()` function in `main.js`).
+
+### 1. Make sure the four tags are listed correctly in `RscpTags.json`
+If the REQ tag was unknown before, also add a polling interval default in `io-package.json`
+
+    "polling_intervals": [
+        ...
+        {
+            "tag": "TAG_EMS_REQ_WB_DISCHARGE_BAT_UNTIL",
+            "interval": "M"
+        },
+        ...
+    ],
+_Do not_ add the REQ_SET tag; it will not be polled regularly.
+
+NOTE: after modifying `io-package.json`, you have to do reinstall the adapter from-the-scratch and re-ernter the configuration - _do not_ load a config json file, this will disable the new `io-package.json` entries.
+### 2. Declare object to represent a setter and assign setter tag
+
+    const mapChangedIdToSetTags = {
+      ...
+      "EMS.WB_DISCHARGE_BAT_UNTIL": ["", "TAG_EMS_REQ_SET_WB_DISCHARGE_BAT_UNTIL"],
+    }
+### 3. Add getter tag to subsystem data request (if not already there)
+This includes the value in regular polling so that we will see E3/DC side changes in the object tree.
+
+    queueEmsRequestData( sml ) {
+    ...
+        this.addTagtoFrame( "TAG_EMS_REQ_WB_DISCHARGE_BAT_UNTIL", sml );
+    ...
+    }
+### 4. Add an object to the object tree
+This is necessary because it is writable and thererfore non-standard.
+
+    await this.setObjectNotExistsAsync( "EMS.WB_DISCHARGE_BAT_UNTIL", {
+      type: "state",
+      common: {
+        name: systemDictionary["WB_DISCHARGE_BAT_UNTIL"][this.language],
+        type: "number",
+        role: "value",
+        read: false,
+        write: true,
+        unit: "%",
+      },
+      native: {},
+    } );
+### 5. System dictionary entry
+The systemDictionary["WB_DISCHARGE_BAT_UNTIL"][this.language] above must be filled with a meaningful text in admin/en/translations.json
+
+    "WB_DISCHARGE_BAT_UNTIL": "Set wallbox discharge battery until",
+
+After entering English text, call 
+
+  `npm run translate all`
+
+to generate translations to all other languages.
+
+### Done. No extra send function in such standard cases! `queueSetValue()` will send the value after it was changed in the object tree.
+
+
+## RSCP API Documentation
+
+### Original sources
+
+The S10 portal contains basic documentation
+
+* [RSCP Short Description](https://s10.e3dc.com/s10/module/download/get.php?id=270)
+* [RscpExample](https://s10.e3dc.com/s10/module/download/get.php?id=1626) contains RSCP-Tags-Official.xlsm
+* [Documentation of RscpExample](https://s10.e3dc.com/s10/module/download/get.php?id=280)
+
+### Additional sources
+
+In addition, the following projects, among others, deal with the RSCP interface:
+
+* [RSCPGui](https://github.com/rxhan/RSCPGui) [MIT License](https://github.com/rxhan/RSCPGui/blob/master/LICENSE)
+* [rscp2mqtt](https://github.com/pvtom/rscp2mqtt) [MIT License](https://github.com/pvtom/rscp2mqtt/blob/main/LICENSE)
+* [E3dcGui](https://github.com/nischram/E3dcGui) no License found
+* [E3DC-Rscp](https://github.com/rellla/E3DC-Rscp) no License found
+* [S10history](https://github.com/RalfJL/S10history) no License found
+
 #
 ## The rest of this Developer manual will be modified/removed when processed and done, respectively.
 
@@ -84,28 +178,3 @@ clear upsides.
 
 The template provides you with basic tests for the adapter startup and package files.
 It is recommended that you add your own tests into the mix.
-
-### Publishing the adapter
-Since you have chosen GitHub Actions as your CI service, you can 
-enable automatic releases on npm whenever you push a new git tag that matches the form 
-`v<major>.<minor>.<patch>`. The necessary steps are described in `.github/workflows/test-and-release.yml`.
-
-To get your adapter released in ioBroker, please refer to the documentation 
-of [ioBroker.repositories](https://github.com/ioBroker/ioBroker.repositories#requirements-for-adapter-to-get-added-to-the-latest-repository).
-
-### Test the adapter manually on a local ioBroker installation
-In order to install the adapter locally without publishing, the following steps are recommended:
-1. Create a tarball from your dev directory:  
-	```bash
-	npm pack
-	```
-1. Upload the resulting file to your ioBroker host
-1. Install it locally (The paths are different on Windows):
-	```bash
-	cd /opt/iobroker
-	npm i /path/to/tarball.tgz
-	```
-
-For later updates, the above procedure is not necessary. Just do the following:
-1. Overwrite the changed files in the adapter directory (`/opt/iobroker/node_modules/iobroker.e3dc-rscp`)
-1. Execute `iobroker upload e3dc-rscp` on the ioBroker host
