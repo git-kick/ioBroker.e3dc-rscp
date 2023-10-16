@@ -427,6 +427,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 ### 1.2.4
+__MODIFIED ADAPTER SETTINGS - do not re-use settings stored in *.json__
+
 (ka-vaNu / git-kick)
 * Added setter functions for wallbox: BATTERY_BEFORE_CAR_MODE, BATTERY_TO_CAR_MODE, WB_DISCHARGE_BAT_UNTIL, WB_ENFORCE_POWER_ASSIGNMENT - [Issue #185](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/185)
 
