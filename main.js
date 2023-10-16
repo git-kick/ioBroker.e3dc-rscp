@@ -289,7 +289,7 @@ const mapChangedIdToSetTags = {
 	"EMS.POWERSAVE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWERSAVE_ENABLED"],
 	"EMS.POWER_LIMITS_USED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_POWER_LIMITS_USED"],
 	"EMS.WEATHER_REGULATED_CHARGE_ENABLED": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED"],
-	"EMS.SET_MANUAL_CHARGE_ENERGY": ["", "TAG_EMS_REQ_START_MANUAL_CHARGE"],
+	"EMS.MANUAL_CHARGE_ENERGY": ["", "TAG_EMS_REQ_START_MANUAL_CHARGE"],
 	"EMS.SET_POWER_MODE": [],
 	"EMS.SET_POWER_VALUE": [],
 	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
@@ -361,8 +361,7 @@ const stringIds = [
 const ignoreIds = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
-	// "EMS.MANUAL_CHARGE_START_COUNTER", // returns Int64, seems to be the same timestamp as in MANUAL_CHARGE_LAST_START
-	"EMS.START_MANUAL_CHARGE", // is only a return value from REQ_START_MANUAL_CHARGE; MANUAL_CHARGE_ACTIVE is sufficient
+	"EMS.MANUAL_CHARGE_START_COUNTER", // returns Int64, seems to be the same timestamp as in MANUAL_CHARGE_LAST_START
 	"EMS.SYS_SPEC_INDEX",
 	"EMS.SET_IDLE_PERIODS",
 	"BAT.UNDEFINED",
@@ -888,7 +887,6 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS", sml );
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_MANUAL_CHARGE", sml );
 		this.pushFrame();
 	}
 
@@ -921,17 +919,6 @@ class E3dcRscp extends utils.Adapter {
 			this.setPowerTimer = null; // nullify to enable "is timer running" check
 		}
 	}
-
-	/* sendEmsSetManualChargeEnergy( mode, value ) {
-		this.log.debug( `sendEmsSetManualChargeEnergy( ${mode}, ${value} )` );
-		this.clearFrame();
-		this.addTagtoFrame( "TAG_EMS_REQ_START_MANUAL_CHARGE", "", value );
-		this.pushFrame();
-		this.sendFrameLIFO();
-		// Acknowledge SET_MANUAL_CHARGE_ENERGY
-		this.setState( "EMS.SET_MANUAL_CHARGE_ENERGY", mode, true );
-		this.setState( "EMS.SET_MANUAL_CHARGE_ENERGY", value, true );
-	} */
 
 	queueSysRequestData( sml ) {
 		this.clearFrame();
@@ -1470,6 +1457,19 @@ class E3dcRscp extends utils.Adapter {
 					}
 					continue;
 				}
+				// Use START_MANUAL_CHARGE response to acknowledge state EMS.MANUAL_CHARGE_ENERGY
+				if( shortId == "EMS.START_MANUAL_CHARGE" ) {
+					this.getState( "EMS.MANUAL_CHARGE_ENERGY", ( err, obj ) => {
+						this.setState( "EMS.MANUAL_CHARGE_ENERGY", obj ? obj.val : 0, true );
+					} );
+					continue;
+				}
+				// On EMS.MANUAL_CHARGE_ACTIVE == false, reset state EMS.MANUAL_CHARGE_ENERGY = 0
+				if( shortId == "EMS.MANUAL_CHARGE_ACTIVE" ) {
+					if( !token.content ) {
+						this.setState( "EMS.MANUAL_CHARGE_ENERGY", 0, true );
+					}
+				}
 				// Handle mapping between "receive" tag names and "set" tag names:
 				let targetStateMatch = null;
 				if( mapReceivedIdToState[shortId] ) {
@@ -1800,10 +1800,10 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
-			await this.setObjectNotExistsAsync( "EMS.SET_MANUAL_CHARGE_ENERGY", {
+			await this.setObjectNotExistsAsync( "EMS.MANUAL_CHARGE_ENERGY", {
 				type: "state",
 				common: {
-					name: systemDictionary["SET_MANUAL_CHARGE_ENERGY"][this.language],
+					name: systemDictionary["MANUAL_CHARGE_ENERGY"][this.language],
 					type: "number",
 					role: "level",
 					read: false,
@@ -1974,10 +1974,6 @@ class E3dcRscp extends utils.Adapter {
 					this.getState( "EMS.SET_POWER_MODE", ( err, mode ) => {
 						this.sendEmsSetPower( mode ? mode.val : 0, state.val );
 					} );
-				/* } else if ( id.endsWith( "EMS.SET_MANUAL_CHARGE_ENERGY" ) ) {
-					this.getState( "EMS.SET_MANUAL_CHARGE_ENERGY", ( err, energy ) => {
-						this.sendEmsSetManualChargeEnergy( state.val, energy ? energy.val : 0 );
-					} ); */
 				} else if ( id.endsWith( "SYS.SYSTEM_REBOOT" ) ) {
 					this.getState( "SYS.SYSTEM_REBOOT", ( err, reboot ) => {
 						this.queueSysSystemReboot( reboot ? reboot.val : 0 );

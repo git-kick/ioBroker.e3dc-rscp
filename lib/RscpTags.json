@@ -3064,7 +3064,7 @@
 		"DataType": "UInt32",
 		"DataTypeHex": "0x07",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "Wh",
 		"Description": "Manuell geladene Energiemenge"
 	},
 	"16777555": {
