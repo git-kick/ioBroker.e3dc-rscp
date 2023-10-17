@@ -410,10 +410,6 @@
                 "interval": "M"
             },
             {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
-                "interval": "M"
-            },
-            {
                 "tag": "TAG_EMS_REQ_BATTERY_TO_CAR_MODE",
                 "interval": "M"
             },
@@ -434,8 +430,20 @@
                 "interval": "M"
             },
             {
-                "tag": "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS",
+                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
                 "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS",
+                "interval": "N"
+            },
+            {
+                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_RETRY",
+                "interval": "N"
             },
             {
                 "tag": "TAG_EMS_REQ_GET_SYS_SPECS",

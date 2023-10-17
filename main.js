@@ -151,6 +151,11 @@ const rscpEmsEmergencyPowerStatus = {
 	3: "NOT_AVAILABLE",
 	4: "SWITCH_IN_ISLAND_STATE",
 };
+const rscpEmsSetEmergencyPower = {
+	0: "NORMAL_GRID_MODE",
+	1: "EMERGENCY_MODE",
+	2: "ISLAND_NO_POWER_MODE",
+};
 const rscpEmsIdlePeriodType = {
 	0: "IDLE_CHARGE",
 	1: "IDLE_DISCHARGE",
@@ -167,8 +172,6 @@ const rscpEmsSetPowerMode = {
 	3: "CHARGE",
 	4: "GRID_CHARGE",
 };
-const rscpWbMode = wb.rscpWbMode;
-
 const rscpActivePhases = {
 	0: "PHASE_000",
 	1: "PHASE_001",
@@ -184,6 +187,7 @@ const rscpSysSystemReboot = {
 	1: "Reboot initiated",
 	2: "Waiting for services to terminate, reboot will be initiated then"
 };
+const rscpWbMode = wb.rscpWbMode;
 
 /* RSCP enumerations for later use:
 const rscpReturnCodes = {
@@ -195,11 +199,6 @@ const rscpReturnCodes = {
 	-5: "ERR_INVALID_FRAME_LENGTH",
 	-6: "ERR_INVALID_CRC",
 	-7: "ERR_DATA_LIMIT_EXCEEDED",
-}
-const rscpEmsSetEmergencyPower = {
-	0: "NORMAL_GRID_MODE",
-	1: "EMERGENCY_MODE",
-	2: "ISLAND_NO_POWER_MODE",
 };
 const rscpEmsGeneratorState = {
 	0x00: "IDLE",
@@ -308,7 +307,6 @@ const mapChangedIdToSetTags = {
 	"SYS.SYSTEM_REBOOT": ["", "TAG_SYS_REQ_SYSTEM_REBOOT"],
 	"SYS.RESTART_APPLICATION": ["", "TAG_SYS_REQ_RESTART_APPLICATION"],
 	"WB.*.Control.*": [],
-	//"WB.*.REQ_SET_EXTERN": ["TAG_WB_SET_EXTERN","TAG_WB_EXTERN_DATA"],
 	//"EP.*.PARAM_EP_RESERVE": ["", "TAG_EP_REQ_SET_EP_RESERVE"],   -- does not work properly as setter tag, perhaps a container is needed?
 };
 // RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
@@ -367,6 +365,7 @@ const ignoreIds = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
 	"EMS.MANUAL_CHARGE_START_COUNTER", // returns Int64, seems to be the same timestamp as in MANUAL_CHARGE_LAST_START
+	"EMS.PARAM_INDEX", // always 0, occurs in container EMERGENCY_POWER_OVERLOAD_STATUS
 	"EMS.SYS_SPEC_INDEX",
 	"EMS.SET_IDLE_PERIODS",
 	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  	// Response is always "true", not usable for state with unit "%"
@@ -885,7 +884,9 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS", sml );
-		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS", sml ); // no response?
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_RETRY", sml ); // response is a bool & PARAM_0=(NO_REMAINING_ENTY,TIME_TO_RETRY)
 		this.addTagtoFrame( "TAG_EMS_REQ_STORED_ERRORS", sml );
 		// this.addTagtoFrame( "TAG_EMS_REQ_GET_GENERATOR_STATE", sml ); // always returns ERROR data type
 		// this.addTagtoFrame( "TAG_EMS_REQ_ERROR_BUZZER_ENABLED", sml ); // always returns ERROR data type

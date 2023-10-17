@@ -2770,8 +2770,8 @@
 	},
 	"16777360": {
 		"TagHex": "0x01000090",
-		"TagName": "REQ_START_EMERGENCYPOWER_TEST",
-		"TagNameGlobal": "TAG_EMS_REQ_START_EMERGENCYPOWER_TEST",
+		"TagName": "REQ_START_EMERGENCY_POWER_TEST",
+		"TagNameGlobal": "TAG_EMS_REQ_START_EMERGENCY_POWER_TEST",
 		"DataTagHex": "0x000090",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -2809,8 +2809,8 @@
 	},
 	"16777363": {
 		"TagHex": "0x01000093",
-		"TagName": "REQ_EMERGENCYPOWER_TEST_STATUS",
-		"TagNameGlobal": "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS",
+		"TagName": "REQ_EMERGENCY_POWER_TEST_STATUS",
+		"TagNameGlobal": "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS",
 		"DataTagHex": "0x000093",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -3689,7 +3689,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "imported from rxhan/RSCPGui"
+		"Description": "comes in Container EMERGENCY_POWER_OVERLOAD_STATUS - imported from rxhan/RSCPGui"
 	},
 	"17039381": {
 		"TagHex": "0x01040015",
@@ -3702,7 +3702,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "imported from rxhan/RSCPGui"
+		"Description": "comes in Container EMERGENCY_POWER_OVERLOAD_STATUS - imported from rxhan/RSCPGui"
 	},
 	"17039382": {
 		"TagHex": "0x01040016",
@@ -7814,8 +7814,8 @@
 	},
 	"25165968": {
 		"TagHex": "0x01800090",
-		"TagName": "START_EMERGENCYPOWER_TEST",
-		"TagNameGlobal": "TAG_EMS_START_EMERGENCYPOWER_TEST",
+		"TagName": "START_EMERGENCY_POWER_TEST",
+		"TagNameGlobal": "TAG_EMS_START_EMERGENCY_POWER_TEST",
 		"DataTagHex": "0x800090",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -7853,8 +7853,8 @@
 	},
 	"25165971": {
 		"TagHex": "0x01800093",
-		"TagName": "EMERGENCYPOWER_TEST_STATUS",
-		"TagNameGlobal": "TAG_EMS_EMERGENCYPOWER_TEST_STATUS",
+		"TagName": "EMERGENCY_POWER_TEST_STATUS",
+		"TagNameGlobal": "TAG_EMS_EMERGENCY_POWER_TEST_STATUS",
 		"DataTagHex": "0x800093",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
@@ -8135,7 +8135,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "imported from rxhan/RSCPGui"
+		"Description": "Container in response to REQ_EMERGENCY_POWER_OVERLOAD_STATUS - imported from rxhan/RSCPGui"
 	},
 	"25166356": {
 		"TagHex": "0x01800214",
