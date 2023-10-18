@@ -2506,7 +2506,7 @@
 		"DataTypeHex": "0x06",
 		"UserLevel": "USER",
 		"Unit": "W",
-		"Description": "Die verfügbare Solarleistung  wird mit diesem Wert überschrieben! (Dieser Wert wird an die WallBox gesendet)"
+		"Description": "Die verfügbare Solarleistung wird mit diesem Wert überschrieben! (Dieser Wert wird an die WallBox gesendet)"
 	},
 	"16777334": {
 		"TagHex": "0x01000076",

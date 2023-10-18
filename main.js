@@ -295,6 +295,9 @@ const mapChangedIdToSetTags = {
 	"EMS.BATTERY_BEFORE_CAR_MODE": ["", "TAG_EMS_REQ_SET_BATTERY_BEFORE_CAR_MODE"],
 	"EMS.WB_DISCHARGE_BAT_UNTIL": ["", "TAG_EMS_REQ_SET_WB_DISCHARGE_BAT_UNTIL"],
 	"EMS.WB_ENFORCE_POWER_ASSIGNMENT": ["", "TAG_EMS_REQ_SET_WB_ENFORCE_POWER_ASSIGNMENT"],
+	"EMS.EMERGENCY_POWER": ["", "TAG_EMS_REQ_SET_EMERGENCY_POWER"],
+	"EMS.START_EMERGENCY_POWER_TEST": ["", "TAG_EMS_REQ_START_EMERGENCY_POWER_TEST"],
+	"EMS.OVERRIDE_AVAILABLE_POWER": ["", "TAG_EMS_REQ_SET_OVERRIDE_AVAILABLE_POWER"],
 	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
 	"EMS.*.*.START_HOUR": [],
 	"EMS.*.*.START_MINUTE": [],
@@ -1466,6 +1469,28 @@ class E3dcRscp extends utils.Adapter {
 					}
 					continue;
 				}
+				// Use SET_EMERGENCY_POWER response "true" to acknowledge state EMS.EMERGENCY_POWER
+				if( shortId == "EMS.SET_EMERGENCY_POWER" && token.content ) {
+					this.getState( "EMS.EMERGENCY_POWER", ( err, obj ) => {
+						this.setState( "EMS.EMERGENCY_POWER", obj ? obj.val : 0, true );
+					} );
+					continue;
+				}
+				// Use START_EMERGENCY_POWER_TEST response >0 to reset state EMS.START_EMERGENCY_POWER_TEST
+				// (the numerical return value is discarded, but EP_TEST_START_COUNTER has the same semantics)
+				if( shortId == "EMS.START_EMERGENCY_POWER_TEST" && token.content > 0 ) {
+					this.getState( "EMS.START_EMERGENCY_POWER_TEST", ( err, obj ) => {
+						this.setState( "EMS.EMERGENCY_POWER", false, true );
+					} );
+					continue;
+				}
+				// Use SET_OVERRIDE_AVAILABLE_POWER response "true" to acknowledge state EMS.OVERRIDE_AVAILABLE_POWER
+				if( shortId == "EMS.SET_OVERRIDE_AVAILABLE_POWER" && token.content ) {
+					this.getState( "EMS.OVERRIDE_AVAILABLE_POWER", ( err, obj ) => {
+						this.setState( "EMS.OVERRIDE_AVAILABLE_POWER", obj ? obj.val : 0, true );
+					} );
+					continue;
+				}
 				// Use START_MANUAL_CHARGE response to acknowledge state EMS.MANUAL_CHARGE_ENERGY
 				if( shortId == "EMS.START_MANUAL_CHARGE" ) {
 					this.getState( "EMS.MANUAL_CHARGE_ENERGY", ( err, obj ) => {
@@ -1863,6 +1888,41 @@ class E3dcRscp extends utils.Adapter {
 					role: "switch",
 					read: false,
 					write: true,
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.EMERGENCY_POWER", {
+				type: "state",
+				common: {
+					name: systemDictionary["EMERGENCY_POWER"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					states: rscpEmsSetEmergencyPower,
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.START_EMERGENCY_POWER_TEST", {
+				type: "state",
+				common: {
+					name: systemDictionary["START_EMERGENCY_POWER_TEST"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true,
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.OVERRIDE_AVAILABLE_POWER", {
+				type: "state",
+				common: {
+					name: systemDictionary["OVERRIDE_AVAILABLE_POWER"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_SET_OVERRIDE_AVAILABLE_POWER"]].Unit
 				},
 				native: {},
 			} );

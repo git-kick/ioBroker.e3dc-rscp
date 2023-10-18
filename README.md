@@ -290,6 +290,24 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>Prevent battery discharge through wallbox in mixing mode, true=forbidden, false=allowed</td>
   </tr>
   <tr>
+    <td>EMS</td>
+    <td>OVERRIDE_AVAILABLE_POWER</td>
+    <td>number</td>
+    <td>E3/DC will send this value [W] to wallvox as available solar power.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>EMERGENCY_POWER</td>
+    <td>states</td>
+    <td>Emergency power mode. **experimental**</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>START_EMERGENCY_POWER_TEST</td>
+    <td>boolean</td>
+    <td>Setting this value will switch the E3/DC to island mode. **experimental**</td>
+  </tr>
+  <tr>
     <td>EMS (1)</td>
     <td>IDLE_PERIOD_ACTIVE</td>
     <td>boolean</td>
@@ -439,8 +457,10 @@ __MODIFIED ADAPTER SETTINGS - do not re-use settings stored in *.json__
 * Added setter functions for wallbox: BATTERY_BEFORE_CAR_MODE, BATTERY_TO_CAR_MODE, WB_DISCHARGE_BAT_UNTIL, WB_ENFORCE_POWER_ASSIGNMENT - [Issue #185](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/185)
 
 (git-kick)
+* Added EMS.REQ_SET_EMERGENCY_POWER (=>EMERGENCY_POWER), EMS.REQ_START_EMERGENCY_POWER_TEST (=>START_EMERGENCY_POWER_TEST) and EMS.REQ_SET_OVERRIDE_AVAILABLE_POWER (=>OVERRIDE_AVAILABLE_POWER). **EMERGENCY_POWER tags are experimental. Testing against the real E3/DC is difficult unless you have an UPS for all relevant devices.** - [Issue #57](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/57)
+
 * Added EMS.REQ_EMERGENCY_POWER_RETRY (=>EMERGENCY_POWER_RETRY) and EMS.REQ_EMERGENCY_POWER_OVERLOAD_STATUS (=>PARAM_NO_REMAINING_ENTRY,PARAM_TIME_TO_RETRY). Note that both have polling interval "N" by default. (Reason is that they are not in the official tag list and use is unclear.)
-* Added setter EMS.MANUAL_CHARGE_ENERGY  - [Issue #184](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/184)
+* Added setter EMS.MANUAL_CHARGE_ENERGY - [Issue #184](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/184)
 * Fixed onReady() async calls causing (very rare) unhandled exceptions - [Issue #178](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/178)
 * Handle ENOENT exception if admin/words.js is unavailable - [Issue #180](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/180)
 * Added config switch lazy_setstate  - [Issue #174](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/174). The adapter is now capable of updating State.ts according to convention (also when the value was unchanged). **Note** that the default ist "false" (i.e. no setState() call as long as value remains unchanged) in order to avoid a breaking chage for users with small hardware. 
