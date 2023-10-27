@@ -511,11 +511,17 @@ class E3dcRscp extends utils.Adapter {
 		}, 5000 ); // check authentication success after 5 seconds - no retry.
 
 		this.setState( "info.connection", false, true );
-		this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
-			this.setState( "info.connection", true, true );
-			this.log.info( "Connection to E3/DC is established" );
-			this.sendFrameFIFO();
-		} );
+		if( this.config.e3dc_port && this.config.e3dc_ip ) {
+			this.tcpConnection.connect( this.config.e3dc_port, this.config.e3dc_ip, () => {
+				this.setState( "info.connection", true, true );
+				this.log.info( "Connection to E3/DC is established" );
+				this.sendFrameFIFO();
+			} );
+		} else {
+			this.log.error( "E3/DC IP address and/or port not set - check adapter configuration!" );
+			// For exit codes see https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/src/lib/common/exitCodes.ts
+			this.terminate( "Error due to missing ip/port", 2 );
+		}
 
 		this.tcpConnection.on( "data", ( data ) => {
 			this.setState( "info.connection", true, true );
@@ -1704,7 +1710,7 @@ class E3dcRscp extends utils.Adapter {
 		try {
 			eval( fs.readFileSync( path.join( __dirname, "/admin/words.js" ) ).toString() );
 		} catch( e ) {
-			// For exit codes see https://github.com/ioBroker/adapter-core/blob/master/src/exitCodes.ts
+			// For exit codes see https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/src/lib/common/exitCodes.ts
 			this.terminate( "Error while reading systemDictionary: " + e, 29 );
 		}
 		// For some objects, we use setObjectNotExists instead of setObjectNotExistsAsync
