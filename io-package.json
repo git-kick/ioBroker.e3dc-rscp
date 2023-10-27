@@ -4,17 +4,17 @@
         "version": "1.2.4",
         "news": {
             "1.2.4": {
-                "en": "Under construction",
-                "de": "In Arbeit",
-                "ru": "В разработке",
-                "pt": "Em construção",
-                "nl": "In opbouw",
-                "fr": "En cours de construction",
-                "it": "In costruzione",
-                "es": "Bajo construcción",
-                "pl": "W budowie",
-                "uk": "У розробці",
-                "zh-cn": "建设中"
+                "en": "Added some EMS setter tags",
+                "de": "Einige neue EMS Steuer-Tags",
+                "ru": "Добавлены некоторые теги установки EMS.",
+                "pt": "Adicionadas algumas tags de configuração EMS",
+                "nl": "Enkele EMS-setter-tags toegevoegd",
+                "fr": "Ajout de quelques balises de définition EMS",
+                "it": "Aggiunti alcuni tag setter EMS",
+                "es": "Se agregaron algunas etiquetas de configuración de EMS",
+                "pl": "Dodano kilka tagów ustawiających EMS",
+                "uk": "Додано деякі теги налаштування EMS",
+                "zh-cn": "添加了一些 EMS setter 标签"
             },
             "1.2.3": {
                 "en": "Stop polling 'non-responsive' tags",
@@ -410,10 +410,6 @@
                 "interval": "M"
             },
             {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
-                "interval": "M"
-            },
-            {
                 "tag": "TAG_EMS_REQ_BATTERY_TO_CAR_MODE",
                 "interval": "M"
             },
@@ -434,8 +430,20 @@
                 "interval": "M"
             },
             {
-                "tag": "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS",
+                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
                 "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS",
+                "interval": "N"
+            },
+            {
+                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_RETRY",
+                "interval": "N"
             },
             {
                 "tag": "TAG_EMS_REQ_GET_SYS_SPECS",

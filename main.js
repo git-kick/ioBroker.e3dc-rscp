@@ -151,6 +151,11 @@ const rscpEmsEmergencyPowerStatus = {
 	3: "NOT_AVAILABLE",
 	4: "SWITCH_IN_ISLAND_STATE",
 };
+const rscpEmsSetEmergencyPower = {
+	0: "NORMAL_GRID_MODE",
+	1: "EMERGENCY_MODE",
+	2: "ISLAND_NO_POWER_MODE",
+};
 const rscpEmsIdlePeriodType = {
 	0: "IDLE_CHARGE",
 	1: "IDLE_DISCHARGE",
@@ -167,8 +172,6 @@ const rscpEmsSetPowerMode = {
 	3: "CHARGE",
 	4: "GRID_CHARGE",
 };
-const rscpWbMode = wb.rscpWbMode;
-
 const rscpActivePhases = {
 	0: "PHASE_000",
 	1: "PHASE_001",
@@ -184,6 +187,7 @@ const rscpSysSystemReboot = {
 	1: "Reboot initiated",
 	2: "Waiting for services to terminate, reboot will be initiated then"
 };
+const rscpWbMode = wb.rscpWbMode;
 
 /* RSCP enumerations for later use:
 const rscpReturnCodes = {
@@ -195,11 +199,6 @@ const rscpReturnCodes = {
 	-5: "ERR_INVALID_FRAME_LENGTH",
 	-6: "ERR_INVALID_CRC",
 	-7: "ERR_DATA_LIMIT_EXCEEDED",
-}
-const rscpEmsSetEmergencyPower = {
-	0: "NORMAL_GRID_MODE",
-	1: "EMERGENCY_MODE",
-	2: "ISLAND_NO_POWER_MODE",
 };
 const rscpEmsGeneratorState = {
 	0x00: "IDLE",
@@ -296,6 +295,9 @@ const mapChangedIdToSetTags = {
 	"EMS.BATTERY_BEFORE_CAR_MODE": ["", "TAG_EMS_REQ_SET_BATTERY_BEFORE_CAR_MODE"],
 	"EMS.WB_DISCHARGE_BAT_UNTIL": ["", "TAG_EMS_REQ_SET_WB_DISCHARGE_BAT_UNTIL"],
 	"EMS.WB_ENFORCE_POWER_ASSIGNMENT": ["", "TAG_EMS_REQ_SET_WB_ENFORCE_POWER_ASSIGNMENT"],
+	"EMS.EMERGENCY_POWER": ["", "TAG_EMS_REQ_SET_EMERGENCY_POWER"],
+	"EMS.START_EMERGENCY_POWER_TEST": ["", "TAG_EMS_REQ_START_EMERGENCY_POWER_TEST"],
+	"EMS.OVERRIDE_AVAILABLE_POWER": ["", "TAG_EMS_REQ_SET_OVERRIDE_AVAILABLE_POWER"],
 	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
 	"EMS.*.*.START_HOUR": [],
 	"EMS.*.*.START_MINUTE": [],
@@ -308,7 +310,6 @@ const mapChangedIdToSetTags = {
 	"SYS.SYSTEM_REBOOT": ["", "TAG_SYS_REQ_SYSTEM_REBOOT"],
 	"SYS.RESTART_APPLICATION": ["", "TAG_SYS_REQ_RESTART_APPLICATION"],
 	"WB.*.Control.*": [],
-	//"WB.*.REQ_SET_EXTERN": ["TAG_WB_SET_EXTERN","TAG_WB_EXTERN_DATA"],
 	//"EP.*.PARAM_EP_RESERVE": ["", "TAG_EP_REQ_SET_EP_RESERVE"],   -- does not work properly as setter tag, perhaps a container is needed?
 };
 // RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
@@ -367,6 +368,7 @@ const ignoreIds = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_SETTING",
 	"EMS.MANUAL_CHARGE_START_COUNTER", // returns Int64, seems to be the same timestamp as in MANUAL_CHARGE_LAST_START
+	"EMS.PARAM_INDEX", // always 0, occurs in container EMERGENCY_POWER_OVERLOAD_STATUS
 	"EMS.SYS_SPEC_INDEX",
 	"EMS.SET_IDLE_PERIODS",
 	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  	// Response is always "true", not usable for state with unit "%"
@@ -885,7 +887,9 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS", sml );
-		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCYPOWER_TEST_STATUS", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS", sml ); // no response?
+		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_RETRY", sml ); // response is a bool & PARAM_0=(NO_REMAINING_ENTY,TIME_TO_RETRY)
 		this.addTagtoFrame( "TAG_EMS_REQ_STORED_ERRORS", sml );
 		// this.addTagtoFrame( "TAG_EMS_REQ_GET_GENERATOR_STATE", sml ); // always returns ERROR data type
 		// this.addTagtoFrame( "TAG_EMS_REQ_ERROR_BUZZER_ENABLED", sml ); // always returns ERROR data type
@@ -1465,6 +1469,28 @@ class E3dcRscp extends utils.Adapter {
 					}
 					continue;
 				}
+				// Use SET_EMERGENCY_POWER response "true" to acknowledge state EMS.EMERGENCY_POWER
+				if( shortId == "EMS.SET_EMERGENCY_POWER" && token.content ) {
+					this.getState( "EMS.EMERGENCY_POWER", ( err, obj ) => {
+						this.setState( "EMS.EMERGENCY_POWER", obj ? obj.val : 0, true );
+					} );
+					continue;
+				}
+				// Use START_EMERGENCY_POWER_TEST response >0 to reset state EMS.START_EMERGENCY_POWER_TEST
+				// (the numerical return value is discarded, but EP_TEST_START_COUNTER has the same semantics)
+				if( shortId == "EMS.START_EMERGENCY_POWER_TEST" && token.content > 0 ) {
+					this.getState( "EMS.START_EMERGENCY_POWER_TEST", ( err, obj ) => {
+						this.setState( "EMS.EMERGENCY_POWER", false, true );
+					} );
+					continue;
+				}
+				// Use SET_OVERRIDE_AVAILABLE_POWER response "true" to acknowledge state EMS.OVERRIDE_AVAILABLE_POWER
+				if( shortId == "EMS.SET_OVERRIDE_AVAILABLE_POWER" && token.content ) {
+					this.getState( "EMS.OVERRIDE_AVAILABLE_POWER", ( err, obj ) => {
+						this.setState( "EMS.OVERRIDE_AVAILABLE_POWER", obj ? obj.val : 0, true );
+					} );
+					continue;
+				}
 				// Use START_MANUAL_CHARGE response to acknowledge state EMS.MANUAL_CHARGE_ENERGY
 				if( shortId == "EMS.START_MANUAL_CHARGE" ) {
 					this.getState( "EMS.MANUAL_CHARGE_ENERGY", ( err, obj ) => {
@@ -1862,6 +1888,41 @@ class E3dcRscp extends utils.Adapter {
 					role: "switch",
 					read: false,
 					write: true,
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.EMERGENCY_POWER", {
+				type: "state",
+				common: {
+					name: systemDictionary["EMERGENCY_POWER"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					states: rscpEmsSetEmergencyPower,
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.START_EMERGENCY_POWER_TEST", {
+				type: "state",
+				common: {
+					name: systemDictionary["START_EMERGENCY_POWER_TEST"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true,
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.OVERRIDE_AVAILABLE_POWER", {
+				type: "state",
+				common: {
+					name: systemDictionary["OVERRIDE_AVAILABLE_POWER"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_SET_OVERRIDE_AVAILABLE_POWER"]].Unit
 				},
 				native: {},
 			} );

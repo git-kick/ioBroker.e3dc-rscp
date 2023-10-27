@@ -72,8 +72,9 @@ NOTE: the following describes how to handle the standard case as depicted above.
 
 are not described here, but handled by dedicated code (e.g. a new `queue...()` function in `main.js`).
 
-### 1. Make sure the four tags are listed correctly in `RscpTags.json`
-If the REQ tag was unknown before, also add a polling interval default in `io-package.json`
+### 1. Make sure the four tags are listed correctly in `RscpTags.json` and `io-package.json`
+First, check `RscpTags.json`. If the REQ tag was unknown before, also add a polling interval default in `io-package.json`.
+NOTE: do _not_ add the REQ_SET tag to `io-package.json`; only the REQ tag is used for polling.
 
     "polling_intervals": [
         ...
