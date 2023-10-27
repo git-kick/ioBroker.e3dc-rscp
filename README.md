@@ -43,7 +43,7 @@ Here is what to configure when creating a new instance of the adapter. Settings 
   </tr>
   <tr>
     <td>E3/DC Portal Password</td>
-    <td>Your username at the <a href="https://s10.e3dc.com/s10/">E3/DC portal</a>.</td>
+    <td>Your password at the <a href="https://s10.e3dc.com/s10/">E3/DC portal</a>.</td>
   </tr>
   <tr>
     <td>E3/DC IP address</td>
