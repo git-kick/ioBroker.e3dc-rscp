@@ -894,8 +894,8 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_STATUS", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS", sml );
-		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS", sml ); // no response?
-		this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_RETRY", sml ); // response is a bool & PARAM_0=(NO_REMAINING_ENTY,TIME_TO_RETRY)
+		// this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS", sml ); // no response?
+		// this.addTagtoFrame( "TAG_EMS_REQ_EMERGENCY_POWER_RETRY", sml ); // CAUTION: stops inverter! Response is a bool & PARAM_0=(NO_REMAINING_ENTY,TIME_TO_RETRY)
 		this.addTagtoFrame( "TAG_EMS_REQ_STORED_ERRORS", sml );
 		// this.addTagtoFrame( "TAG_EMS_REQ_GET_GENERATOR_STATE", sml ); // always returns ERROR data type
 		// this.addTagtoFrame( "TAG_EMS_REQ_ERROR_BUZZER_ENABLED", sml ); // always returns ERROR data type
