@@ -4738,11 +4738,11 @@
 		"DataTagHex": "0x000010",
 		"NameSpace": "EP",
 		"NameSpaceHex": "0x0B",
-		"DataType": "Float32",
-		"DataTypeHex": "0x0A",
+		"DataType": "Container",
+		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "imported from nischram/E3dcGui"
+		"Description": "Container for setting PARAM_ values; imported from nischram/E3dcGui"
 	},
 	"453246976": {
 		"TagHex": "0x1B040000",
@@ -4781,7 +4781,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "%",
-		"Description": "imported from nischram/E3dcGui"
+		"Description": "target battery SOC kept as EP reserve (correlates with PARAM_EP_RESERVE_W); imported from nischram/E3dcGui"
 	},
 	"453247012": {
 		"TagHex": "0x1B040024",
@@ -4832,8 +4832,8 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
-		"Description": "imported from nischram/E3dcGui"
+		"Unit": "Wh",
+		"Description": "target energy to be kept as EP reserve (correlates with PARAM_EP_RESERVE); imported from nischram/E3dcGui"
 	},
 	"453247028": {
 		"TagHex": "0x1B040034",
@@ -4845,8 +4845,8 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "W",
-		"Description": "imported from nischram/E3dcGui"
+		"Unit": "Wh",
+		"Description": "max. energy kept as EP reserve; imported from nischram/E3dcGui"
 	},
 	"461373449": {
 		"TagHex": "0x1B800009",
@@ -4855,8 +4855,8 @@
 		"DataTagHex": "0x800009",
 		"NameSpace": "EP",
 		"NameSpaceHex": "0x0B",
-		"DataType": "None",
-		"DataTypeHex": "0x00",
+		"DataType": "Container",
+		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Container with index and values: EP_RESERVE, EP_RESERVE_W, EP_RESERVE_MAX_W, TIME_LAST_EMPTY, TIME_LAST_FULL, LAST_SOC - imported from nischram/E3dcGui"
