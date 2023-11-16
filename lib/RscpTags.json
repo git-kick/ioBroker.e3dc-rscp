@@ -4781,7 +4781,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "%",
-		"Description": "target battery SOC kept as EP reserve (correlates with PARAM_EP_RESERVE_W); imported from nischram/E3dcGui"
+		"Description": "target battery SOC kept as EP reserve (correlates with PARAM_EP_RESERVE_ENERGY); imported from nischram/E3dcGui"
 	},
 	"453247012": {
 		"TagHex": "0x1B040024",
@@ -4824,8 +4824,8 @@
 	},
 	"453247027": {
 		"TagHex": "0x1B040033",
-		"TagName": "PARAM_EP_RESERVE_W",
-		"TagNameGlobal": "TAG_EP_PARAM_EP_RESERVE_W",
+		"TagName": "PARAM_EP_RESERVE_ENERGY",
+		"TagNameGlobal": "TAG_EP_PARAM_EP_RESERVE_ENERGY",
 		"DataTagHex": "0x040033",
 		"NameSpace": "EP",
 		"NameSpaceHex": "0x0B",
@@ -4833,12 +4833,12 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "Wh",
-		"Description": "target energy to be kept as EP reserve (correlates with PARAM_EP_RESERVE); imported from nischram/E3dcGui"
+		"Description": "target energy to be kept as EP reserve (correlates with PARAM_EP_RESERVE) (renamed from PARAM_EP_RESERVE_W); imported from nischram/E3dcGui"
 	},
 	"453247028": {
 		"TagHex": "0x1B040034",
-		"TagName": "PARAM_EP_RESERVE_MAX_W",
-		"TagNameGlobal": "TAG_EP_PARAM_EP_RESERVE_MAX_W",
+		"TagName": "PARAM_EP_RESERVE_MAX_ENERGY",
+		"TagNameGlobal": "TAG_EP_PARAM_EP_RESERVE_MAX_ENERGY",
 		"DataTagHex": "0x040034",
 		"NameSpace": "EP",
 		"NameSpaceHex": "0x0B",
@@ -4846,7 +4846,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "Wh",
-		"Description": "max. energy kept as EP reserve; imported from nischram/E3dcGui"
+		"Description": "max. energy kept as EP reserve (renamed from PARAM_EP_RESERVE_MAX_W); imported from nischram/E3dcGui"
 	},
 	"461373449": {
 		"TagHex": "0x1B800009",
@@ -4859,7 +4859,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Container with index and values: EP_RESERVE, EP_RESERVE_W, EP_RESERVE_MAX_W, TIME_LAST_EMPTY, TIME_LAST_FULL, LAST_SOC - imported from nischram/E3dcGui"
+		"Description": "Container with index and values: EP_RESERVE, EP_RESERVE_ENERGY, EP_RESERVE_MAX_ENERGY, TIME_LAST_EMPTY, TIME_LAST_FULL, LAST_SOC - imported from nischram/E3dcGui"
 	},
 	"201326593": {
 		"TagHex": "0x0C000001",
