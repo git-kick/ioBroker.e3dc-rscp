@@ -1065,7 +1065,7 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	queueEpReserve( globalId, value ) {
+	queueSetEpReserve( globalId, value ) {
 		this.log.info( `queueEpReserve( ${globalId} )` );
 		this.clearFrame();
 		const pos = this.startContainer( "TAG_EP_REQ_SET_EP_RESERVE" );
@@ -2120,7 +2120,7 @@ class E3dcRscp extends utils.Adapter {
 				} else if ( id.includes( "HISTORY_DATA" ) ) {
 					this.queueGetHistoryData( id );
 				} else if ( id.endsWith( "PARAM_EP_RESERVE" ) ) {
-					this.queueEpReserve( id, state.val );
+					this.queueSetEpReserve( id, state.val );
 				} else {
 					this.queueSetValue( id, state.val );
 				}
