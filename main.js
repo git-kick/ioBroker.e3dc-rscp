@@ -303,6 +303,8 @@ const mapChangedIdToSetTags = {
 	"EMS.*.*.START_MINUTE": [],
 	"EMS.*.*.END_HOUR": [],
 	"EMS.*.*.END_MINUTE": [],
+	"EP.*.PARAM_EP_RESERVE": [],
+	"EP.*.PARAM_EP_RESERVE_ENERGY": [],
 	"DB.HISTORY_DATA_DAY.*": [],
 	"DB.HISTORY_DATA_WEEK.*": [],
 	"DB.HISTORY_DATA_MONTH.*": [],
@@ -310,7 +312,6 @@ const mapChangedIdToSetTags = {
 	"SYS.SYSTEM_REBOOT": ["", "TAG_SYS_REQ_SYSTEM_REBOOT"],
 	"SYS.RESTART_APPLICATION": ["", "TAG_SYS_REQ_RESTART_APPLICATION"],
 	"WB.*.Control.*": [],
-	//"EP.*.PARAM_EP_RESERVE": ["", "TAG_EP_REQ_SET_EP_RESERVE"],   -- does not work properly as setter tag, perhaps a container is needed?
 };
 // RSCP is sloppy concerning Bool - some Char8 and UChar8 values must be converted:
 const castToBooleanIds = [
@@ -1062,6 +1063,17 @@ class E3dcRscp extends utils.Adapter {
 		} else {
 			this.log.warn( `Don't know how to queue ${id}` );
 		}
+	}
+
+	queueSetEpReserve( globalId, value ) {
+		this.log.info( `queueEpReserve( ${globalId} )` );
+		const tagname = globalId.match( "^[^.]+[.][^.]+[.][^.]+[.][^.]+[.](.*)" )[1];
+		this.clearFrame();
+		const pos = this.startContainer( "TAG_EP_REQ_SET_EP_RESERVE" );
+		const index = 0; // are there cases where index > 0 ?
+		this.addTagtoFrame( "TAG_EP_PARAM_INDEX", "", index );
+		this.addTagtoFrame( `TAG_EP_${tagname}`, "", value );
+		this.pushFrame( pos );
 	}
 
 	queueSetIdlePeriod( globalId ) {
@@ -2103,12 +2115,13 @@ class E3dcRscp extends utils.Adapter {
 						this.queueSysRestartApplication( restart ? restart.val : false );
 					} );
 				} else if ( id.includes( ".WB." ) ) {
-					this.log.debug( "WB changed" );
 					wb.queueWbSetData( id );
 				} else if ( id.includes( "IDLE_PERIOD" ) ) {
 					this.queueSetIdlePeriod( id );
 				} else if ( id.includes( "HISTORY_DATA" ) ) {
 					this.queueGetHistoryData( id );
+				} else if ( id.endsWith( "PARAM_EP_RESERVE" ) || id.endsWith( "PARAM_EP_RESERVE_ENERGY" ) ) {
+					this.queueSetEpReserve( id, state.val );
 				} else {
 					this.queueSetValue( id, state.val );
 				}

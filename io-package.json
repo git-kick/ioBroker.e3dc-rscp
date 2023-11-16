@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.2.5",
+        "version": "1.2.5-dev",
         "news": {
-            "1.2.5": {
+            "1.2.5-dev": {
                 "en": "Under development",
                 "de": "In Entwicklung",
                 "ru": "В разработке",
