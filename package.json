@@ -1,6 +1,6 @@
 {
   "name": "iobroker.e3dc-rscp",
-  "version": "1.2.5-dev",
+  "version": "1.2.5",
   "description": "Control E3/DC power station via RSCP",
   "author": {
     "name": "Ulrich Kick",

@@ -462,7 +462,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-### 1.2.5-dev - UNDER DEVELOPMENT
+### 1.2.5
  
 (git-kick)
 * Added setter function for PARAM_EP_RESERVE and PARAM_EP_RESERVE_ENERGY in EP namespace - [Issue #199](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/199)  

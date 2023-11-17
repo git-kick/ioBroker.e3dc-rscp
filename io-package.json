@@ -1,20 +1,20 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.2.5-dev",
+        "version": "1.2.5",
         "news": {
-            "1.2.5-dev": {
-                "en": "Under development",
-                "de": "In Entwicklung",
-                "ru": "В разработке",
-                "pt": "Em desenvolvimento",
-                "nl": "In ontwikkeling",
-                "fr": "En développement",
-                "it": "In fase di sviluppo",
-                "es": "En desarrollo",
-                "pl": "W budowie",
-                "uk": "В стадії розробки",
-                "zh-cn": "正在开发中"
+            "1.2.5": {
+                "en": "Added some EP setter tags",
+                "de": "Einige neue EP Steuer-Tags",
+                "ru": "Добавлены некоторые теги установки EP.",
+                "pt": "Adicionadas algumas tags EP setter",
+                "nl": "Enkele EP-setter-tags toegevoegd",
+                "fr": "Ajout de quelques balises de poseur EP",
+                "it": "Aggiunti alcuni tag setter EP",
+                "es": "Se agregaron algunas etiquetas de configuración de EP",
+                "pl": "Dodano kilka tagów ustawiających EP",
+                "uk": "Додано деякі теги налаштування EP",
+                "zh-cn": "添加了一些 EP setter 标签"
             },
             "1.2.4": {
                 "en": "Added some EMS setter tags",
