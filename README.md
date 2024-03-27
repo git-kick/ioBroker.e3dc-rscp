@@ -462,6 +462,11 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+### 1.2.6
+ 
+(git-kick)
+* Quick-fix for [Issue #211](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/210) - added tag 0x0100003E to RscpTags.json, now adapter does not warn about it anymore.
+
 ### 1.2.5
  
 (git-kick)
@@ -470,7 +475,6 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * Renamed PARAM_EP_RESERVE_MAX_W to PARAM_EP_RESERVE_MAX_ENERGY for the same reason.
 
 * Removed "dangerous" setter tags introduced with v1.2.4 , instead of just switching them off - [Issue #196](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/196)
-
 
 ### 1.2.4
 __MODIFIED ADAPTER SETTINGS - do not re-use settings stored in *.json__

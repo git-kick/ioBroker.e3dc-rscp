@@ -2313,6 +2313,19 @@
 		"Unit": "W",
 		"Description": ""
 	},
+	"16777278": {
+		"TagHex": "0x0100003E",
+		"TagName": "UNDOCUMENTED",
+		"TagNameGlobal": "TAG_EMS_UNDOCUMENTED",
+		"DataTagHex": "0x00003E",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "UInt32",
+		"DataTypeHex": "0x07",
+		"UserLevel": "USER",
+		"Unit": "",
+		"Description": "Tag returned since March 2024, but not documented"
+	},
 	"16777280": {
 		"TagHex": "0x01000040",
 		"TagName": "REQ_STATUS",
