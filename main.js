@@ -367,6 +367,7 @@ const stringIds = [
 // "INDEX" and "..._INDEX" tags are automatically treated as subchannels, no need to list them here.
 const ignoreIds = [
 	"RSCP.UNDEFINED",
+	"EMS.UNDEFINED_POWER_VALUE",
 	"EMS.UNDEFINED_POWER_SETTING",
 	"EMS.MANUAL_CHARGE_START_COUNTER", // returns Int64, seems to be the same timestamp as in MANUAL_CHARGE_LAST_START
 	"EMS.PARAM_INDEX", // always 0, occurs in container EMERGENCY_POWER_OVERLOAD_STATUS
