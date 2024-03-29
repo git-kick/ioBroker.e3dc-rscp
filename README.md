@@ -465,7 +465,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### 1.2.6
  
 (git-kick)
-* Quick-fix for [Issue #211](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/210) - added tag 0x0100003E to RscpTags.json, now adapter does not warn about it anymore.
+* Fixed [Issue #211](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/211) - added tag 0x0100003E to RscpTags.json and to ignoreIds, now adapter does not warn about it anymore.
+* In consequence of [Issue #211](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/211), degraded "unknown tag" from warning to debug level. Message seems not to make sense for end users.
 
 ### 1.2.5
  
