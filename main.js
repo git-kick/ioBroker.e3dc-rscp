@@ -471,6 +471,7 @@ class E3dcRscp extends utils.Adapter {
 		// For BAT and PVI, there is no COUNT request, so initialize maxIndex to a best guess upper bound.
 		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
 		this.maxIndex["BAT"] = 1; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
+		this.maxIndex["PM"] = 1;
 		this.maxIndex["PVI"] = 2;
 
 		// For triggering the polling and setting requests:
@@ -981,7 +982,7 @@ class E3dcRscp extends utils.Adapter {
 
 	queuePmRequestData( sml ) {
 		this.clearFrame();
-		for( let i = 0; i <= 0; i++ ) { //                                   ALLGEMEIN: this.maxIndex["PM"]
+		for( let i = 0; i <= this.maxIndex["PM"]; i++ ) {
 			const pos = this.startContainer( "TAG_PM_REQ_DATA");
 			this.addTagtoFrame( "TAG_PM_INDEX", "", i );
 			this.addTagtoFrame( "TAG_PM_REQ_DEVICE_STATE", sml );
@@ -1412,6 +1413,12 @@ class E3dcRscp extends utils.Adapter {
 					// This is an error response due to out-of-range BAT index, heuristically cut off the biggest one:
 					--this.maxIndex["BAT"];
 					this.log.info( `Adjusted BAT max. index to ${this.maxIndex["BAT"]}` );
+					continue;
+				}
+				if ( shortId == "PM.DEVICE_STATE" && rscpError[token.content] == "RSCP_ERR_NOT_AVAILABLE" ) {
+					// This is an error response due to out-of-range PM index, heuristically cut off the biggest one:
+					--this.maxIndex["PM"];
+					this.log.info( `Adjusted PM max. index to ${this.maxIndex["PM"]}` );
 					continue;
 				}
 				if ( stopPollingIds.includes( shortId ) && rscpError[token.content] == "RSCP_ERR_NOT_AVAILABLE" ) {
