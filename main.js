@@ -182,6 +182,24 @@ const rscpActivePhases = {
 	6: "PHASE_110",
 	7: "PHASE_111",
 };
+const rscpPmType = {
+	0: "UNDEFINED",
+	1: "ROOT",
+	2: "ADDITIONAL",
+	3: "ADDITIONAL_PRODUCTION",
+	4: "ADDITIONAL_CONSUMPTION",
+	5: "FARM",
+	6: "UNUSED",
+	7: "WALLBOX",
+	8: "FARM_ADDITIONAL",
+};
+const rscpPmMode = {
+	0: "ACTIVE",
+	1: "PASSIVE",
+	2: "DIAGNOSE",
+	3: "ERROR_ACTIVE",
+	4: "ERROR_PASSIVE",
+};
 const rscpSysSystemReboot = {
 	0: "Reboot currently not possible, try later",
 	1: "Reboot initiated",
@@ -211,24 +229,6 @@ const rscpEmsGeneratorState = {
 	0x07: "STOPPED",
 	0x10: "RELAISCONTROLMODE",
 	0xFF: "NO_GENERATOR",
-};
-const rscpPmType = {
-	0: "UNDEFINED",
-	1: "ROOT",
-	2: "ADDITIONAL",
-	3: "ADDITIONAL_PRODUCTION",
-	4: "ADDITIONAL_CONSUMPTION",
-	5: "FARM",
-	6: "UNUSED",
-	7: "WALLBOX",
-	8: "FARM_ADDITIONAL",
-};
-const rscpPmMode = {
-	0: "ACTIVE",
-	1: "PASSIVE",
-	2: "DIAGNOSE",
-	3: "ERROR_ACTIVE",
-	4: "ERROR_PASSIVE",
 };
 const rscpUmUpdateStatus = {
 	0: "IDLE",
@@ -260,6 +260,8 @@ const mapIdToCommonStates = {
 	"EMS.MODE": rscpEmsMode,
 	"EMS.BALANCED_PHASES": rscpActivePhases,
 	"PM.ACTIVE_PHASES": rscpActivePhases,
+	"PM.MODE": rscpPmMode,
+	"PM.TYPE": rscpPmType,
 	"WB.PM_ACTIVE_PHASES": rscpActivePhases,
 	"WB.MODE": rscpWbMode,
 	"SYS.SYTEM_REBOOT": rscpSysSystemReboot,
