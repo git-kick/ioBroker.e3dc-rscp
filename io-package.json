@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.2.5",
+        "version": "1.2.6",
         "news": {
+            "1.2.6": {
+                "en": "No more warnings about unknown tags like 0x100003e",
+                "de": "Keine Warnung mehr bei unbekannten Tags wie 0x100003e",
+                "ru": "Больше никаких предупреждений о неизвестных тегах, таких как 0x100003e.",
+                "pt": "Chega de avisos sobre tags desconhecidas como 0x100003e",
+                "nl": "Geen waarschuwingen meer over onbekende tags zoals 0x100003e",
+                "fr": "Plus d'avertissements concernant les balises inconnues comme 0x100003e",
+                "it": "Niente più avvisi su tag sconosciuti come 0x100003e",
+                "es": "No más advertencias sobre etiquetas desconocidas como 0x100003e",
+                "pl": "Koniec z ostrzeżeniami o nieznanych tagach, takich jak 0x100003e",
+                "uk": "Більше немає попереджень про невідомі теги, такі як 0x100003e",
+                "zh-cn": "不再出现有关 0x100003e 等未知标签的警告"
+            },
             "1.2.5": {
                 "en": "Added some EP setter tags",
                 "de": "Einige neue EP Steuer-Tags",
@@ -273,7 +286,11 @@
             "energy",
             "RSCP"
         ],
-        "license": "GPL-3.0-only",
+        "licenseInformation": {
+            "license": "GPL-3.0-only",
+            "type": "free"
+        },
+        "tier": 3,
         "platform": "Javascript/Node.js",
         "main": "main.js",
         "icon": "e3dc-rscp.png",
