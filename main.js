@@ -977,6 +977,33 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
+	queuePmRequestData( sml ) {
+		this.clearFrame();
+		for( let i = 0; i <= 0; i++ ) { //                                   ALLGEMEIN: this.maxIndex["PM"]
+			const pos = this.startContainer( "TAG_PM_REQ_DATA");
+			this.addTagtoFrame( "TAG_PM_INDEX", "", i );
+			this.addTagtoFrame( "TAG_PM_REQ_DEVICE_STATE", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_POWER_L1", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_POWER_L2", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_POWER_L3", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ACTIVE_PHASES", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_MODE", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ENERGY_L1", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ENERGY_L2", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ENERGY_L3", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_DEVICE_ID", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ERROR_CODE", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_FIRMWARE_VERSION", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_VOLTAGE_L1", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_VOLTAGE_L2", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_VOLTAGE_L3", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_TYPE", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_GET_PHASE_ELIMINATION", sml );
+			this.endContainer( pos );			
+		}
+		this.pushFrame();
+	}
+
 	queueEpRequestData( sml ) {
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH", sml );
@@ -1192,6 +1219,7 @@ class E3dcRscp extends utils.Adapter {
 
 	requestAllData( sml ) {
 		if ( this.config.query_ems ) this.queueEmsRequestData( sml );
+		if ( this.config.query_pm ) this.queuePmRequestData( sml );
 		if ( this.config.query_ep ) this.queueEpRequestData( sml );
 		if ( this.config.query_bat ) this.queueBatRequestData( sml );
 		if ( this.config.query_pvi ) this.queuePviRequestData( sml );
@@ -1804,6 +1832,16 @@ class E3dcRscp extends utils.Adapter {
 				common: {
 					name: systemDictionary["EP"][this.language],
 					role: "emergency.power",
+				},
+				native: {},
+			} );
+		}
+		if( this.config.query_pm ) {
+			await this.setObjectNotExistsAsync( "PM", {
+				type: "device",
+				common: {
+					name: systemDictionary["PM"][this.language],
+					role: "power.meter",
 				},
 				native: {},
 			} );

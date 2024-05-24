@@ -13959,7 +13959,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Anfrage Is CAN Silence / imported from rxhan/RSCPGui"
+		"Description": "access denied; Anfrage Is CAN Silence / imported from rxhan/RSCPGui"
 	},
 	"83886097": {
 		"TagHex": "0x05000011",
@@ -14063,7 +14063,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "imported from rxhan/RSCPGui"
+		"Description": "access denied; imported from rxhan/RSCPGui"
 	},
 	"8388617": {
 		"TagHex": "0x00800009",
@@ -14205,7 +14205,7 @@
 		"DataType": "Double64",
 		"DataTypeHex": "0x0B",
 		"UserLevel": "NO_AUTH",
-		"Unit": "kWh",
+		"Unit": "Wh",
 		"Description": "Energiemenge an L1 in kWh"
 	},
 	"92274695": {
@@ -14218,7 +14218,7 @@
 		"DataType": "Double64",
 		"DataTypeHex": "0x0B",
 		"UserLevel": "NO_AUTH",
-		"Unit": "kWh",
+		"Unit": "Wh",
 		"Description": "Energiemenge an L2 in kWh"
 	},
 	"92274696": {
@@ -14231,7 +14231,7 @@
 		"DataType": "Double64",
 		"DataTypeHex": "0x0B",
 		"UserLevel": "NO_AUTH",
-		"Unit": "kWh",
+		"Unit": "Wh",
 		"Description": "Energiemenge an L3 in kWh"
 	},
 	"92274697": {

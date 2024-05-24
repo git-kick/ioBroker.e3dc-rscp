@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.2.6",
+        "version": "1.3.0",
         "news": {
+            "1.3.0": {
+                "en": "Added PM (power meter) namespace",
+                "de": "PM-Namespace (power meter) hinzugefügt",
+                "ru": "Добавлено пространство имен PM (измеритель мощности).",
+                "pt": "Adicionado namespace PM (medidor de energia)",
+                "nl": "Naamruimte PM (vermogensmeter) toegevoegd",
+                "fr": "Espace de noms PM (wattmètre) ajouté",
+                "it": "Aggiunto spazio dei nomi PM (misuratore di potenza).",
+                "es": "Se agregó el espacio de nombres PM (medidor de potencia)",
+                "pl": "Dodano przestrzeń nazw PM (miernik mocy).",
+                "uk": "Додано простір імен PM (вимірювача потужності).",
+                "zh-cn": "添加了 PM（功率计）命名空间"
+            },
             "1.2.6": {
                 "en": "No more warnings about unknown tags like 0x100003e",
                 "de": "Keine Warnung mehr bei unbekannten Tags wie 0x100003e",
@@ -497,6 +510,22 @@
                 "interval": "M"
             },
             {
+                "tag": "TAG_PM_REQ_DEVICE_STATE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_PM_REQ_POWER_L1",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_POWER_L2",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_POWER_L3",
+                "interval": "S"
+            },
+            {
                 "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
                 "interval": "M"
             },
@@ -981,6 +1010,7 @@
         "send_tuple_delay": 10,
         "query_bat": "true",
         "query_ems": "true",
+        "query_pm": "true",
         "query_ep": "true",
         "query_pvi": "true",
         "query_sys": "true",
