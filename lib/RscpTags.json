@@ -2313,6 +2313,19 @@
 		"Unit": "W",
 		"Description": ""
 	},
+	"16777278": {
+		"TagHex": "0x0100003E",
+		"TagName": "UNDEFINED_POWER_VALUE",
+		"TagNameGlobal": "TAG_EMS_UNDEFINED_POWER_VALUE",
+		"DataTagHex": "0x00003E",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "UInt32",
+		"DataTypeHex": "0x07",
+		"UserLevel": "USER",
+		"Unit": "",
+		"Description": "E3/DC S10 returns this tag since ~March 2024, but it isn't documented"
+	},
 	"16777280": {
 		"TagHex": "0x01000040",
 		"TagName": "REQ_STATUS",

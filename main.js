@@ -367,6 +367,7 @@ const stringIds = [
 // "INDEX" and "..._INDEX" tags are automatically treated as subchannels, no need to list them here.
 const ignoreIds = [
 	"RSCP.UNDEFINED",
+	"EMS.UNDEFINED_POWER_VALUE",
 	"EMS.UNDEFINED_POWER_SETTING",
 	"EMS.MANUAL_CHARGE_START_COUNTER", // returns Int64, seems to be the same timestamp as in MANUAL_CHARGE_LAST_START
 	"EMS.PARAM_INDEX", // always 0, occurs in container EMERGENCY_POWER_OVERLOAD_STATUS
@@ -1257,7 +1258,7 @@ class E3dcRscp extends utils.Adapter {
 			const len = buffer.readUInt16LE( start+5 );
 			const typeName = rscpType[typeCode];
 			if( !rscpTag[tagCode] ) {
-				this.log.warn( `Unknown tag: tagCode=0x${tagCode.toString( 16 )}, len=${len}, typeCode=0x${typeCode.toString( 16 )}` );
+				this.log.debug( `Unknown tag: tagCode=0x${tagCode.toString( 16 )}, len=${len}, typeCode=0x${typeCode.toString( 16 )}` );
 			} else if( typeName == "Container" ) {
 				tree.push( { "tag": tagCode, "type": typeCode, "content": this.parseTlv( buffer, start+7, start+7+len ) } );
 			} else {
