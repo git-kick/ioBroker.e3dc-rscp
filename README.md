@@ -463,6 +463,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 ### 1.3.0
+
+MODIFIED ADAPTER SETTINGS - do not re-use settings stored in json-file!
  
 (git-kick)
 * Fixed [Issue #217](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/217) - added PM (power meter) namespace. **Only reading values, no SET tags.**

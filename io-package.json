@@ -526,6 +526,58 @@
                 "interval": "S"
             },
             {
+                "tag": "TAG_PM_REQ_ACTIVE_PHASES",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_MODE",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_ENERGY_L1",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_ENERGY_L2",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_ENERGY_L3",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_DEVICE_ID",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_ERROR_CODE",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_FIRMWARE_VERSION",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_VOLTAGE_L1",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_VOLTAGE_L2",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_VOLTAGE_L3",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_TYPE",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_PM_REQ_GET_PHASE_ELIMINATION",
+                "interval": "S"
+            },
+            {
                 "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
                 "interval": "M"
             },
