@@ -286,6 +286,7 @@
             "energy",
             "RSCP"
         ],
+        "license": "GPL-3.0-only",
         "licenseInformation": {
             "license": "GPL-3.0-only",
             "type": "free"
