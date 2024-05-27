@@ -2,6 +2,9 @@
     "common": {
         "name": "e3dc-rscp",
         "version": "1.3.0",
+        "blockedVersions": [
+            "1.2.0"
+        ],
         "news": {
             "1.3.0": {
                 "en": "Added PM (power meter) namespace",
@@ -298,6 +301,62 @@
             "power station",
             "energy",
             "RSCP"
+        ],
+        "messages": [
+            {
+                "condition": {
+                    "operand": "and",
+                    "rules": [
+                        "oldVersion<1.3.0",
+                        "newVersion>=1.3.0"
+                    ]
+                },
+                "title": {
+                    "en": "Important notice!",
+                    "de": "Wichtiger Hinweis!",
+                    "ru": "Важное замечание!",
+                    "pt": "Notícia importante!",
+                    "nl": "Belangrijke mededeling!",
+                    "fr": "Avis important!",
+                    "it": "Avviso IMPORTANTE!",
+                    "es": "¡Noticia importante!",
+                    "pl": "Ważna uwaga!",
+                    "uk": "Важливе повідомлення!",
+                    "zh-cn": "重要的提醒！"
+                },
+                "text": {
+                    "en": "Version 1.3 introduces new configuration settings - do not re-use settings stored in a json-file which was created from an older version!",
+                    "de": "Version 1.3 bringt neue Konfigurationsparameter - Konfiguration nicht aus einem json-file laden, das mit einer früheren Version erzeugt wurde!",
+                    "ru": "В версии 1.3 представлены новые настройки конфигурации — не используйте повторно настройки, хранящиеся в json-файле, созданном из более старой версии!",
+                    "pt": "A versão 1.3 introduz novas definições de configuração - não reutilize as configurações armazenadas em um arquivo json que foi criado a partir de uma versão mais antiga!",
+                    "nl": "Versie 1.3 introduceert nieuwe configuratie-instellingen - gebruik de instellingen die zijn opgeslagen in een json-bestand dat is gemaakt op basis van een oudere versie niet opnieuw!",
+                    "fr": "La version 1.3 introduit de nouveaux paramètres de configuration : ne réutilisez pas les paramètres stockés dans un fichier json créé à partir d'une ancienne version !",
+                    "it": "La versione 1.3 introduce nuove impostazioni di configurazione: non riutilizzare le impostazioni memorizzate in un file json creato da una versione precedente!",
+                    "es": "La versión 1.3 introduce nuevos ajustes de configuración: ¡no reutilice los ajustes almacenados en un archivo json creado a partir de una versión anterior!",
+                    "pl": "Wersja 1.3 wprowadza nowe ustawienia konfiguracyjne - nie używaj ponownie ustawień zapisanych w pliku json, który został utworzony ze starszej wersji!",
+                    "uk": "Версія 1.3 представляє нові параметри конфігурації - не використовуйте повторно параметри, збережені у файлі json, створеному зі старішої версії!",
+                    "zh-cn": "版本 1.3 引入了新的配置设置 - 不要重复使用存储在从旧版本创建的 json 文件中的设置！"
+                },
+                "link": "https://github.com/git-kick/ioBroker.e3dc-rscp?tab=readme-ov-file#reuse-of-adapter-configuration",
+                "linkText": {
+                    "en": "Reuse of adapter configuration",
+                    "de": "Wiederverwendung der Adapter-Konfiguration",
+                    "ru": "Повторное использование конфигурации адаптера",
+                    "pt": "Reutilização da configuração do adaptador",
+                    "nl": "Hergebruik van adapterconfiguratie",
+                    "fr": "Réutilisation de la configuration de l'adaptateur",
+                    "it": "Riutilizzo della configurazione dell'adattatore",
+                    "es": "Reutilización de la configuración del adaptador",
+                    "pl": "Ponowne wykorzystanie konfiguracji adaptera",
+                    "uk": "Повторне використання конфігурації адаптера",
+                    "zh-cn": "重用适配器配置"
+                },
+                "level": "warn",
+                "buttons": [
+                    "ok",
+                    "cancel"
+                ]
+            }
         ],
         "license": "GPL-3.0-only",
         "licenseInformation": {

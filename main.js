@@ -983,7 +983,7 @@ class E3dcRscp extends utils.Adapter {
 	queuePmRequestData( sml ) {
 		this.clearFrame();
 		for( let i = 0; i <= this.maxIndex["PM"]; i++ ) {
-			const pos = this.startContainer( "TAG_PM_REQ_DATA");
+			const pos = this.startContainer( "TAG_PM_REQ_DATA" );
 			this.addTagtoFrame( "TAG_PM_INDEX", "", i );
 			this.addTagtoFrame( "TAG_PM_REQ_DEVICE_STATE", sml );
 			this.addTagtoFrame( "TAG_PM_REQ_POWER_L1", sml );
@@ -1002,7 +1002,7 @@ class E3dcRscp extends utils.Adapter {
 			this.addTagtoFrame( "TAG_PM_REQ_VOLTAGE_L3", sml );
 			this.addTagtoFrame( "TAG_PM_REQ_TYPE", sml );
 			this.addTagtoFrame( "TAG_PM_REQ_GET_PHASE_ELIMINATION", sml );
-			this.endContainer( pos );			
+			this.endContainer( pos );
 		}
 		this.pushFrame();
 	}
