@@ -182,6 +182,24 @@ const rscpActivePhases = {
 	6: "PHASE_110",
 	7: "PHASE_111",
 };
+const rscpPmType = {
+	0: "UNDEFINED",
+	1: "ROOT",
+	2: "ADDITIONAL",
+	3: "ADDITIONAL_PRODUCTION",
+	4: "ADDITIONAL_CONSUMPTION",
+	5: "FARM",
+	6: "UNUSED",
+	7: "WALLBOX",
+	8: "FARM_ADDITIONAL",
+};
+const rscpPmMode = {
+	0: "ACTIVE",
+	1: "PASSIVE",
+	2: "DIAGNOSE",
+	3: "ERROR_ACTIVE",
+	4: "ERROR_PASSIVE",
+};
 const rscpSysSystemReboot = {
 	0: "Reboot currently not possible, try later",
 	1: "Reboot initiated",
@@ -211,24 +229,6 @@ const rscpEmsGeneratorState = {
 	0x07: "STOPPED",
 	0x10: "RELAISCONTROLMODE",
 	0xFF: "NO_GENERATOR",
-};
-const rscpPmType = {
-	0: "UNDEFINED",
-	1: "ROOT",
-	2: "ADDITIONAL",
-	3: "ADDITIONAL_PRODUCTION",
-	4: "ADDITIONAL_CONSUMPTION",
-	5: "FARM",
-	6: "UNUSED",
-	7: "WALLBOX",
-	8: "FARM_ADDITIONAL",
-};
-const rscpPmMode = {
-	0: "ACTIVE",
-	1: "PASSIVE",
-	2: "DIAGNOSE",
-	3: "ERROR_ACTIVE",
-	4: "ERROR_PASSIVE",
 };
 const rscpUmUpdateStatus = {
 	0: "IDLE",
@@ -260,6 +260,8 @@ const mapIdToCommonStates = {
 	"EMS.MODE": rscpEmsMode,
 	"EMS.BALANCED_PHASES": rscpActivePhases,
 	"PM.ACTIVE_PHASES": rscpActivePhases,
+	"PM.MODE": rscpPmMode,
+	"PM.TYPE": rscpPmType,
 	"WB.PM_ACTIVE_PHASES": rscpActivePhases,
 	"WB.MODE": rscpWbMode,
 	"SYS.SYTEM_REBOOT": rscpSysSystemReboot,
@@ -469,6 +471,7 @@ class E3dcRscp extends utils.Adapter {
 		// For BAT and PVI, there is no COUNT request, so initialize maxIndex to a best guess upper bound.
 		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
 		this.maxIndex["BAT"] = 1; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
+		this.maxIndex["PM"] = 1;
 		this.maxIndex["PVI"] = 2;
 
 		// For triggering the polling and setting requests:
@@ -977,6 +980,33 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
+	queuePmRequestData( sml ) {
+		this.clearFrame();
+		for( let i = 0; i <= this.maxIndex["PM"]; i++ ) {
+			const pos = this.startContainer( "TAG_PM_REQ_DATA" );
+			this.addTagtoFrame( "TAG_PM_INDEX", "", i );
+			this.addTagtoFrame( "TAG_PM_REQ_DEVICE_STATE", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_POWER_L1", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_POWER_L2", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_POWER_L3", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ACTIVE_PHASES", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_MODE", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ENERGY_L1", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ENERGY_L2", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ENERGY_L3", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_DEVICE_ID", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_ERROR_CODE", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_FIRMWARE_VERSION", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_VOLTAGE_L1", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_VOLTAGE_L2", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_VOLTAGE_L3", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_TYPE", sml );
+			this.addTagtoFrame( "TAG_PM_REQ_GET_PHASE_ELIMINATION", sml );
+			this.endContainer( pos );
+		}
+		this.pushFrame();
+	}
+
 	queueEpRequestData( sml ) {
 		this.clearFrame();
 		this.addTagtoFrame( "TAG_EP_REQ_IS_READY_FOR_SWITCH", sml );
@@ -1192,6 +1222,7 @@ class E3dcRscp extends utils.Adapter {
 
 	requestAllData( sml ) {
 		if ( this.config.query_ems ) this.queueEmsRequestData( sml );
+		if ( this.config.query_pm ) this.queuePmRequestData( sml );
 		if ( this.config.query_ep ) this.queueEpRequestData( sml );
 		if ( this.config.query_bat ) this.queueBatRequestData( sml );
 		if ( this.config.query_pvi ) this.queuePviRequestData( sml );
@@ -1382,6 +1413,12 @@ class E3dcRscp extends utils.Adapter {
 					// This is an error response due to out-of-range BAT index, heuristically cut off the biggest one:
 					--this.maxIndex["BAT"];
 					this.log.info( `Adjusted BAT max. index to ${this.maxIndex["BAT"]}` );
+					continue;
+				}
+				if ( shortId == "PM.DEVICE_STATE" && rscpError[token.content] == "RSCP_ERR_NOT_AVAILABLE" ) {
+					// This is an error response due to out-of-range PM index, heuristically cut off the biggest one:
+					--this.maxIndex["PM"];
+					this.log.info( `Adjusted PM max. index to ${this.maxIndex["PM"]}` );
 					continue;
 				}
 				if ( stopPollingIds.includes( shortId ) && rscpError[token.content] == "RSCP_ERR_NOT_AVAILABLE" ) {
@@ -1804,6 +1841,16 @@ class E3dcRscp extends utils.Adapter {
 				common: {
 					name: systemDictionary["EP"][this.language],
 					role: "emergency.power",
+				},
+				native: {},
+			} );
+		}
+		if( this.config.query_pm ) {
+			await this.setObjectNotExistsAsync( "PM", {
+				type: "device",
+				common: {
+					name: systemDictionary["PM"][this.language],
+					role: "power.meter",
 				},
 				native: {},
 			} );
