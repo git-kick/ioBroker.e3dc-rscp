@@ -364,7 +364,6 @@
         },
         "tier": 3,
         "platform": "Javascript/Node.js",
-        "main": "main.js",
         "icon": "e3dc-rscp.png",
         "enabled": true,
         "extIcon": "https://raw.githubusercontent.com/git-kick/ioBroker.e3dc-rscp/master/admin/e3dc-rscp.png",
