@@ -286,6 +286,7 @@
             "energy",
             "RSCP"
         ],
+        "license": "GPL-3.0-only",
         "tier": 3,
         "platform": "Javascript/Node.js",
         "icon": "e3dc-rscp.png",
