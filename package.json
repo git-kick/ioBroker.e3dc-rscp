@@ -7,7 +7,6 @@
     "email": "iobroker@kick-web.de"
   },
   "homepage": "https://github.com/git-kick/ioBroker.e3dc-rscp",
-  "license": "GPL-3.0-only",
   "keywords": [
     "E3/DC",
     "S10",
