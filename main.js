@@ -1610,7 +1610,11 @@ class E3dcRscp extends utils.Adapter {
 		if ( oUnit == "" && rscpTag[rscpTagCode[`TAG_${nameSpace}_${tagName}`]] ) {
 			oUnit = rscpTag[rscpTagCode[`TAG_${nameSpace}_${tagName}`]].Unit;
 		}
-		const oName = systemDictionary[dictionaryIndex] ? systemDictionary[dictionaryIndex][this.language] : dictionaryIndex;
+		let oName = dictionaryIndex;
+		if( systemDictionary[dictionaryIndex] && this.language !== undefined ) {
+			oName = systemDictionary[dictionaryIndex][this.language];
+		}
+		// const oName = systemDictionary[dictionaryIndex] ? systemDictionary[dictionaryIndex][this.language] : dictionaryIndex;
 		this.setObjectNotExists( oId, {
 			type: "state",
 			common: {
@@ -1709,15 +1713,17 @@ class E3dcRscp extends utils.Adapter {
 
 	// Delete VALUE_x object branches for a certain x, x+1, ...
 	deleteValueObjects( count, path ) {
-		const id = `${this.common.name}.${this.instance}.DB.${path}VALUE_${count.toString().padStart( 2,"0" )}`;
-		//this.log.silly(`deleteValueObjects: count=${count}, id=${id}`);
-		this.getForeignObject( id, ( err, obj ) => {
-			if( obj ) {
-				//this.log.silly(`deleteValueObjects: found object with id=${id}`);
-				this.delObject( id, { recursive:true } );
-				this.deleteValueObjects( count+1, path );
-			}
-		} );
+		if( this.common !== undefined ) {
+			const id = `${this.common.name}.${this.instance}.DB.${path}VALUE_${count.toString().padStart( 2,"0" )}`;
+			//this.log.silly(`deleteValueObjects: count=${count}, id=${id}`);
+			this.getForeignObject( id, ( err, obj ) => {
+				if( obj ) {
+					//this.log.silly(`deleteValueObjects: found object with id=${id}`);
+					this.delObject( id, { recursive:true } );
+					this.deleteValueObjects( count+1, path );
+				}
+			} );
+		}
 	}
 
 	// ioBroker best practice for password encryption, using key native.secret
