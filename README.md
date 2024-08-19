@@ -473,6 +473,7 @@ MODIFIED ADAPTER SETTINGS - do not re-use settings stored in json-file!
   * \[E162\]: js-controller dependency updated to >= 5.0.19
   * \[E204\]: "remove news version 1.3.0" considered a false finding; in v1.2.6, io-package.json does not contain common.news "1.3.0"
   * \[E605\]: updated copyright to 2024 in README.md
+  * \[E605\]: removed .npmignore from project directory
   * \[W040\]: added keyword "ioBroker" in package.json
   * \[W130\]: deleted all but some recent common.news in io-packege.json 
 
