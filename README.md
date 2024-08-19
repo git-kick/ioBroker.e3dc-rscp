@@ -468,6 +468,7 @@ MODIFIED ADAPTER SETTINGS - do not re-use settings stored in json-file!
  
 (git-kick)
 * Fixed [Issue #217](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/217) - added PM (power meter) namespace. **Only reading values, no SET tags.**
+* Fixed two newly reported "undefined" occurences in main.js.
 
 ### 1.2.6
  
