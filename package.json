@@ -13,7 +13,8 @@
     "S10",
     "power station",
     "energy",
-    "RSCP"
+    "RSCP",
+    "ioBroker"
   ],
   "repository": {
     "type": "git",
