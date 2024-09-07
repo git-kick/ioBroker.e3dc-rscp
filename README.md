@@ -475,7 +475,9 @@ MODIFIED ADAPTER SETTINGS - do not re-use settings stored in json-file!
   * \[E605\]: updated copyright to 2024 in README.md
   * \[E605\]: removed .npmignore from project directory
   * \[W040\]: added keyword "ioBroker" in package.json
-  * \[W130\]: deleted all but some recent common.news in io-packege.json 
+  * \[W130\]: deleted all but some recent common.news in io-package.json 
+  * \[S522\]: migrated to admin5 UI (jsonConfig.json5)
+
 
 ### 1.2.6
  

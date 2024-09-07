@@ -1726,15 +1726,6 @@ class E3dcRscp extends utils.Adapter {
 		}
 	}
 
-	// ioBroker best practice for password encryption, using key native.secret
-	decryptPassword( key="", value="" ) {
-		let result = "";
-		for ( let i = 0; i < value.length; ++i ) {
-			result += String.fromCharCode( key[i % key.length].charCodeAt( 0 ) ^ value.charCodeAt( i ) );
-		}
-		return result;
-	}
-
 	clearAllIntervals() {
 		if( this.dataPollingTimerS ) clearInterval( this.dataPollingTimerS );
 		if( this.dataPollingTimerM ) clearInterval( this.dataPollingTimerM );
@@ -2110,16 +2101,7 @@ class E3dcRscp extends utils.Adapter {
 
 		// Initialize your adapter here
 		this.log.debug( `config.*: (${this.config.e3dc_ip}, ${this.config.e3dc_port}, ${this.config.portal_user}, ${this.config.polling_interval_short}, ${this.config.polling_interval_medium}, ${this.config.polling_interval_long}, ${this.config.setpower_interval})` );
-		// @ts-ignore
-		this.getForeignObject( "system.config", ( err, obj ) => {
-			if ( obj && obj.native && obj.native.secret ) {
-				this.config.rscp_password = this.decryptPassword( obj.native.secret,this.config.rscp_password );
-				this.config.portal_password = this.decryptPassword( obj.native.secret,this.config.portal_password );
-				this.initChannel();
-			} else {
-				this.log.error( "Cannot initialize adapter because obj.native.secret is null." );
-			}
-		} );
+		this.initChannel();
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates( "RSCP.AUTHENTICATION" );
