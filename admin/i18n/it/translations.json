@@ -373,5 +373,6 @@
     "title_intervals": "Impostare intervalli di tempo per la query e la rispedizione",
     "title_misc": "Varie",
     "title_namespaces": "Selezionare gli spazi dei nomi E3 / DC per interrogare i dati",
-    "title_polling_intervals": "Ottimizzare gli intervalli di polling dei dati"
+    "title_polling_intervals": "Ottimizzare gli intervalli di polling dei dati",
+    "title_polling_intervals_table": "Intervallo di polling per tag RSCP"
 }

@@ -346,9 +346,9 @@
     "minStartChargePower": "Minimale anfängliche Ladeleistung",
     "minStartDischargePower": "Minimum anfängliche Entladeleistung",
     "options": "Einstellungen",
-    "polling_interval_long": "Abfrageintervall L = lang [h]",
-    "polling_interval_medium": "Abfrageintervall M = mittel [m]",
-    "polling_interval_short": "Abfrageintervall S = kurz [s]",
+    "polling_interval_long": "Abfrageintervall L = lang [Std]",
+    "polling_interval_medium": "Abfrageintervall M = mittel [Min]",
+    "polling_interval_short": "Abfrageintervall S = kurz [Sek]",
     "polling_intervals": "Abfrageintervalle",
     "portal_password": "E3/DC Portal Passwort",
     "portal_user": "E3/DC Portal Benutzername",
@@ -373,5 +373,6 @@
     "title_intervals": "Zeitintervalle für Senden",
     "title_misc": "Verschiedenes",
     "title_namespaces": "Auswahl der E3/DC-Namespaces, für die Daten abgefragt werden",
-    "title_polling_intervals": "Einstellung der Abfrageintervalle"
+    "title_polling_intervals": "Länge der Abfrageintervalle",
+    "title_polling_intervals_table": "Abfrageintervall je RSCP-Tag"
 }

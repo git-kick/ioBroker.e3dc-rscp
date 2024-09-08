@@ -346,9 +346,9 @@
     "minStartChargePower": "Minimum start charge power",
     "minStartDischargePower": "Minimum start discharge power",
     "options": "Options",
-    "polling_interval_long": "Polling interval L = long [h]",
-    "polling_interval_medium": "Polling interval M = medium [m]",
-    "polling_interval_short": "Polling interval S = short [s]",
+    "polling_interval_long": "Polling interval L = long [hrs]",
+    "polling_interval_medium": "Polling interval M = medium [min]",
+    "polling_interval_short": "Polling interval S = short [sec]",
     "polling_intervals": "Polling intervals",
     "portal_password": "E3/DC portal password",
     "portal_user": "E3/DC portal user",
@@ -373,5 +373,6 @@
     "title_intervals": "Set time intervals for sending",
     "title_misc": "Miscellaneous",
     "title_namespaces": "Select E3/DC namespaces to query data for",
-    "title_polling_intervals": "Set data polling intervals"
+    "title_polling_intervals": "Set data polling intervals",
+    "title_polling_intervals_table": "Polling interval per RSCP tag"
 }

@@ -112,7 +112,6 @@
         "lazy_setstate": {
           "type": "checkbox",
           "label": "lazy_setstate",
-          "min": 0,
           "xs": 12, "sm": 12, "md": 6, "lg": 3
         }
       }
@@ -120,7 +119,6 @@
     "Tab_Polling_Intervals": {
       "type": "panel",
       "label": "polling_intervals",
-      "noDelete": true,
       "items": {
         "title_polling_intervals": {
           "newLine": true,
@@ -129,7 +127,6 @@
           "size": 2
         },
         "polling_interval_short": {
-          "newLine": true,
           "type": "number",
           "label": "polling_interval_short",
           "min": 0,
@@ -147,33 +144,42 @@
           "min": 0,
           "xs": 12, "sm": 6, "md": 3, "lg": 2
         },
-        "polling_intervals": {
+        "title_polling_intervals_table": {
           "newLine": true,
+          "type": "header",
+          "text": "title_polling_intervals_table",
+          "size": 2
+        },
+        "polling_intervals": {
           "type": "table",
           "label": "",
+          "noDelete": true,
           "xs": 12, "sm": 12,"md": 9, "lg": 6,
           "items": [
             {
               "type": "text",
               "attr": "tag",
-              "width": "80% ",
+              "width": "70% ",
               "title": "column_tag",
               "filter": true,
-              "sort": true,
+              "sort": false,
               "readOnly": true,
               "default": ""
             },
             {
-              "type": "text",
+              "type": "select",
+              "options": [
+                  {"label": "S", "value": "S"},
+                  {"label": "M", "value": "M"},
+                  {"label": "L", "value": "L"},
+                  {"label": "N", "value": "N"}
+              ],
               "attr": "interval",
-              "width": "20% ",
+              "width": "30% ",
               "title": "column_interval",
-              "tooltip": "S/M/L/N",
               "filter": false,
               "sort": false,
-              "default": "L",
-              "validator": "return (data.intervall==='') || data.interval.match(/^[SMLN]$/);",
-              "validatorNoSaveOnError": true
+              "default": "L"
             }
           ]
         }

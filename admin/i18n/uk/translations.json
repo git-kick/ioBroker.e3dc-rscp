@@ -373,5 +373,6 @@
     "title_intervals": "Встановіть часові інтервали для відправки",
     "title_misc": "Різне",
     "title_namespaces": "Виберіть простори імен E3/DC для запиту даних",
-    "title_polling_intervals": "Встановити інтервали опитування даних"
+    "title_polling_intervals": "Встановити інтервали опитування даних",
+    "title_polling_intervals_table": "Інтервал опитування на тег RSCP"
 }

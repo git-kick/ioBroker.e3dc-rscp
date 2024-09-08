@@ -373,5 +373,6 @@
     "title_intervals": "Définir des intervalles de temps pour la requête et le renvoi",
     "title_misc": "Divers",
     "title_namespaces": "Sélectionnez les espaces de noms E3/DC pour interroger les données",
-    "title_polling_intervals": "Affiner les intervalles d'interrogation des données"
+    "title_polling_intervals": "Affiner les intervalles d'interrogation des données",
+    "title_polling_intervals_table": "Intervalle d'interrogation par balise RSCP"
 }
