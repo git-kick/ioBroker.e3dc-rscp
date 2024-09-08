@@ -102,7 +102,19 @@
           "type": "checkbox",
           "label": "query_info",
           "xs": 12, "sm": 12,"md": 6, "lg": 3
-        }        
+        },
+        "title_misc": {
+            "newLine": true,
+            "type": "header",
+            "text": "title_misc",
+            "size": 2
+        },
+        "lazy_setstate": {
+          "type": "checkbox",
+          "label": "lazy_setstate",
+          "min": 0,
+          "xs": 12, "sm": 12, "md": 6, "lg": 3
+        }
       }
     },
     "Tab_Polling_Intervals": {
@@ -116,10 +128,30 @@
           "text": "title_polling_intervals",
           "size": 2
         },
+        "polling_interval_short": {
+          "newLine": true,
+          "type": "number",
+          "label": "polling_interval_short",
+          "min": 0,
+          "xs": 12, "sm": 6, "md": 3, "lg": 2
+        },
+        "polling_interval_medium": {
+          "type": "number",
+          "label": "polling_interval_medium",
+          "min": 0,
+          "xs": 12, "sm": 6, "md": 3, "lg": 2
+        },
+        "polling_interval_long": {
+          "type": "number",
+          "label": "polling_interval_long",
+          "min": 0,
+          "xs": 12, "sm": 6, "md": 3, "lg": 2
+        },
         "polling_intervals": {
+          "newLine": true,
           "type": "table",
           "label": "",
-          "xs": 12, "sm": 12,"md": 12, "lg": 9,
+          "xs": 12, "sm": 12,"md": 9, "lg": 6,
           "items": [
             {
               "type": "text",
