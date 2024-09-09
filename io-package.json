@@ -7,17 +7,17 @@
         ],
         "news": {
             "1.3.0": {
-                "en": "UNDER DEVELOPMENT",
-                "de": "IN ENTWICKLUNG",
-                "ru": "В РАЗРАБОТКЕ",
-                "pt": "EM DESENVOLVIMENTO",
-                "nl": "ONDER ONTWIKKELING",
-                "fr": "EN DÉVELOPPEMENT",
-                "it": "IN SVILUPPO",
-                "es": "EN DESARROLLO",
-                "pl": "W ROZWOJU",
-                "uk": "В РОЗРОБЦІ",
-                "zh-cn": "正在开发中"
+                "en": "Added PM namespace (read-only)",
+                "de": "PM namespace (nur lesend)",
+                "ru": "Добавлено пространство имен PM (только чтение).",
+                "pt": "Adicionado namespace PM (somente leitura)",
+                "nl": "PM-naamruimte toegevoegd (alleen-lezen)",
+                "fr": "Espace de noms PM ajouté (lecture seule)",
+                "it": "Aggiunto spazio dei nomi PM (sola lettura)",
+                "es": "Espacio de nombres PM agregado (solo lectura)",
+                "pl": "Dodano przestrzeń nazw PM (tylko do odczytu)",
+                "uk": "Додано простір імен PM (тільки для читання)",
+                "zh-cn": "添加 PM 命名空间（只读）"
             },
             "1.2.6": {
                 "en": "No more warnings about unknown tags like 0x100003e",
@@ -44,19 +44,6 @@
                 "pl": "Dodano kilka tagów ustawiających EP",
                 "uk": "Додано деякі теги налаштування EP",
                 "zh-cn": "添加了一些 EP setter 标签"
-            },
-            "1.2.4": {
-                "en": "Added some EMS setter tags",
-                "de": "Einige neue EMS Steuer-Tags",
-                "ru": "Добавлены некоторые теги установки EMS.",
-                "pt": "Adicionadas algumas tags de configuração EMS",
-                "nl": "Enkele EMS-setter-tags toegevoegd",
-                "fr": "Ajout de quelques balises de définition EMS",
-                "it": "Aggiunti alcuni tag setter EMS",
-                "es": "Se agregaron algunas etiquetas de configuración de EMS",
-                "pl": "Dodano kilka tagów ustawiających EMS",
-                "uk": "Додано деякі теги налаштування EMS",
-                "zh-cn": "添加了一些 EMS setter 标签"
             }
         },
         "titleLang": {
