@@ -65,20 +65,20 @@ Here is what to configure when creating a new instance of the adapter. Settings 
       <img src="admin/e3dc-rscp-password.png" width="600">
     </td>
   </tr>
-    <td>SET_POWER re-send interval [s]</td>
+    <td>SET_POWER re-send interval [sec]</td>
     <td>Define how often ioBroker will request state updates from E3/DC. Experiments showed that SET_POWER may oscillate when this interval is longer than 10 seconds, despite a comment in the official E3/DC tag list saying that setting every 30 seconds is sufficient. If set to 0 (zero), no re-send will happen, i.e. you have to trigger the re-send from outside, otherwise the E3/DC will fall back to normal after ca. 10 seconds.</td>
   </tr>
   <tr>
-    <td>Tuple sending delay [s]</td>
+    <td>Tuple sending delay [sec]</td>
     <td>Define how long ioBroker will wait before writing idle period or data history changes to E3/DC. Purpose is to merge several subsequent changes into one single call. A dedicated timeout is set/reset upon every change concerning the values within one idle period or one data history scale, resepectively; changes are only transmitted after the timeout is   <tr>
+  <tr>
+    <td>Checkbox for each E3/DC namespace</td>
+    <td>Data will be requested only for checked namespaces.</td>
+  </tr>
     <td>Checkbox for Lazy SetState()</td>
     <td>If checked (default), the adapter will write to ioBroker States only when values have changed - this reduces workload, better for smaller hardware. Uncheck this option and the adapter will call setState() after every polling iterval, also for unchanged values - better if you have an application depending on regular State.ts updates. </td>
   </tr>
 over. This applies to EMS.IDLE_PERIODS_* and DB.HISTORY_DATA_*</td>
-  </tr>
-  <tr>
-    <td>Checkbox for each E3/DC namespace</td>
-    <td>Data will be requested only for checked namespaces.</td>
   </tr>
 
 </table>
@@ -90,15 +90,15 @@ over. This applies to EMS.IDLE_PERIODS_* and DB.HISTORY_DATA_*</td>
     <th>Meaning</th>
   </tr>
   <tr>
-    <td>Polling interval short [s]</td>
+    <td>Polling interval short [sec]</td>
     <td>Define how often ioBroker will request state updates from E3/DC for most dynamic variables.</td>
   </tr>
   <tr>
-    <td>Polling interval medium [m]</td>
+    <td>Polling interval medium [min]</td>
     <td>Define how often ioBroker will request state updates from E3/DC in the regular case.</td>
   </tr>
   <tr>
-    <td>Polling interval long [h]</td>
+    <td>Polling interval long [hrs]</td>
     <td>Define how often ioBroker will request state updates from E3/DC for rarely or never modified variables.</td>
   </tr>
   <tr>
@@ -464,7 +464,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ## Changelog
 ### 1.3.0
 
-MODIFIED ADAPTER SETTINGS - do not re-use settings stored in json-file!
+MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.com/git-kick/ioBroker.e3dc-rscp/tree/master?tab=readme-ov-file#reuse-of-adapter-configuration)
  
 (git-kick)
 * Fixed [Issue #217](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/217) - added PM (power meter) namespace. **Only reading values, no SET tags.**
