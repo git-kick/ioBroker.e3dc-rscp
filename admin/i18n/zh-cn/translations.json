@@ -373,5 +373,6 @@
     "title_intervals": "设置查询和重新发送的时间间隔",
     "title_misc": "各种各样的",
     "title_namespaces": "选择E3/DC命名空间以查询数据",
-    "title_polling_intervals": "微调数据轮询间隔"
+    "title_polling_intervals": "微调数据轮询间隔",
+    "title_polling_intervals_table": "每个 RSCP 标签的轮询间隔"
 }

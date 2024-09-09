@@ -373,5 +373,6 @@
     "title_intervals": "Tijdintervallen instellen voor opvragen en opnieuw verzenden",
     "title_misc": "Gemengd",
     "title_namespaces": "Selecteer E3 / DC-naamruimten om gegevens op te vragen",
-    "title_polling_intervals": "Fijnafstellen van data polling intervallen"
+    "title_polling_intervals": "Fijnafstellen van data polling intervallen",
+    "title_polling_intervals_table": "Polling-interval per RSCP-tag"
 }

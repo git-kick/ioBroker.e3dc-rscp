@@ -373,5 +373,6 @@
     "title_intervals": "Ustawianie przedziałów czasowych dla zapytania i ponownego wysyłania",
     "title_misc": "Różnorodny",
     "title_namespaces": "Wybierz przestrzenie nazw E3 / DC do odpytywania danych",
-    "title_polling_intervals": "Dostrajanie interwałów ankietowych danych"
+    "title_polling_intervals": "Dostrajanie interwałów ankietowych danych",
+    "title_polling_intervals_table": "Interwał odpytywania na znacznik RSCP"
 }

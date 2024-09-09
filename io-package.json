@@ -166,8 +166,9 @@
         "compact": true,
         "connectionType": "local",
         "dataSource": "poll",
-        "materialize": true,
-        "materializeTab": false,
+        "adminUI": {
+            "config": "json"
+        },
         "dependencies": [
             {
                 "js-controller": ">=5.0.19"
@@ -179,6 +180,14 @@
             }
         }
     },
+    "protectedNative": [
+        "rscp_password",
+        "portal_password"
+    ],
+    "encryptedNative": [
+        "rscp_password",
+        "portal_password"
+    ],
     "native": {
         "e3dc_ip": "192.168.178.1",
         "e3dc_port": 5033,
@@ -909,15 +918,15 @@
         "polling_interval_long": 12,
         "setpower_interval": 10,
         "send_tuple_delay": 10,
-        "query_bat": "true",
-        "query_ems": "true",
-        "query_pm": "true",
-        "query_ep": "true",
-        "query_pvi": "true",
-        "query_sys": "true",
-        "query_wb": "true",
-        "query_info": "true",
-        "query_db": "true"
+        "query_bat": true,
+        "query_ems": true,
+        "query_pm": true,
+        "query_ep": true,
+        "query_pvi": true,
+        "query_sys": true,
+        "query_wb": true,
+        "query_info": true,
+        "query_db": true
     },
     "objects": [],
     "instanceObjects": []

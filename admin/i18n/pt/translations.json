@@ -373,5 +373,6 @@
     "title_intervals": "Definir os intervalos de tempo para a pesquisa e a revenda",
     "title_misc": "Diversos",
     "title_namespaces": "Seleccione os espaços de nomes E3/DC para onde procurar os dados",
-    "title_polling_intervals": "Intervalos de sondagem de dados de afinação fina"
+    "title_polling_intervals": "Intervalos de sondagem de dados de afinação fina",
+    "title_polling_intervals_table": "Intervalo de pesquisa por tag RSCP"
 }
