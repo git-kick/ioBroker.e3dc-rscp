@@ -67,22 +67,22 @@
           "type": "checkbox",
           "label": "query_bat",
           "xs": 12, "sm": 12,"md": 6, "lg": 3
-        },        
+        },
         "query_ems": {
           "type": "checkbox",
           "label": "query_ems",
           "xs": 12, "sm": 12,"md": 6, "lg": 3
-        },        
+        },
         "query_ep": {
           "type": "checkbox",
           "label": "query_ep",
           "xs": 12, "sm": 12,"md": 6, "lg": 3
-        },       
+        },
         "query_pvi": {
           "type": "checkbox",
           "label": "query_pvi",
           "xs": 12, "sm": 12,"md": 6, "lg": 3
-        },    
+        },
         "query_sys": {
           "type": "checkbox",
           "label": "query_sys",
@@ -92,15 +92,20 @@
           "type": "checkbox",
           "label": "query_wb",
           "xs": 12, "sm": 12,"md": 6, "lg": 3
-        },        
+        },
         "query_db": {
           "type": "checkbox",
           "label": "query_db",
           "xs": 12, "sm": 12,"md": 6, "lg": 3
-        },        
+        },
         "query_info": {
           "type": "checkbox",
           "label": "query_info",
+          "xs": 12, "sm": 12,"md": 6, "lg": 3
+        },
+        "query_pm": {
+          "type": "checkbox",
+          "label": "query_pm",
           "xs": 12, "sm": 12,"md": 6, "lg": 3
         },
         "title_misc": {
