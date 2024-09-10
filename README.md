@@ -462,7 +462,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-### 1.3.0
+### 1.3.1
 
 MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.com/git-kick/ioBroker.e3dc-rscp/tree/master?tab=readme-ov-file#reuse-of-adapter-configuration)
  
@@ -478,6 +478,8 @@ MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.
   * \[W130\]: deleted all but some recent common.news in io-package.json 
   * \[W184\]: removed "common.materialize" from io-package.json 
   * \[S522\]: migrated to admin5 UI (jsonConfig.json5)
+
+### 1.3.0  - Deprecated - Do not install -
 
 ### 1.2.6
  
