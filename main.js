@@ -471,7 +471,6 @@ class E3dcRscp extends utils.Adapter {
 		// For BAT and PVI, there is no COUNT request, so initialize maxIndex to a best guess upper bound.
 		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
 		this.maxIndex["BAT"] = 1; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
-		this.maxIndex["PM"] = 1;
 		this.maxIndex["PVI"] = 2;
 
 		// For PM, there may be a non-sequential set of indexes like (0, 2, 6),
@@ -1510,6 +1509,7 @@ class E3dcRscp extends utils.Adapter {
 					if( tree.length <= Number( i )+1 || rscpType[tree[Number( i )+1].type] != "Error" ) {
 						if( nameSpace != "PM" ) { // PM has an index _set_ and is handled separately
 							this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], currentIndex ) : currentIndex;
+							this.log.info( `Adjusted ${nameSpace} max. index to ${this.maxIndex[nameSpace]}` );
 						}
 						pathNew = `${nameSpace}_${currentIndex}.`;
 						this.extendObject( `${nameSpace}.${pathNew.slice( 0,-1 )}`, { type: "channel", common: { role: "info.module" } } );
@@ -1521,6 +1521,7 @@ class E3dcRscp extends utils.Adapter {
 					const name = tagName.replace( "_INDEX","" );
 					const key = path ? `${path}.${name}` : name ;
 					this.maxIndex[key] = this.maxIndex[key] ? Math.max( this.maxIndex[key], token.content ) : token.content;
+					this.log.debug( `Adjusted ${key} max. index to ${this.maxIndex[key]}` );
 					pathNew = path ? `${pathNew.split( "." ).slice( 0,-1 ).join( "." )}.${name}_${token.content}.` : `${name}_${token.content}.`;
 					this.extendObject( `${nameSpace}.${pathNew.slice( 0,-1 )}`, { type: "channel", common: { role: "info.submodule" } } );
 					continue;
@@ -1528,6 +1529,7 @@ class E3dcRscp extends utils.Adapter {
 				// ..._COUNT explicitely sets upper bound for (sub-)device index
 				if( tagName.endsWith( "_COUNT" ) ) {
 					this.maxIndex[`${pathNew}${tagName.replace( "_COUNT","" )}`] = token.content - 1;
+					this.log.debug( `Adjusted ${pathNew}${tagName.replace( "_COUNT","" )} max. index to ${this.maxIndex[`${pathNew}${tagName.replace( "_COUNT","" )}`]}` );
 				}
 				// Translate bit-mapped EMS.STATUS
 				if( shortId == "EMS.STATUS" ) {
