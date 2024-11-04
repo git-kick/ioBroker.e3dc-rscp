@@ -16,28 +16,28 @@
           "type": "text",
           "label": "portal_user",
           "newLine": true,
-          "xs": 12, "sm": 6, "md": 3, "lg": 3
+          "xs": 12, "sm": 6, "md": 3, "lg": 3, "xl": 3
         },
         "portal_password": {
           "type": "password",
           "label": "portal_password",
-          "xs": 12, "sm": 6, "md": 3, "lg": 3
+          "xs": 12, "sm": 6, "md": 3, "lg": 3, "xl": 3
         },
         "e3dc_ip": {
           "type": "text",
           "label": "e3dc_ip",
           "newLine": true,
-          "xs": 12, "sm": 6, "md": 3, "lg": 3
+          "xs": 12, "sm": 6, "md": 3, "lg": 3, "xl": 3
         },
         "e3dc_port": {
           "type": "port",
           "label": "e3dc_port",
-          "xs": 12, "sm": 6, "md": 3, "lg": 3
+          "xs": 12, "sm": 6, "md": 3, "lg": 3, "xl": 3
         },
         "rscp_password": {
           "type": "password",
           "label": "rscp_password",
-          "xs": 12, "sm": 6, "md": 3, "lg": 3
+          "xs": 12, "sm": 6, "md": 3, "lg": 3, "xl": 3
         },
         "title_intervals": {
             "newLine": true,
@@ -49,13 +49,13 @@
           "type": "number",
           "label": "setpower_interval",
           "min": 0,
-          "xs": 12, "sm": 6, "md": 3, "lg": 3
+          "xs": 12, "sm": 6, "md": 3, "lg": 3, "xl": 3
         },
         "send_tuple_delay": {
           "type": "number",
           "label": "send_tuple_delay",
           "min": 0,
-          "xs": 12, "sm": 6, "md": 3, "lg": 3
+          "xs": 12, "sm": 6, "md": 3, "lg": 3, "xl": 3
         },
         "title_namespaces": {
             "newLine": true,
@@ -66,47 +66,47 @@
         "query_bat": {
           "type": "checkbox",
           "label": "query_bat",
-          "xs": 12, "sm": 12,"md": 6, "lg": 3
+          "xs": 12, "sm": 12,"md": 6, "lg": 3, "xl": 3
         },
         "query_ems": {
           "type": "checkbox",
           "label": "query_ems",
-          "xs": 12, "sm": 12,"md": 6, "lg": 3
+          "xs": 12, "sm": 12,"md": 6, "lg": 3, "xl": 3
         },
         "query_ep": {
           "type": "checkbox",
           "label": "query_ep",
-          "xs": 12, "sm": 12,"md": 6, "lg": 3
+          "xs": 12, "sm": 12,"md": 6, "lg": 3, "xl": 3
         },
         "query_pvi": {
           "type": "checkbox",
           "label": "query_pvi",
-          "xs": 12, "sm": 12,"md": 6, "lg": 3
+          "xs": 12, "sm": 12,"md": 6, "lg": 3, "xl": 3
         },
         "query_sys": {
           "type": "checkbox",
           "label": "query_sys",
-          "xs": 12, "sm": 12,"md": 6, "lg": 3
+          "xs": 12, "sm": 12,"md": 6, "lg": 3, "xl": 3
         },
         "query_wb": {
           "type": "checkbox",
           "label": "query_wb",
-          "xs": 12, "sm": 12,"md": 6, "lg": 3
+          "xs": 12, "sm": 12,"md": 6, "lg": 3, "xl": 3
         },
         "query_db": {
           "type": "checkbox",
           "label": "query_db",
-          "xs": 12, "sm": 12,"md": 6, "lg": 3
+          "xs": 12, "sm": 12,"md": 6, "lg": 3, "xl": 3
         },
         "query_info": {
           "type": "checkbox",
           "label": "query_info",
-          "xs": 12, "sm": 12,"md": 6, "lg": 3
+          "xs": 12, "sm": 12,"md": 6, "lg": 3, "xl": 3
         },
         "query_pm": {
           "type": "checkbox",
           "label": "query_pm",
-          "xs": 12, "sm": 12,"md": 6, "lg": 3
+          "xs": 12, "sm": 12,"md": 6, "lg": 3, "xl": 3
         },
         "title_misc": {
             "newLine": true,
@@ -117,7 +117,7 @@
         "lazy_setstate": {
           "type": "checkbox",
           "label": "lazy_setstate",
-          "xs": 12, "sm": 12, "md": 6, "lg": 3
+          "xs": 12, "sm": 12, "md": 6, "lg": 3, "xl": 3
         }
       }
     },
@@ -135,19 +135,19 @@
           "type": "number",
           "label": "polling_interval_short",
           "min": 0,
-          "xs": 12, "sm": 6, "md": 3, "lg": 2
+          "xs": 12, "sm": 6, "md": 3, "lg": 2, "xl": 2
         },
         "polling_interval_medium": {
           "type": "number",
           "label": "polling_interval_medium",
           "min": 0,
-          "xs": 12, "sm": 6, "md": 3, "lg": 2
+          "xs": 12, "sm": 6, "md": 3, "lg": 2, "xl": 2
         },
         "polling_interval_long": {
           "type": "number",
           "label": "polling_interval_long",
           "min": 0,
-          "xs": 12, "sm": 6, "md": 3, "lg": 2
+          "xs": 12, "sm": 6, "md": 3, "lg": 2, "xl": 2
         },
         "title_polling_intervals_table": {
           "newLine": true,
@@ -159,7 +159,7 @@
           "type": "table",
           "label": "",
           "noDelete": true,
-          "xs": 12, "sm": 12,"md": 9, "lg": 6,
+          "xs": 12, "sm": 12,"md": 9, "lg": 6, "xl": 6
           "items": [
             {
               "type": "text",
