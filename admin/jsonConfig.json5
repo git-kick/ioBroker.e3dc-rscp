@@ -159,7 +159,7 @@
           "type": "table",
           "label": "",
           "noDelete": true,
-          "xs": 12, "sm": 12,"md": 9, "lg": 6, "xl": 6
+          "xs": 12, "sm": 12,"md": 9, "lg": 6, "xl": 6,
           "items": [
             {
               "type": "text",
