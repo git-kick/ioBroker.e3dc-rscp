@@ -162,13 +162,13 @@
           "type": "table",
           "label": "",
           "noDelete": true,
-          "xs": 12, "sm": 12,"md": 9, "lg": 6, "xl": 6,
+          "xs": 12, "sm": 12,"md": 12, "lg": 9, "xl": 6,
           "items": [
             {
               "type": "text",
               "attr": "tag",
-              "width": "70% ",
               "title": "column_tag",
+              "width": "70%",
               "filter": true,
               "sort": false,
               "readOnly": true,
@@ -183,8 +183,8 @@
                   {"label": "N", "value": "N"}
               ],
               "attr": "interval",
-              "width": "30% ",
               "title": "column_interval",
+              "width": "30%",
               "filter": false,
               "sort": false,
               "default": "L"
