@@ -465,9 +465,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### 1.3.2
  
 (git-kick)
-* Fixed [Issue #241](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/241) - modified PM index detection so that discountinuous index sets are handled correctly, like ( 0, 1, 3, 6 )
 * New RscpTags.json: added new tags from 01-2024 tag list. 
 **Stick to** ..EMERGENCY_POWER_TEST.. naming despite it changed to ..EMERGENCYPOWER_TEST.. in the new tag-list (this accects four tags).
+* Fixed [Issue #241](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/241) - modified PM index detection so that discountinuous index sets are handled correctly, like ( 0, 1, 3, 6 ).
+* Fixed [Issue #249](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/249) - increased BAT polling range to 0..3, i.e. max. four BATs (instead of two).
 
 ### 1.3.1
 

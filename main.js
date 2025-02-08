@@ -470,14 +470,14 @@ class E3dcRscp extends utils.Adapter {
 
 		// For BAT and PVI, there is no COUNT request, so initialize maxIndex to a best guess upper bound.
 		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
-		this.maxIndex["BAT"] = 1; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
+		this.maxIndex["BAT"] = 3; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
 		this.maxIndex["PVI"] = 2;
 
 		// For PM, there may be a non-sequential set of indexes like (0, 2, 6),
 		// so initialize with a best guess covering set, which will be pinched out dynamically.
 		this.indexSet = {}; // {path} - array of indexes with ok response
 		this.indexSet["PM"] = [];
-		for ( let i = 0; i <= 10; i++ ) {
+		for ( let i = 0; i < 10; i++ ) {
 			this.indexSet["PM"].push( i );
 		}
 
