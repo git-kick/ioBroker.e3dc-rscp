@@ -301,6 +301,7 @@ const mapChangedIdToSetTags = {
 	"EMS.START_EMERGENCY_POWER_TEST": ["", "TAG_EMS_REQ_START_EMERGENCY_POWER_TEST"],
 	"EMS.OVERRIDE_AVAILABLE_POWER": ["", "TAG_EMS_REQ_SET_OVERRIDE_AVAILABLE_POWER"],
 	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
+	"EMS.*.*.PERIOD_ACTIVE": [],
 	"EMS.*.*.START_HOUR": [],
 	"EMS.*.*.START_MINUTE": [],
 	"EMS.*.*.END_HOUR": [],
@@ -375,6 +376,7 @@ const ignoreIds = [
 	"EMS.PARAM_INDEX", // always 0, occurs in container EMERGENCY_POWER_OVERLOAD_STATUS
 	"EMS.SYS_SPEC_INDEX",
 	"EMS.SET_IDLE_PERIODS",
+	"EMS.SET_IDLE_PERIODS_2",
 	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  	// Response is always "true", not usable for state with unit "%"
 	"BAT.UNDEFINED",
 	"BAT.INTERNAL_CURRENT_AVG30",
@@ -916,6 +918,7 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_POWER_VALUE", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS_2", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS", sml );
 		this.pushFrame();
 	}
@@ -1456,6 +1459,8 @@ class E3dcRscp extends utils.Adapter {
 					wb.storeWbExternData( shortId, token.content, pathNew );
 				} else if ( shortId == "EMS.GET_IDLE_PERIODS" ) {
 					this.storeIdlePeriods( token.content, pathNew );
+				} else if ( shortId == "EMS.GET_IDLE_PERIODS_2" ) {
+					this.storeIdlePeriods2( token.content, pathNew );
 				} else if ( shortId.startsWith( "DB.HISTORY_DATA_" ) ) {
 					this.storeHistoryData( token.content, pathNew + `${tagName}.` );
 				} else if ( ignoreIndexIds.includes( shortId ) && token.content.length == 2 ) {
@@ -1682,6 +1687,33 @@ class E3dcRscp extends utils.Adapter {
 		} );
 		this.extendObject( "EMS.IDLE_PERIODS_CHARGE", { type: "channel", common: { role: "calendar.week" } } );
 		this.extendObject( "EMS.IDLE_PERIODS_DISCHARGE", { type: "channel", common: { role: "calendar.week" } } );
+	}
+
+	storeIdlePeriods2( tree, path ) {
+		let i = 0;
+		tree.forEach( token => {
+			const idleNode = `IDLE_PERIODS_2.${String( i ).padStart( 2, "0" )}`;
+			const newPath = `${path}${idleNode}.`;
+			if( rscpTag[token.tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_2" || token.content.length != 5 ) return;
+			if ( rscpTag[token.content[0].tag].TagNameGlobal != "TAG_EMS_PERIOD_ACTIVE" ) return;
+			const active = token.content[0].content;
+			if ( rscpTag[token.content[1].tag].TagNameGlobal != "TAG_EMS_PERIOD_WEEKDAYS" ) return;
+			const weekdays = token.content[1].content;
+			if ( rscpTag[token.content[2].tag].TagNameGlobal != "TAG_EMS_PERIOD_START" ) return;
+			const start = token.content[2].content;
+			if ( rscpTag[token.content[3].tag].TagNameGlobal != "TAG_EMS_PERIOD_STOP" ) return;
+			const stop = token.content[3].content;
+			if( rscpTag[token.content[4].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_TYPE" ) return;
+			const type = token.content[4].content;
+			this.storeValue( "EMS", newPath, "PERIOD_ACTIVE", "Bool", ( active != 0 ), "PERIOD_ACTIVE" );
+			this.storeValue( "EMS", newPath, "PERIOD_WEEKDAYS", "UChar8", weekdays, "PERIOD_WEEKDAYS", "bitmask" );
+			this.storeValue( "EMS", newPath, "PERIOD_START", "CString", convertToTimeOfDay( start ), "PERIOD_START", "" );
+			this.storeValue( "EMS", newPath, "PERIOD_STOP", "CString", convertToTimeOfDay( stop ), "PERIOD_STOP", "" );
+			this.storeValue( "EMS", newPath, "IDLE_PERIOD_TYPE", "UChar8", type, "TYPE", "" );
+			this.extendObject( `EMS.${newPath.slice( 0, -1 )}`, { type: "channel", common: { role: "calendar.day" } } );
+			i = i + 1;
+		} );
+		this.extendObject( "EMS.IDLE_PERIODS_2", { type: "channel", common: { role: "calendar.week" } } );
 	}
 
 	storeHistoryData( tree, path ) {
@@ -2380,4 +2412,12 @@ function getSetTags( id ) {
 		}
 		return result;
 	}
+}
+
+function convertToTimeOfDay( secs ) {
+	const hrs = Math.floor( secs / 3600 );
+	secs = secs - hrs * 3600;
+	const mins = Math.floor( secs / 60 );
+	secs = secs - mins * 60;
+	return `${String( hrs ).padStart( 2, "0" )}:${String( mins ).padStart( 2, "0" )}:${String( secs ).padStart( 2, "0" )}`;
 }

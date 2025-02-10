@@ -325,6 +325,10 @@
                 "interval": "M"
             },
             {
+                "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS_2",
+                "interval": "M"
+            },
+            {
                 "tag": "TAG_EMS_REQ_GET_POWER_SETTINGS",
                 "interval": "M"
             },
