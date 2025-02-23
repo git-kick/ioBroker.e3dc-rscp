@@ -28,6 +28,53 @@ function roundForReadability( n ) {
 	}
 }
 
+// 7263 sec => "02:01:03"
+function secondsToTimeOfDayString( secs ) {
+	const hrs = Math.floor( secs / 3600 );
+	secs = secs - hrs * 3600;
+	const mins = Math.floor( secs / 60 );
+	secs = secs - mins * 60;
+	return `${String( hrs ).padStart( 2, "0" )}:${String( mins ).padStart( 2, "0" )}:${String( secs ).padStart( 2, "0" )}`;
+}
+
+// "02:01:03" => 7263 sec
+function timeOfDayStringToSeconds( tod ) {
+	const parts = tod.split( ":" );
+	const len = parts.length;
+	let result = 0;
+	if( len > 0 ) {
+		result = 3600 * Number( parts[0] );
+		if( len > 1 ) {
+			result += 60 * Number( parts[1] );
+			if( len > 2 ) {
+				result += Number( parts[2] );
+			}
+		}
+	}
+	return result;
+}
+
+// 0b11000001 => "167"
+function bitmaskToWeekdayString( bitmask ) {
+	const days = ["1", "2", "3", "4", "5", "6", "7"]; // Monday = "1", Tuesday = "2", etc.
+	const result = [];
+	for ( let i = 0; i < days.length; i++ ) {
+		if ( bitmask & ( 1 << i ) ) {
+			result.push( days[i] );
+		}
+	}
+	return result.join( "" );
+}
+
+// "167" => 0b11000001
+function weekdayStringToBitmask( days ) {
+	let result = 0;
+	for( const day of days ) {
+		result += 2^( day-1 );
+	}
+	return result;
+}
+
 // Timestamps are stringified like "2022-01-30 12:00:00.000"
 function dateToString( date ) {
 	const year = date.getFullYear().toString().padStart( 4, "0" );
@@ -75,6 +122,10 @@ function stringToBuffer( str ) {
 module.exports = {
 	toHex,
 	roundForReadability,
+	secondsToTimeOfDayString,
+	timeOfDayStringToSeconds,
+	bitmaskToWeekdayString,
+	weekdayStringToBitmask,
 	dateToString,
 	stringToDate,
 	bufferToString,
