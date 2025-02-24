@@ -282,7 +282,7 @@ const mapReceivedIdToState = {
 // List of all writable states and define how to send a corresponding SET to E3/DC
 // hash-key is the state id - '*' wildcards in path are allowed. This is the state the user will modify to trigger a change.
 // hash-value is [optional_container_global_tag, setter_global_tag]. This is the tag the adapter will send to the E3/DC device.
-// hash-value is [] (i.e. empty) for tags which are handled in a dedicated 'queue...' function
+// hash-value is [] (i.e. empty) for tags which are handled in a dedicated queue...() function
 const mapChangedIdToSetTags = {
 	"EMS.MAX_CHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_CHARGE_POWER"],
 	"EMS.MAX_DISCHARGE_POWER": ["TAG_EMS_REQ_SET_POWER_SETTINGS", "TAG_EMS_MAX_DISCHARGE_POWER"],
@@ -305,6 +305,12 @@ const mapChangedIdToSetTags = {
 	"EMS.*.*.START_MINUTE": [],
 	"EMS.*.*.END_HOUR": [],
 	"EMS.*.*.END_MINUTE": [],
+	"EMS.*.*.PERIOD_ACTIVE": [],
+	"EMS.*.*.IDLE_PERIOD_TYPE": [],
+	"EMS.*.*.PERIOD_START": [],
+	"EMS.*.*.PERIOD_STOP": [],
+	"EMS.*.*.PERIOD_WEEKDAYS": [],
+	"EMS.*.*.PERIOD_DESCRIPTION": [],
 	"EP.*.PARAM_EP_RESERVE": [],
 	"EP.*.PARAM_EP_RESERVE_ENERGY": [],
 	"DB.HISTORY_DATA_DAY.*": [],
@@ -375,7 +381,9 @@ const ignoreIds = [
 	"EMS.PARAM_INDEX", // always 0, occurs in container EMERGENCY_POWER_OVERLOAD_STATUS
 	"EMS.SYS_SPEC_INDEX",
 	"EMS.SET_IDLE_PERIODS",
+	"EMS.SET_IDLE_PERIODS_2",
 	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  	// Response is always "true", not usable for state with unit "%"
+	"EP.PARAM_INDEX",
 	"BAT.UNDEFINED",
 	"BAT.INTERNAL_CURRENT_AVG30",
 	"BAT.INTERNAL_MTV_AVG30",
@@ -399,6 +407,11 @@ const ignoreIndexIds = [
 	"WB.EXTERN_DATA_ALG",
 	"WB.EXTERN_RSP_PARAM_1",
 	"WB.EXTERN_RSP_PARAM_2",
+];
+// Some of the INDEX or COUNT tags must be treated as regular values, NOT as indexes
+const notIndexIds = [
+	"BAT.DCB_CYCLE_COUNT",
+	"BAT.SPECIFIED_MAX_DCB_COUNT",
 ];
 // Some of the tags are unavailable on some E3/DC devices.
 // For those, automatically stop polling after the first RSCP_ERR_NOT_AVAILABLE response:
@@ -470,16 +483,13 @@ class E3dcRscp extends utils.Adapter {
 
 		// For BAT and PVI, there is no COUNT request, so initialize maxIndex to a best guess upper bound.
 		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
-		this.maxIndex["BAT"] = 3; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
-		this.maxIndex["PVI"] = 2;
+		// Initial values can be set in adapter configuration.
+		this.maxIndex["BAT"] = 0; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
+		this.maxIndex["PVI"] = 0;
 
 		// For PM, there may be a non-sequential set of indexes like (0, 2, 6),
 		// so initialize with a best guess covering set, which will be pinched out dynamically.
 		this.indexSet = {}; // {path} - array of indexes with ok response
-		this.indexSet["PM"] = [];
-		for ( let i = 0; i < 10; i++ ) {
-			this.indexSet["PM"].push( i );
-		}
 
 		// For triggering the polling and setting requests:
 		this.dataPollingTimerS = null;
@@ -581,6 +591,14 @@ class E3dcRscp extends utils.Adapter {
 			this.log.error( "E3/DC connection error" );
 			this.reconnectChannel();
 		} );
+
+		// Initialize index sets from adapter config:
+		this.maxIndex["BAT"] = this.config.maxindex_bat; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
+		this.maxIndex["PVI"] = this.config.maxindex_pvi;
+		this.indexSet["PM"] = [];
+		for ( let i = 0; i <= this.config.maxindex_pm; i++ ) {
+			this.indexSet["PM"].push( i );
+		}
 
 		// Force some quick data requests for index probing and building up the object tree:
 		for( let i = 0; i < 5; i++ ) {
@@ -916,6 +934,7 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_POWER_VALUE", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS_2", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS", sml );
 		this.pushFrame();
 	}
@@ -1160,6 +1179,55 @@ class E3dcRscp extends utils.Adapter {
 		} else {
 			this.log.warn( `queueSetIdlePeriod: invalid globalId ${globalId}` );
 		}
+	}
+
+	queueSetIdlePeriods2() {
+		this.log.info( `queueSetIdlePeriod2()` );
+		const prefix = "EMS.IDLE_PERIODS_2";
+		if( this.sendTupleTimeout[prefix] ) {
+			clearTimeout( this.sendTupleTimeout[prefix] );
+		}
+		this.sendTupleTimeout[prefix] = setTimeout( () => {
+			// RSCP requires to send a container with _all_ PERIODs every time something changes.
+			getHighestSubnode( this, prefix, ( max ) => {
+				this.log.debug( `queueSetIdlePeriods2: maxNode = ${max}` );
+				this.clearFrame();
+				const c1 = this.startContainer( "TAG_EMS_REQ_SET_IDLE_PERIODS_2" );
+				let counter = max;
+				for( let n = 0; n <= max; n++ ) {
+					const node = `${prefix}.${n.toString().padStart( 2, "0" )}`;
+					this.log.debug( `queueSetIdlePeriod2(): node ${node}` );
+					this.getState( `${node}.PERIOD_ACTIVE`, ( err, active ) => {
+						this.getState( `${node}.PERIOD_DESCRIPTION`, ( err, description ) => {
+							this.getState( `${node}.PERIOD_WEEKDAYS`, ( err, weekdays ) => {
+								this.getState( `${node}.PERIOD_START`, ( err, start ) => {
+									this.getState( `${node}.PERIOD_STOP`, ( err, stop ) => {
+										this.getState( `${node}.IDLE_PERIOD_TYPE`, ( err, type ) => {
+											this.log.silly( `queueSetIdlePeriod2(): ${start ? start.val : "00:00:00"}-${stop ? stop.val : "00:00:00"} translates to ${helper.timeOfDayStringToSeconds( start ? start.val : "00:00:00" )}-${helper.timeOfDayStringToSeconds( stop ? stop.val : "00:00:00" )}` );
+											const c2 = this.startContainer( "TAG_EMS_IDLE_PERIOD_2" );
+											this.addTagtoFrame( "TAG_EMS_PERIOD_ACTIVE", "", active ? active.val : 0 );
+											this.addTagtoFrame( "TAG_EMS_PERIOD_DESCRIPTION", "", description ? description.val : "" );
+											this.addTagtoFrame( "TAG_EMS_PERIOD_WEEKDAYS", "", helper.weekdayStringToBitmask( weekdays ? weekdays.val : 0 ) );
+											this.addTagtoFrame( "TAG_EMS_PERIOD_START", "", helper.timeOfDayStringToSeconds( start ? start.val : "00:00:00" ) );
+											this.addTagtoFrame( "TAG_EMS_PERIOD_STOP", "", helper.timeOfDayStringToSeconds( stop ? stop.val : "00:00:00" ) );
+											this.addTagtoFrame( "TAG_EMS_IDLE_PERIOD_TYPE", "", type ? type.val : 0 );
+											this.endContainer( c2 );
+											if( --counter < 0 ) { // async detect loop work finished
+												this.pushFrame( c1 );
+												this.clearFrame();
+												this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS_2" );
+												this.pushFrame();
+												this.sendTupleTimeout[prefix] = null;
+											}
+										} );
+									} );
+								} );
+							} );
+						} );
+					} );
+				}
+			} );
+		}, this.config.send_tuple_delay * 1000 );
 	}
 
 	queueGetHistoryData( globalId ) {
@@ -1420,7 +1488,7 @@ class E3dcRscp extends utils.Adapter {
 				if ( shortId == "BAT.DATA" && rscpError[token.content] == "RSCP_ERR_NOT_AVAILABLE" ) {
 					// This is an error response due to out-of-range BAT index, heuristically cut off the biggest one:
 					--this.maxIndex["BAT"];
-					this.log.info( `Adjusted BAT max. index to ${this.maxIndex["BAT"]}` );
+					this.log.info( `Decreased BAT max. index to ${this.maxIndex["BAT"]}` );
 					continue;
 				}
 				if ( ["PM.DEVICE_STATE","PM.REQ_DEVICE_STATE"].includes( shortId ) && ["RSCP_ERR_NOT_AVAILABLE","RSCP_ERR_OUT_OF_BOUNDS"].includes( rscpError[token.content] ) ) {
@@ -1447,7 +1515,7 @@ class E3dcRscp extends utils.Adapter {
 					// This is an error response due to out-of-range PVI index
 					if( token.content[0].content - 1 < this.maxIndex["PVI"] ) {
 						this.maxIndex["PVI"] = token.content[0].content - 1;
-						this.log.info( `Adjusted PVI max. index to ${this.maxIndex["PVI"]}` );
+						this.log.info( `Decreased PVI max. index to ${token.content[0].content - 1}` );
 					}
 				} else if ( shortId == "INFO.MODULE_SW_VERSION" && token.content.length == 2 ) {
 					this.storeValue( nameSpace, pathNew + "MODULE_SW_VERSION.", token.content[0].content, "CString", token.content[1].content, token.content[0].content );
@@ -1456,6 +1524,8 @@ class E3dcRscp extends utils.Adapter {
 					wb.storeWbExternData( shortId, token.content, pathNew );
 				} else if ( shortId == "EMS.GET_IDLE_PERIODS" ) {
 					this.storeIdlePeriods( token.content, pathNew );
+				} else if ( shortId == "EMS.GET_IDLE_PERIODS_2" ) {
+					this.storeIdlePeriods2( token.content, pathNew );
 				} else if ( shortId.startsWith( "DB.HISTORY_DATA_" ) ) {
 					this.storeHistoryData( token.content, pathNew + `${tagName}.` );
 				} else if ( ignoreIndexIds.includes( shortId ) && token.content.length == 2 ) {
@@ -1503,33 +1573,40 @@ class E3dcRscp extends utils.Adapter {
 					continue;
 				}
 
-				// INDEX indicates top level device, e.g. TAG_BAT_INDEX
-				if( tagName == "INDEX" ) {
-					currentIndex = token.content;
-					if( tree.length <= Number( i )+1 || rscpType[tree[Number( i )+1].type] != "Error" ) {
-						if( nameSpace != "PM" ) { // PM has an index _set_ and is handled separately
-							this.maxIndex[nameSpace] = this.maxIndex[nameSpace] ? Math.max( this.maxIndex[nameSpace], currentIndex ) : currentIndex;
-							this.log.info( `Adjusted ${nameSpace} max. index to ${this.maxIndex[nameSpace]}` );
+				// Handle index values named INDEX or COUNT
+				if( !notIndexIds.includes( shortId ) ) {
+					// INDEX indicates top level device, e.g. TAG_BAT_INDEX
+					if( tagName == "INDEX" ) {
+						currentIndex = token.content;
+						if( tree.length <= Number( i )+1 || rscpType[tree[Number( i )+1].type] != "Error" ) {
+							if( nameSpace != "PM" && currentIndex > this.maxIndex[nameSpace] ) { // PM has an index _set_ and is handled separately
+								this.maxIndex[nameSpace] = currentIndex;
+								this.log.info( `Increased ${nameSpace} max. index to ${currentIndex}` );
+							}
+							pathNew = `${nameSpace}_${currentIndex}.`;
+							this.extendObject( `${nameSpace}.${pathNew.slice( 0,-1 )}`, { type: "channel", common: { role: "info.module" } } );
 						}
-						pathNew = `${nameSpace}_${currentIndex}.`;
-						this.extendObject( `${nameSpace}.${pathNew.slice( 0,-1 )}`, { type: "channel", common: { role: "info.module" } } );
+						continue;
 					}
-					continue;
-				}
-				// ..._INDEX indicates sub-device, e.g. TAG_BAT_DCB_INDEX
-				if( tagName.endsWith( "_INDEX" ) ) {
-					const name = tagName.replace( "_INDEX","" );
-					const key = path ? `${path}.${name}` : name ;
-					this.maxIndex[key] = this.maxIndex[key] ? Math.max( this.maxIndex[key], token.content ) : token.content;
-					this.log.debug( `Adjusted ${key} max. index to ${this.maxIndex[key]}` );
-					pathNew = path ? `${pathNew.split( "." ).slice( 0,-1 ).join( "." )}.${name}_${token.content}.` : `${name}_${token.content}.`;
-					this.extendObject( `${nameSpace}.${pathNew.slice( 0,-1 )}`, { type: "channel", common: { role: "info.submodule" } } );
-					continue;
-				}
-				// ..._COUNT explicitely sets upper bound for (sub-)device index
-				if( tagName.endsWith( "_COUNT" ) ) {
-					this.maxIndex[`${pathNew}${tagName.replace( "_COUNT","" )}`] = token.content - 1;
-					this.log.debug( `Adjusted ${pathNew}${tagName.replace( "_COUNT","" )} max. index to ${this.maxIndex[`${pathNew}${tagName.replace( "_COUNT","" )}`]}` );
+					// ..._INDEX indicates sub-device, e.g. TAG_BAT_DCB_INDEX
+					if( tagName.endsWith( "_INDEX" ) ) {
+						const name = tagName.replace( "_INDEX","" );
+						const key = path ? `${path}${name}` : name ;
+						if( !this.maxIndex[key] || token.content > this.maxIndex[key] ) {
+							this.maxIndex[key] = token.content;
+							this.log.debug( `Increased ${key} max. index to ${token.content}` );
+						}
+						pathNew = path ? `${pathNew.split( "." ).slice( 0,-1 ).join( "." )}.${name}_${token.content}.` : `${name}_${token.content}.`;
+						this.extendObject( `${nameSpace}.${pathNew.slice( 0,-1 )}`, { type: "channel", common: { role: "info.submodule" } } );
+						continue;
+					}
+					// ..._COUNT explicitely sets upper bound for (sub-)device index
+					if( tagName.endsWith( "_COUNT" ) ) {
+						if( this.maxIndex[`${pathNew}${tagName.replace( "_COUNT","" )}`] != ( token.content - 1 ) ) {
+							this.maxIndex[`${pathNew}${tagName.replace( "_COUNT","" )}`] = token.content - 1;
+							this.log.debug( `Adjusted ${pathNew}${tagName.replace( "_COUNT","" )} max. index to ${token.content - 1}` );
+						}
+					}
 				}
 				// Translate bit-mapped EMS.STATUS
 				if( shortId == "EMS.STATUS" ) {
@@ -1682,6 +1759,79 @@ class E3dcRscp extends utils.Adapter {
 		} );
 		this.extendObject( "EMS.IDLE_PERIODS_CHARGE", { type: "channel", common: { role: "calendar.week" } } );
 		this.extendObject( "EMS.IDLE_PERIODS_DISCHARGE", { type: "channel", common: { role: "calendar.week" } } );
+	}
+
+	storeIdlePeriods2( tree, path ) {
+		// Sometimes we receive an empty GET_IDLE_PERIODS_2 container. Don't know why. Ignore it.
+		if( tree.length > 0 ) {
+			const prefix = "EMS.IDLE_PERIODS_2";
+			if ( !this.sendTupleTimeout[prefix] ) { // do not overwrite manual changes which are waiting to be sent
+				let i = 0;
+				tree.forEach( token => {
+					if( rscpTag[token.tag].TagNameGlobal == "TAG_EMS_IDLE_PERIOD_2" ) {
+						const idleNode = `IDLE_PERIODS_2.${String( i ).padStart( 2, "0" )}`;
+						const newPath = `${path}${idleNode}.`;
+						let active = 0;
+						let type = 0;
+						let start = 0;
+						let stop = 0;
+						let weekdays = 0;
+						let desc = "";
+						token.content.forEach( member => {
+							switch( rscpTag[member.tag].TagNameGlobal ) {
+								case "TAG_EMS_PERIOD_ACTIVE": active = member.content; break;
+								case "TAG_EMS_PERIOD_DESCRIPTION": desc = member.content; break;
+								case "TAG_EMS_PERIOD_WEEKDAYS": weekdays = member.content; break;
+								case "TAG_EMS_PERIOD_START": start = member.content; break;
+								case "TAG_EMS_PERIOD_STOP": stop = member.content; break;
+								case "TAG_EMS_IDLE_PERIOD_TYPE": type = member.content; break;
+								default: this.log.debug( `storeIdlePeriods2: got unexpected tag ${rscpTag[member.tag].TagNameGlobal}` );
+							}
+						} );
+						this.storeValue( "EMS", newPath, "PERIOD_ACTIVE", "Bool", ( active != 0 ), "PERIOD_ACTIVE" );
+						this.storeValue( "EMS", newPath, "PERIOD_DESCRIPTION", "CString", desc, "PERIOD_DESCRIPTION" );
+						this.storeValue( "EMS", newPath, "PERIOD_WEEKDAYS", "CString", helper.bitmaskToWeekdayString( weekdays ), "PERIOD_WEEKDAYS" );
+						this.storeValue( "EMS", newPath, "PERIOD_START", "CString", helper.secondsToTimeOfDayString( start ), "PERIOD_START" );
+						this.storeValue( "EMS", newPath, "PERIOD_STOP", "CString", helper.secondsToTimeOfDayString( stop ), "PERIOD_STOP" );
+						this.storeValue( "EMS", newPath, "IDLE_PERIOD_TYPE", "UChar8", type, "TYPE" );
+						this.extendObject( `EMS.${newPath.slice( 0, -1 )}`, { type: "channel", common: { role: "calendar.day" } } );
+						i++;
+					}
+				} );
+				this.extendObject( prefix, { type: "channel", common: { role: "calendar.week" } } );
+				this.maxIndex[prefix] = i - 1;
+				this.log.silly( `storeIdlePeriods2: new max is ${i}; will delete higher indexes.` );
+				// delete remaining periods (may happen when periods were deleted e.g. using the E3/DC portal)
+				getHighestSubnode( this, prefix, ( max ) => {
+					for( i; i <= max; i++ ) {
+						const id = `${prefix}.${String( i ).padStart( 2, "0" )}`;
+						this.delObject( id, { recursive: true }, ( err ) => {
+							if ( err ) {
+								this.log.warn( `storeIdlePeriods2: cannot delete ${id}: ${err}` );
+							} else {
+								this.log.silly( `storeIdlePeriods2: deleted period ${id} since it was no longer reported via RSCP.` );
+							}
+						} );
+					}
+				} );
+			}
+			// Delete & reload idle periods V1 objects, to get rid of "zombie objects"
+			let id = "e3dc-rscp.0.EMS.IDLE_PERIODS_CHARGE";
+			this.delObject( id, { recursive: true }, ( err ) => {
+				if( err ) {
+					this.log.warn( `storeIdlePeriods2: cannot delete ${id}: ${err}` );
+				}
+			} );
+			id = "e3dc-rscp.0.EMS.IDLE_PERIODS_DISCHARGE";
+			this.delObject( id, { recursive: true }, ( err ) => {
+				if( err ) {
+					this.log.warn( `storeIdlePeriods2: cannot delete ${id}: ${err}` );
+				}
+			} );
+			this.clearFrame();
+			this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
+			this.pushFrame();
+		}
 	}
 
 	storeHistoryData( tree, path ) {
@@ -2165,6 +2315,8 @@ class E3dcRscp extends utils.Adapter {
 					} );
 				} else if ( id.includes( ".WB." ) ) {
 					wb.queueWbSetData( id );
+				} else if ( id.includes( "IDLE_PERIODS_2" ) ) {
+					this.queueSetIdlePeriods2();
 				} else if ( id.includes( "IDLE_PERIOD" ) ) {
 					this.queueSetIdlePeriod( id );
 				} else if ( id.includes( "HISTORY_DATA" ) ) {
@@ -2349,15 +2501,15 @@ function printTree( tree ) {
 	if ( tree ) {
 		result = "[ ";
 		tree.forEach( element => {
-			result += `{${rscpTag[element.tag].TagNameGlobal}(${rscpType[element.type]}) = `;
+			result += `<${rscpTag[element.tag].TagNameGlobal}(${rscpType[element.type]}) = `;
 			if ( rscpType[element.type] == "Container" ) {
 				result += printTree( element.content );
 			} else {
 				result += element.content;
 			}
-			result += "}, ";
+			result += ">, ";
 		} );
-		result += " ]";
+		result = result.slice( 0, -2 ) + " ]";
 	}
 	return result;
 }
@@ -2380,4 +2532,22 @@ function getSetTags( id ) {
 		}
 		return result;
 	}
+}
+
+// Given node <id> has subnodes "00", "01", "02", ... - return highest number
+function getHighestSubnode( adapter, id, callback ) {
+	adapter.getStates( id + ".*", ( err, states ) => {
+		if ( err || !states ) {
+			callback( null );
+			return;
+		}
+		let max = -1;
+		Object.keys( states ).forEach( id => {
+			const match = id.match( /\.(\d+)\.[A-Z_]+$/ );
+			if ( match ) {
+				max = Math.max( max, parseInt( match[1], 10 ) );
+			}
+		} );
+		callback( max >= 0 ? max : null );
+	} );
 }

@@ -10,7 +10,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "This tag is used for authentication at the E3/DC system. / Be aware that before authentication takes place, the connection is already encrypted using the encryption passphrase. Also be aware that each particular connection ('session') must be authenticated, even if the connection is reestablished after it was lost. It is good practice to authenticate within the first RSCP frame(s) send over a new connection before any other data is exchanged. Otherwise the access granted is very limited. / There are two possibilities to authenticate. The user/password authentication authenticates a single user, while the challenge/response authentication authenticates an E3/DC partner to the system. Customers must use the user/password authentication, while E3/DC partners may use either challenge/response partner authentication or user/password customer authentication. If in doubt which one to use, use user/password authentication. / For user/password authentication the tags TAG_RSCP_AUTHENTICATION_USER and TAG_RSCP_AUTHENTICATION_PASSWORD must be contained in the request. / The usage of the challenge/response partner authentication must be requested from E3/DC. Before sending the authentication data, an auth challenge must be obtained from the system by sending TAG_RSCP_REQ_AUTH_CHALLENGE. The obtained auth challenge must be processed with the partners credentials claimed from E3/DC. Beside TAG_RSCP_AUTHENTICATION_USER, the tags TAG_RSCP_AUTH_CHALLENGE_INDEX and TAG_RSCP_AUTH_CHALLENGE_DATA hold the response for the challenge. Please note that any requested auth challenge can be used only once and within a limited time span. This procedure may later be followed by a user/password authentication if neccessary. / Dieser TAG kapselt eine Authorisierungsanfrage an das S10. Er enth?lt daher die Daten-Tags AUTHENTICATION_USER und AUTHENTICATION_PASSWORD"
+		"Description": "This tag is used for authentication at the E3/DC system. / Be aware that before authentication takes place, the connection is already encrypted using the encryption passphrase. Also be aware that each particular connection ('session') must be authenticated, even if the connection is reestablished after it was lost. It is good practice to authenticate within the first RSCP frame(s) send over a new connection before any other data is exchanged. Otherwise the access granted is very limited. / There are two possibilities to authenticate. The user/password authentication authenticates a single user, while the challenge/response authentication authenticates an E3/DC partner to the system. Customers must use the user/password authentication, while E3/DC partners may use either challenge/response partner authentication or user/password customer authentication. If in doubt which one to use, use user/password authentication. / For user/password authentication the tags TAG_RSCP_AUTHENTICATION_USER and TAG_RSCP_AUTHENTICATION_PASSWORD must be contained in the request. / The usage of the challenge/response partner authentication must be requested from E3/DC. Before sending the authentication data, an auth challenge must be obtained from the system by sending TAG_RSCP_REQ_AUTH_CHALLENGE. The obtained auth challenge must be processed with the partners credentials claimed from E3/DC. Beside TAG_RSCP_AUTHENTICATION_USER, the tags TAG_RSCP_AUTH_CHALLENGE_INDEX and TAG_RSCP_AUTH_CHALLENGE_DATA hold the response for the challenge. Please note that any requested auth challenge can be used only once and within a limited time span. This procedure may later be followed by a user/password authentication if neccessary. / Dieser TAG kapselt eine Authorisierungsanfrage an das S10. Er enthält daher die Daten-Tags AUTHENTICATION_USER und AUTHENTICATION_PASSWORD"
 	},
 	"2": {
 		"TagHex": "0x00000002",
@@ -153,7 +153,7 @@
 		"DataTypeHex": "0x03",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
-		"Description": "The response to tag TAG_RSCP_REQ_AUTHENTICATION will contain the level of the access granted. See TAG_RSCP_USER_LEVEL for a list. If this response contains an error, the authentication is failed. / Die Antwort auf einen REQ_AUTHENTICATION die den erhaltenen Level enth?lt. / NO_AUTH = 0 / USER = 10 / INSTALLER = 20 / PARTNER = 30 / E3DC = 40 / E3DC_ADMIN = 50 / E3DC_ROOT = 60"
+		"Description": "The response to tag TAG_RSCP_REQ_AUTHENTICATION will contain the level of the access granted. See TAG_RSCP_USER_LEVEL for a list. If this response contains an error, the authentication is failed. / Die Antwort auf einen REQ_AUTHENTICATION die den erhaltenen Level enthält. / NO_AUTH = 0 / USER = 10 / INSTALLER = 20 / PARTNER = 30 / E3DC = 40 / E3DC_ADMIN = 50 / E3DC_ROOT = 60"
 	},
 	"8388612": {
 		"TagHex": "0x00800004",
@@ -309,7 +309,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Leistung eines zus?tzlich vorhandenen Einspeisers in W"
+		"Description": "Leistung eines zusätzlich vorhandenen Einspeisers in W"
 	},
 	"16777222": {
 		"TagHex": "0x01000006",
@@ -595,7 +595,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Anfragetag ob ein zus?tzlicher Leistungsmesser installiert ist, der zus?ztliche Quellen misst."
+		"Description": "Anfragetag ob ein zusätzlicher Leistungsmesser installiert ist, der zusäztliche Quellen misst."
 	},
 	"16777255": {
 		"TagHex": "0x01000027",
@@ -725,7 +725,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Mit diesem TAG kann in die Regelung des S10s eingegriffen werden. / Bei DC-Systemen ist die Ladeleistung auf die anliegende PV-Leistung beschr?nkt, bei AC und Hybrid-Systemen kann die Ladeleistung auch gr??er der PV-Leistung sein. / Achtung: Wenn mit diesem Kommando eingegriffen wird, wird eine eventuell gesetzte Einspeisereduzierung NICHT beachtet! / Achtung: Das Kommando muss mindestens alle 30 Sekunden gesetzt werden, ansonsten geht das EMS in den Normalmodus."
+		"Description": "Mit diesem TAG kann in die Regelung des S10s eingegriffen werden. / Bei DC-Systemen ist die Ladeleistung auf die anliegende PV-Leistung beschränkt, bei AC und Hybrid-Systemen kann die Ladeleistung auch großer der PV-Leistung sein. / Achtung: Wenn mit diesem Kommando eingegriffen wird, wird eine eventuell gesetzte Einspeisereduzierung NICHT beachtet! / Achtung: Das Kommando muss mindestens alle 30 Sekunden gesetzt werden, ansonsten geht das EMS in den Normalmodus."
 	},
 	"16777265": {
 		"TagHex": "0x01000031",
@@ -1219,7 +1219,7 @@
 		"DataTypeHex": "0x06",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Die verf?gbare Solarleistung wird mit diesem Wert ?berschrieben! (Dieser Wert wird an die WallBox gesendet)."
+		"Description": "Die verfügbare Solarleistung wird mit diesem Wert überschrieben! (Dieser Wert wird an die WallBox gesendet)."
 	},
 	"16777334": {
 		"TagHex": "0x01000076",
@@ -1596,7 +1596,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Enth?lt die Elemente SYS_SPEC_INDEX, SYS_SPEC_NAME, SYS_SPEC_VALUE und kennzeichnet eine Systemeigenschaft."
+		"Description": "Enthält die Elemente SYS_SPEC_INDEX, SYS_SPEC_NAME, SYS_SPEC_VALUE und kennzeichnet eine Systemeigenschaft."
 	},
 	"16777370": {
 		"TagHex": "0x0100009a",
@@ -2259,7 +2259,7 @@
 		"DataTypeHex": "0x03",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Abfrage: Batterieentladung durch Wallbox, im Mischmodus und w?hrend Haltezeit und Zeitfunktion."
+		"Description": "Abfrage: Batterieentladung durch Wallbox, im Mischmodus und während Haltezeit und Zeitfunktion."
 	},
 	"16777852": {
 		"TagHex": "0x0100027C",
@@ -2974,7 +2974,7 @@
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Leistung eines zus?tzlich vorhandenen Einspeisers in W"
+		"Description": "Leistung eines zusätzlich vorhandenen Einspeisers in W"
 	},
 	"25165830": {
 		"TagHex": "0x01800006",
@@ -3039,7 +3039,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung ?bertragen!"
+		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung übertragen!"
 	},
 	"25165835": {
 		"TagHex": "0x0180000b",
@@ -3052,7 +3052,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung ?bertragen!"
+		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung übertragen!"
 	},
 	"25165836": {
 		"TagHex": "0x0180000c",
@@ -3065,7 +3065,7 @@
 		"DataTypeHex": "0x03",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung ?bertragen!"
+		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung übertragen!"
 	},
 	"25165837": {
 		"TagHex": "0x0180000d",
@@ -3078,7 +3078,7 @@
 		"DataTypeHex": "0x0D",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung ?bertragen!"
+		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung übertragen!"
 	},
 	"25165838": {
 		"TagHex": "0x0180000e",
@@ -3091,7 +3091,7 @@
 		"DataTypeHex": "0x0D",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung ?bertragen!"
+		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung übertragen!"
 	},
 	"25165839": {
 		"TagHex": "0x0180000f",
@@ -3104,7 +3104,7 @@
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung ?bertragen!"
+		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung übertragen!"
 	},
 	"25165840": {
 		"TagHex": "0x01800010",
@@ -3117,7 +3117,7 @@
 		"DataTypeHex": "0x09",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung ?bertragen!"
+		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung übertragen!"
 	},
 	"25165841": {
 		"TagHex": "0x01800011",
@@ -3451,8 +3451,8 @@
 		"DataTagHex": "0x80002f",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
-		"DataType": "UChar8",
-		"DataTypeHex": "0x03",
+		"DataType": "Container",
+		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "This container always must contain the full set of idle periods."
@@ -3468,7 +3468,7 @@
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Die Antwort auf einen REQ_SET_POWER. Es werden die empfangenen Werte zur?ckgespiegelt."
+		"Description": "Die Antwort auf einen REQ_SET_POWER. Es werden die empfangenen Werte zurückgespiegelt."
 	},
 	"25165875": {
 		"TagHex": "0x01800033",
@@ -3481,7 +3481,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
-		"Description": "The response container contains all idle periods defined."
+		"Description": "The response container contains all idle periods defined. - Is empty, if nothing changed (detected by git-kick)."
 	},
 	"25165876": {
 		"TagHex": "0x01800034",
@@ -3845,7 +3845,7 @@
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Antwort mit dem tats?chlich gesetzten Offset"
+		"Description": "Antwort mit dem Tatsächlich gesetzten Offset"
 	},
 	"25165921": {
 		"TagHex": "0x01800061",
@@ -3871,7 +3871,7 @@
 		"DataTypeHex": "0x07",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Noch m?gliche Ladeleistung nach Abzug der momentanen Ladeleistung vom momentanen Limit."
+		"Description": "Noch mögliche Ladeleistung nach Abzug der momentanen Ladeleistung vom momentanen Limit."
 	},
 	"25165938": {
 		"TagHex": "0x01800072",
@@ -3884,7 +3884,7 @@
 		"DataTypeHex": "0x07",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Noch m?gliche Entladeleistung nach Abzug der momentanen Entladeleistung vom momentanen Limit."
+		"Description": "Noch mögliche Entladeleistung nach Abzug der momentanen Entladeleistung vom momentanen Limit."
 	},
 	"25165939": {
 		"TagHex": "0x01800073",
@@ -3936,7 +3936,7 @@
 		"DataTypeHex": "0x03",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "1 = Modus aktiviert / 0 = Modus deaktiviert / 0xFF = Aktivierung nicht m?glich (BatteryBeforeCar noch aktiv?)"
+		"Description": "1 = Modus aktiviert / 0 = Modus deaktiviert / 0xFF = Aktivierung nicht möglich (BatteryBeforeCar noch aktiv?)"
 	},
 	"25165943": {
 		"TagHex": "0x01800077",
@@ -3962,7 +3962,7 @@
 		"DataTypeHex": "0x03",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "1 = Modus aktiviert / 0 = Modus deaktiviert / 0xFF = Aktivierung nicht m?glich (BatteryToCar noch aktiv?)"
+		"Description": "1 = Modus aktiviert / 0 = Modus deaktiviert / 0xFF = Aktivierung nicht möglich (BatteryToCar noch aktiv?)"
 	},
 	"25165945": {
 		"TagHex": "0x01800079",
@@ -4144,7 +4144,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Enth?lt die Antwort auf das Setzen der PowerSettings. Gibt f?r jeden gesetzen Wert eine entsprechendes Element mit R?ckgabecode zur?ck. / Kann die Folgenden TAGS enthalten: / RES_POWER_LIMITS_USED / RES_MAX_CHARGE_POWER / RES_MAX_DISCHARGE_POWER / RES_MINIMUM_DISCHARGE_POWER / RES_POWERSAVE_ENABLED / RES_WEATHER_REGULATED_CHARGE_ENABLED / RES_WEATHER_FORECAST_MODE"
+		"Description": "Enthält die Antwort auf das Setzen der PowerSettings. Gibt für jeden gesetzen Wert eine entsprechendes Element mit Rückgabecode zurück. / Kann die Folgenden TAGS enthalten: / RES_POWER_LIMITS_USED / RES_MAX_CHARGE_POWER / RES_MAX_DISCHARGE_POWER / RES_MINIMUM_DISCHARGE_POWER / RES_POWERSAVE_ENABLED / RES_WEATHER_REGULATED_CHARGE_ENABLED / RES_WEATHER_FORECAST_MODE"
 	},
 	"25165965": {
 		"TagHex": "0x0180008d",
@@ -4196,7 +4196,7 @@
 		"DataTypeHex": "0x03",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Gibt als R?ckantwort die Anzahl der gestarteten Notstromtests zur?ck."
+		"Description": "Gibt als Rückantwort die Anzahl der gestarteten Notstromtests zurück."
 	},
 	"25165969": {
 		"TagHex": "0x01800091",
@@ -4222,7 +4222,7 @@
 		"DataTypeHex": "0x03",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Gibt als R?ckantwort / Erfolgreich = 0x01 / Unbekannter Generatormodus = 0xFE / Kein Generator vorhanden oder Generatorinterface kommuniziert nicht = 0xFF"
+		"Description": "Gibt als Rückantwort / Erfolgreich = 0x01 / Unbekannter Generatormodus = 0xFE / Kein Generator vorhanden oder Generatorinterface kommuniziert nicht = 0xFF"
 	},
 	"25165971": {
 		"TagHex": "0x01800093",
@@ -4248,7 +4248,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Enth?lt 1 -x Untercontainer vom Typ SYS_SPEC."
+		"Description": "Enthält 1 -x Untercontainer vom Typ SYS_SPEC."
 	},
 	"25166080": {
 		"TagHex": "0x01800100",
@@ -4274,7 +4274,7 @@
 		"DataTypeHex": "0x02",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Maximale Ladeleistung / returns: / 1 bei Erfolg, allerdings ist das limit unterhalb des empfohlenden Limits / 0 Werte erfolgreich gesetzt / -1 Wert au?erhalb des zul?ssigen Bereichs / -2 setzen momentan nicht m?glich, sp?ter erneut versuchen."
+		"Description": "Maximale Ladeleistung / returns: / 1 bei Erfolg, allerdings ist das limit unterhalb des empfohlenden Limits / 0 Werte erfolgreich gesetzt / -1 Wert außerhalb des zulässigen Bereichs / -2 setzen momentan nicht möglich, später erneut versuchen."
 	},
 	"25166082": {
 		"TagHex": "0x01800102",
@@ -4287,7 +4287,7 @@
 		"DataTypeHex": "0x02",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Maximale Entladeleistung / returns: / 1 bei Erfolg, allerdings ist das limit unterhalb des empfohlenden Limits / 0 Werte erfolgreich gesetzt / -1 Wert au?erhalb des zul?ssigen Bereichs / -2 setzen momentan nicht m?glich, sp?ter erneut versuchen."
+		"Description": "Maximale Entladeleistung / returns: / 1 bei Erfolg, allerdings ist das limit unterhalb des empfohlenden Limits / 0 Werte erfolgreich gesetzt / -1 Wert außerhalb des zulässigen Bereichs / -2 setzen momentan nicht möglich, später erneut versuchen."
 	},
 	"25166083": {
 		"TagHex": "0x01800103",
@@ -4300,7 +4300,7 @@
 		"DataTypeHex": "0x02",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Minimale Entladeleistung / returns: / 0 Werte erfolgreich gesetzt / -1 Wert au?erhalb des zul?ssigen Bereichs / -2 setzen momentan nicht m?glich, sp?ter erneut versuchen."
+		"Description": "Minimale Entladeleistung / returns: / 0 Werte erfolgreich gesetzt / -1 Wert außerhalb des zulässigen Bereichs / -2 setzen momentan nicht möglich, später erneut versuchen."
 	},
 	"25166084": {
 		"TagHex": "0x01800104",
@@ -5186,6 +5186,19 @@
 		"Unit": "",
 		"Description": "Flag for the activation of the period. If the flag is false, the period is not taken into account."
 	},
+	"25166594": {
+		"TagHex": "0x01800302",
+		"TagName": "PERIOD_DESCRIPTION",
+		"TagNameGlobal": "TAG_EMS_PERIOD_DESCRIPTION",
+		"DataTagHex": "0x800302",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "CString",
+		"DataTypeHex": "0x0D",
+		"UserLevel": "NO_VALIDATION",
+		"Unit": "",
+		"Description": "Description for the idle period - detected by git-kick."
+	},
 	"25166595": {
 		"TagHex": "0x01800303",
 		"TagName": "PERIOD_WEEKDAYS",
@@ -5210,7 +5223,7 @@
 		"DataTypeHex": "0x07",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
-		"Description": "The begin of the idle period in seconds since midnight (0 to 86399). If the stop has a lower value than the start, it is assumed that the end is in the morning of the next day."
+		"Description": "The begin of the idle period in minutes since midnight (0 to 1439). If the stop has a lower value than the start, it is assumed that the end is in the morning of the next day."
 	},
 	"25166597": {
 		"TagHex": "0x01800305",
@@ -5223,7 +5236,20 @@
 		"DataTypeHex": "0x07",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
-		"Description": "The end of the idle period in seconds since midnight (0 to 86399). If the stop has a lower value than the start, it is assumed that the end is in the morning of the next day."
+		"Description": "The end of the idle period in minutes since midnight (0 to 1439). If the stop has a lower value than the start, it is assumed that the end is in the morning of the next day."
+	},
+	"25166599": {
+		"TagHex": "0x01800307",
+		"TagName": "PERIOD_UNKNOWN",
+		"TagNameGlobal": "TAG_EMS_PERIOD_UNKNOWN",
+		"DataTagHex": "0x800307",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "CString",
+		"DataTypeHex": "0x0D",
+		"UserLevel": "NO_VALIDATION",
+		"Unit": "",
+		"Description": "Unknown idle period tag - detected by git-kick."
 	},
 	"25493504": {
 		"TagHex": "0x01850000",
@@ -5522,7 +5548,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Spannung Steigung aufw?rts"
+		"Description": "Spannung Steigung aufwärts"
 	},
 	"33554549": {
 		"TagHex": "0x02000075",
@@ -5535,7 +5561,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Spannung Steigung abw?rts."
+		"Description": "Spannung Steigung abwärts."
 	},
 	"33554560": {
 		"TagHex": "0x02000080",
@@ -5730,7 +5756,7 @@
 		"DataTypeHex": "0x05",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Index des angefragten Ger?tes (0...x), Muss in Anfrage und Antwort zum DATA-Tag vorkommen."
+		"Description": "Index des angefragten Gerätes (0...x), Muss in Anfrage und Antwort zum DATA-Tag vorkommen."
 	},
 	"33816581": {
 		"TagHex": "0x02040005",
@@ -5743,7 +5769,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "DataType gibt den jeweiligen Daten Typ zur?ck!"
+		"Description": "DataType gibt den jeweiligen Daten Typ zurück!"
 	},
 	"33947648": {
 		"TagHex": "0x02060000",
@@ -6471,7 +6497,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Ger?te-Status / DEVICE_CONNECTED & DEVICE_WORKING & DEVICE_IN_SERVICE"
+		"Description": "Geräte-Status / DEVICE_CONNECTED & DEVICE_WORKING & DEVICE_IN_SERVICE"
 	},
 	"42336257": {
 		"TagHex": "0x02860001",
@@ -6757,7 +6783,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Max. DC-Stromst?rke / TAG_PVI_INDEX & TAG_PVI_VALUE"
+		"Description": "Max. DC-Stromstärke / TAG_PVI_INDEX & TAG_PVI_VALUE"
 	},
 	"42844165": {
 		"TagHex": "0x028dc005",
@@ -6796,7 +6822,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Max. DC-Stromst?rke in A / TAG_PVI_INDEX & TAG_PVI_VALUE"
+		"Description": "Max. DC-Stromstärke in A / TAG_PVI_INDEX & TAG_PVI_VALUE"
 	},
 	"42844168": {
 		"TagHex": "0x028dc008",
@@ -6809,7 +6835,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Min. DC-Stromst?rke in A / TAG_PVI_INDEX & TAG_PVI_VALUE"
+		"Description": "Min. DC-Stromstärke in A / TAG_PVI_INDEX & TAG_PVI_VALUE"
 	},
 	"42844169": {
 		"TagHex": "0x028dc009",
@@ -7017,7 +7043,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Anfrage Tats?chlicher SOC / imported from rxhan/RSCPGui"
+		"Description": "Anfrage Tatsächlicher SOC / imported from rxhan/RSCPGui"
 	},
 	"50331663": {
 		"TagHex": "0x0300000F",
@@ -7303,7 +7329,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Anfrage Nutzbare Kapazit?t in Ah / imported from rxhan/RSCPGui"
+		"Description": "Anfrage Nutzbare Kapazität in Ah / imported from rxhan/RSCPGui"
 	},
 	"50331687": {
 		"TagHex": "0x03000027",
@@ -7316,7 +7342,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Anfrage Verbleibende Kapazit?t in Wh / imported from rxhan/RSCPGui"
+		"Description": "Anfrage Verbleibende Kapazität in Wh / imported from rxhan/RSCPGui"
 	},
 	"50331688": {
 		"TagHex": "0x03000028",
@@ -7693,7 +7719,7 @@
 		"DataTypeHex": "0x05",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Index des angefragten Ger?tes (Im Moment immer 0 bei der Batterie), kann in der Anfrage und in der Antwort vorkommen."
+		"Description": "Index des angefragten Gerätes (Im Moment immer 0 bei der Batterie), kann in der Anfrage und in der Antwort vorkommen."
 	},
 	"50724864": {
 		"TagHex": "0x03060000",
@@ -7732,7 +7758,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r errechnet SOC Wert."
+		"Description": "Rückgabewert für errechnet SOC Wert."
 	},
 	"58720258": {
 		"TagHex": "0x03800002",
@@ -7745,7 +7771,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r gesamte Batteriespannung."
+		"Description": "Rückgabewert für gesamte Batteriespannung."
 	},
 	"58720259": {
 		"TagHex": "0x03800003",
@@ -7758,7 +7784,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r gesamten Batteriestrom."
+		"Description": "Rückgabewert für gesamten Batteriestrom."
 	},
 	"58720260": {
 		"TagHex": "0x03800004",
@@ -7771,7 +7797,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r maximale Batteriespannung."
+		"Description": "Rückgabewert für maximale Batteriespannung."
 	},
 	"58720261": {
 		"TagHex": "0x03800005",
@@ -7784,7 +7810,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r maximale Batterieladestrom."
+		"Description": "Rückgabewert für maximale Batterieladestrom."
 	},
 	"58720262": {
 		"TagHex": "0x03800006",
@@ -7797,7 +7823,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r Entladeschlussspannung."
+		"Description": "Rückgabewert für Entladeschlussspannung."
 	},
 	"58720263": {
 		"TagHex": "0x03800007",
@@ -7810,7 +7836,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r maximale Batterieentladestrom."
+		"Description": "Rückgabewert für maximale Batterieentladestrom."
 	},
 	"58720264": {
 		"TagHex": "0x03800008",
@@ -7823,7 +7849,7 @@
 		"DataTypeHex": "0x07",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r Batterieladezyklen."
+		"Description": "Rückgabewert für Batterieladezyklen."
 	},
 	"58720265": {
 		"TagHex": "0x03800009",
@@ -7836,7 +7862,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r die Terminalspannung."
+		"Description": "Rückgabewert für die Terminalspannung."
 	},
 	"58720266": {
 		"TagHex": "0x0380000a",
@@ -7849,7 +7875,7 @@
 		"DataTypeHex": "0x0C",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r Batteriestatus."
+		"Description": "Rückgabewert für Batteriestatus."
 	},
 	"58720267": {
 		"TagHex": "0x0380000b",
@@ -7862,7 +7888,7 @@
 		"DataTypeHex": "0x0C",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r Batteriefehler."
+		"Description": "Rückgabewert für Batteriefehler."
 	},
 	"58720268": {
 		"TagHex": "0x0380000c",
@@ -7875,7 +7901,7 @@
 		"DataTypeHex": "0x0D",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r Batteriebezeichnung."
+		"Description": "Rückgabewert für Batteriebezeichnung."
 	},
 	"58720269": {
 		"TagHex": "0x0380000d",
@@ -7888,7 +7914,7 @@
 		"DataTypeHex": "0x03",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "R?ckgabewert f?r Anzahl der gefundenen DCBs."
+		"Description": "Rückgabewert für Anzahl der gefundenen DCBs."
 	},
 	"58720270": {
 		"TagHex": "0x0380000E",
@@ -7901,7 +7927,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "%",
-		"Description": "Tats?chlicher SOC / imported from rxhan/RSCPGui"
+		"Description": "Tatsächlicher SOC / imported from rxhan/RSCPGui"
 	},
 	"58720271": {
 		"TagHex": "0x0380000F",
@@ -8018,7 +8044,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Ein Container mit allen Temperaturen f?r die angefragte DCB."
+		"Description": "Ein Container mit allen Temperaturen für die angefragte DCB."
 	},
 	"58720280": {
 		"TagHex": "0x03800018",
@@ -8044,7 +8070,7 @@
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Ein Container mit allen Spannungen f?r die angefragte DCB."
+		"Description": "Ein Container mit allen Spannungen für die angefragte DCB."
 	},
 	"58720282": {
 		"TagHex": "0x0380001A",
@@ -8200,7 +8226,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "Ah",
-		"Description": "Nutzbare Kapazit?t in Ah / imported from rxhan/RSCPGui"
+		"Description": "Nutzbare Kapazität in Ah / imported from rxhan/RSCPGui"
 	},
 	"58720295": {
 		"TagHex": "0x03800027",
@@ -8213,7 +8239,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "Ah",
-		"Description": "Verbleibende Kapazit?t in Wh / imported from rxhan/RSCPGui"
+		"Description": "Verbleibende Kapazität in Wh / imported from rxhan/RSCPGui"
 	},
 	"58720296": {
 		"TagHex": "0x03800028",
@@ -8329,7 +8355,7 @@
 		"DataType": "None",
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
-		"Unit": "?C",
+		"Unit": "°C",
 		"Description": "imported from rxhan/RSCPGui"
 	},
 	"58720328": {
@@ -8342,7 +8368,7 @@
 		"DataType": "None",
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
-		"Unit": "?C",
+		"Unit": "°C",
 		"Description": "imported from rxhan/RSCPGui"
 	},
 	"58720329": {
@@ -8837,7 +8863,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "Wh",
-		"Description": "Kapazit?t (spezifiziert) in Wh / imported from rxhan/RSCPGui"
+		"Description": "Kapazität (spezifiziert) in Wh / imported from rxhan/RSCPGui"
 	},
 	"58720550": {
 		"TagHex": "0x03800126",
@@ -9045,7 +9071,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Ger?tename / imported from rxhan/RSCPGui"
+		"Description": "Gerätename / imported from rxhan/RSCPGui"
 	},
 	"58721028": {
 		"TagHex": "0x03800304",
@@ -9162,7 +9188,7 @@
 		"DataTypeHex": "0x01",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Ger?t verbunden / Kommt nur im BAT_DEVICE_STATE Antwort vor."
+		"Description": "Gerät verbunden / Kommt nur im BAT_DEVICE_STATE Antwort vor."
 	},
 	"59113474": {
 		"TagHex": "0x03860002",
@@ -9175,7 +9201,7 @@
 		"DataTypeHex": "0x01",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Ger?t arbeitet / Kommt nur im BAT_DEVICE_STATE Antwort vor."
+		"Description": "Gerät arbeitet / Kommt nur im BAT_DEVICE_STATE Antwort vor."
 	},
 	"59113475": {
 		"TagHex": "0x03860003",
@@ -9188,7 +9214,7 @@
 		"DataTypeHex": "0x01",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Ger?t im Service / Kommt nur im BAT_DEVICE_STATE Antwort vor."
+		"Description": "Gerät im Service / Kommt nur im BAT_DEVICE_STATE Antwort vor."
 	},
 	"67108863": {
 		"TagHex": "0x03ffffff",
@@ -9214,7 +9240,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Anfrage Stromst?rke BAT / As parameter the index of the DCDC is required. Index 0 is for GroupController."
+		"Description": "Anfrage Stromstärke BAT / As parameter the index of the DCDC is required. Index 0 is for GroupController."
 	},
 	"67108866": {
 		"TagHex": "0x04000002",
@@ -9435,7 +9461,7 @@
 		"DataTypeHex": "0x05",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Index des angefragten Ger?tes (0...n f?r die FBC Nr oder 0xFF f?r Gruppe), Kommt in der Anfrage und in der Antwort zum DATA-Tag vor."
+		"Description": "Index des angefragten Gerätes (0...n für die FBC Nr oder 0xFF für Gruppe), Kommt in der Anfrage und in der Antwort zum DATA-Tag vor."
 	},
 	"67502080": {
 		"TagHex": "0x04060000",
@@ -9916,7 +9942,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Anfrage Ger?te-ID / Kann nur innerhalb eines REQ_PM_DATA Container verwendet werden!"
+		"Description": "Anfrage Geräte-ID / Kann nur innerhalb eines REQ_PM_DATA Container verwendet werden!"
 	},
 	"83886090": {
 		"TagHex": "0x0500000a",
@@ -10085,7 +10111,7 @@
 		"DataTypeHex": "0x05",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Index des angefragten Ger?tes (0...x), muss in Anfrage und ist in Antwort enthalten."
+		"Description": "Index des angefragten Gerätes (0...x), muss in Anfrage und ist in Antwort enthalten."
 	},
 	"84279296": {
 		"TagHex": "0x05060000",
@@ -10215,7 +10241,7 @@
 		"DataTypeHex": "0x07",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Ger?te-ID"
+		"Description": "Geräte-ID"
 	},
 	"92274698": {
 		"TagHex": "0x0580000a",
@@ -10514,7 +10540,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Ger?te-Status / DEVICE_CONNECTED & DEVICE_WORKING & DEVICE_IN_SERVICE"
+		"Description": "Geräte-Status / DEVICE_CONNECTED & DEVICE_WORKING & DEVICE_IN_SERVICE"
 	},
 	"92667905": {
 		"TagHex": "0x05860001",
@@ -11385,7 +11411,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Die Summe zwischen der Energien ?ber den Zeitraum."
+		"Description": "Die Summe zwischen der Energien über den Zeitraum."
 	},
 	"109051921": {
 		"TagHex": "0x06800011",
@@ -14336,7 +14362,7 @@
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Erl?uterung / 0 = Reboot kann momentan nicht durchgef?hrt werden -> sp?ter nochmal versuchen (im Moment nicht in Gebrauch) / 1 = Reboot wird durchgef?hrt / 2 = Warten auf andere Services, danach wird Reboot automatisch durchgef?hrt."
+		"Description": "Erläuterung / 0 = Reboot kann momentan nicht durchgeführt werden -> später nochmal versuchen (im Moment nicht in Gebrauch) / 1 = Reboot wird durchgeführt / 2 = Warten auf andere Services, danach wird Reboot automatisch durchgeführt."
 	},
 	"209715202": {
 		"TagHex": "0x0c800002",
@@ -14362,7 +14388,7 @@
 		"DataTypeHex": "0x01",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "Erl?uterung / false = Applikationsneustart kann nicht durchgef?hrt werden (z.B. Software Update l?uft) -> sp?ter nochmal versuchen / true = Applikationsneustart wird durchgef?hrt."
+		"Description": "Erläuterung / false = Applikationsneustart kann nicht durchgeführt werden (z.B. Software Update läuft) -> später nochmal versuchen / true = Applikationsneustart wird durchgeführt."
 	},
 	"209715216": {
 		"TagHex": "0x0C800010",
@@ -14492,7 +14518,7 @@
 		"DataTypeHex": "0x03",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "0 = check nicht m?glich (kein Internet?) / 1 = check wird ausgef?hrt, wenn was neues entdeckt wird, wird es installiert."
+		"Description": "0 = check nicht möglich (kein Internet?) / 1 = check wird ausgeführt, wenn was neues entdeckt wird, wird es installiert."
 	},
 	"234881023": {
 		"TagHex": "0x0dffffff",
@@ -14544,7 +14570,7 @@
 		"DataTypeHex": "0x00",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Request current car SOC (does not reflect actual car SOC for AC wallboxes) / Kann nur innerhalb eines REQ_WB_DATA Container verwendet werden! Nicht aussagekr?ftig solange die E-Cars das noch nicht unterst?tzen."
+		"Description": "Request current car SOC (does not reflect actual car SOC for AC wallboxes) / Kann nur innerhalb eines REQ_WB_DATA Container verwendet werden! Nicht aussagekräftig solange die E-Cars das noch nicht unterstützen."
 	},
 	"234881028": {
 		"TagHex": "0x0e000004",

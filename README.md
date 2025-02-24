@@ -75,6 +75,10 @@ Here is what to configure when creating a new instance of the adapter. Settings 
     <td>Checkbox for each E3/DC namespace</td>
     <td>Data will be requested only for checked namespaces.</td>
   </tr>
+  <tr>
+    <td>Max. index for initialisation of components</td>
+    <td>Adjust max. index as needed, e.g. if you have more batteries. This is used for initial detection of components. Exception: the PERIOD2 count says how many version 2 PERIOD objects will be created at least. NOTE that index starts with 0,1,..., i.e. if you have four batteries, max. index 3 is appropriate.</td>
+  </tr>
     <td>Checkbox for Lazy SetState()</td>
     <td>If checked (default), the adapter will write to ioBroker States only when values have changed - this reduces workload, better for smaller hardware. Uncheck this option and the adapter will call setState() after every polling iterval, also for unchanged values - better if you have an application depending on regular State.ts updates. </td>
   </tr>
@@ -311,31 +315,61 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>EMS (1)</td>
     <td>IDLE_PERIOD_ACTIVE</td>
     <td>boolean</td>
-    <td>(de-)activate idle period (2).</td>
+    <td>(de-)activate idle period.</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
     <td>START_HOUR</td>
     <td>number</td>
-    <td>Start hour of idle period (2).</td>
+    <td>Start hour of idle period.</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
     <td>START_MINUTE</td>
     <td>number</td>
-    <td>Start minute of idle period (2).</td>
+    <td>Start minute of idle period.</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
     <td>END_HOUR</td>
     <td>number</td>
-    <td>End hour of idle period (2).</td>
+    <td>End hour of idle period.</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
     <td>END_MINUTE</td>
     <td>number</td>
-    <td>End minute of idle period (2).</td>
+    <td>End minute of idle period.</td>
+  </tr>
+  <tr>
+    <td>EMS (2)</td>
+    <td>IDLE_PERIOD_TYPE</td>
+    <td>number</td>
+    <td>(V2) 0 = pause charging, 1 = pause discharging.</td>
+  </tr>
+  <tr>
+    <td>EMS (2)</td>
+    <td>PERIOD_ACTIVE</td>
+    <td>boolean</td>
+    <td>(V2) (de-)activate idle period.</td>
+  </tr>
+  <tr>
+    <td>EMS (2)</td>
+    <td>PERIOD_START</td>
+    <td>string</td>
+    <td>(V2) idle period begins at time-of-day like "12:30:00".</td>
+  </tr>
+  <tr>
+    <td>EMS (2)</td>
+    <td>PERIOD_STOP</td>
+    <td>string</td>
+    <td>(V2) idle period ends at time-of-day like "21:00:00".</td>
+  </tr>
+  <tr>
+    <td>EMS (2)</td>
+    <td>PERIOD_WEEKDAYS</td>
+    <td>string</td>
+    <td>(V2) idle period is enabled on weekdays like "135" where 1 = Monday, 2 = Tuesday, ... 7 = Sunday.</td>
   </tr>
   <tr>
     <td>EP</td>
@@ -405,9 +439,9 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
 </table> 
 
-Note (1): Full path is EMS.IDLE_PERIODS_(DIS)CHARGE.&lt;day-of-week&gt; - e.g. "EMS.IDLE_PERIODS_CHARGE.00-Monday". Changes are only sent "tuple sendig delay" after the last change. 
+Note (1): Full path is EMS.IDLE_PERIODS_(DIS)CHARGE.&lt;day-of-week&gt; - e.g. "EMS.IDLE_PERIODS_CHARGE.00-Monday". Changes are only sent "tuple sending delay" after the last change. 
 
-Note (2): Note that all IDLE_PERIOD tags are written only after the SET_IDLE_PERIOD delay, as defined in the configuration. The delay is restarted upon every change within one IDLE_PERIOD day. 
+Note (2): Full path is EMS.IDLE_PERIODS_2.&lt;counter&gt; - e.g. "EMS.IDLE_PERIODS_2.07.PERIOD_START". Changes are only sent "tuple sending delay" after the last change. (V2) means this is a tag introduced in 2024 for the new PERIODS_2 feature. E3/DC copies (V1) and (V2) periods in both directions, but with more than one interval on the same weekday, (V1) will only have one of them. **Caution**: if you modify (V1) periods, extra (V2) intervals will be removed by E3/DC! So, best practice is to consistently use only (V1) or only (V2).
 
 Note (3): Full path is DB.HISTORY_DATA_{DAY,WEEK,MONTH,YEAR} - e.g. "DB.HISTORY_DATA_DAY". Changes are only sent "tuple sendig delay" after the last change.
 
@@ -467,9 +501,11 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 (git-kick)
 * New RscpTags.json: added new tags from 01-2024 tag list. 
 **But keep** ...EMERGENCY_POWER_TEST... naming despite it changed to ...EMERGENCYPOWER_TEST... in the new tag-list (this affects four tags).
+* Fixed [Issue #236](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/236) - added handling for version 2 PERIODs. 
+* New instance settings for max. number of BAT/PVI/PM/PERIOD - so everybody who has e.g. 6 batteries or 3 power inverters can now adjust the detection range for his own setup. This fixes [Issue #249](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/249)
 * Fixed [Issue #241](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/241) - modified PM index detection so that discountinuous index sets are handled correctly, like ( 0, 1, 3, 6 ).
-* Fixed [Issue #249](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/249) - increased BAT polling range to 0..3, i.e. max. four BATs (instead of two).
 * Fixed E524, E525, S526 dev dependencies.
+* Enhanced max. index handling to produce less debug log messages. (Introduced notIndexIds for non-index counts.)
 
 ### 1.3.1
 
