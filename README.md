@@ -441,7 +441,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
 
 Note (1): Full path is EMS.IDLE_PERIODS_(DIS)CHARGE.&lt;day-of-week&gt; - e.g. "EMS.IDLE_PERIODS_CHARGE.00-Monday". Changes are only sent "tuple sending delay" after the last change. 
 
-Note (2): Full path is EMS.IDLE_PERIODS_2.&lt;counter&gt; - e.g. "EMS.IDLE_PERIODS_2.07.PERIOD_START". Changes are only sent "tuple sending delay" after the last change. (V2) means this is a tag introduced in 2024 for the new PERIODS_2 construct.
+Note (2): Full path is EMS.IDLE_PERIODS_2.&lt;counter&gt; - e.g. "EMS.IDLE_PERIODS_2.07.PERIOD_START". Changes are only sent "tuple sending delay" after the last change. (V2) means this is a tag introduced in 2024 for the new PERIODS_2 feature. E3/DC copies (V1) and (V2) periods in both directions, but with more than one interval on the same weekday, (V1) will only have one of them. **Caution**: if you modify (V1) periods, extra (V2) intervals will be removed by E3/DC! So, best practice is to consistently use only (V1) or only (V2).
 
 Note (3): Full path is DB.HISTORY_DATA_{DAY,WEEK,MONTH,YEAR} - e.g. "DB.HISTORY_DATA_DAY". Changes are only sent "tuple sendig delay" after the last change.
 
@@ -501,7 +501,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 (git-kick)
 * New RscpTags.json: added new tags from 01-2024 tag list. 
 **But keep** ...EMERGENCY_POWER_TEST... naming despite it changed to ...EMERGENCYPOWER_TEST... in the new tag-list (this affects four tags).
-* Fixed [Issue #236](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/236) - added handling for version 2 PERIODs.
+* Fixed [Issue #236](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/236) - added handling for version 2 PERIODs. 
 * New instance settings for max. number of BAT/PVI/PM/PERIOD - so everybody who has e.g. 6 batteries or 3 power inverters can now adjust the detection range for his own setup. This fixes [Issue #249](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/249)
 * Fixed [Issue #241](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/241) - modified PM index detection so that discountinuous index sets are handled correctly, like ( 0, 1, 3, 6 ).
 * Fixed E524, E525, S526 dev dependencies.

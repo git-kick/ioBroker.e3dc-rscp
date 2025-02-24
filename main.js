@@ -1805,7 +1805,7 @@ class E3dcRscp extends utils.Adapter {
 				getHighestSubnode( this, prefix, ( max ) => {
 					for( i; i <= max; i++ ) {
 						const id = `${prefix}.${String( i ).padStart( 2, "0" )}`;
-						deleteObjectWithStates( this, id, ( err ) => {
+						this.delObject( id, { recursive: true }, ( err ) => {
 							if ( err ) {
 								this.log.warn( `storeIdlePeriods2: cannot delete ${id}: ${err}` );
 							} else {
@@ -1815,6 +1815,22 @@ class E3dcRscp extends utils.Adapter {
 					}
 				} );
 			}
+			// Delete & reload idle periods V1 objects, to get rid of "zombie objects"
+			let id = "e3dc-rscp.0.EMS.IDLE_PERIODS_CHARGE";
+			this.delObject( id, { recursive: true }, ( err ) => {
+				if( err ) {
+					this.log.warn( `storeIdlePeriods2: cannot delete ${id}: ${err}` );
+				}
+			} );
+			id = "e3dc-rscp.0.EMS.IDLE_PERIODS_DISCHARGE";
+			this.delObject( id, { recursive: true }, ( err ) => {
+				if( err ) {
+					this.log.warn( `storeIdlePeriods2: cannot delete ${id}: ${err}` );
+				}
+			} );
+			this.clearFrame();
+			this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
+			this.pushFrame();
 		}
 	}
 
@@ -2518,39 +2534,20 @@ function getSetTags( id ) {
 	}
 }
 
-function getHighestSubnode( adapter, parentId, callback ) {
-	adapter.getStates( parentId + ".*", ( err, states ) => {
+// Given node <id> has subnodes "00", "01", "02", ... - return highest number
+function getHighestSubnode( adapter, id, callback ) {
+	adapter.getStates( id + ".*", ( err, states ) => {
 		if ( err || !states ) {
 			callback( null );
 			return;
 		}
-		let maxNum = -1;
+		let max = -1;
 		Object.keys( states ).forEach( id => {
 			const match = id.match( /\.(\d+)\.[A-Z_]+$/ );
 			if ( match ) {
-				maxNum = Math.max( maxNum, parseInt( match[1], 10 ) );
+				max = Math.max( max, parseInt( match[1], 10 ) );
 			}
 		} );
-		callback( maxNum >= 0 ? maxNum : null );
-	} );
-}
-
-function deleteObjectWithStates( adapter, parentId, callback ) {
-	adapter.getStates( parentId + ".*", ( err, states ) => {
-		if ( err || !states ) {
-			return adapter.delObject( parentId, callback );
-		}
-		const ids = Object.keys( states );
-		let pending = ids.length;
-		if ( pending === 0 ) {
-			return adapter.delObject( parentId, callback );
-		}
-		ids.forEach( id => {
-			adapter.delObject( id, () => {
-				if ( --pending === 0 ) {
-					adapter.delObject( parentId, callback );
-				}
-			} );
-		} );
+		callback( max >= 0 ? max : null );
 	} );
 }
