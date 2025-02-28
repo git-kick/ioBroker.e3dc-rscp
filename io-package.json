@@ -8,17 +8,17 @@
         ],
         "news": {
             "1.4.0": {
-                "en": "Added dynamic price (DPP) tags.",
-                "de": "Tags für dynamische Preise (DPP) hinzugefügt.",
-                "ru": "Добавлены теги динамической цены (DPP).",
-                "pt": "Tags de preço dinâmico (DPP) adicionadas.",
-                "nl": "Dynamic Price (DPP) tags toegevoegd.",
-                "fr": "Ajout de balises de prix dynamique (DPP).",
-                "it": "Aggiunti tag di prezzo dinamico (DPP).",
-                "es": "Tags de precio dinámico agregado (DPP).",
-                "pl": "Dodano tagi dynamicznej ceny (DPP).",
-                "uk": "Додані теги динамічної ціни (DPP).",
-                "zh-cn": "增加了动态价格（DPP）标签。"
+                "en": "Support for version 2 idle periods.",
+                "de": "Unterstützung von Version 2 Sperrzeiten.",
+                "ru": "Поддержка периодов версии 2.",
+                "pt": "Suporte aos períodos de versão 2 ociosos.",
+                "nl": "Ondersteuning voor inactiviteit van versie 2.",
+                "fr": "Prise en charge des périodes d'inactivité de la version 2.",
+                "it": "Supporto per i periodi di inattività della versione 2.",
+                "es": "Soporte para los períodos de inactividad de la versión 2.",
+                "pl": "Obsługa wersji 2 bezczynnych okresów.",
+                "uk": "Підтримка версії 2 очікування.",
+                "zh-cn": "支持版本2空闲时期。"
             },
             "1.3.2": {
                 "en": "Fixed PM index detection",

@@ -497,6 +497,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 ### 1.4.0
+
+MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.com/git-kick/ioBroker.e3dc-rscp/tree/master?tab=readme-ov-file#reuse-of-adapter-configuration)
  
 (git-kick)
 * New RscpTags.json: added new tags from 01-2024 tag list. 
