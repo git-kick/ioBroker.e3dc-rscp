@@ -496,7 +496,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-### 1.3.2
+### 1.4.0
  
 (git-kick)
 * New RscpTags.json: added new tags from 01-2024 tag list. 

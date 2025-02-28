@@ -855,7 +855,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "INSTALLER",
 		"Unit": "",
-		"Description": "This container describes an error that occoures during getting dynamic power prices for a given target."
+		"Description": "This container describes an error that occurs during getting dynamic power prices for a given target."
 	},
 	"16777275": {
 		"TagHex": "0x0100003b",
@@ -2766,7 +2766,7 @@
 		"DataTypeHex": "0x0E",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
-		"Description": "This container consists of the grid consumption conatiners and the grid feed-in containers."
+		"Description": "This container consists of the grid consumption containers and the grid feed-in containers."
 	},
 	"20971540": {
 		"TagHex": "0x01400014",
