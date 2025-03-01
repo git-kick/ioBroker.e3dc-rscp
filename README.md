@@ -496,6 +496,14 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+
+### 1.4.1
+
+(git-kick)
+* fixed errors reported by the ioBroker Check and Service Bot:
+  * \[E186\]: "common.globalDependencies" must be an array at io-package.json
+  * \[E190\]: admin dependency missing. Please add to dependencies at io-package.json.
+
 ### 1.4.0
 
 MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.com/git-kick/ioBroker.e3dc-rscp/tree/master?tab=readme-ov-file#reuse-of-adapter-configuration)
