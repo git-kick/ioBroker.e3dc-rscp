@@ -70,7 +70,8 @@ Here is what to configure when creating a new instance of the adapter. Settings 
   </tr>
   <tr>
     <td>Tuple sending delay [sec]</td>
-    <td>Define how long ioBroker will wait before writing idle period or data history changes to E3/DC. Purpose is to merge several subsequent changes into one single call. A dedicated timeout is set/reset upon every change concerning the values within one idle period or one data history scale, resepectively; changes are only transmitted after the timeout is   <tr>
+    <td>Define how long ioBroker will wait before writing idle period or data history changes to E3/DC. Purpose is to merge several subsequent changes into one single call. A dedicated timeout is set/reset upon every change concerning the values within one idle period or one data history scale, resepectively; changes are only transmitted after the timeout is over. This applies to EMS.IDLE_PERIODS_* and DB.HISTORY_DATA_*</td>
+  <tr>
   <tr>
     <td>Checkbox for each E3/DC namespace</td>
     <td>Data will be requested only for checked namespaces.</td>
@@ -82,8 +83,11 @@ Here is what to configure when creating a new instance of the adapter. Settings 
     <td>Checkbox for Lazy SetState()</td>
     <td>If checked (default), the adapter will write to ioBroker States only when values have changed - this reduces workload, better for smaller hardware. Uncheck this option and the adapter will call setState() after every polling iterval, also for unchanged values - better if you have an application depending on regular State.ts updates. </td>
   </tr>
-over. This applies to EMS.IDLE_PERIODS_* and DB.HISTORY_DATA_*</td>
   </tr>
+    <td>Checkboxes for Idle Periods V1 and V2</td>
+    <td>In 2024, E3/DC introduced version 2 of idle periods, which can handle more than one period on the same day. The old E3/DC portal showed V1 periods, the new on shows V2 periods. I did not drop V1 completely, so you still can use them for downwards compatibility. If you decide to go with V2, I recommend to switch off V1. Both versions interfere in a non-trivial way, so be careful.</td>
+  </tr>
+
 
 </table>
 
@@ -496,12 +500,16 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-
-### 1.4.0
+### 1.4.1
 
 MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.com/git-kick/ioBroker.e3dc-rscp/tree/master?tab=readme-ov-file#reuse-of-adapter-configuration)
  
 (git-kick)
+* fixed error in weekdayStringToBitmask() - thanks to @SurfGargano for testing.
+* idle periods v1 or v2 can now switched off in the adapter config - recommendation is to use only one of them.
+* fixed errors reported by the ioBroker Check and Service Bot:
+  * \[E186\]: "common.globalDependencies" must be an array at io-package.json
+  * \[E190\]: admin dependency missing. Please add to dependencies at io-package.json.
 * New RscpTags.json: added new tags from 01-2024 tag list. 
 **But keep** ...EMERGENCY_POWER_TEST... naming despite it changed to ...EMERGENCYPOWER_TEST... in the new tag-list (this affects four tags).
 * Fixed [Issue #236](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/236) - added handling for version 2 PERIODs. 
@@ -513,6 +521,8 @@ MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.
   * \[E186\] "common.globalDependencies" must be an array at io-package.json
   * \[E190\] admin dependency missing. Please add to dependencies at io-package.json.
   * \[W050\] Package 'axios' listed as devDependency at package.json might be obsolete if using '@iobroker/adapter-dev'.
+
+### 1.4.0   - Deprecated - Do not install -
 
 ### 1.3.1
 
