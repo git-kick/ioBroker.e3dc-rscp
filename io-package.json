@@ -189,8 +189,7 @@
                 "admin": ">=7.4.10"
             }
         ],
-        "globalDependencies": [
-        ],
+        "globalDependencies": [],
         "plugins": {
             "sentry": {
                 "dsn": "https://cc70dc76ca0d4bc89be51866648d109c@o1065834.ingest.sentry.io/6058026"
@@ -934,6 +933,8 @@
             }
         ],
         "lazy_setstate": true,
+        "periods_v1": false,
+        "periods_v2": true,
         "polling_interval_short": 30,
         "polling_interval_medium": 5,
         "polling_interval_long": 12,
