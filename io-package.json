@@ -189,7 +189,6 @@
                 "admin": ">=7.4.10"
             }
         ],
-            "plugins": {
         "globalDependencies": [
         ],
         "plugins": {
