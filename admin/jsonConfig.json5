@@ -145,7 +145,21 @@
           "type": "checkbox",
           "label": "lazy_setstate",
           "xs": 12, "sm": 12, "md": 6, "lg": 3, "xl": 3
-        }
+        },
+        "periods_v1": {
+          "type": "checkbox",
+          "label": "periods_v1",
+          "validator": "!data.periods_v1 || !data.periods_v2",
+          "validatorErrorText": "periods_v1v2",
+          "tooltip": "periods_v1_tooltip",
+          "xs": 12, "sm": 12, "md": 6, "lg": 3, "xl": 3
+        },
+        "periods_v2": {
+          "type": "checkbox",
+          "label": "periods_v2",
+          "tooltip": "periods_v2_tooltip",
+          "xs": 12, "sm": 12, "md": 6, "lg": 3, "xl": 3
+        },
       }
     },
     "Tab_Polling_Intervals": {

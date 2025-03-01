@@ -621,10 +621,14 @@ class E3dcRscp extends utils.Adapter {
 			this.pollingInterval[rscpTagCode[element.tag]] = element.interval;
 		} );
 
-		// Provoke error for testing Sentry
-		// @ts-ignore
-		// eslint-disable-next-line no-undef
-		//huhu();
+		// Cleanup v1/v2 idle period objects, according to config:
+		if( !this.config.periods_v1 ) {
+			this.deleteObjectRecursively( "e3dc-rscp.0.EMS.IDLE_PERIODS_CHARGE" );
+			this.deleteObjectRecursively( "e3dc-rscp.0.EMS.IDLE_PERIODS_DISCHARGE" );
+		}
+		if( !this.config.periods_v2 ) {
+			this.deleteObjectRecursively( "e3dc-rscp.0.EMS.IDLE_PERIODS_2" );
+		}
 	}
 
 	reconnectChannel() {
@@ -933,8 +937,8 @@ class E3dcRscp extends utils.Adapter {
 		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_DERATE_AT_POWER_VALUE", sml );
 		this.addTagtoFrame( "TAG_EMS_REQ_EXT_SRC_AVAILABLE", sml );
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", sml );
-		this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS_2", sml );
+		if( this.config.periods_v1 ) { this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS", sml ); }
+		if( this.config.periods_v2 ) { this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS_2", sml ); }
 		this.addTagtoFrame( "TAG_EMS_REQ_GET_SYS_SPECS", sml );
 		this.pushFrame();
 	}
@@ -1189,7 +1193,7 @@ class E3dcRscp extends utils.Adapter {
 		}
 		this.sendTupleTimeout[prefix] = setTimeout( () => {
 			// RSCP requires to send a container with _all_ PERIODs every time something changes.
-			getHighestSubnode( this, prefix, ( max ) => {
+			this.getHighestSubnode( prefix, ( max ) => {
 				this.log.debug( `queueSetIdlePeriods2: maxNode = ${max}` );
 				this.clearFrame();
 				const c1 = this.startContainer( "TAG_EMS_REQ_SET_IDLE_PERIODS_2" );
@@ -1727,43 +1731,45 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	storeIdlePeriods( tree, path ) {
-		tree.forEach( token => {
-			if( rscpTag[token.tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD" || token.content.length != 5 ) return;
-			if( rscpTag[token.content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_TYPE" ) return;
-			const type = token.content[0].content;
-			if ( rscpTag[token.content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_DAY" ) return;
-			const day = token.content[1].content;
-			const idleNode = ( type==0 ) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
-			const dayNode = `${day.toString().padStart( 2, "0" )}-${dayOfWeek[day]}`;
-			const newPath = `${path}${idleNode}.${dayNode}.`;
-			if ( !this.sendTupleTimeout[`EMS.${idleNode}.${dayNode}`] ) { // do not overwrite manual changes which are waiting to be sent
-				if ( rscpTag[token.content[2].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_ACTIVE" ) return;
-				const active = token.content[2].content;
-				if( rscpTag[token.content[3].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_START" || token.content[3].content.length != 2 )  return;
-				if( rscpTag[token.content[3].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
-				const startHour = token.content[3].content[0].content;
-				if ( rscpTag[token.content[3].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
-				const startMinute = token.content[3].content[1].content;
-				if( rscpTag[token.content[4].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_END" || token.content[4].content.length != 2 )  return;
-				if( rscpTag[token.content[4].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
-				const endHour = token.content[4].content[0].content;
-				if ( rscpTag[token.content[4].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
-				const endMinute = token.content[4].content[1].content;
-				this.storeValue( "EMS", newPath, "IDLE_PERIOD_ACTIVE", "Bool", ( active != 0 ) );
-				this.storeValue( "EMS", newPath, "START_HOUR", "UChar8", startHour, "START_HOUR", "h" );
-				this.storeValue( "EMS", newPath, "START_MINUTE", "UChar8", startMinute, "START_MINUTE", "m" );
-				this.storeValue( "EMS", newPath, "END_HOUR", "UChar8", endHour, "END_HOUR", "h" );
-				this.storeValue( "EMS", newPath, "END_MINUTE", "UChar8", endMinute, "END_MINUTE", "m" );
-				this.extendObject( `EMS.${newPath.slice( 0, -1 )}`, { type: "channel", common: { role: "calendar.day" } } );
-			}
-		} );
-		this.extendObject( "EMS.IDLE_PERIODS_CHARGE", { type: "channel", common: { role: "calendar.week" } } );
-		this.extendObject( "EMS.IDLE_PERIODS_DISCHARGE", { type: "channel", common: { role: "calendar.week" } } );
+		if( this.config.periods_v1 ) {
+			tree.forEach( token => {
+				if( rscpTag[token.tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD" || token.content.length != 5 ) return;
+				if( rscpTag[token.content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_TYPE" ) return;
+				const type = token.content[0].content;
+				if ( rscpTag[token.content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_DAY" ) return;
+				const day = token.content[1].content;
+				const idleNode = ( type==0 ) ? "IDLE_PERIODS_CHARGE" : "IDLE_PERIODS_DISCHARGE";
+				const dayNode = `${day.toString().padStart( 2, "0" )}-${dayOfWeek[day]}`;
+				const newPath = `${path}${idleNode}.${dayNode}.`;
+				if ( !this.sendTupleTimeout[`EMS.${idleNode}.${dayNode}`] ) { // do not overwrite manual changes which are waiting to be sent
+					if ( rscpTag[token.content[2].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_ACTIVE" ) return;
+					const active = token.content[2].content;
+					if( rscpTag[token.content[3].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_START" || token.content[3].content.length != 2 )  return;
+					if( rscpTag[token.content[3].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
+					const startHour = token.content[3].content[0].content;
+					if ( rscpTag[token.content[3].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
+					const startMinute = token.content[3].content[1].content;
+					if( rscpTag[token.content[4].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_END" || token.content[4].content.length != 2 )  return;
+					if( rscpTag[token.content[4].content[0].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_HOUR" ) return;
+					const endHour = token.content[4].content[0].content;
+					if ( rscpTag[token.content[4].content[1].tag].TagNameGlobal != "TAG_EMS_IDLE_PERIOD_MINUTE" ) return;
+					const endMinute = token.content[4].content[1].content;
+					this.storeValue( "EMS", newPath, "IDLE_PERIOD_ACTIVE", "Bool", ( active != 0 ) );
+					this.storeValue( "EMS", newPath, "START_HOUR", "UChar8", startHour, "START_HOUR", "h" );
+					this.storeValue( "EMS", newPath, "START_MINUTE", "UChar8", startMinute, "START_MINUTE", "m" );
+					this.storeValue( "EMS", newPath, "END_HOUR", "UChar8", endHour, "END_HOUR", "h" );
+					this.storeValue( "EMS", newPath, "END_MINUTE", "UChar8", endMinute, "END_MINUTE", "m" );
+					this.extendObject( `EMS.${newPath.slice( 0, -1 )}`, { type: "channel", common: { role: "calendar.day" } } );
+				}
+			} );
+			this.extendObject( "EMS.IDLE_PERIODS_CHARGE", { type: "channel", common: { role: "calendar.week" } } );
+			this.extendObject( "EMS.IDLE_PERIODS_DISCHARGE", { type: "channel", common: { role: "calendar.week" } } );
+		}
 	}
 
 	storeIdlePeriods2( tree, path ) {
 		// Sometimes we receive an empty GET_IDLE_PERIODS_2 container. Don't know why. Ignore it.
-		if( tree.length > 0 ) {
+		if( tree.length > 0 && this.config.periods_v2 ) {
 			const prefix = "EMS.IDLE_PERIODS_2";
 			if ( !this.sendTupleTimeout[prefix] ) { // do not overwrite manual changes which are waiting to be sent
 				let i = 0;
@@ -1802,35 +1808,21 @@ class E3dcRscp extends utils.Adapter {
 				this.maxIndex[prefix] = i - 1;
 				this.log.silly( `storeIdlePeriods2: new max is ${i}; will delete higher indexes.` );
 				// delete remaining periods (may happen when periods were deleted e.g. using the E3/DC portal)
-				getHighestSubnode( this, prefix, ( max ) => {
+				this.getHighestSubnode( prefix, ( max ) => {
 					for( i; i <= max; i++ ) {
 						const id = `${prefix}.${String( i ).padStart( 2, "0" )}`;
-						this.delObject( id, { recursive: true }, ( err ) => {
-							if ( err ) {
-								this.log.warn( `storeIdlePeriods2: cannot delete ${id}: ${err}` );
-							} else {
-								this.log.silly( `storeIdlePeriods2: deleted period ${id} since it was no longer reported via RSCP.` );
-							}
-						} );
+						this.deleteObjectRecursively( id );
 					}
 				} );
 			}
-			// Delete & reload idle periods V1 objects, to get rid of "zombie objects"
-			let id = "e3dc-rscp.0.EMS.IDLE_PERIODS_CHARGE";
-			this.delObject( id, { recursive: true }, ( err ) => {
-				if( err ) {
-					this.log.warn( `storeIdlePeriods2: cannot delete ${id}: ${err}` );
-				}
-			} );
-			id = "e3dc-rscp.0.EMS.IDLE_PERIODS_DISCHARGE";
-			this.delObject( id, { recursive: true }, ( err ) => {
-				if( err ) {
-					this.log.warn( `storeIdlePeriods2: cannot delete ${id}: ${err}` );
-				}
-			} );
-			this.clearFrame();
-			this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
-			this.pushFrame();
+			if( this.config.periods_v1 ) {
+				// Delete & reload idle periods V1 objects, to get rid of "zombie objects"
+				this.deleteObjectRecursively( "e3dc-rscp.0.EMS.IDLE_PERIODS_CHARGE" );
+				this.deleteObjectRecursively( "e3dc-rscp.0.EMS.IDLE_PERIODS_DISCHARGE" );
+				this.clearFrame();
+				this.addTagtoFrame( "TAG_EMS_REQ_GET_IDLE_PERIODS" );
+				this.pushFrame();
+			}
 		}
 	}
 
@@ -1903,6 +1895,32 @@ class E3dcRscp extends utils.Adapter {
 			if( timeout ) this.clearInterval( timeout ) ;
 		}
 		if( this.reconnectTimeout ) clearInterval( this.reconnectTimeout );
+	}
+
+	deleteObjectRecursively( id ) {
+		this.delObject( id, { recursive: true }, ( err ) => {
+			if( err ) {
+				this.log.warn( `deleteObjectRecursively(): cannot delete ${id}: ${err}` );
+			}
+		} );
+	}
+
+	// Given node <id> has subnodes "00", "01", "02", ... - return highest number
+	getHighestSubnode( id, callback ) {
+		this.getStates( id + ".*", ( err, states ) => {
+			if ( err || !states ) {
+				callback( null );
+				return;
+			}
+			let max = -1;
+			Object.keys( states ).forEach( id => {
+				const match = id.match( /\.(\d+)\.[A-Z_]+$/ );
+				if ( match ) {
+					max = Math.max( max, parseInt( match[1], 10 ) );
+				}
+			} );
+			callback( max >= 0 ? max : null );
+		} );
 	}
 
 	/**
@@ -2532,22 +2550,4 @@ function getSetTags( id ) {
 		}
 		return result;
 	}
-}
-
-// Given node <id> has subnodes "00", "01", "02", ... - return highest number
-function getHighestSubnode( adapter, id, callback ) {
-	adapter.getStates( id + ".*", ( err, states ) => {
-		if ( err || !states ) {
-			callback( null );
-			return;
-		}
-		let max = -1;
-		Object.keys( states ).forEach( id => {
-			const match = id.match( /\.(\d+)\.[A-Z_]+$/ );
-			if ( match ) {
-				max = Math.max( max, parseInt( match[1], 10 ) );
-			}
-		} );
-		callback( max >= 0 ? max : null );
-	} );
 }
