@@ -70,7 +70,7 @@ function bitmaskToWeekdayString( bitmask ) {
 function weekdayStringToBitmask( days ) {
 	let result = 0;
 	for( const day of days ) {
-		result += 2^( day-1 );
+		result += 2 ** ( day-1 );
 	}
 	return result;
 }

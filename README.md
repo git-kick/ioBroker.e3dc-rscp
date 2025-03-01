@@ -500,7 +500,6 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-
 ### 1.4.1
 
 MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.com/git-kick/ioBroker.e3dc-rscp/tree/master?tab=readme-ov-file#reuse-of-adapter-configuration)
@@ -518,6 +517,10 @@ MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.
 * Fixed [Issue #241](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/241) - modified PM index detection so that discountinuous index sets are handled correctly, like ( 0, 1, 3, 6 ).
 * Fixed E524, E525, S526 dev dependencies.
 * Enhanced max. index handling to produce less debug log messages. (Introduced notIndexIds for non-index counts.)
+* fixed errors reported by the ioBroker Check and Service Bot:
+  * \[E186\] "common.globalDependencies" must be an array at io-package.json
+  * \[E190\] admin dependency missing. Please add to dependencies at io-package.json.
+  * \[W050\] Package 'axios' listed as devDependency at package.json might be obsolete if using '@iobroker/adapter-dev'.
 
 ### 1.4.0   - Deprecated - Do not install -
 
