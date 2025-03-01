@@ -501,8 +501,9 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 (git-kick)
 * fixed errors reported by the ioBroker Check and Service Bot:
-  * \[E186\]: "common.globalDependencies" must be an array at io-package.json
-  * \[E190\]: admin dependency missing. Please add to dependencies at io-package.json.
+  * \[E186\] "common.globalDependencies" must be an array at io-package.json
+  * \[E190\] admin dependency missing. Please add to dependencies at io-package.json.
+  * \[W050\] Package 'axios' listed as devDependency at package.json might be obsolete if using '@iobroker/adapter-dev'.
 
 ### 1.4.0
 
