@@ -500,16 +500,24 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+
+### 1.4.2
+
+* fixed errors reported by the ioBroker Check and Service Bot:
+  * \[E160\]\[E190\] "peerDependencies.iobroker.admin"  in package.json
+  * \[605\] updated (c) 2025.
+  * \[254\] removed v1.3.2 which was never released.
+
 ### 1.4.1
 
 MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.com/git-kick/ioBroker.e3dc-rscp/tree/master?tab=readme-ov-file#reuse-of-adapter-configuration)
  
 (git-kick)
 * fixed error in weekdayStringToBitmask() - thanks to @SurfGargano for testing.
-* idle periods v1 or v2 can now switched off in the adapter config - recommendation is to use only one of them.
+* idle periods v1 or v2 can now be switched off in the adapter config - recommendation is to use only one of both.
 * fixed errors reported by the ioBroker Check and Service Bot:
-  * \[E186\]: "common.globalDependencies" must be an array at io-package.json
-  * \[E190\]: admin dependency missing. Please add to dependencies at io-package.json.
+  * \[E186\] "common.globalDependencies" must be an array at io-package.json
+  * \[E190\] admin dependency missing. Please add to dependencies at io-package.json.
 * New RscpTags.json: added new tags from 01-2024 tag list. 
 **But keep** ...EMERGENCY_POWER_TEST... naming despite it changed to ...EMERGENCYPOWER_TEST... in the new tag-list (this affects four tags).
 * Fixed [Issue #236](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/236) - added handling for version 2 PERIODs. 
@@ -532,14 +540,14 @@ MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.
 * Fixed [Issue #217](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/217) - added PM (power meter) namespace. **Only reading values, no SET tags.**
 * Fixed two newly reported "undefined" occurences in main.js.
 * Fixed errors listed in [Issue #217](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/217) - reported by the ioBroker Check and Service Bot.
-  * \[E162\]: js-controller dependency updated to >= 5.0.19
-  * \[E204\]: "remove news version 1.3.0" considered a false finding; in v1.2.6, io-package.json does not contain common.news "1.3.0"
-  * \[E605\]: updated copyright to 2024 in README.md
-  * \[E605\]: removed .npmignore from project directory
-  * \[W040\]: added keyword "ioBroker" in package.json
-  * \[W130\]: deleted all but some recent common.news in io-package.json 
-  * \[W184\]: removed "common.materialize" from io-package.json 
-  * \[S522\]: migrated to admin5 UI (jsonConfig.json5)
+  * \[E162\] js-controller dependency updated to >= 5.0.19
+  * \[E204\] "remove news version 1.3.0" considered a false finding; in v1.2.6, io-package.json does not contain common.news "1.3.0"
+  * \[E605\] updated copyright to 2024 in README.md
+  * \[E605\] removed .npmignore from project directory
+  * \[W040\] added keyword "ioBroker" in package.json
+  * \[W130\] deleted all but some recent common.news in io-package.json 
+  * \[W184\] removed "common.materialize" from io-package.json 
+  * \[S522\] migrated to admin5 UI (jsonConfig.json5)
 
 ### 1.3.0  - Deprecated - Do not install -
 
