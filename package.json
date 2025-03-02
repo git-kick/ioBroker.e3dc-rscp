@@ -58,9 +58,6 @@
     "sinon-chai": "^3.7.0",
     "typescript": "~4.4.4"
   },
-  "peerDependencies": {
-    "@iobroker/admin": ">=6.17.14"
-  },
   "main": "main.js",
   "files": [
     "admin{,/!(src)/**}/!(tsconfig|tsconfig.*).json*",
