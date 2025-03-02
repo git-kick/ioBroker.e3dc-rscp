@@ -178,7 +178,7 @@
         ],
         "globalDependencies": [
             {
-                "@iobroker/admin": ">=6.17.14"
+                "admin": ">=6.17.14"
             }
         ],
         "plugins": {
