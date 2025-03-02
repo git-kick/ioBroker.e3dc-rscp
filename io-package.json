@@ -174,7 +174,7 @@
         "dependencies": [
             {
                 "js-controller": ">=5.0.19",
-                "admin": ">=7.4.10"
+                "minimumAdmin": ">=6.17.14"
             }
         ],
         "globalDependencies": [],
