@@ -371,8 +371,9 @@ const stringIds = [
 	"PVI.DC_CURRENT",
 	"PVI.DC_STRING_ENERGY_ALL",
 ];
-// Some of the return values we do not want to see as (missing) states:
+// Some of the return values we do not want to see as (missing) states.
 // "INDEX" and "..._INDEX" tags are automatically treated as subchannels, no need to list them here.
+// Current implementation handles only containers having exactly 1 value attribute besides index.
 const ignoreIds = [
 	"RSCP.UNDEFINED",
 	"EMS.UNDEFINED_POWER_VALUE",
@@ -383,7 +384,6 @@ const ignoreIds = [
 	"EMS.SET_IDLE_PERIODS",
 	"EMS.SET_IDLE_PERIODS_2",
 	"EMS.SET_WB_DISCHARGE_BAT_UNTIL",  	// Response is always "true", not usable for state with unit "%"
-	"EP.PARAM_INDEX",
 	"BAT.UNDEFINED",
 	"BAT.INTERNAL_CURRENT_AVG30",
 	"BAT.INTERNAL_MTV_AVG30",

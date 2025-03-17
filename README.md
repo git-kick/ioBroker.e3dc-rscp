@@ -507,6 +507,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * \[E160\]\[E190\] "peerDependencies.iobroker.admin"  in package.json
   * \[605\] updated (c) 2025.
   * \[254\] removed v1.3.2 which was never released.
+* Restored EP_RESERVE is writable - [Issue #263](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/263)
 
 ### 1.4.1
 
