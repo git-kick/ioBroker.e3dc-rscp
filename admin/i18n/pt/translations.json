@@ -351,6 +351,7 @@
     "maxindex_bat": "Morcego (baterias)",
     "maxindex_pm": "Index2 (versão 2 períodos)",
     "maxindex_pvi": "PVI (inversores de energia)",
+    "maxindex_wb": "WB (Wallbox)",
     "minStartChargePower": "Potência mínima de arranque [W]",
     "minStartDischargePower": "Potência mínima de descarga no arranque [W]",
     "options": "Opcao",

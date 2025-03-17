@@ -351,6 +351,7 @@
     "maxindex_bat": "蝙蝠（电池）",
     "maxindex_pm": "index2（版本2个时期）",
     "maxindex_pvi": "PVI（电源逆变器）",
+    "maxindex_wb": "WB（Wallbox）",
     "minStartChargePower": "最小启动充电功率[W]",
     "minStartDischargePower": "最小启动放电功率[W]",
     "options": "选项",

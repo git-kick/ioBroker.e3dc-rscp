@@ -351,6 +351,7 @@
     "maxindex_bat": "Летучая мышь (батареи)",
     "maxindex_pm": "Index2 (версия 2 периоды)",
     "maxindex_pvi": "PVI (Power Inverters)",
+    "maxindex_wb": "WB (Wallbox)",
     "minStartChargePower": "Минимальная начальная мощность заряда [Вт]",
     "minStartDischargePower": "Минимальная начальная мощность разряда [Вт]",
     "options": "Опции",

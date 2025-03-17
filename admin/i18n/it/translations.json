@@ -351,6 +351,7 @@
     "maxindex_bat": "Pipistrello (batterie)",
     "maxindex_pm": "INDICE2 (versione della versione 2)",
     "maxindex_pvi": "PVI (Power Inverter)",
+    "maxindex_wb": "WB (Wallbox)",
     "minStartChargePower": "Potenza minima di carica iniziale [W]",
     "minStartDischargePower": "Potenza minima di scarico iniziale [W]",
     "options": "Opzioni",

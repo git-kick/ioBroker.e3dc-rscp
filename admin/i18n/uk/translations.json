@@ -351,6 +351,7 @@
     "maxindex_bat": "Бат (батареї)",
     "maxindex_pm": "PM (лічильники потужності)",
     "maxindex_pvi": "PVI (силові інвертори)",
+    "maxindex_wb": "WB (Wallbox)",
     "minStartChargePower": "Мінімальна потужність стартового заряду",
     "minStartDischargePower": "Мінімальна потужність стартового розряду",
     "options": "Опції",
