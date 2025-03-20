@@ -510,6 +510,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * removed duplicate queueWbRequestData() definition from main.js - the relevant one is in wallbox.js
 * removed obsolete initialisation of maxIndex for BAT and PVI from constructor(). Both values are now initialized from config during initChannel().
 * introduced config value maxindex_wb - before, maxIndex["WB"] remained undefined in some cases.
+* Restored EP_RESERVE is writable - [Issue #263](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/263)
 
 ### 1.4.1
 
