@@ -504,7 +504,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### 1.4.2
 
 * introduced config value maxindex_wb - before, maxIndex["WB"] remained undefined in some cases - [Issue #262](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/262)
-* Restored EP_RESERVE is writable - [Issue #263](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/263)
+* restored EP_RESERVE is writable - [Issue #263](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/263)
 * fixed errors reported by the ioBroker Check and Service Bot:
   * \[E160\]\[E190\] "peerDependencies.iobroker.admin"  in package.json
   * \[605\] updated (c) 2025.

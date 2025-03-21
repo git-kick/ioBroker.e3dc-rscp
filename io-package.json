@@ -1,13 +1,26 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.4.1",
+        "version": "1.4.2",
         "blockedVersions": [
             "1.4.0",
             "1.3.0",
             "1.2.0"
         ],
         "news": {
+            "1.4.2": {
+                "en": "Regression fixes.",
+                "de": "Fehlerbehebungen.",
+                "ru": "Регрессия исправляет.",
+                "pt": "Correções de regressão.",
+                "nl": "Regressiefixes.",
+                "fr": "Régression fixe.",
+                "it": "Correzioni di regressione.",
+                "es": "Correcciones de regresión.",
+                "pl": "Poprawki regresji.",
+                "uk": "Регресійні виправлення.",
+                "zh-cn": "回归修复。"
+            },
             "1.4.1": {
                 "en": "Support for version 2 idle periods.",
                 "de": "Unterstützung von Version 2 Sperrzeiten.",
