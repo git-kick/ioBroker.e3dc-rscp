@@ -351,6 +351,7 @@
     "maxindex_bat": "BAT (batteries)",
     "maxindex_pm": "PM (power meters)",
     "maxindex_pvi": "PVI (power inverters)",
+    "maxindex_wb": "WB (wallbox)",
     "minStartChargePower": "Minimum start charge power",
     "minStartDischargePower": "Minimum start discharge power",
     "options": "Options",

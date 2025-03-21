@@ -942,7 +942,8 @@
         "query_db": true,
         "maxindex_bat": 3,
         "maxindex_pvi": 1,
-        "maxindex_pm": 9
+        "maxindex_pm": 9,
+        "maxindex_wb": 0
     },
     "objects": [],
     "instanceObjects": []

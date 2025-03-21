@@ -351,6 +351,7 @@
     "maxindex_bat": "Nietoperz (baterie)",
     "maxindex_pm": "Indeks2 (wersja 2 okresy)",
     "maxindex_pvi": "PVI (falowniki energetyczne)",
+    "maxindex_wb": "WB (Wallbox)",
     "minStartChargePower": "Minimalna moc ładowania rozruchowego [W]",
     "minStartDischargePower": "Minimalna moc rozruchu [W]",
     "options": "Opcje",

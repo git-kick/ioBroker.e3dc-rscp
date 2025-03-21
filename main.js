@@ -481,12 +481,6 @@ class E3dcRscp extends utils.Adapter {
 		// For keeping observed max. indexes, e.g. BAT.INDEX, DCB_COUNT etc.:
 		this.maxIndex = {}; // {path} - the biggest index with ok response, or 1 below the smallest index with error response
 
-		// For BAT and PVI, there is no COUNT request, so initialize maxIndex to a best guess upper bound.
-		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
-		// Initial values can be set in adapter configuration.
-		this.maxIndex["BAT"] = 0; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
-		this.maxIndex["PVI"] = 0;
-
 		// For PM, there may be a non-sequential set of indexes like (0, 2, 6),
 		// so initialize with a best guess covering set, which will be pinched out dynamically.
 		this.indexSet = {}; // {path} - array of indexes with ok response
@@ -592,9 +586,12 @@ class E3dcRscp extends utils.Adapter {
 			this.reconnectChannel();
 		} );
 
+		// For BAT and PVI, there is no COUNT request, so initialize maxIndex to a best guess upper bound.
+		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
 		// Initialize index sets from adapter config:
 		this.maxIndex["BAT"] = this.config.maxindex_bat; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
 		this.maxIndex["PVI"] = this.config.maxindex_pvi;
+		this.maxIndex["WB"] = this.config.maxindex_wb;
 		this.indexSet["PM"] = [];
 		for ( let i = 0; i <= this.config.maxindex_pm; i++ ) {
 			this.indexSet["PM"].push( i );
@@ -1048,53 +1045,6 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
-	queueWbRequestData( sml ) {
-		this.clearFrame();
-		this.addTagtoFrame( "TAG_WB_REQ_CONNECTED_DEVICES", sml );
-		for( let i = 0; i <= this.maxIndex["WB"]; i++ ) {
-			const pos = this.startContainer( "TAG_WB_REQ_DATA" );
-			this.addTagtoFrame( "TAG_WB_INDEX", "", i );
-			this.addTagtoFrame( "TAG_WB_REQ_STATUS", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_ERROR_CODE", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_MODE", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_ID", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_NAME", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DEVICE_STATE", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_APP_SOFTWARE", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_BOOTLOADER_SOFTWARE", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_HW_VERSION", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_FLASH_VERSION", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_ENERGY_ALL", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_ENERGY_SOLAR", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_SOC", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_POWER_L1", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_POWER_L2", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_POWER_L3", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ACTIVE_PHASES", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_MODE", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ENERGY_L1", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ENERGY_L2", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ENERGY_L3", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_DEVICE_ID", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_ERROR_CODE", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_FIRMWARE_VERSION", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PM_MAX_PHASE_POWER", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_INFOS", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_WARNINGS", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_ERRORS", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_TEMP_1", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_DIAG_TEMP_2", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_SUN", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_NET", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALL", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_EXTERN_DATA_ALG", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PARAM_1", sml  );
-			this.addTagtoFrame( "TAG_WB_REQ_PARAM_2", sml  );
-			this.endContainer( pos );
-		}
-		this.pushFrame();
-	}
-
 	// Only used for interface exploration:
 	queueDbRequestData( sml ) {
 		this.clearFrame();
@@ -1307,6 +1257,7 @@ class E3dcRscp extends utils.Adapter {
 		if ( this.config.query_pvi ) this.queuePviRequestData( sml );
 		if ( this.config.query_sys ) this.queueSysRequestData( sml );
 		if ( this.config.query_info ) this.queueInfoRequestData( sml );
+		this.log.silly( `maxIndex["WB"] = ${this.maxIndex["WB"]}` );
 		if ( this.config.query_wb ) wb.queueWbRequestData( sml );
 		this.sendFrameFIFO();
 	}

@@ -351,6 +351,7 @@
     "maxindex_bat": "Bat (baterías)",
     "maxindex_pm": "Index2 (períodos de la versión 2)",
     "maxindex_pvi": "PVI (inversores de potencia)",
+    "maxindex_wb": "WB (Wallbox)",
     "minStartChargePower": "Potencia mínima de carga de arranque [W]",
     "minStartDischargePower": "Potencia mínima de descarga de arranque [W]",
     "options": "Opcion",

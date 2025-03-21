@@ -351,6 +351,7 @@
     "maxindex_bat": "Chauve-souris (batteries)",
     "maxindex_pm": "Index2 (version 2 périodes)",
     "maxindex_pvi": "PVI (onduleur de puissance)",
+    "maxindex_wb": "WB (Wallbox)",
     "minStartChargePower": "Puissance minimale de charge de démarrage [W]",
     "minStartDischargePower": "Puissance de décharge minimale de démarrage [W]",
     "options": "Option",

@@ -351,6 +351,7 @@
     "maxindex_bat": "Bat (batterijen)",
     "maxindex_pm": "Index2 (versie 2 periodes)",
     "maxindex_pvi": "PVI (Power Inverters)",
+    "maxindex_wb": "WB (wallbox)",
     "minStartChargePower": "Minimaal startladingsvermogen [W]",
     "minStartDischargePower": "Minimaal startontladingsvermogen [W]",
     "options": "Optie",
