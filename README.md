@@ -56,7 +56,7 @@ Here is what to configure when creating a new instance of the adapter. Settings 
   </tr>
   <tr>
     <td>E3/DC Port</td>
-    <td>RSCP port of your E3/DC, usually 5033. If you have a farm, try 5034 instead (credits to @gitpaddex)<br>NOTE: this is different fom the Modbus-Port.</td>
+    <td>RSCP port of your E3/DC, usually 5033. If you have a farm, try 5034 instead (credits to [@gitpaddex](https://github.com/gitpaddex))<br>NOTE: this is different fom the Modbus-Port.</td>
   </tr>
   <tr>
     <td>RSCP Password</td>
