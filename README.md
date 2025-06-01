@@ -501,6 +501,13 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 1.4.3
+
+* fixed errors reported by the ioBroker Check and Service Bot:
+  * \[W028\] now "node": ">=20" at package.json
+  * \[W037\] now "adapter-dev": "^1.4.0" at package.json
+  * \[W037\] now "testing": "^5.0.4" at package.json
+
 ### 1.4.2
 
 * introduced config value maxindex_wb - before, maxIndex["WB"] remained undefined in some cases - [Issue #262](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/262)
