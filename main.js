@@ -278,6 +278,8 @@ const mapReceivedIdToState = {
 	"EMS.DISCHARGE_START_POWER": { "Int32": "EMS.DISCHARGE_START_POWER", "Char8": "EMS.RETURN_CODE" },
 	"EMS.USER_CHARGE_LIMIT": { "*": "EMS.MAX_CHARGE_POWER" },
 	"EMS.USER_DISCHARGE_LIMIT": { "*": "EMS.MAX_DISCHARGE_POWER" },
+	"EMS.DPP_SET_BATTERY_CHARGE_ENABLED": { "*": "EMS.DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED" },
+	"EMS.DPP_SET_PRICE_LIMIT_BATTERY": { "*": "EMS.DPP_PRICE_LIMIT_BATTERY" },
 };
 // List of all writable states and define how to send a corresponding SET to E3/DC
 // hash-key is the state id - '*' wildcards in path are allowed. This is the state the user will modify to trigger a change.
@@ -300,6 +302,10 @@ const mapChangedIdToSetTags = {
 	"EMS.EMERGENCY_POWER": ["", "TAG_EMS_REQ_SET_EMERGENCY_POWER"],
 	"EMS.START_EMERGENCY_POWER_TEST": ["", "TAG_EMS_REQ_START_EMERGENCY_POWER_TEST"],
 	"EMS.OVERRIDE_AVAILABLE_POWER": ["", "TAG_EMS_REQ_SET_OVERRIDE_AVAILABLE_POWER"],
+	"EMS.DPP_PRICE_LIMIT_BATTERY": ["", "TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_BATTERY"],
+	"EMS.DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": ["", "TAG_EMS_REQ_DPP_SET_BATTERY_CHARGE_ENABLED"],
+	"EMS.DPP_SOC_BATTERY": ["", "TAG_EMS_REQ_DPP_SET_SOC_BATTERY"],
+	"EMS.DPP_MONTHS_ACTIVE": ["", "TAG_EMS_REQ_DPP_SET_MONTHS_ACTIVE"],
 	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
 	"EMS.*.*.START_HOUR": [],
 	"EMS.*.*.START_MINUTE": [],
@@ -940,6 +946,17 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
+	queueDppRequestData( sml ) {
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_PRICE_BASED_WB_CHARGE_ACTIVE", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ACTIVE", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_PRICE_LIMIT_BATTERY", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_SOC_BATTERY", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_MONTHS_ACTIVE", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED" , sml );
+		this.pushFrame();
+	}
+
 	sendEmsSetPower( mode, value ) {
 		this.log.debug( `sendEmsSetPower( ${mode}, ${value} )` );
 		this.clearFrame();
@@ -1250,7 +1267,10 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	requestAllData( sml ) {
-		if ( this.config.query_ems ) this.queueEmsRequestData( sml );
+		if ( this.config.query_ems ) {
+			this.queueEmsRequestData( sml );
+			this.queueDppRequestData( sml );
+		}
 		if ( this.config.query_pm ) this.queuePmRequestData( sml );
 		if ( this.config.query_ep ) this.queueEpRequestData( sml );
 		if ( this.config.query_bat ) this.queueBatRequestData( sml );
@@ -1563,11 +1583,16 @@ class E3dcRscp extends utils.Adapter {
 						}
 					}
 				}
-				// Translate bit-mapped EMS.STATUS
+				// Translate bit-mapped EMS.STATUS to single-bit values
 				if( shortId == "EMS.STATUS" ) {
 					for( let bit = 0; bit < 10; bit++ ) {
 						this.storeValue( nameSpace, pathNew, `STATUS_${bit}`, "Bool", ( token.content & ( 2**bit ) ) != 0, `EMS_STATUS_${bit}` );
 					}
+					continue;
+				}
+				// Translate bit-mapped EMS.DPP_MONTHS_ACTIVE to string
+				if( shortId == "EMS.DPP_MONTHS_ACTIVE" ) {
+					this.storeValue( nameSpace, pathNew, "DPP_MONTHS_ACTIVE", "CString", helper.bitmaskToMonthString( token.content ), "DPP_MONTHS_ACTIVE" );
 					continue;
 				}
 				// Use SET_EMERGENCY_POWER response "true" to acknowledge state EMS.EMERGENCY_POWER
@@ -2121,6 +2146,54 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+			await this.setObjectNotExistsAsync( "EMS.DPP_PRICE_LIMIT_BATTERY", {
+				type: "state",
+				common: {
+					name: systemDictionary["DPP_PRICE_LIMIT_BATTERY"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_BATTERY"]].Unit
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED", {
+				type: "state",
+				common: {
+					name: systemDictionary["DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_DPP_SET_BATTERY_CHARGE_ENABLED"]].Unit
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.DPP_SOC_BATTERY", {
+				type: "state",
+				common: {
+					name: systemDictionary["DPP_SOC_BATTERY"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_DPP_SET_SOC_BATTERY"]].Unit
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.DPP_MONTHS_ACTIVE", {
+				type: "state",
+				common: {
+					name: systemDictionary["DPP_MONTHS_ACTIVE"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_DPP_SET_MONTHS_ACTIVE"]].Unit
+				},
+				native: {},
+			} );
 		}
 		if( this.config.query_sys ) {
 			await this.setObjectNotExistsAsync( "SYS", {
@@ -2292,6 +2365,8 @@ class E3dcRscp extends utils.Adapter {
 					this.queueGetHistoryData( id );
 				} else if ( id.endsWith( "PARAM_EP_RESERVE" ) || id.endsWith( "PARAM_EP_RESERVE_ENERGY" ) ) {
 					this.queueSetEpReserve( id, state.val );
+				} else if ( id.endsWith( "EMS.DPP_MONTHS_ACTIVE" ) ) {
+					this.queueSetValue( id, helper.monthStringToBitmask( state.val ) );
 				} else {
 					this.queueSetValue( id, state.val );
 				}

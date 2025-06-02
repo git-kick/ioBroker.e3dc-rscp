@@ -392,6 +392,30 @@
                 "interval": "M"
             },
             {
+                "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_WB_CHARGE_ACTIVE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ACTIVE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_DPP_PRICE_LIMIT_BATTERY",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_DPP_SOC_BATTERY",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_DPP_MONTHS_ACTIVE",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED",
+                "interval": "M"
+            },
+            {
                 "tag": "TAG_PM_REQ_DEVICE_STATE",
                 "interval": "M"
             },

@@ -75,6 +75,38 @@ function weekdayStringToBitmask( days ) {
 	return result;
 }
 
+// 0b000011110000 => "jfmaMJJAsond"
+function bitmaskToMonthString( bitmask ) {
+	if( bitmask < 4096 ) {
+		const months = ["j", "f", "m", "a", "m", "j", "j", "a", "s", "o", "n", "d"];
+		const result = [];
+		for ( let i = 0; i < months.length; i++ ) {
+			if ( bitmask & ( 1 << i ) ) {
+				result.push( months[i].toUpperCase() );
+			} else {
+				result.push( months[i] );
+			}
+		}
+		return result.join( "" );
+	} else {
+		return "";
+	}
+}
+
+// "jfmaMJJAsond" => 0b000011110000
+function monthStringToBitmask( months ) {
+	let result = 0;
+	if( months.toUpperCase() == "JFMAMJJASOND" ) {
+		for ( let i = 0; i < months.length; i++ ) {
+			const m = months[i];
+			if( m >= "A" && m <= "Z" ) {
+				result += 2 ** i;
+			}
+		}
+	}
+	return result;
+}
+
 // Timestamps are stringified like "2022-01-30 12:00:00.000"
 function dateToString( date ) {
 	const year = date.getFullYear().toString().padStart( 4, "0" );
@@ -126,6 +158,8 @@ module.exports = {
 	timeOfDayStringToSeconds,
 	bitmaskToWeekdayString,
 	weekdayStringToBitmask,
+	bitmaskToMonthString,
+	monthStringToBitmask,
 	dateToString,
 	stringToDate,
 	bufferToString,
