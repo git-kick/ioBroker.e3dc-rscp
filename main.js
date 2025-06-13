@@ -2237,6 +2237,28 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+
+			const now = new Date();
+			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
+			const timeStart = {};
+			const timeInterval = {};
+			const timeSpan = {};
+			timeStart["DAY"] = helper.dateToString( d ); // last midnight
+			timeInterval["DAY"] = 3600 / 4; // 15 min
+			timeSpan["DAY"] = 3600 * 6; // 6 hours
+			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
+			timeStart["WEEK"] = helper.dateToString( d ); // last Monday
+			timeInterval["WEEK"] = 3600 * 4; // 4 hours
+			timeSpan["WEEK"] = 3600 * 24 * 7; // 7 days
+			d.setDate( 1 );
+			timeStart["MONTH"] = helper.dateToString( d ); // 1st of month
+			timeInterval["MONTH"] = 3600 * 24; // 1 day
+			timeSpan["MONTH"] = 3600 * 24 * 31; // 31 days
+			d.setMonth( 0 );
+			timeStart["YEAR"] = helper.dateToString( d ); // 1st of January
+			timeInterval["YEAR"] = 3600 * 24 * 30; // 30 days
+			timeSpan["YEAR"] = 3600 * 24 * 365; // 1 year
+
 			for ( const scale of ["DAY", "WEEK", "MONTH", "YEAR"] ) {
 				await this.setObjectNotExistsAsync( `DB.HISTORY_DATA_${scale}`, {
 					type: "channel",
@@ -2254,6 +2276,7 @@ class E3dcRscp extends utils.Adapter {
 						role: "level",
 						read: false,
 						write: true,
+						def: timeStart[scale],
 					},
 					native: {},
 				} );
@@ -2265,6 +2288,7 @@ class E3dcRscp extends utils.Adapter {
 						role: "level",
 						read: false,
 						write: true,
+						def: timeInterval[scale],
 						unit: rscpTag[rscpTagCode["TAG_DB_REQ_HISTORY_TIME_INTERVAL"]].Unit,
 					},
 					native: {},
@@ -2277,28 +2301,12 @@ class E3dcRscp extends utils.Adapter {
 						role: "level",
 						read: false,
 						write: true,
+						def: timeSpan[scale],
 						unit: rscpTag[rscpTagCode["TAG_DB_REQ_HISTORY_TIME_SPAN"]].Unit,
 					},
 					native: {},
 				} );
 			}
-			const now = new Date();
-			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
-			await this.setState( "DB.HISTORY_DATA_DAY.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_DAY.TIME_INTERVAL", 3600 / 4, true );
-			await this.setState( "DB.HISTORY_DATA_DAY.TIME_SPAN", 3600 * 6, true );
-			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
-			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_INTERVAL", 3600 * 4, true );
-			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_SPAN", 3600 * 24 * 7, true );
-			d.setDate( 1 );
-			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_INTERVAL", 3600 * 24, true );
-			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_SPAN", 3600 * 24 * 31, true );
-			d.setMonth( 0 );
-			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600 * 24 * 30, true );
-			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600 * 24 * 365, true );
 		}
 		if ( this.config.query_wb ) {
 			wb = new wallbox( {}, this, systemDictionary );

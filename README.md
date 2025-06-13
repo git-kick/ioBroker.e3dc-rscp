@@ -526,6 +526,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * \[W037\] now "adapter-dev": "^1.4.0" at package.json
   * \[W037\] now "testing": "^5.0.4" at package.json
 * Added dynamic power prices tags `EMS.DPP...` - [Issue #247](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/247)
+* Initialize DB.HISTORY_DATA_{DAY,WEEK,MONTH,YEAR}.TIME_{START,INTERVAL,SPAN} values only if not existing before  - [Issue #271](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/271)
 
 ### 1.4.2
 
