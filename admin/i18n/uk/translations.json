@@ -350,7 +350,7 @@
     "maxStartChargePower": "Максимальна потужність стартового заряду",
     "maxStartDischargePower": "Максимальна потужність стартового розряду",
     "maxindex_bat": "Бат (батареї)",
-    "maxindex_dcdc": "DCDC (інвертори батареї",
+    "maxindex_dcdc": "DCDC (інвертори батареї)",
     "maxindex_pm": "PM (лічильники потужності)",
     "maxindex_pvi": "PVI (силові інвертори)",
     "maxindex_wb": "WB (Wallbox)",

@@ -350,7 +350,7 @@
     "maxStartChargePower": "Maximaal startvermogen [W]",
     "maxStartDischargePower": "Maximaal startontladingsvermogen [W]",
     "maxindex_bat": "Bat (batterijen)",
-    "maxindex_dcdc": "DCDC (Batterie -omvormers",
+    "maxindex_dcdc": "DCDC (Batterie -omvormers)",
     "maxindex_pm": "Index2 (versie 2 periodes)",
     "maxindex_pvi": "PVI (Power Inverters)",
     "maxindex_wb": "WB (wallbox)",

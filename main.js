@@ -590,7 +590,7 @@ class E3dcRscp extends utils.Adapter {
 		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
 		// Initialize index sets from adapter config:
 		this.maxIndex["BAT"] = this.config.maxindex_bat; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
-		// DCDC count should be the same as BAT BAT count.
+		// DCDC count should be the same as BAT BAT count, but don't know
 		this.maxIndex["DCDC"] = this.config.maxindex_dcdc;
 		this.maxIndex["PVI"] = this.config.maxindex_pvi;
 		this.maxIndex["WB"] = this.config.maxindex_wb;

@@ -350,7 +350,7 @@
     "maxStartChargePower": "Maksymalna moc ładowania rozruchowego [W]",
     "maxStartDischargePower": "Maksymalna moc rozruchu [W]",
     "maxindex_bat": "Nietoperz (baterie)",
-    "maxindex_dcdc": "DCDC (falowniki batterie",
+    "maxindex_dcdc": "DCDC (falowniki batterie)",
     "maxindex_pm": "Indeks2 (wersja 2 okresy)",
     "maxindex_pvi": "PVI (falowniki energetyczne)",
     "maxindex_wb": "WB (Wallbox)",

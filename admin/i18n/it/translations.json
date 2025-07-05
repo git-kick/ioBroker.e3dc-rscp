@@ -350,7 +350,7 @@
     "maxStartChargePower": "Potenza massima di carica iniziale [W]",
     "maxStartDischargePower": "Potenza massima di scarico iniziale [W]",
     "maxindex_bat": "Pipistrello (batterie)",
-    "maxindex_dcdc": "DCDC (Batterie Inverter",
+    "maxindex_dcdc": "DCDC (Batterie Inverter)",
     "maxindex_pm": "INDICE2 (versione della versione 2)",
     "maxindex_pvi": "PVI (Power Inverter)",
     "maxindex_wb": "WB (Wallbox)",

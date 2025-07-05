@@ -350,7 +350,7 @@
     "maxStartChargePower": "Potência máxima de arranque [W]",
     "maxStartDischargePower": "Potência máxima de descarga no arranque [W]",
     "maxindex_bat": "Morcego (baterias)",
-    "maxindex_dcdc": "DCDC (inversores de bateria",
+    "maxindex_dcdc": "DCDC (inversores de bateria)",
     "maxindex_pm": "Index2 (versão 2 períodos)",
     "maxindex_pvi": "PVI (inversores de energia)",
     "maxindex_wb": "WB (Wallbox)",

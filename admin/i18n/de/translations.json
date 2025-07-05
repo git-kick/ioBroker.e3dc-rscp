@@ -350,7 +350,7 @@
     "maxStartChargePower": "Maximale anfängliche Ladeleistung",
     "maxStartDischargePower": "Maximale anfängliche Entladeleistung",
     "maxindex_bat": "BAT (Batterien)",
-    "maxindex_dcdc": "DCDC (Batterie -Wechselrichter",
+    "maxindex_dcdc": "DCDC (Batterie Wechselrichter)",
     "maxindex_pm": "PM (Leistungsmesser)",
     "maxindex_pvi": "PVI (Wechselrichter)",
     "maxindex_wb": "WB (Wallbox)",

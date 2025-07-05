@@ -350,7 +350,7 @@
     "maxStartChargePower": "最大启动充电功率[W]",
     "maxStartDischargePower": "最大启动放电功率[W]",
     "maxindex_bat": "蝙蝠（电池）",
-    "maxindex_dcdc": "DCDC（电池逆变器",
+    "maxindex_dcdc": "DCDC（电池逆变器）",
     "maxindex_pm": "index2（版本2个时期）",
     "maxindex_pvi": "PVI（电源逆变器）",
     "maxindex_wb": "WB（Wallbox）",
