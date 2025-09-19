@@ -1493,7 +1493,7 @@ class E3dcRscp extends utils.Adapter {
 				}
 				if ( shortId == "DCDC.DATA" && rscpError[token.content] == "RSCP_ERR_OUT_OF_BOUNDS" ) {
 					// This is an error response due to out-of-range DCDC index, heuristically cut off the biggest one
-					// In theorie maxIndex["DCDC"] should be the same as maxIndex["BAT"]
+					// In theory, maxIndex["DCDC"] should be the same as maxIndex["BAT"]
 					--this.maxIndex["DCDC"];
 					this.log.info( `Decreased DCDC max. index to ${this.maxIndex["DCDC"]}` );
 					continue;
@@ -2016,7 +2016,7 @@ class E3dcRscp extends utils.Adapter {
 				type: "device",
 				common: {
 					name: systemDictionary["DCDC"][this.language],
-					role: "dcdc.inverter",
+					role: "dcdc.converter",
 				},
 				native: {},
 			} );

@@ -376,7 +376,7 @@
     "portal_user": "E3/DC portal gebruiker",
     "query_bat": "EMS (energiebeheersysteem)",
     "query_db": "DB (database)",
-    "query_dcdc": "DCDC (Batterie Inverter)",
+    "query_dcdc": "DCDC (DC-DC Converter)",
     "query_ems": "EMS (energiebeheersysteem)",
     "query_ep": "EMS (energiebeheersysteem)",
     "query_info": "INFO (informatie)",

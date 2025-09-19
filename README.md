@@ -156,8 +156,8 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>DCDC</td>
-    <td>Battery Inverter</td>
-    <td>partially supported, experimental</td>
+    <td>DC-DC converter</td>
+    <td>partially supported, experimental; credits to <a href="https://github.com/db3wf">db3wf</td>
   </tr>
   <tr>
     <td>PM</td>
@@ -521,6 +521,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ### 1.4.3
 
+(db3wf)
+* Added DCDC namespace [Issue #273](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/273)
+
+(git-kick)
 * fixed errors reported by the ioBroker Check and Service Bot:
   * \[W028\] now "node": ">=20" at package.json
   * \[W037\] now "adapter-dev": "^1.4.0" at package.json
@@ -530,6 +534,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ### 1.4.2
 
+(git-kick)
 * introduced config value maxindex_wb - before, maxIndex["WB"] remained undefined in some cases - [Issue #262](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/262)
 * restored EP_RESERVE is writable - [Issue #263](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/263)
 * fixed errors reported by the ioBroker Check and Service Bot:
