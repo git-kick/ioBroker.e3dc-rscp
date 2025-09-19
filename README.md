@@ -525,12 +525,20 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * Added DCDC namespace [Issue #273](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/273)
 
 (git-kick)
-* fixed errors reported by the ioBroker Check and Service Bot:
-  * \[W028\] now "node": ">=20" at package.json
-  * \[W037\] now "adapter-dev": "^1.4.0" at package.json
-  * \[W037\] now "testing": "^5.0.4" at package.json
 * Added dynamic power prices tags `EMS.DPP...` - [Issue #247](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/247)
 * Initialize DB.HISTORY_DATA_{DAY,WEEK,MONTH,YEAR}.TIME_{START,INTERVAL,SPAN} values only if not existing before  - [Issue #271](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/271)
+* Fixed warnings and suggestions reported by the ioBroker Check and Service Bot:
+  * \[W028\] now "node": ">=20" in package.json
+  * \[W034\] now "adapter-core": "^3.3.2" in package.json
+  * \[W037\] now "adapter-dev": "^1.4.0" in package.json
+  * \[W037\] now "testing": "^5.1.0" in package.json
+  * \[W050\] now "@types/html-to-text" is under "devDependencies" in package.json
+  * \[W156\] now "admin": ">=7.6.17" in io-package.json
+  * \[W156\] now "js-controller": ">=6.0.11" in io-package.json
+  * \[W442\] added schema for jsonConfig files in .vscode/settings.json
+  * \[W444\] added schema for JSON5 config files in settings.json
+  * \[S532\] removed unused lib/tools.js
+  * \[S906\] added ".commitinfo§ to .gitignore
 
 ### 1.4.2
 
@@ -552,8 +560,8 @@ MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.
 * fixed error in weekdayStringToBitmask() - thanks to @SurfGargano for testing.
 * idle periods v1 or v2 can now be switched off in the adapter config - recommendation is to use only one of both.
 * fixed errors reported by the ioBroker Check and Service Bot:
-  * \[E186\] "common.globalDependencies" must be an array at io-package.json
-  * \[E190\] admin dependency missing. Please add to dependencies at io-package.json.
+  * \[E186\] "common.globalDependencies" must be an array in io-package.json
+  * \[E190\] admin dependency missing. Please add to dependencies in io-package.json.
 * New RscpTags.json: added new tags from 01-2024 tag list. 
 **But keep** ...EMERGENCY_POWER_TEST... naming despite it changed to ...EMERGENCYPOWER_TEST... in the new tag-list (this affects four tags).
 * Fixed [Issue #236](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/236) - added handling for version 2 PERIODs. 
@@ -562,9 +570,9 @@ MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.
 * Fixed E524, E525, S526 dev dependencies.
 * Enhanced max. index handling to produce less debug log messages. (Introduced notIndexIds for non-index counts.)
 * fixed errors reported by the ioBroker Check and Service Bot:
-  * \[E186\] "common.globalDependencies" must be an array at io-package.json
-  * \[E190\] admin dependency missing. Please add to dependencies at io-package.json.
-  * \[W050\] Package 'axios' listed as devDependency at package.json might be obsolete if using '@iobroker/adapter-dev'.
+  * \[E186\] "common.globalDependencies" must be an array in io-package.json
+  * \[E190\] admin dependency missing. Please add to dependencies in io-package.json.
+  * \[W050\] Package 'axios' listed as devDependency in package.json might be obsolete if using '@iobroker/adapter-dev'.
 
 ### 1.4.0   - Deprecated - Do not install -
 
