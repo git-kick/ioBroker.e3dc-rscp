@@ -156,8 +156,8 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>DCDC</td>
-    <td>Battery DCDC</td>
-    <td>not supported (yet)</td>
+    <td>Battery Inverter</td>
+    <td>partially supported, experimental</td>
   </tr>
   <tr>
     <td>PM</td>

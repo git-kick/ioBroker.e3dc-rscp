@@ -596,6 +596,8 @@ class E3dcRscp extends utils.Adapter {
 		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
 		// Initialize index sets from adapter config:
 		this.maxIndex["BAT"] = this.config.maxindex_bat; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
+		// DCDC count should be the same as BAT BAT count, but don't know
+		this.maxIndex["DCDC"] = this.config.maxindex_dcdc;
 		this.maxIndex["PVI"] = this.config.maxindex_pvi;
 		this.maxIndex["WB"] = this.config.maxindex_wb;
 		this.indexSet["PM"] = [];
@@ -852,6 +854,28 @@ class E3dcRscp extends utils.Adapter {
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", sml, j );
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", sml, j );
 			}
+			this.pushFrame( pos );
+		}
+	}
+
+	queueDcdcRequestData( sml ) {
+		for ( let i = 0; i <= this.maxIndex["DCDC"]; i++ ) {
+			this.clearFrame();
+			const pos = this.startContainer( "TAG_DCDC_REQ_DATA" );
+			this.addTagtoFrame( "TAG_DCDC_INDEX", "", i );
+			this.addTagtoFrame( "TAG_DCDC_REQ_I_BAT", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_U_BAT", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_P_BAT", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_I_DCL", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_U_DCL", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_P_DCL", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_FIRMWARE_VERSION", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_FPGA_FIRMWARE", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_SERIAL_NUMBER", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_BOARD_VERSION", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_STATUS", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_STATUS_AS_STRING", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_DEVICE_STATE", sml );
 			this.pushFrame( pos );
 		}
 	}
@@ -1274,6 +1298,7 @@ class E3dcRscp extends utils.Adapter {
 		if ( this.config.query_pm ) this.queuePmRequestData( sml );
 		if ( this.config.query_ep ) this.queueEpRequestData( sml );
 		if ( this.config.query_bat ) this.queueBatRequestData( sml );
+		if ( this.config.query_dcdc ) this.queueDcdcRequestData( sml );
 		if ( this.config.query_pvi ) this.queuePviRequestData( sml );
 		if ( this.config.query_sys ) this.queueSysRequestData( sml );
 		if ( this.config.query_info ) this.queueInfoRequestData( sml );
@@ -1464,6 +1489,13 @@ class E3dcRscp extends utils.Adapter {
 					// This is an error response due to out-of-range BAT index, heuristically cut off the biggest one:
 					--this.maxIndex["BAT"];
 					this.log.info( `Decreased BAT max. index to ${this.maxIndex["BAT"]}` );
+					continue;
+				}
+				if ( shortId == "DCDC.DATA" && rscpError[token.content] == "RSCP_ERR_OUT_OF_BOUNDS" ) {
+					// This is an error response due to out-of-range DCDC index, heuristically cut off the biggest one
+					// In theorie maxIndex["DCDC"] should be the same as maxIndex["BAT"]
+					--this.maxIndex["DCDC"];
+					this.log.info( `Decreased DCDC max. index to ${this.maxIndex["DCDC"]}` );
 					continue;
 				}
 				if ( ["PM.DEVICE_STATE","PM.REQ_DEVICE_STATE"].includes( shortId ) && ["RSCP_ERR_NOT_AVAILABLE","RSCP_ERR_OUT_OF_BOUNDS"].includes( rscpError[token.content] ) ) {
@@ -1975,6 +2007,16 @@ class E3dcRscp extends utils.Adapter {
 				common: {
 					name: systemDictionary["BAT"][this.language],
 					role: "battery.storage",
+				},
+				native: {},
+			} );
+		}
+		if ( this.config.query_dcdc ) {
+			await this.setObjectNotExistsAsync( "DCDC", {
+				type: "device",
+				common: {
+					name: systemDictionary["DCDC"][this.language],
+					role: "dcdc.inverter",
 				},
 				native: {},
 			} );

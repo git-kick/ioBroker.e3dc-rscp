@@ -484,6 +484,58 @@
                 "interval": "M"
             },
             {
+                "tag": "TAG_DCDC_REQ_I_BAT",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_U_BAT",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_P_BAT",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_I_DCL",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_U_DCL",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_P_DCL",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_FIRMWARE_VERSION",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_FPGA_FIRMWARE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_SERIAL_NUMBER",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_BOARD_VERSION",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_STATUS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_STATUS_AS_STRING",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_DEVICE_STATE",
+                "interval": "M"
+            },
+            {
                 "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
                 "interval": "M"
             },
@@ -974,12 +1026,14 @@
         "query_ep": true,
         "query_pvi": true,
         "query_sys": true,
+        "query_dcdc": false,
         "query_wb": true,
         "query_info": true,
         "query_db": true,
         "maxindex_bat": 3,
         "maxindex_pvi": 1,
         "maxindex_pm": 9,
+        "maxindex_dcdc": 3,
         "maxindex_wb": 0
     },
     "objects": [],
