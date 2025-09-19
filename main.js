@@ -278,6 +278,8 @@ const mapReceivedIdToState = {
 	"EMS.DISCHARGE_START_POWER": { "Int32": "EMS.DISCHARGE_START_POWER", "Char8": "EMS.RETURN_CODE" },
 	"EMS.USER_CHARGE_LIMIT": { "*": "EMS.MAX_CHARGE_POWER" },
 	"EMS.USER_DISCHARGE_LIMIT": { "*": "EMS.MAX_DISCHARGE_POWER" },
+	"EMS.DPP_SET_BATTERY_CHARGE_ENABLED": { "*": "EMS.DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED" },
+	"EMS.DPP_SET_PRICE_LIMIT_BATTERY": { "*": "EMS.DPP_PRICE_LIMIT_BATTERY" },
 };
 // List of all writable states and define how to send a corresponding SET to E3/DC
 // hash-key is the state id - '*' wildcards in path are allowed. This is the state the user will modify to trigger a change.
@@ -300,6 +302,10 @@ const mapChangedIdToSetTags = {
 	"EMS.EMERGENCY_POWER": ["", "TAG_EMS_REQ_SET_EMERGENCY_POWER"],
 	"EMS.START_EMERGENCY_POWER_TEST": ["", "TAG_EMS_REQ_START_EMERGENCY_POWER_TEST"],
 	"EMS.OVERRIDE_AVAILABLE_POWER": ["", "TAG_EMS_REQ_SET_OVERRIDE_AVAILABLE_POWER"],
+	"EMS.DPP_PRICE_LIMIT_BATTERY": ["", "TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_BATTERY"],
+	"EMS.DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": ["", "TAG_EMS_REQ_DPP_SET_BATTERY_CHARGE_ENABLED"],
+	"EMS.DPP_SOC_BATTERY": ["", "TAG_EMS_REQ_DPP_SET_SOC_BATTERY"],
+	"EMS.DPP_MONTHS_ACTIVE": ["", "TAG_EMS_REQ_DPP_SET_MONTHS_ACTIVE"],
 	"EMS.*.*.IDLE_PERIOD_ACTIVE": [],
 	"EMS.*.*.START_HOUR": [],
 	"EMS.*.*.START_MINUTE": [],
@@ -940,6 +946,17 @@ class E3dcRscp extends utils.Adapter {
 		this.pushFrame();
 	}
 
+	queueDppRequestData( sml ) {
+		this.clearFrame();
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_PRICE_BASED_WB_CHARGE_ACTIVE", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ACTIVE", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_PRICE_LIMIT_BATTERY", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_SOC_BATTERY", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_MONTHS_ACTIVE", sml );
+		this.addTagtoFrame( "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED" , sml );
+		this.pushFrame();
+	}
+
 	sendEmsSetPower( mode, value ) {
 		this.log.debug( `sendEmsSetPower( ${mode}, ${value} )` );
 		this.clearFrame();
@@ -1250,7 +1267,10 @@ class E3dcRscp extends utils.Adapter {
 	}
 
 	requestAllData( sml ) {
-		if ( this.config.query_ems ) this.queueEmsRequestData( sml );
+		if ( this.config.query_ems ) {
+			this.queueEmsRequestData( sml );
+			this.queueDppRequestData( sml );
+		}
 		if ( this.config.query_pm ) this.queuePmRequestData( sml );
 		if ( this.config.query_ep ) this.queueEpRequestData( sml );
 		if ( this.config.query_bat ) this.queueBatRequestData( sml );
@@ -1563,11 +1583,16 @@ class E3dcRscp extends utils.Adapter {
 						}
 					}
 				}
-				// Translate bit-mapped EMS.STATUS
+				// Translate bit-mapped EMS.STATUS to single-bit values
 				if( shortId == "EMS.STATUS" ) {
 					for( let bit = 0; bit < 10; bit++ ) {
 						this.storeValue( nameSpace, pathNew, `STATUS_${bit}`, "Bool", ( token.content & ( 2**bit ) ) != 0, `EMS_STATUS_${bit}` );
 					}
+					continue;
+				}
+				// Translate bit-mapped EMS.DPP_MONTHS_ACTIVE to string
+				if( shortId == "EMS.DPP_MONTHS_ACTIVE" ) {
+					this.storeValue( nameSpace, pathNew, "DPP_MONTHS_ACTIVE", "CString", helper.bitmaskToMonthString( token.content ), "DPP_MONTHS_ACTIVE" );
 					continue;
 				}
 				// Use SET_EMERGENCY_POWER response "true" to acknowledge state EMS.EMERGENCY_POWER
@@ -2121,6 +2146,54 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+			await this.setObjectNotExistsAsync( "EMS.DPP_PRICE_LIMIT_BATTERY", {
+				type: "state",
+				common: {
+					name: systemDictionary["DPP_PRICE_LIMIT_BATTERY"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_BATTERY"]].Unit
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED", {
+				type: "state",
+				common: {
+					name: systemDictionary["DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED"][this.language],
+					type: "boolean",
+					role: "switch",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_DPP_SET_BATTERY_CHARGE_ENABLED"]].Unit
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.DPP_SOC_BATTERY", {
+				type: "state",
+				common: {
+					name: systemDictionary["DPP_SOC_BATTERY"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_DPP_SET_SOC_BATTERY"]].Unit
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.DPP_MONTHS_ACTIVE", {
+				type: "state",
+				common: {
+					name: systemDictionary["DPP_MONTHS_ACTIVE"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_DPP_SET_MONTHS_ACTIVE"]].Unit
+				},
+				native: {},
+			} );
 		}
 		if( this.config.query_sys ) {
 			await this.setObjectNotExistsAsync( "SYS", {
@@ -2164,6 +2237,28 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+
+			const now = new Date();
+			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
+			const timeStart = {};
+			const timeInterval = {};
+			const timeSpan = {};
+			timeStart["DAY"] = helper.dateToString( d ); // last midnight
+			timeInterval["DAY"] = 3600 / 4; // 15 min
+			timeSpan["DAY"] = 3600 * 6; // 6 hours
+			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
+			timeStart["WEEK"] = helper.dateToString( d ); // last Monday
+			timeInterval["WEEK"] = 3600 * 4; // 4 hours
+			timeSpan["WEEK"] = 3600 * 24 * 7; // 7 days
+			d.setDate( 1 );
+			timeStart["MONTH"] = helper.dateToString( d ); // 1st of month
+			timeInterval["MONTH"] = 3600 * 24; // 1 day
+			timeSpan["MONTH"] = 3600 * 24 * 31; // 31 days
+			d.setMonth( 0 );
+			timeStart["YEAR"] = helper.dateToString( d ); // 1st of January
+			timeInterval["YEAR"] = 3600 * 24 * 30; // 30 days
+			timeSpan["YEAR"] = 3600 * 24 * 365; // 1 year
+
 			for ( const scale of ["DAY", "WEEK", "MONTH", "YEAR"] ) {
 				await this.setObjectNotExistsAsync( `DB.HISTORY_DATA_${scale}`, {
 					type: "channel",
@@ -2181,6 +2276,7 @@ class E3dcRscp extends utils.Adapter {
 						role: "level",
 						read: false,
 						write: true,
+						def: timeStart[scale],
 					},
 					native: {},
 				} );
@@ -2192,6 +2288,7 @@ class E3dcRscp extends utils.Adapter {
 						role: "level",
 						read: false,
 						write: true,
+						def: timeInterval[scale],
 						unit: rscpTag[rscpTagCode["TAG_DB_REQ_HISTORY_TIME_INTERVAL"]].Unit,
 					},
 					native: {},
@@ -2204,28 +2301,12 @@ class E3dcRscp extends utils.Adapter {
 						role: "level",
 						read: false,
 						write: true,
+						def: timeSpan[scale],
 						unit: rscpTag[rscpTagCode["TAG_DB_REQ_HISTORY_TIME_SPAN"]].Unit,
 					},
 					native: {},
 				} );
 			}
-			const now = new Date();
-			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
-			await this.setState( "DB.HISTORY_DATA_DAY.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_DAY.TIME_INTERVAL", 3600 / 4, true );
-			await this.setState( "DB.HISTORY_DATA_DAY.TIME_SPAN", 3600 * 6, true );
-			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
-			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_INTERVAL", 3600 * 4, true );
-			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_SPAN", 3600 * 24 * 7, true );
-			d.setDate( 1 );
-			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_INTERVAL", 3600 * 24, true );
-			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_SPAN", 3600 * 24 * 31, true );
-			d.setMonth( 0 );
-			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600 * 24 * 30, true );
-			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600 * 24 * 365, true );
 		}
 		if ( this.config.query_wb ) {
 			wb = new wallbox( {}, this, systemDictionary );
@@ -2292,6 +2373,8 @@ class E3dcRscp extends utils.Adapter {
 					this.queueGetHistoryData( id );
 				} else if ( id.endsWith( "PARAM_EP_RESERVE" ) || id.endsWith( "PARAM_EP_RESERVE_ENERGY" ) ) {
 					this.queueSetEpReserve( id, state.val );
+				} else if ( id.endsWith( "EMS.DPP_MONTHS_ACTIVE" ) ) {
+					this.queueSetValue( id, helper.monthStringToBitmask( state.val ) );
 				} else {
 					this.queueSetValue( id, state.val );
 				}

@@ -86,7 +86,7 @@ NOTE: do _not_ add the REQ_SET tag to `io-package.json`; only the REQ tag is use
     ],
 _Do not_ add the REQ_SET tag; it will not be polled regularly.
 
-NOTE: after modifying `io-package.json`, you have to do reinstall the adapter from-the-scratch and re-ernter the configuration - _do not_ load a config json file, this will disable the new `io-package.json` entries.
+NOTE: after modifying `io-package.json`, you have to do reinstall the adapter from-the-scratch and re-enter the configuration - _do not_ load a config json file, this will disable the new `io-package.json` entries.
 ### 2. Declare object to represent a setter and assign setter tag
 
     const mapChangedIdToSetTags = {
@@ -126,9 +126,25 @@ After entering English text, call
   `npm run translate all`
 
 to generate translations to all other languages.
+### 6. Map incoming tag id to object
+Often, the tag used by E3/DC to send back the value is different from the tag name used as object in ioBroker, e.g. it may be marked with "RES" or "USER" or "SET".
 
-### Done. No extra send function in such standard cases! `queueSetValue()` will send the value after it was changed in the object tree.
+    const mapReceivedIdToState = {
+      ...
+      "EMS.RES_POWERSAVE_ENABLED": { "*": "EMS.POWERSAVE_ENABLED" },
+      ...
+    };
+### 7. Define behaviour when value is changed
+Last but not least, there are different procedures to follow when a setter tag is changed in the ioBroker object tree. In some cases, a timer is started, in other cases, a special `queue...()` function is called, etc.
 
+    	onStateChange( id, state ) {
+        ...
+        else if ( id.endsWith( "EMS.DPP_MONTHS_ACTIVE" ) ) {
+              this.queueSetValue( id, helper.monthStringToBitmask( state.val ) );
+        } else ...
+      }
+
+### Note: no extra send function is needed in standard cases! `queueSetValue()` will send the value after it was changed in the object tree.
 
 ## RSCP API Documentation
 

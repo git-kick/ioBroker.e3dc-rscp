@@ -142,7 +142,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   <tr>
     <td>EMS</td>
     <td>Energy Management System</td>
-    <td>partially supported</td>
+    <td>partially supported; in particular, many of new new tags introduced in 2024 are not yet handled</td>
   </tr>
   <tr>
     <td>PVI</td>
@@ -207,7 +207,7 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   <tr>
     <td>WB</td>
     <td>Wallbox</td>
-    <td>supported</td>
+    <td>supported; credits to <a href="https://github.com/ka-vaNu">ka-vaNu</a></td>
   </tr>
 </table> 
 
@@ -314,6 +314,24 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>START_EMERGENCY_POWER_TEST</td>
     <td>boolean</td>
     <td>Setting this value will switch the E3/DC to island mode. **experimental**</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>DPP_MONTHS_ACTIVE</td>
+    <td>string</td>
+    <td>Dynamic power prices: active in uppercae months, inactive in lowercase months, e.g. "jfMAMJJASOnd"</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED</td>
+    <td>boolean</td>
+    <td>Dynamic power prices: battery charge enabled?</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>DPP_PRICE_LIMIT_BATTERY</td>
+    <td>number</td>
+    <td>Dynamic power prices below this limit are used to charge battery.</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
@@ -507,6 +525,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * \[W028\] now "node": ">=20" at package.json
   * \[W037\] now "adapter-dev": "^1.4.0" at package.json
   * \[W037\] now "testing": "^5.0.4" at package.json
+* Added dynamic power prices tags `EMS.DPP...` - [Issue #247](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/247)
+* Initialize DB.HISTORY_DATA_{DAY,WEEK,MONTH,YEAR}.TIME_{START,INTERVAL,SPAN} values only if not existing before  - [Issue #271](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/271)
 
 ### 1.4.2
 
