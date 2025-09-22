@@ -519,6 +519,11 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### 1.4.4
+
+(git-kick)
+* Wording (de): now "DC-DC-Wandler" instead of "DC-DC-Konverter"
+
 ### 1.4.3
 
 (db3wf)
