@@ -1026,6 +1026,19 @@
 		"Unit": "",
 		"Description": ""
 	},
+	"16777291": {
+		"TagHex": "0x0100004b",
+		"TagName": "REQ_DPP_SET_PRICE_LIMIT_WB",
+		"TagNameGlobal": "TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_WB",
+		"DataTagHex": "0x00004b",
+		"NameSpace": "EMS",
+		"NameSpaceHex": "0x01",
+		"DataType": "Float32",
+		"DataTypeHex": "0x0A",
+		"UserLevel": "USER",
+		"Unit": "",
+		"Description": "Set price limit for dynamic power price integration of Wallbox."
+	},
 	"16777300": {
 		"TagHex": "0x01000054",
 		"TagName": "REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ACTIVE",

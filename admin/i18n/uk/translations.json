@@ -108,6 +108,7 @@
     "DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": "Запровадження зарядки акумулятора на основі цін",
     "DPP_PRICE_BASED_WB_CHARGE_ACTIVE": "Стягнення на основі ціни на основі ціни активна",
     "DPP_PRICE_LIMIT_BATTERY": "Ліміт цін на зарядку акумулятора з сітки [валюта]",
+    "DPP_PRICE_LIMIT_WB": "Обмеження ціни на зарядку Wallbox від мережі",
     "DPP_SOC_BATTERY": "Акумулятор Soc [%]",
     "EMERGENCY_POWER": "Аварійне живлення",
     "EMERGENCY_POWER_RETRY": "Повторна спроба аварійного живлення",

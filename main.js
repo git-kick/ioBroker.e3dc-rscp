@@ -302,6 +302,7 @@ const mapChangedIdToSetTags = {
 	"EMS.EMERGENCY_POWER": ["", "TAG_EMS_REQ_SET_EMERGENCY_POWER"],
 	"EMS.START_EMERGENCY_POWER_TEST": ["", "TAG_EMS_REQ_START_EMERGENCY_POWER_TEST"],
 	"EMS.OVERRIDE_AVAILABLE_POWER": ["", "TAG_EMS_REQ_SET_OVERRIDE_AVAILABLE_POWER"],
+	"EMS.DPP_PRICE_LIMIT_WB": ["", "TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_WB"],
 	"EMS.DPP_PRICE_LIMIT_BATTERY": ["", "TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_BATTERY"],
 	"EMS.DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": ["", "TAG_EMS_REQ_DPP_SET_BATTERY_CHARGE_ENABLED"],
 	"EMS.DPP_SOC_BATTERY": ["", "TAG_EMS_REQ_DPP_SET_SOC_BATTERY"],
@@ -2185,6 +2186,18 @@ class E3dcRscp extends utils.Adapter {
 					read: false,
 					write: true,
 					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_SET_OVERRIDE_AVAILABLE_POWER"]].Unit
+				},
+				native: {},
+			} );
+			await this.setObjectNotExistsAsync( "EMS.DPP_PRICE_LIMIT_WB", {
+				type: "state",
+				common: {
+					name: systemDictionary["DPP_PRICE_LIMIT_WB"][this.language],
+					type: "number",
+					role: "level",
+					read: false,
+					write: true,
+					unit: rscpTag[rscpTagCode["TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_WB"]].Unit
 				},
 				native: {},
 			} );
