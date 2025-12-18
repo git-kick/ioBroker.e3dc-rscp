@@ -596,6 +596,8 @@ class E3dcRscp extends utils.Adapter {
 		// Error responses due to out-of range index are handled by processTree(), and maxIndex is adjusted dynamically.
 		// Initialize index sets from adapter config:
 		this.maxIndex["BAT"] = this.config.maxindex_bat; // E3/DC tag list states that BAT INDEX is always 0, BUT there are counterexamples (see Issue#96)
+		// DCDC count should be the same as BAT BAT count, but don't know
+		this.maxIndex["DCDC"] = this.config.maxindex_dcdc;
 		this.maxIndex["PVI"] = this.config.maxindex_pvi;
 		this.maxIndex["WB"] = this.config.maxindex_wb;
 		this.indexSet["PM"] = [];
@@ -852,6 +854,28 @@ class E3dcRscp extends utils.Adapter {
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES", sml, j );
 				this.addTagtoFrame( "TAG_BAT_REQ_DCB_INFO", sml, j );
 			}
+			this.pushFrame( pos );
+		}
+	}
+
+	queueDcdcRequestData( sml ) {
+		for ( let i = 0; i <= this.maxIndex["DCDC"]; i++ ) {
+			this.clearFrame();
+			const pos = this.startContainer( "TAG_DCDC_REQ_DATA" );
+			this.addTagtoFrame( "TAG_DCDC_INDEX", "", i );
+			this.addTagtoFrame( "TAG_DCDC_REQ_I_BAT", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_U_BAT", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_P_BAT", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_I_DCL", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_U_DCL", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_P_DCL", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_FIRMWARE_VERSION", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_FPGA_FIRMWARE", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_SERIAL_NUMBER", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_BOARD_VERSION", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_STATUS", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_STATUS_AS_STRING", sml );
+			this.addTagtoFrame( "TAG_DCDC_REQ_DEVICE_STATE", sml );
 			this.pushFrame( pos );
 		}
 	}
@@ -1274,6 +1298,7 @@ class E3dcRscp extends utils.Adapter {
 		if ( this.config.query_pm ) this.queuePmRequestData( sml );
 		if ( this.config.query_ep ) this.queueEpRequestData( sml );
 		if ( this.config.query_bat ) this.queueBatRequestData( sml );
+		if ( this.config.query_dcdc ) this.queueDcdcRequestData( sml );
 		if ( this.config.query_pvi ) this.queuePviRequestData( sml );
 		if ( this.config.query_sys ) this.queueSysRequestData( sml );
 		if ( this.config.query_info ) this.queueInfoRequestData( sml );
@@ -1464,6 +1489,13 @@ class E3dcRscp extends utils.Adapter {
 					// This is an error response due to out-of-range BAT index, heuristically cut off the biggest one:
 					--this.maxIndex["BAT"];
 					this.log.info( `Decreased BAT max. index to ${this.maxIndex["BAT"]}` );
+					continue;
+				}
+				if ( shortId == "DCDC.DATA" && rscpError[token.content] == "RSCP_ERR_OUT_OF_BOUNDS" ) {
+					// This is an error response due to out-of-range DCDC index, heuristically cut off the biggest one
+					// In theory, maxIndex["DCDC"] should be the same as maxIndex["BAT"]
+					--this.maxIndex["DCDC"];
+					this.log.info( `Decreased DCDC max. index to ${this.maxIndex["DCDC"]}` );
 					continue;
 				}
 				if ( ["PM.DEVICE_STATE","PM.REQ_DEVICE_STATE"].includes( shortId ) && ["RSCP_ERR_NOT_AVAILABLE","RSCP_ERR_OUT_OF_BOUNDS"].includes( rscpError[token.content] ) ) {
@@ -1979,6 +2011,16 @@ class E3dcRscp extends utils.Adapter {
 				native: {},
 			} );
 		}
+		if ( this.config.query_dcdc ) {
+			await this.setObjectNotExistsAsync( "DCDC", {
+				type: "device",
+				common: {
+					name: systemDictionary["DCDC"][this.language],
+					role: "dcdc.converter",
+				},
+				native: {},
+			} );
+		}
 		if( this.config.query_pvi ) {
 			await this.setObjectNotExistsAsync( "PVI", {
 				type: "device",
@@ -2237,6 +2279,28 @@ class E3dcRscp extends utils.Adapter {
 				},
 				native: {},
 			} );
+
+			const now = new Date();
+			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
+			const timeStart = {};
+			const timeInterval = {};
+			const timeSpan = {};
+			timeStart["DAY"] = helper.dateToString( d ); // last midnight
+			timeInterval["DAY"] = 3600 / 4; // 15 min
+			timeSpan["DAY"] = 3600 * 6; // 6 hours
+			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
+			timeStart["WEEK"] = helper.dateToString( d ); // last Monday
+			timeInterval["WEEK"] = 3600 * 4; // 4 hours
+			timeSpan["WEEK"] = 3600 * 24 * 7; // 7 days
+			d.setDate( 1 );
+			timeStart["MONTH"] = helper.dateToString( d ); // 1st of month
+			timeInterval["MONTH"] = 3600 * 24; // 1 day
+			timeSpan["MONTH"] = 3600 * 24 * 31; // 31 days
+			d.setMonth( 0 );
+			timeStart["YEAR"] = helper.dateToString( d ); // 1st of January
+			timeInterval["YEAR"] = 3600 * 24 * 30; // 30 days
+			timeSpan["YEAR"] = 3600 * 24 * 365; // 1 year
+
 			for ( const scale of ["DAY", "WEEK", "MONTH", "YEAR"] ) {
 				await this.setObjectNotExistsAsync( `DB.HISTORY_DATA_${scale}`, {
 					type: "channel",
@@ -2254,6 +2318,7 @@ class E3dcRscp extends utils.Adapter {
 						role: "level",
 						read: false,
 						write: true,
+						def: timeStart[scale],
 					},
 					native: {},
 				} );
@@ -2265,6 +2330,7 @@ class E3dcRscp extends utils.Adapter {
 						role: "level",
 						read: false,
 						write: true,
+						def: timeInterval[scale],
 						unit: rscpTag[rscpTagCode["TAG_DB_REQ_HISTORY_TIME_INTERVAL"]].Unit,
 					},
 					native: {},
@@ -2277,28 +2343,12 @@ class E3dcRscp extends utils.Adapter {
 						role: "level",
 						read: false,
 						write: true,
+						def: timeSpan[scale],
 						unit: rscpTag[rscpTagCode["TAG_DB_REQ_HISTORY_TIME_SPAN"]].Unit,
 					},
 					native: {},
 				} );
 			}
-			const now = new Date();
-			let d = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 );
-			await this.setState( "DB.HISTORY_DATA_DAY.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_DAY.TIME_INTERVAL", 3600 / 4, true );
-			await this.setState( "DB.HISTORY_DATA_DAY.TIME_SPAN", 3600 * 6, true );
-			d = new Date( d.getTime() - ( d.getDay() + 6 ) % 7 * 1000 * 3600 * 24 );
-			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_INTERVAL", 3600 * 4, true );
-			await this.setState( "DB.HISTORY_DATA_WEEK.TIME_SPAN", 3600 * 24 * 7, true );
-			d.setDate( 1 );
-			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_INTERVAL", 3600 * 24, true );
-			await this.setState( "DB.HISTORY_DATA_MONTH.TIME_SPAN", 3600 * 24 * 31, true );
-			d.setMonth( 0 );
-			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_START", helper.dateToString( d ), true );
-			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_INTERVAL", 3600 * 24 * 30, true );
-			await this.setState( "DB.HISTORY_DATA_YEAR.TIME_SPAN", 3600 * 24 * 365, true );
 		}
 		if ( this.config.query_wb ) {
 			wb = new wallbox( {}, this, systemDictionary );

@@ -3597,7 +3597,7 @@
 		"DataType": "Int32",
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"25165890": {
@@ -3610,7 +3610,7 @@
 		"DataType": "Int32",
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"25165891": {
@@ -3623,7 +3623,7 @@
 		"DataType": "Int32",
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"25165892": {
@@ -3636,7 +3636,7 @@
 		"DataType": "Int32",
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"25165893": {
@@ -3649,7 +3649,7 @@
 		"DataType": "Int32",
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"25165894": {
@@ -3662,7 +3662,7 @@
 		"DataType": "Int32",
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"25165895": {
@@ -3675,7 +3675,7 @@
 		"DataType": "Int32",
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"25165896": {
@@ -3688,7 +3688,7 @@
 		"DataType": "Int32",
 		"DataTypeHex": "0x06",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"25165899": {
@@ -9486,7 +9486,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "A",
 		"Description": ""
 	},
 	"75497474": {
@@ -9499,7 +9499,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "V",
 		"Description": ""
 	},
 	"75497475": {
@@ -9512,7 +9512,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"75497476": {
@@ -9525,7 +9525,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "A",
 		"Description": ""
 	},
 	"75497477": {
@@ -9538,7 +9538,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "V",
 		"Description": ""
 	},
 	"75497478": {
@@ -9551,7 +9551,7 @@
 		"DataType": "Float32",
 		"DataTypeHex": "0x0A",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
+		"Unit": "W",
 		"Description": ""
 	},
 	"75497479": {

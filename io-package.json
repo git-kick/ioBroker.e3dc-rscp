@@ -1,13 +1,26 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.4.2",
+        "version": "1.4.3",
         "blockedVersions": [
             "1.4.0",
             "1.3.0",
             "1.2.0"
         ],
         "news": {
+            "1.4.3": {
+                "en": "Added DCDC namespace.",
+                "de": "DCDC Namespace wird unterstützt.",
+                "ru": "Добавлено пространство имен DCDC.",
+                "pt": "Adicionado namespace DCDC.",
+                "nl": "DCDC -naamruimte toegevoegd.",
+                "fr": "Ajout de l'espace de noms DCDC.",
+                "it": "Aggiunto spazio dei nomi DCDC.",
+                "es": "Se agregó el espacio de nombres DCDC.",
+                "pl": "Dodano przestrzeń nazw DCDC.",
+                "uk": "Додано простір імен DCDC.",
+                "zh-cn": "添加了DCDC名称空间。"
+            },
             "1.4.2": {
                 "en": "Regression fixes.",
                 "de": "Fehlerbehebungen.",
@@ -33,45 +46,6 @@
                 "pl": "Obsługa wersji 2 bezczynnych okresów.",
                 "uk": "Підтримка версії 2 очікування.",
                 "zh-cn": "支持版本2空闲时期。"
-            },
-            "1.3.1": {
-                "en": "Added PM namespace (read-only)",
-                "de": "PM namespace (nur lesend)",
-                "ru": "Добавлено пространство имен PM (только чтение).",
-                "pt": "Adicionado namespace PM (somente leitura)",
-                "nl": "PM-naamruimte toegevoegd (alleen-lezen)",
-                "fr": "Espace de noms PM ajouté (lecture seule)",
-                "it": "Aggiunto spazio dei nomi PM (sola lettura)",
-                "es": "Espacio de nombres PM agregado (solo lectura)",
-                "pl": "Dodano przestrzeń nazw PM (tylko do odczytu)",
-                "uk": "Додано простір імен PM (тільки для читання)",
-                "zh-cn": "添加 PM 命名空间（只读）"
-            },
-            "1.2.6": {
-                "en": "No more warnings about unknown tags like 0x100003e",
-                "de": "Keine Warnung mehr bei unbekannten Tags wie 0x100003e",
-                "ru": "Больше никаких предупреждений о неизвестных тегах, таких как 0x100003e.",
-                "pt": "Chega de avisos sobre tags desconhecidas como 0x100003e",
-                "nl": "Geen waarschuwingen meer over onbekende tags zoals 0x100003e",
-                "fr": "Plus d'avertissements concernant les balises inconnues comme 0x100003e",
-                "it": "Niente più avvisi su tag sconosciuti come 0x100003e",
-                "es": "No más advertencias sobre etiquetas desconocidas como 0x100003e",
-                "pl": "Koniec z ostrzeżeniami o nieznanych tagach, takich jak 0x100003e",
-                "uk": "Більше немає попереджень про невідомі теги, такі як 0x100003e",
-                "zh-cn": "不再出现有关 0x100003e 等未知标签的警告"
-            },
-            "1.2.5": {
-                "en": "Added some EP setter tags",
-                "de": "Einige neue EP Steuer-Tags",
-                "ru": "Добавлены некоторые теги установки EP.",
-                "pt": "Adicionadas algumas tags EP setter",
-                "nl": "Enkele EP-setter-tags toegevoegd",
-                "fr": "Ajout de quelques balises de poseur EP",
-                "it": "Aggiunti alcuni tag setter EP",
-                "es": "Se agregaron algunas etiquetas de configuración de EP",
-                "pl": "Dodano kilka tagów ustawiających EP",
-                "uk": "Додано деякі теги налаштування EP",
-                "zh-cn": "添加了一些 EP setter 标签"
             }
         },
         "titleLang": {
@@ -186,12 +160,12 @@
         },
         "dependencies": [
             {
-                "js-controller": ">=5.0.19"
+                "js-controller": ">=6.0.11"
             }
         ],
         "globalDependencies": [
             {
-                "admin": ">=7.4.10"
+                "admin": ">=7.6.17"
             }
         ],
         "plugins": {
@@ -481,6 +455,58 @@
             },
             {
                 "tag": "TAG_PM_REQ_GET_PHASE_ELIMINATION",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_I_BAT",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_U_BAT",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_P_BAT",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_I_DCL",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_U_DCL",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_P_DCL",
+                "interval": "S"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_FIRMWARE_VERSION",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_FPGA_FIRMWARE",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_SERIAL_NUMBER",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_BOARD_VERSION",
+                "interval": "L"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_STATUS",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_STATUS_AS_STRING",
+                "interval": "M"
+            },
+            {
+                "tag": "TAG_DCDC_REQ_DEVICE_STATE",
                 "interval": "M"
             },
             {
@@ -974,12 +1000,14 @@
         "query_ep": true,
         "query_pvi": true,
         "query_sys": true,
+        "query_dcdc": false,
         "query_wb": true,
         "query_info": true,
         "query_db": true,
         "maxindex_bat": 3,
         "maxindex_pvi": 1,
         "maxindex_pm": 9,
+        "maxindex_dcdc": 3,
         "maxindex_wb": 0
     },
     "objects": [],
