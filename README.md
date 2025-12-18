@@ -523,8 +523,12 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 * fixed errors reported by the ioBroker Check and Service Bot:
   * \[W028\] now "node": ">=20" at package.json
-  * \[W037\] now "adapter-dev": "^1.4.0" at package.json
-  * \[W037\] now "testing": "^5.0.4" at package.json
+  * \[W037\] now "@iobroker/adapter-dev": "^1.4.0" at package.json
+  * \[W037\] now "@iobroker/testing": "^5.2.2" at package.json
+  * \[W037\] now "@alcalzone/release-script": "^5.0.0" at package.json
+  * \[W037\] now "@alcalzone/release-script-plugin-iobroker": "^4.0.0" at package.json
+  * \[W037\] now "@alcalzone/release-script-plugin-license": "^4.0.0" at package.json
+  * \[W037\] now "@alcalzone/release-script-plugin-manual-review": "^4.0.0" at package.json
 * Added dynamic power prices tags `EMS.DPP...` - [Issue #247](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/247)
 
 ### 1.4.2
