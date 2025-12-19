@@ -526,6 +526,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ### 1.4.3
 
+(git-kick)
 * fixed errors reported by the ioBroker Check and Service Bot:
   * \[W028\] now "node": ">=20" at package.json
   * \[W037\] now "@iobroker/adapter-dev": "^1.4.0" at package.json
@@ -534,6 +535,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * \[W037\] now "@alcalzone/release-script-plugin-iobroker": "^4.0.0" at package.json
   * \[W037\] now "@alcalzone/release-script-plugin-license": "^4.0.0" at package.json
   * \[W037\] now "@alcalzone/release-script-plugin-manual-review": "^4.0.0" at package.json
+  * \[S0064\] now "@iobroker/adapter-dev": "^1.5.0" at package.json
+
 (db3wf)
 * Added DCDC namespace [Issue #273](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/273)
 
