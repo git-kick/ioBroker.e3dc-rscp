@@ -757,10 +757,10 @@ __Note__: DO NOT import adapter settings from a json-file created with an older 
 * Remove Sentry, because it was only a trial and not properly configured
 
 <a name="lic"></a>
-## License
+## License  
   
 Copyright (c) 2025 Ulrich Kick <iobroker@kick-web.de>  
-
+  
 ```
 					GNU GENERAL PUBLIC LICENSE
 					   Version 3, 29 June 2007
