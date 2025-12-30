@@ -123,8 +123,9 @@ jobs:
                   echo "::set-output name=BODY::$BODY"
 
             - name: Publish package to npm
-              run:
-                  # npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: |
                   npm whoami
                   npm publish
 
