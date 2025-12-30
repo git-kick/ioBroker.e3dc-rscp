@@ -758,12 +758,12 @@ __Note__: DO NOT import adapter settings from a json-file created with an older 
 
 <a name="lic"></a>
 ## License  
-Copyright (c) 2026 Ulrich Kick <iobroker@kick-web.de>
+Copyright (c) 2026 Ulrich Kick <iobroker@kick-web.de>  
 ```
 					GNU GENERAL PUBLIC LICENSE
 					   Version 3, 29 June 2007
 
- Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>  
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
@@ -800,7 +800,7 @@ or can get the source code.  And you must show them these terms so they
 know their rights.
 
   Developers that use the GNU GPL protect your rights with two steps:
-(1) assert copyright on the software, and (2) offer you this License
+(1) assert copyright on the software, and (2) offer you this License  
 giving you legal permission to copy, distribute and/or modify it.
 
   For the developers' and authors' protection, the GPL clearly explains
