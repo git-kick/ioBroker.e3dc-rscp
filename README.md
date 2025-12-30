@@ -758,9 +758,7 @@ __Note__: DO NOT import adapter settings from a json-file created with an older 
 
 <a name="lic"></a>
 ## License  
-  
-Copyright (c) 2025 Ulrich Kick <iobroker@kick-web.de>  
-  
+Copyright (c) 2026 Ulrich Kick <iobroker@kick-web.de>
 ```
 					GNU GENERAL PUBLIC LICENSE
 					   Version 3, 29 June 2007
