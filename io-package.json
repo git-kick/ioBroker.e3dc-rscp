@@ -1,13 +1,26 @@
 {
     "common": {
         "name": "e3dc-rscp",
-        "version": "1.4.3",
+        "version": "1.4.4",
         "blockedVersions": [
             "1.4.0",
             "1.3.0",
             "1.2.0"
         ],
         "news": {
+            "1.4.4": {
+                "en": "Software maintenance.",
+                "de": "Software-Wartung.",
+                "ru": "Обслуживание программного обеспечения.",
+                "pt": "Manutenção de software.",
+                "nl": "Software-onderhoud.",
+                "fr": "Maintenance du logiciel.",
+                "it": "Manutenzione del software.",
+                "es": "Mantenimiento de software.",
+                "pl": "Konserwacja oprogramowania.",
+                "uk": "Обслуговування програмного забезпечення.",
+                "zh-cn": "软件维护。"
+            },
             "1.4.3": {
                 "en": "Added DCDC namespace.",
                 "de": "DCDC Namespace wird unterstützt.",
