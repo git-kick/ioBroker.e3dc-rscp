@@ -126,21 +126,18 @@ jobs:
                   BODY="${BODY//$'\r'/'%0D'}"
                   echo "::set-output name=BODY::$BODY"
 
-            - name: Verify auth env
-              run: |
-                if [ -z "$NODE_AUTH_TOKEN" ]; then
-                    echo "NODE_AUTH_TOKEN is empty"
-                else
-                  echo "NODE_AUTH_TOKEN is present"
-                fi
-
-                echo "registry=$(npm config get registry)"
-                npm config list
-
             - name: Publish package to npm
               env:
-                NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
+                  if [ -z "$NODE_AUTH_TOKEN" ]; then
+                      echo "NODE_AUTH_TOKEN is empty"
+                  else
+                      echo "NODE_AUTH_TOKEN is present"
+                  fi
+                  echo "registry=$(npm config get registry)"
+                  npm config list
+                
                   npm whoami
                   npm publish
 
