@@ -128,11 +128,8 @@ jobs:
                   echo "::set-output name=BODY::$BODY"
 
             - name: Publish package to npm
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
-                  npm whoami
-                  npm publish --access public
+                  npm publish --provenance --access public
 
             - name: Create Github Release
               uses: actions/create-release@v1
