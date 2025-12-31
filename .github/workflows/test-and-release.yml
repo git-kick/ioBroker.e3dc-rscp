@@ -77,15 +77,11 @@ jobs:
               if: startsWith(runner.OS, 'windows')
               run: set DEBUG=testing:* & npm run test:integration
 
-# To enable automatic npm releases, create a token on npmjs.org 
-# Enter this token as a GitHub secret (with name NPM_TOKEN) in the repository options
-# Then uncomment the following block:
-
-    # Deploys the final package to NPM
+    # Deploys the final package to NPM using OIDC (Trusted Publisher)
     deploy:
         needs: [adapter-tests]
 
-        # Trigger this step only when a commit on any branch is tagged with a version number
+        # Trigger this step only manually, or when a commit on any branch is tagged with a version number
         if: |
             github.event_name == 'workflow_dispatch' ||
             (
@@ -112,7 +108,6 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-                  registry-url: 'https://registry.npmjs.org/'
 
             - name: Extract the version and commit body from the tag
               id: extract_release
@@ -126,6 +121,11 @@ jobs:
                   BODY="${BODY//$'\n'/'%0A'}"
                   BODY="${BODY//$'\r'/'%0D'}"
                   echo "::set-output name=BODY::$BODY"
+
+            - name: Debug npm config
+              run: |
+                npm config list
+                cat ~/.npmrc || echo "no ~/.npmrc"
 
             - name: Publish package to npm
               run: |
