@@ -112,6 +112,7 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
+                  registry-url: 'https://registry.npmjs.org/'
 
             - name: Extract the version and commit body from the tag
               id: extract_release
@@ -130,9 +131,8 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
-                  echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc         
                   npm whoami
-                  npm publish
+                  npm publish --access public
 
             - name: Create Github Release
               uses: actions/create-release@v1
