@@ -58,7 +58,6 @@
     "wallbox.js"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.build.json",
     "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
     "test:package": "mocha test/package --exit",
     "test:unit": "mocha test/unit --exit",
