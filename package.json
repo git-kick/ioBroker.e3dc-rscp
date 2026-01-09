@@ -1,6 +1,6 @@
 {
   "name": "iobroker.e3dc-rscp",
-  "version": "1.4.4",
+  "version": "1.4.5-alpha.0",
   "description": "Control E3/DC power station via RSCP",
   "author": {
     "name": "Ulrich Kick",
@@ -58,6 +58,7 @@
     "wallbox.js"
   ],
   "scripts": {
+    "build": "tsc -b tsconfig.build.json",
     "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
     "test:package": "mocha test/package --exit",
     "test:unit": "mocha test/unit --exit",

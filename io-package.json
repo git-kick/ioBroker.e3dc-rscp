@@ -1,1028 +1,1041 @@
 {
-    "common": {
-        "name": "e3dc-rscp",
-        "version": "1.4.4",
-        "blockedVersions": [
-            "1.4.0",
-            "1.3.0",
-            "1.2.0"
-        ],
-        "news": {
-            "1.4.4": {
-                "en": "Software maintenance.",
-                "de": "Software-Wartung.",
-                "ru": "Обслуживание программного обеспечения.",
-                "pt": "Manutenção de software.",
-                "nl": "Software-onderhoud.",
-                "fr": "Maintenance du logiciel.",
-                "it": "Manutenzione del software.",
-                "es": "Mantenimiento de software.",
-                "pl": "Konserwacja oprogramowania.",
-                "uk": "Обслуговування програмного забезпечення.",
-                "zh-cn": "软件维护。"
-            },
-            "1.4.3": {
-                "en": "Added DCDC namespace.",
-                "de": "DCDC Namespace wird unterstützt.",
-                "ru": "Добавлено пространство имен DCDC.",
-                "pt": "Adicionado namespace DCDC.",
-                "nl": "DCDC -naamruimte toegevoegd.",
-                "fr": "Ajout de l'espace de noms DCDC.",
-                "it": "Aggiunto spazio dei nomi DCDC.",
-                "es": "Se agregó el espacio de nombres DCDC.",
-                "pl": "Dodano przestrzeń nazw DCDC.",
-                "uk": "Додано простір імен DCDC.",
-                "zh-cn": "添加了DCDC名称空间。"
-            },
-            "1.4.2": {
-                "en": "Regression fixes.",
-                "de": "Fehlerbehebungen.",
-                "ru": "Регрессия исправляет.",
-                "pt": "Correções de regressão.",
-                "nl": "Regressiefixes.",
-                "fr": "Régression fixe.",
-                "it": "Correzioni di regressione.",
-                "es": "Correcciones de regresión.",
-                "pl": "Poprawki regresji.",
-                "uk": "Регресійні виправлення.",
-                "zh-cn": "回归修复。"
-            },
-            "1.4.1": {
-                "en": "Support for version 2 idle periods.",
-                "de": "Unterstützung von Version 2 Sperrzeiten.",
-                "ru": "Поддержка периодов версии 2.",
-                "pt": "Suporte aos períodos de versão 2 ociosos.",
-                "nl": "Ondersteuning voor inactiviteit van versie 2.",
-                "fr": "Prise en charge des périodes d'inactivité de la version 2.",
-                "it": "Supporto per i periodi di inattività della versione 2.",
-                "es": "Soporte para los períodos de inactividad de la versión 2.",
-                "pl": "Obsługa wersji 2 bezczynnych okresów.",
-                "uk": "Підтримка версії 2 очікування.",
-                "zh-cn": "支持版本2空闲时期。"
-            }
-        },
-        "titleLang": {
-            "en": "E3/DC RSCP",
-            "de": "E3/DC RSCP",
-            "ru": "E3/DC RSCP",
-            "pt": "E3/DC RSCP",
-            "nl": "E3/DC RSCP",
-            "fr": "E3/DC RSCP",
-            "it": "E3/DC RSCP",
-            "es": "E3/DC RSCP",
-            "pl": "E3/DC RSCP",
-            "zh-cn": "E3/DC RSCP",
-            "uk": "E3/DC RSCP"
-        },
-        "desc": {
-            "en": "Control E3/DC power station using RSCP protocol",
-            "de": "Steuern Sie das E3/DC-Kraftwerk mithilfe des RSCP-Protokolls",
-            "ru": "Управление электростанцией E3/DC по протоколу RSCP",
-            "pt": "Controle da estação de energia E3/DC usando o protocolo RSCP",
-            "nl": "Bedien de E3/DC-krachtcentrale met behulp van het RSCP-protocol",
-            "fr": "Contrôlez la centrale électrique E3/DC en utilisant le protocole RSCP",
-            "it": "Controllare la centrale E3/DC utilizzando il protocollo RSCP",
-            "es": "Control de la central eléctrica E3/DC mediante protocolo RSCP",
-            "pl": "Sterowanie elektrownią E3/DC za pomocą protokołu RSCP",
-            "zh-cn": "使用RSCP协议控制E3/DC电站",
-            "uk": "Керуйте електростанцією E3/DC за допомогою протоколу RSCP"
-        },
-        "authors": [
-            "Ulrich Kick <iobroker@kick-web.de>"
-        ],
-        "keywords": [
-            "E3/DC",
-            "power station",
-            "energy",
-            "RSCP"
-        ],
-        "messages": [
-            {
-                "condition": {
-                    "operand": "and",
-                    "rules": [
-                        "oldVersion<1.4.0",
-                        "newVersion>=1.4.0"
-                    ]
-                },
-                "title": {
-                    "en": "Important notice!",
-                    "de": "Wichtiger Hinweis!",
-                    "ru": "Важное замечание!",
-                    "pt": "Notícia importante!",
-                    "nl": "Belangrijke mededeling!",
-                    "fr": "Avis important!",
-                    "it": "Avviso IMPORTANTE!",
-                    "es": "¡Noticia importante!",
-                    "pl": "Ważna uwaga!",
-                    "uk": "Важливе повідомлення!",
-                    "zh-cn": "重要的提醒！"
-                },
-                "text": {
-                    "en": "Version 1.4 introduces new configuration settings - do not re-use settings stored in a json-file which was created from an older version!",
-                    "de": "Version 1.4 bringt neue Konfigurationsparameter - Konfiguration nicht aus einem json-file laden, das mit einer früheren Version erzeugt wurde!",
-                    "ru": "Версия 1.4 представляет новые настройки конфигурации-не используйте настройки повторного использования, хранящиеся в файле JSON, созданного из более старой версии!",
-                    "pt": "A versão 1.4 apresenta novas configurações de configuração-não reutilize as configurações armazenadas em um arquivo JSON que foi criado a partir de uma versão mais antiga!",
-                    "nl": "Versie 1.4 introduceert nieuwe configuratie-instellingen-Gebruik niet opnieuw instellingen die zijn opgeslagen in een JSON-bestand dat is gemaakt vanuit een oudere versie!",
-                    "fr": "La version 1.4 présente de nouveaux paramètres de configuration - ne réutilisez pas les paramètres stockés dans un fichier JSON qui a été créé à partir d'une ancienne version!",
-                    "it": "La versione 1.4 introduce nuove impostazioni di configurazione: non riutilizzare le impostazioni memorizzate in un file JSON che è stato creato da una versione precedente!",
-                    "es": "La versión 1.4 presenta una nueva configuración de configuración: ¡no reutilice la configuración almacenada en un archivo JSON que se creó a partir de una versión anterior!",
-                    "pl": "Wersja 1.4 wprowadza nowe ustawienia konfiguracji-nie używaj ustawień przechowywanych w pliku JSON, który został utworzony ze starszej wersji!",
-                    "uk": "Версія 1.4 представляє нові налаштування конфігурації-не використовуйте налаштування, що зберігаються в JSON-файлі, створеному з більш старої версії!",
-                    "zh-cn": "版本1.4引入了新的配置设置 - 请勿重新使用存储在旧版本创建的JSON文件中的设置！"
-                },
-                "link": "https://github.com/git-kick/ioBroker.e3dc-rscp?tab=readme-ov-file#reuse-of-adapter-configuration",
-                "linkText": {
-                    "en": "Reuse of adapter configuration",
-                    "de": "Wiederverwendung der Adapter-Konfiguration",
-                    "ru": "Повторное использование конфигурации адаптера",
-                    "pt": "Reutilização da configuração do adaptador",
-                    "nl": "Hergebruik van adapterconfiguratie",
-                    "fr": "Réutilisation de la configuration de l'adaptateur",
-                    "it": "Riutilizzo della configurazione dell'adattatore",
-                    "es": "Reutilización de la configuración del adaptador",
-                    "pl": "Ponowne wykorzystanie konfiguracji adaptera",
-                    "uk": "Повторне використання конфігурації адаптера",
-                    "zh-cn": "重用适配器配置"
-                },
-                "level": "warn",
-                "buttons": [
-                    "ok",
-                    "cancel"
-                ]
-            }
-        ],
-        "licenseInformation": {
-            "license": "GPL-3.0-only",
-            "type": "free"
-        },
-        "tier": 3,
-        "platform": "Javascript/Node.js",
-        "icon": "e3dc-rscp.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/git-kick/ioBroker.e3dc-rscp/master/admin/e3dc-rscp.png",
-        "readme": "https://github.com/git-kick/ioBroker.e3dc-rscp/blob/master/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "energy",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "poll",
-        "adminUI": {
-            "config": "json"
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=6.0.11"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=7.6.17"
-            }
-        ],
-        "plugins": {
-            "sentry": {
-                "dsn": "https://cc70dc76ca0d4bc89be51866648d109c@o1065834.ingest.sentry.io/6058026"
-            }
-        }
-    },
-    "protectedNative": [
-        "rscp_password",
-        "portal_password"
+  "common": {
+    "name": "e3dc-rscp",
+    "version": "1.4.5-alpha.0",
+    "blockedVersions": [
+      "1.4.0",
+      "1.3.0",
+      "1.2.0"
     ],
-    "encryptedNative": [
-        "rscp_password",
-        "portal_password"
-    ],
-    "native": {
-        "e3dc_ip": "192.168.178.1",
-        "e3dc_port": 5033,
-        "rscp_password": "",
-        "portal_user": "",
-        "portal_password": "",
-        "polling_intervals": [
-            {
-                "tag": "TAG_EMS_REQ_POWER_PV",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_BAT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_HOME",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_GRID",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_ADD",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_AUTARKY",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_SELF_CONSUMPTION",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BAT_SOC",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_COUPLING_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_STORED_ERRORS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_MODE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BALANCED_PHASES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_INSTALLED_PEAK_POWER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DERATE_AT_POWER_VALUE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_WB_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_WB_SOLAR",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EXT_SRC_AVAILABLE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_STATUS",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USED_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BAT_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DCDC_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USER_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USED_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USER_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BATTERY_TO_CAR_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS_2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_POWER_SETTINGS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_MANUAL_CHARGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS",
-                "interval": "N"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_RETRY",
-                "interval": "N"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_SYS_SPECS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_PV_AC_OUT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_ALIVE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_WB_DISCHARGE_BAT_UNTIL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_WB_ENFORCE_POWER_ASSIGNMENT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_WB_CHARGE_ACTIVE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ACTIVE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_PRICE_LIMIT_BATTERY",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_SOC_BATTERY",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_MONTHS_ACTIVE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_POWER_L1",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_POWER_L2",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_POWER_L3",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_ACTIVE_PHASES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_ENERGY_L1",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_ENERGY_L2",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_ENERGY_L3",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_DEVICE_ID",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PM_REQ_ERROR_CODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_FIRMWARE_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PM_REQ_VOLTAGE_L1",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_VOLTAGE_L2",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_VOLTAGE_L3",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_TYPE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_GET_PHASE_ELIMINATION",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_I_BAT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_U_BAT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_P_BAT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_I_DCL",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_U_DCL",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_P_DCL",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_FIRMWARE_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_FPGA_FIRMWARE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_SERIAL_NUMBER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_BOARD_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_STATUS_AS_STRING",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_GRID_CONNECTED",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_ISLAND_GRID",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_INVALID_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_POSSIBLE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_EP_RESERVE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_ON_GRID",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_STATE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_LAST_ERROR",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_TYPE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_VOLTAGE_MONITORING",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_FREQUENCY_UNDER_OVER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_SYSTEM_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_POWER_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_TEMPERATURE_COUNT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_MAX_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_MIN_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_SERIAL_NUMBER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_MAX_PHASE_COUNT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_POWER",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_VOLTAGE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_CURRENT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_APPARENTPOWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_REACTIVEPOWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_ENERGY_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_MAX_APPARENTPOWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_ENERGY_GRID_CONSUMPTION",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_VOLTAGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_CURRENT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_STRING_ENERGY_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_INFO",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_BAT_VOLTAGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_CHARGE_CURRENT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_EOD_VOLTAGE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_CHARGE_CYCLES",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TERMINAL_VOLTAGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DEVICE_NAME",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_COUNT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_RSOC_REAL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_ASOC",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_FCC",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_RC",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_READY_FOR_SHUTDOWN",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_INFO",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TRAINING_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_USABLE_CAPACITY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_INFO",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_SPECIFICATION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_INTERNALS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TOTAL_USE_TIME",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_SYS_REQ_IS_SYSTEM_REBOOTING",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_CONNECTED_DEVICES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_ENERGY_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_ENERGY_SOLAR",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_SOC",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_ERROR_CODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_APP_SOFTWARE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_BOOTLOADER_SOFTWARE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_HW_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_FLASH_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DEVICE_ID",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_POWER_L1",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_POWER_L2",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_POWER_L3",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ACTIVE_PHASES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ENERGY_L1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ENERGY_L2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ENERGY_L3",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_DEVICE_ID",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ERROR_CODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_FIRMWARE_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_INFOS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_WARNINGS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_ERRORS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_TEMP_1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_TEMP_2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_MAX_PHASE_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DEVICE_NAME",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_SUN",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_NET",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_ALG",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PARAM_1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PARAM_2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_INFO_REQ_SERIAL_NUMBER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_PRODUCTION_DATE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_MODULES_SW_VERSIONS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_A35_SERIAL_NUMBER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_IP_ADDRESS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_SUBNET_MASK",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_MAC_ADDRESS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_GATEWAY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_DNS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_DHCP_STATUS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_TIME",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_INFO_REQ_UTC_TIME",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_INFO_REQ_TIME_ZONE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_SW_RELEASE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_GUI_TARGET",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_GET_FACILITY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_GET_FS_USAGE",
-                "interval": "L"
-            }
-        ],
-        "lazy_setstate": true,
-        "periods_v1": false,
-        "periods_v2": true,
-        "polling_interval_short": 30,
-        "polling_interval_medium": 5,
-        "polling_interval_long": 12,
-        "setpower_interval": 10,
-        "send_tuple_delay": 10,
-        "query_bat": true,
-        "query_ems": true,
-        "query_pm": true,
-        "query_ep": true,
-        "query_pvi": true,
-        "query_sys": true,
-        "query_dcdc": false,
-        "query_wb": true,
-        "query_info": true,
-        "query_db": true,
-        "maxindex_bat": 3,
-        "maxindex_pvi": 1,
-        "maxindex_pm": 9,
-        "maxindex_dcdc": 3,
-        "maxindex_wb": 0
+    "news": {
+      "1.4.5-alpha.0": {
+        "en": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "de": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "ru": "Включите [AlCalzone/release-script] (https://github.com/AlCalzone/release-script)",
+        "pt": "Incluir [AlCalzone/release-script] (https://github.com/AlCalzone/release-script)",
+        "nl": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "fr": "Inclure [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "it": "[AlCalzone/release-script](http://github.com/AlCalzone/release-script)",
+        "es": "Incluir [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "pl": "W imieniu Komisji",
+        "uk": "Включити [AlCalzone/видання](https://github.com/AlCalzone/видання)",
+        "zh-cn": "包括[AlCalzone/release-script](https://github.com/AlCalzone/release-script)"
+      },
+      "1.4.4": {
+        "en": "Software maintenance.",
+        "de": "Software-Wartung.",
+        "ru": "Обслуживание программного обеспечения.",
+        "pt": "Manutenção de software.",
+        "nl": "Software-onderhoud.",
+        "fr": "Maintenance du logiciel.",
+        "it": "Manutenzione del software.",
+        "es": "Mantenimiento de software.",
+        "pl": "Konserwacja oprogramowania.",
+        "uk": "Обслуговування програмного забезпечення.",
+        "zh-cn": "软件维护。"
+      },
+      "1.4.3": {
+        "en": "Added DCDC namespace.",
+        "de": "DCDC Namespace wird unterstützt.",
+        "ru": "Добавлено пространство имен DCDC.",
+        "pt": "Adicionado namespace DCDC.",
+        "nl": "DCDC -naamruimte toegevoegd.",
+        "fr": "Ajout de l'espace de noms DCDC.",
+        "it": "Aggiunto spazio dei nomi DCDC.",
+        "es": "Se agregó el espacio de nombres DCDC.",
+        "pl": "Dodano przestrzeń nazw DCDC.",
+        "uk": "Додано простір імен DCDC.",
+        "zh-cn": "添加了DCDC名称空间。"
+      },
+      "1.4.2": {
+        "en": "Regression fixes.",
+        "de": "Fehlerbehebungen.",
+        "ru": "Регрессия исправляет.",
+        "pt": "Correções de regressão.",
+        "nl": "Regressiefixes.",
+        "fr": "Régression fixe.",
+        "it": "Correzioni di regressione.",
+        "es": "Correcciones de regresión.",
+        "pl": "Poprawki regresji.",
+        "uk": "Регресійні виправлення.",
+        "zh-cn": "回归修复。"
+      },
+      "1.4.1": {
+        "en": "Support for version 2 idle periods.",
+        "de": "Unterstützung von Version 2 Sperrzeiten.",
+        "ru": "Поддержка периодов версии 2.",
+        "pt": "Suporte aos períodos de versão 2 ociosos.",
+        "nl": "Ondersteuning voor inactiviteit van versie 2.",
+        "fr": "Prise en charge des périodes d'inactivité de la version 2.",
+        "it": "Supporto per i periodi di inattività della versione 2.",
+        "es": "Soporte para los períodos de inactividad de la versión 2.",
+        "pl": "Obsługa wersji 2 bezczynnych okresów.",
+        "uk": "Підтримка версії 2 очікування.",
+        "zh-cn": "支持版本2空闲时期。"
+      }
     },
-    "objects": [],
-    "instanceObjects": []
+    "titleLang": {
+      "en": "E3/DC RSCP",
+      "de": "E3/DC RSCP",
+      "ru": "E3/DC RSCP",
+      "pt": "E3/DC RSCP",
+      "nl": "E3/DC RSCP",
+      "fr": "E3/DC RSCP",
+      "it": "E3/DC RSCP",
+      "es": "E3/DC RSCP",
+      "pl": "E3/DC RSCP",
+      "zh-cn": "E3/DC RSCP",
+      "uk": "E3/DC RSCP"
+    },
+    "desc": {
+      "en": "Control E3/DC power station using RSCP protocol",
+      "de": "Steuern Sie das E3/DC-Kraftwerk mithilfe des RSCP-Protokolls",
+      "ru": "Управление электростанцией E3/DC по протоколу RSCP",
+      "pt": "Controle da estação de energia E3/DC usando o protocolo RSCP",
+      "nl": "Bedien de E3/DC-krachtcentrale met behulp van het RSCP-protocol",
+      "fr": "Contrôlez la centrale électrique E3/DC en utilisant le protocole RSCP",
+      "it": "Controllare la centrale E3/DC utilizzando il protocollo RSCP",
+      "es": "Control de la central eléctrica E3/DC mediante protocolo RSCP",
+      "pl": "Sterowanie elektrownią E3/DC za pomocą protokołu RSCP",
+      "zh-cn": "使用RSCP协议控制E3/DC电站",
+      "uk": "Керуйте електростанцією E3/DC за допомогою протоколу RSCP"
+    },
+    "authors": [
+      "Ulrich Kick <iobroker@kick-web.de>"
+    ],
+    "keywords": [
+      "E3/DC",
+      "power station",
+      "energy",
+      "RSCP"
+    ],
+    "messages": [
+      {
+        "condition": {
+          "operand": "and",
+          "rules": [
+            "oldVersion<1.4.0",
+            "newVersion>=1.4.0"
+          ]
+        },
+        "title": {
+          "en": "Important notice!",
+          "de": "Wichtiger Hinweis!",
+          "ru": "Важное замечание!",
+          "pt": "Notícia importante!",
+          "nl": "Belangrijke mededeling!",
+          "fr": "Avis important!",
+          "it": "Avviso IMPORTANTE!",
+          "es": "¡Noticia importante!",
+          "pl": "Ważna uwaga!",
+          "uk": "Важливе повідомлення!",
+          "zh-cn": "重要的提醒！"
+        },
+        "text": {
+          "en": "Version 1.4 introduces new configuration settings - do not re-use settings stored in a json-file which was created from an older version!",
+          "de": "Version 1.4 bringt neue Konfigurationsparameter - Konfiguration nicht aus einem json-file laden, das mit einer früheren Version erzeugt wurde!",
+          "ru": "Версия 1.4 представляет новые настройки конфигурации-не используйте настройки повторного использования, хранящиеся в файле JSON, созданного из более старой версии!",
+          "pt": "A versão 1.4 apresenta novas configurações de configuração-não reutilize as configurações armazenadas em um arquivo JSON que foi criado a partir de uma versão mais antiga!",
+          "nl": "Versie 1.4 introduceert nieuwe configuratie-instellingen-Gebruik niet opnieuw instellingen die zijn opgeslagen in een JSON-bestand dat is gemaakt vanuit een oudere versie!",
+          "fr": "La version 1.4 présente de nouveaux paramètres de configuration - ne réutilisez pas les paramètres stockés dans un fichier JSON qui a été créé à partir d'une ancienne version!",
+          "it": "La versione 1.4 introduce nuove impostazioni di configurazione: non riutilizzare le impostazioni memorizzate in un file JSON che è stato creato da una versione precedente!",
+          "es": "La versión 1.4 presenta una nueva configuración de configuración: ¡no reutilice la configuración almacenada en un archivo JSON que se creó a partir de una versión anterior!",
+          "pl": "Wersja 1.4 wprowadza nowe ustawienia konfiguracji-nie używaj ustawień przechowywanych w pliku JSON, który został utworzony ze starszej wersji!",
+          "uk": "Версія 1.4 представляє нові налаштування конфігурації-не використовуйте налаштування, що зберігаються в JSON-файлі, створеному з більш старої версії!",
+          "zh-cn": "版本1.4引入了新的配置设置 - 请勿重新使用存储在旧版本创建的JSON文件中的设置！"
+        },
+        "link": "https://github.com/git-kick/ioBroker.e3dc-rscp?tab=readme-ov-file#reuse-of-adapter-configuration",
+        "linkText": {
+          "en": "Reuse of adapter configuration",
+          "de": "Wiederverwendung der Adapter-Konfiguration",
+          "ru": "Повторное использование конфигурации адаптера",
+          "pt": "Reutilização da configuração do adaptador",
+          "nl": "Hergebruik van adapterconfiguratie",
+          "fr": "Réutilisation de la configuration de l'adaptateur",
+          "it": "Riutilizzo della configurazione dell'adattatore",
+          "es": "Reutilización de la configuración del adaptador",
+          "pl": "Ponowne wykorzystanie konfiguracji adaptera",
+          "uk": "Повторне використання конфігурації адаптера",
+          "zh-cn": "重用适配器配置"
+        },
+        "level": "warn",
+        "buttons": [
+          "ok",
+          "cancel"
+        ]
+      }
+    ],
+    "licenseInformation": {
+      "license": "GPL-3.0-only",
+      "type": "free"
+    },
+    "tier": 3,
+    "platform": "Javascript/Node.js",
+    "icon": "e3dc-rscp.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/git-kick/ioBroker.e3dc-rscp/master/admin/e3dc-rscp.png",
+    "readme": "https://github.com/git-kick/ioBroker.e3dc-rscp/blob/master/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "energy",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=7.6.17"
+      }
+    ],
+    "plugins": {
+      "sentry": {
+        "dsn": "https://cc70dc76ca0d4bc89be51866648d109c@o1065834.ingest.sentry.io/6058026"
+      }
+    }
+  },
+  "protectedNative": [
+    "rscp_password",
+    "portal_password"
+  ],
+  "encryptedNative": [
+    "rscp_password",
+    "portal_password"
+  ],
+  "native": {
+    "e3dc_ip": "192.168.178.1",
+    "e3dc_port": 5033,
+    "rscp_password": "",
+    "portal_user": "",
+    "portal_password": "",
+    "polling_intervals": [
+      {
+        "tag": "TAG_EMS_REQ_POWER_PV",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_BAT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_HOME",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_GRID",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_ADD",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_AUTARKY",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_SELF_CONSUMPTION",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BAT_SOC",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_COUPLING_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_STORED_ERRORS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_MODE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BALANCED_PHASES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_INSTALLED_PEAK_POWER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DERATE_AT_POWER_VALUE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_WB_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_WB_SOLAR",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EXT_SRC_AVAILABLE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_STATUS",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USED_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BAT_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DCDC_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USER_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USED_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USER_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BATTERY_TO_CAR_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS_2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_POWER_SETTINGS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_MANUAL_CHARGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS",
+        "interval": "N"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCY_POWER_RETRY",
+        "interval": "N"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_SYS_SPECS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_PV_AC_OUT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_ALIVE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_WB_DISCHARGE_BAT_UNTIL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_WB_ENFORCE_POWER_ASSIGNMENT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_WB_CHARGE_ACTIVE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ACTIVE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_PRICE_LIMIT_BATTERY",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_SOC_BATTERY",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_MONTHS_ACTIVE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_POWER_L1",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_POWER_L2",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_POWER_L3",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_ACTIVE_PHASES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_ENERGY_L1",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_ENERGY_L2",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_ENERGY_L3",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_DEVICE_ID",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PM_REQ_ERROR_CODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_FIRMWARE_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PM_REQ_VOLTAGE_L1",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_VOLTAGE_L2",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_VOLTAGE_L3",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_TYPE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_GET_PHASE_ELIMINATION",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_I_BAT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_U_BAT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_P_BAT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_I_DCL",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_U_DCL",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_P_DCL",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_FIRMWARE_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_FPGA_FIRMWARE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_SERIAL_NUMBER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_BOARD_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_STATUS_AS_STRING",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_GRID_CONNECTED",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_ISLAND_GRID",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_INVALID_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_POSSIBLE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_EP_RESERVE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_ON_GRID",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_STATE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_LAST_ERROR",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_TYPE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_VOLTAGE_MONITORING",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_FREQUENCY_UNDER_OVER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_SYSTEM_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_POWER_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_TEMPERATURE_COUNT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_MAX_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_MIN_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_SERIAL_NUMBER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_MAX_PHASE_COUNT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_POWER",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_VOLTAGE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_CURRENT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_APPARENTPOWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_REACTIVEPOWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_ENERGY_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_MAX_APPARENTPOWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_ENERGY_GRID_CONSUMPTION",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_VOLTAGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_CURRENT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_STRING_ENERGY_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_INFO",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_BAT_VOLTAGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_CHARGE_CURRENT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_EOD_VOLTAGE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_CHARGE_CYCLES",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TERMINAL_VOLTAGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DEVICE_NAME",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_COUNT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_RSOC_REAL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_ASOC",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_FCC",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_RC",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_READY_FOR_SHUTDOWN",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_INFO",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TRAINING_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_USABLE_CAPACITY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_INFO",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_SPECIFICATION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_INTERNALS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TOTAL_USE_TIME",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_SYS_REQ_IS_SYSTEM_REBOOTING",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_CONNECTED_DEVICES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_ENERGY_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_ENERGY_SOLAR",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_SOC",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_ERROR_CODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_APP_SOFTWARE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_BOOTLOADER_SOFTWARE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_HW_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_FLASH_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_DEVICE_ID",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_POWER_L1",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_POWER_L2",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_POWER_L3",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ACTIVE_PHASES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ENERGY_L1",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ENERGY_L2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ENERGY_L3",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_DEVICE_ID",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ERROR_CODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_FIRMWARE_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_INFOS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_WARNINGS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_ERRORS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_TEMP_1",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_TEMP_2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_MAX_PHASE_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DEVICE_NAME",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_SUN",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_NET",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_ALG",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PARAM_1",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PARAM_2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_INFO_REQ_SERIAL_NUMBER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_PRODUCTION_DATE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_MODULES_SW_VERSIONS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_A35_SERIAL_NUMBER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_IP_ADDRESS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_SUBNET_MASK",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_MAC_ADDRESS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_GATEWAY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_DNS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_DHCP_STATUS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_TIME",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_INFO_REQ_UTC_TIME",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_INFO_REQ_TIME_ZONE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_SW_RELEASE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_GUI_TARGET",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_GET_FACILITY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_GET_FS_USAGE",
+        "interval": "L"
+      }
+    ],
+    "lazy_setstate": true,
+    "periods_v1": false,
+    "periods_v2": true,
+    "polling_interval_short": 30,
+    "polling_interval_medium": 5,
+    "polling_interval_long": 12,
+    "setpower_interval": 10,
+    "send_tuple_delay": 10,
+    "query_bat": true,
+    "query_ems": true,
+    "query_pm": true,
+    "query_ep": true,
+    "query_pvi": true,
+    "query_sys": true,
+    "query_dcdc": false,
+    "query_wb": true,
+    "query_info": true,
+    "query_db": true,
+    "maxindex_bat": 3,
+    "maxindex_pvi": 1,
+    "maxindex_pm": 9,
+    "maxindex_dcdc": 3,
+    "maxindex_wb": 0
+  },
+  "objects": [],
+  "instanceObjects": []
 }
