@@ -519,6 +519,14 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+<!--
+  Placeholder for the next version (at the beginning of the line):
+  ### **WORK IN PROGRESS**
+-->
+## **WORK IN PROGRESS**
+
+- Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)
+
 ### 1.4.4
 
 (git-kick)
