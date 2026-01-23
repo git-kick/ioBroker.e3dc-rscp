@@ -523,6 +523,12 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+(git-kick)
+* Added e3dc-rscp.0.EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)
+
 ### 1.4.5-alpha.0 (2026-01-09)
 
 - Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)
