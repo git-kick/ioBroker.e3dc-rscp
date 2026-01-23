@@ -108,6 +108,7 @@
     "DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": "Зарядка батареи на основе цены",
     "DPP_PRICE_BASED_WB_CHARGE_ACTIVE": "Зарядка на основе цен на стенку активна",
     "DPP_PRICE_LIMIT_BATTERY": "Предел цен на зарядку аккумулятора от сетки [валюта]",
+    "DPP_PRICE_LIMIT_WB": "Ограничение цены на зарядку настенной коробки от сети",
     "DPP_SOC_BATTERY": "SOC Батарея [%]",
     "EMERGENCY_POWER": "Аварийное питание",
     "EMERGENCY_POWER_RETRY": "Повторная попытка аварийного питания",

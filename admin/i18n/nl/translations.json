@@ -108,6 +108,7 @@
     "DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": "Batterij oplaad op prijs ingeschakeld batterij",
     "DPP_PRICE_BASED_WB_CHARGE_ACTIVE": "Op prijs op prijs gebaseerde tuurbox is actief",
     "DPP_PRICE_LIMIT_BATTERY": "Prijslimiet voor het opladen van de batterij uit het rooster [valuta]",
+    "DPP_PRICE_LIMIT_WB": "Prijslimiet voor opladen via wallbox via elektriciteitsnet",
     "DPP_SOC_BATTERY": "SOC -batterij [%]",
     "EMERGENCY_POWER": "Noodstroom",
     "EMERGENCY_POWER_RETRY": "Opnieuw noodstroom proberen",

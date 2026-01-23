@@ -108,6 +108,7 @@
     "DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": "Carregamento de bateria baseado em preço habilitado",
     "DPP_PRICE_BASED_WB_CHARGE_ACTIVE": "O carregamento de Wallbox baseado em preços está ativo",
     "DPP_PRICE_LIMIT_BATTERY": "Limite de preço para carregar a bateria da grade [moeda]",
+    "DPP_PRICE_LIMIT_WB": "Limite de preço para carregamento em wallbox da rede",
     "DPP_SOC_BATTERY": "Bateria SoC [%]",
     "EMERGENCY_POWER": "Energia de emergência",
     "EMERGENCY_POWER_RETRY": "Nova tentativa de energia de emergência",

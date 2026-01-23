@@ -108,6 +108,7 @@
     "DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": "Charge de batterie basée sur le prix activé",
     "DPP_PRICE_BASED_WB_CHARGE_ACTIVE": "La charge de boîte murale basée sur les prix est active",
     "DPP_PRICE_LIMIT_BATTERY": "Limite de prix pour charger la batterie de la grille [devise]",
+    "DPP_PRICE_LIMIT_WB": "Limite de prix pour la recharge de la wallbox à partir du réseau",
     "DPP_SOC_BATTERY": "Batterie SOC [%]",
     "EMERGENCY_POWER": "Alimentation de secours",
     "EMERGENCY_POWER_RETRY": "Nouvelle tentative d'alimentation d'urgence",

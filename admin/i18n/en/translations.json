@@ -108,6 +108,7 @@
     "DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": "Price based battery charging is enabled",
     "DPP_PRICE_BASED_WB_CHARGE_ACTIVE": "Price based wallbox charging is active",
     "DPP_PRICE_LIMIT_BATTERY": "Price limit for charging battery from grid",
+    "DPP_PRICE_LIMIT_WB": "Price limit for wallbox charging from grid",
     "DPP_SOC_BATTERY": "SOC battery [%]",
     "EMERGENCY_POWER": "Emergency power",
     "EMERGENCY_POWER_RETRY": "Emergency power retry",

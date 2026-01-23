@@ -108,6 +108,7 @@
     "DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED": "Preisbasiertes Batterieladen ist freigegeben",
     "DPP_PRICE_BASED_WB_CHARGE_ACTIVE": "Preisbasiertes Wandbox -Laden ist aktiv",
     "DPP_PRICE_LIMIT_BATTERY": "Preislimit für das Laden der Batterie aus dem Netz",
+    "DPP_PRICE_LIMIT_WB": "Preislimit für das Laden über die Wallbox aus dem Netz",
     "DPP_SOC_BATTERY": "SOC Batterie [%]",
     "EMERGENCY_POWER": "Notstrom",
     "EMERGENCY_POWER_RETRY": "Notstrom Wiederholung",
