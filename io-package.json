@@ -1,13 +1,26 @@
 {
   "common": {
     "name": "e3dc-rscp",
-    "version": "1.4.5-alpha.0",
+    "version": "1.4.5-alpha.1",
     "blockedVersions": [
       "1.4.0",
       "1.3.0",
       "1.2.0"
     ],
     "news": {
+      "1.4.5-alpha.1": {
+        "en": "(git-kick)\n* Added EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Settings: \n  * name space WB defaults to false (not everybody has an attached wallbox)\n  * name space DCDC defaults to true (everybody has a DCDC converter)",
+        "de": "(git-kick)\n* EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Einstellungen:\n* Name-Raum WB standardmäßig auf false (nicht jeder hat eine beigefügte Wandbox)\n* Namensraum DCDC standardmäßig auf true (jeder hat einen DCDC-Wandler)",
+        "ru": "(гит-кик)\n* Добавлено EMS.DPP_PRICE_LIMIT_WALLBOX [Выпуск #284] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Фиксированный настройщик EMS.DPP_SOC_BATTERY [выпуск #295] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Настройки:\nНазовите пространство WB по умолчанию ложным (не у всех есть прикрепленный настенный ящик)\nНазвание пространства DCDC по умолчанию истинно (у каждого есть конвертер DCDC)",
+        "pt": "(git-kick)\n* Adicionado EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixo EMS.DPP_SOC_BATTTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Configurações:\n* espaço de nome WB padrão para false (nem todo mundo tem uma caixa de parede anexada)\n* nome espaço DCDC padrão para true (everybody tem um conversor DCDC)",
+        "nl": "(git-kick)\n* Toegevoegd EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Instellingen:\n* naamruimte WB is standaard vals (niet iedereen heeft een bijgevoegde wandkast)\n* naamruimte DCDC defaults to true (iedereen heeft een DCDC converter)",
+        "fr": "(cliquetis)\n* Ajouté EMS.DPP_PRICE_LIMIT_WALLBOX (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Setter fixe EMS.DPP_SOC_BATTERY [Numéro #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Paramètres :\n* nom de l'espace WB par défaut à false (pas tout le monde a une boîte murale attachée)\n* nom de l'espace DCDC par défaut à true (tout le monde a un convertisseur DCDC)",
+        "it": "ehi\n# Aggiunto EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rsc/issues/295)\n* Impostazioni:\n* name space WB default a false (non tutti hanno una scatola da parete attaccata)\n* name space DCDC predefinito a true (tutti hanno un convertitore DCDC)",
+        "es": "(git-kick)\n* Añadido EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Ajustes:\n* espacio de nombre WB predeterminado a falso (no todo el mundo tiene una caja de pared adjunta)\n* espacio de nombre DCDC predeterminado a verdadero (todo el mundo tiene un convertidor DCDC)",
+        "pl": "(git- kick)\n* Dodano EMS.DPP _ Price _ LIMIT _ WALLBOX [Issue # 284] (https: / / github.com / git- kick / ioBroker.e3dc- rscp / issues / 284)\n* Fixed EMS.DPP _ SOC _ BATTERY setter [Issue # 295] (https: / / github.com / git- kick / ioBroker.e3dc- rscp / issues / 295)\n* Ustawienia:\n* nazwa spacja WB domyślnie false (nie każdy ma dołączoną tapetę)\n* nazwa miejsca DCDC domyślnie true (każdy ma konwerter DCDC)",
+        "uk": "(git-kick)\nІм'я * Додано EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/products/284)\n* Фіксований EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/products/295)\n* Налаштування:\n* простір імен WB за замовчуванням до false (не всі мають прикріплену скриньку)\n* простір імен DCDC за замовчуванням true (все має конвертер DCDC)",
+        "zh-cn": "(基特语)\n* 《大会正式记录,第五十八届会议,补编第5号》(A/C.6/61/Rev.1)。 已添加 EMS.DPP_PRICE_LIMIT_WALLBOX [问题284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* 固定EMS.DPP_SOC_BATTERY设置器[问题#295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* 设置 :\n* 名称空格 WB 默认为虚假( 不是每个人都有一个附着的挂贴)\n* 名称空间 DCDC 默认为真( 每个人都有 DCDC 转换器)"
+      },
       "1.4.5-alpha.0": {
         "en": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
         "de": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",

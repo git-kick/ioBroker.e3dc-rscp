@@ -541,8 +541,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 1.4.5-alpha.1 (2026-01-26)
 
 (git-kick)
 * Added EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)
@@ -602,28 +601,6 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * \[254\] removed v1.3.2 which was never released.
 * removed duplicate queueWbRequestData() definition from main.js - the relevant one is in wallbox.js
 * removed obsolete initialisation of maxIndex for BAT and PVI from constructor(). Both values are now initialized from config during initChannel().
-
-### 1.4.1
-
-MODIFIED ADAPTER SETTINGS - see [Reuse of adapter configuration](https://github.com/git-kick/ioBroker.e3dc-rscp/tree/master?tab=readme-ov-file#reuse-of-adapter-configuration)
- 
-(git-kick)
-* fixed error in weekdayStringToBitmask() - thanks to @SurfGargano for testing.
-* idle periods v1 or v2 can now be switched off in the adapter config - recommendation is to use only one of both.
-* fixed errors reported by the ioBroker Check and Service Bot:
-  * \[E186\] "common.globalDependencies" must be an array in io-package.json
-  * \[E190\] admin dependency missing. Please add to dependencies in io-package.json.
-* New RscpTags.json: added new tags from 01-2024 tag list. 
-**But keep** ...EMERGENCY_POWER_TEST... naming despite it changed to ...EMERGENCYPOWER_TEST... in the new tag-list (this affects four tags).
-* Fixed [Issue #236](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/236) - added handling for version 2 PERIODs. 
-* New instance settings for max. number of BAT/PVI/PM/PERIOD - so everybody who has e.g. 6 batteries or 3 power inverters can now adjust the detection range for his own setup. This fixes [Issue #249](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/249)
-* Fixed [Issue #241](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/241) - modified PM index detection so that discountinuous index sets are handled correctly, like ( 0, 1, 3, 6 ).
-* Fixed E524, E525, S526 dev dependencies.
-* Enhanced max. index handling to produce less debug log messages. (Introduced notIndexIds for non-index counts.)
-* fixed errors reported by the ioBroker Check and Service Bot:
-  * \[E186\] "common.globalDependencies" must be an array in io-package.json
-  * \[E190\] admin dependency missing. Please add to dependencies in io-package.json.
-  * \[W050\] Package 'axios' listed as devDependency in package.json might be obsolete if using '@iobroker/adapter-dev'.
 
 ## License  
 Copyright (c) 2026 Ulrich Kick <iobroker@kick-web.de>  
