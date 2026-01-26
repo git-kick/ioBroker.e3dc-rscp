@@ -1072,11 +1072,11 @@
 		"DataTagHex": "0x000057",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
-		"DataType": "Char8",
-		"DataTypeHex": "0x02",
+		"DataType": "UChar8",
+		"DataTypeHex": "0x03",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": "Set the SoC ( 0 to 100 )%. This this for the dynamic power price menu. / When dpp is active the car is only allowed to charge, after the SoC is reached."
+		"Description": "Set the SoC ( 0 to 100 )%. This this for the dynamic power price menu. / When the SoC is reached, DPP-based charging will stop."
 	},
 	"16777304": {
 		"TagHex": "0x01000058",
@@ -3750,7 +3750,7 @@
 		"DataTagHex": "0x800057",
 		"NameSpace": "EMS",
 		"NameSpaceHex": "0x01",
-		"DataType": "Char8",
+		"DataType": "UChar8",
 		"DataTypeHex": "0x02",
 		"UserLevel": "USER",
 		"Unit": "",
