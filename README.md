@@ -221,60 +221,6 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>EMS</td>
-    <td>MAX_CHARGE_POWER</td>
-    <td>number</td>
-    <td>Charge limit in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true".</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>MAX_DISCHARGE_POWER</td>
-    <td>number</td>
-    <td>Discharge limit in [W] - NOTE: inffective unless POWER_LIMITS_USED is "true".</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>DISCHARGE_START_POWER</td>
-    <td>number</td>
-    <td>Minimal battery discharge power in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true".</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>POWERSAVE_ENABLED</td>
-    <td>boolean</td>
-    <td>Powersave mode is enabled.</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>POWERLIMITS_USED</td>
-    <td>boolean</td>
-    <td>Power limits are used.</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>WEATHER_REGULATED_CHARGE_ENABLED</td>
-    <td>boolean</td>
-    <td>Weather regulated charging is enabled.</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>SET_POWER_MODE</td>
-    <td>states</td>
-    <td>Charging mode; usually propagates to MODE.</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>SET_POWER_VALUE</td>
-    <td>number</td>
-    <td>Charging power [W]; usually propagates to SET_POWER.</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>MANUAL_CHARGE_ENERGY</td>
-    <td>number</td>
-    <td>Manual charging energy [Wh]; setting this value will start manual charge.</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
     <td>BATTERY_BEFORE_CAR_MODE</td>
     <td>boolean</td>
     <td>Charge battery before wallbox.</td>
@@ -287,33 +233,9 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>  
   <tr>
     <td>EMS</td>
-    <td>WB_DISCHARGE_BAT_UNTIL</td>
+    <td>DISCHARGE_START_POWER</td>
     <td>number</td>
-    <td>Percentage down to which the wallbox may discharge the battery.</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>WB_ENFORCE_POWER_ASSIGNMENT</td>
-    <td>boolean</td>
-    <td>Prevent battery discharge through wallbox in mixing mode, true=forbidden, false=allowed</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>OVERRIDE_AVAILABLE_POWER</td>
-    <td>number</td>
-    <td>E3/DC will send this value [W] to wallvox as available solar power.</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>EMERGENCY_POWER</td>
-    <td>states</td>
-    <td>Emergency power mode. **experimental**</td>
-  </tr>
-  <tr>
-    <td>EMS</td>
-    <td>START_EMERGENCY_POWER_TEST</td>
-    <td>boolean</td>
-    <td>Setting this value will switch the E3/DC to island mode. **experimental**</td>
+    <td>Minimal battery discharge power in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true".</td>
   </tr>
   <tr>
     <td>EMS</td>
@@ -332,6 +254,102 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
     <td>DPP_PRICE_LIMIT_BATTERY</td>
     <td>number</td>
     <td>Dynamic power prices below this limit are used to charge battery.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>DPP_PRICE_LIMIT_WB</td>
+    <td>number</td>
+    <td>Dynamic power prices below this limit are used to charge car.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>DPP_SOC_BATTERY</td>
+    <td>number</td>
+    <td>When the SoC [%] is reached, DPP-based charging will stop.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>EMERGENCY_POWER</td>
+    <td>states</td>
+    <td>Emergency power mode. **experimental**</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>MANUAL_CHARGE_ENERGY</td>
+    <td>number</td>
+    <td>Manual charging energy [Wh]; setting this value will start manual charge.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>MAX_CHARGE_POWER</td>
+    <td>number</td>
+    <td>Charge limit in [W] - NOTE: ineffective unless POWER_LIMITS_USED is "true".</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>MAX_DISCHARGE_POWER</td>
+    <td>number</td>
+    <td>Discharge limit in [W] - NOTE: inffective unless POWER_LIMITS_USED is "true".</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>OVERRIDE_AVAILABLE_POWER</td>
+    <td>number</td>
+    <td>E3/DC will send this value [W] to wallvox as available solar power.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>POWERLIMITS_USED</td>
+    <td>boolean</td>
+    <td>Power limits are used.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>POWERSAVE_ENABLED</td>
+    <td>boolean</td>
+    <td>Powersave mode is enabled.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>SET_POWER_MODE</td>
+    <td>states</td>
+    <td>Charging mode; usually propagates to MODE.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>SET_POWER_VALUE</td>
+    <td>number</td>
+    <td>Charging power [W]; usually propagates to SET_POWER.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>START_EMERGENCY_POWER_TEST</td>
+    <td>boolean</td>
+    <td>Setting this value will switch the E3/DC to island mode. **experimental**</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>START_MANUAL_CHARGE</td>
+    <td>number</td>
+    <td>Start manual charge [Wh].</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>WB_DISCHARGE_BAT_UNTIL</td>
+    <td>number</td>
+    <td>Percentage down to which the wallbox may discharge the battery.</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>WB_ENFORCE_POWER_ASSIGNMENT</td>
+    <td>boolean</td>
+    <td>Prevent battery discharge through wallbox in mixing mode, true=forbidden, false=allowed</td>
+  </tr>
+  <tr>
+    <td>EMS</td>
+    <td>WEATHER_REGULATED_CHARGE_ENABLED</td>
+    <td>boolean</td>
+    <td>Weather regulated charging is enabled.</td>
   </tr>
   <tr>
     <td>EMS (1)</td>
@@ -437,15 +455,9 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>WB</td>
-    <td>EXTERN_DATA_SUN</td>
-    <td>boolean</td>
-    <td>Set Sun mode or Mixed mode.</td>
-  </tr>
-  <tr>
-    <td>WB</td>
-    <td>EXTERN_DATA_NET</td>
-    <td>number</td>
-    <td>Set wallbox grid power.</td>
+    <td>EXTERN_DATA_ALG</td>
+    <td>byte array</td>
+    <td>Set wallbox mode, cancel charging, type 2 plug locking, power limit.</td>
   </tr>
   <tr>
     <td>WB</td>
@@ -455,9 +467,15 @@ The RSCP protocol groups *Tags* (i.e. states or values) into *Namespaces* (i.e. 
   </tr>
   <tr>
     <td>WB</td>
-    <td>EXTERN_DATA_ALG</td>
-    <td>byte array</td>
-    <td>Set wallbox mode, cancel charging, type 2 plug locking, power limit.</td>
+    <td>EXTERN_DATA_NET</td>
+    <td>number</td>
+    <td>Set wallbox grid power.</td>
+  </tr>
+  <tr>
+    <td>WB</td>
+    <td>EXTERN_DATA_SUN</td>
+    <td>boolean</td>
+    <td>Set Sun mode or Mixed mode.</td>
   </tr>
 </table> 
 
