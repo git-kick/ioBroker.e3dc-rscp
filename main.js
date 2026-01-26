@@ -374,6 +374,7 @@ const ignoreIds = [
     'EMS.SET_IDLE_PERIODS',
     'EMS.SET_IDLE_PERIODS_2',
     'EMS.SET_WB_DISCHARGE_BAT_UNTIL', // Response is always "true", not usable for state with unit "%"
+    'EMS.DPP_SET_SOC_BATTERY', // returns UChar8, the value is the same as sent with REQ_SET_...
     'BAT.UNDEFINED',
     'BAT.INTERNAL_CURRENT_AVG30',
     'BAT.INTERNAL_MTV_AVG30',

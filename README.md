@@ -527,7 +527,11 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### **WORK IN PROGRESS**
 
 (git-kick)
-* Added e3dc-rscp.0.EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)
+* Added EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)
+* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)
+* Settings: 
+  * name space WB defaults to false (not everybody has an attached wallbox)
+  * name space DCDC defaults to true (everybody has a DCDC converter)
 
 ### 1.4.5-alpha.0 (2026-01-09)
 
