@@ -541,6 +541,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+
+(git-kick)
+* "@iobroker/testing": "^5.2.2" [Issue #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)
+
 ### 1.4.5-alpha.1 (2026-01-26)
 
 (git-kick)
