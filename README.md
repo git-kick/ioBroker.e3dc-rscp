@@ -543,13 +543,14 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 -->
 
 (git-kick)
-* "@iobroker/testing": "^5.2.2" [Issue #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)
+* "@iobroker/testing": "^5.2.2" - [Issue #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)
+* Added JSDoc - [Issue #300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)
 
 ### 1.4.5-alpha.1 (2026-01-26)
 
 (git-kick)
-* Added EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)
-* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)
+* Added EMS.DPP_PRICE_LIMIT_WALLBOX - [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)
+* Fixed EMS.DPP_SOC_BATTERY setter - [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)
 * Settings: 
   * name space WB defaults to false (not everybody has an attached wallbox)
   * name space DCDC defaults to true (everybody has a DCDC converter)
@@ -562,7 +563,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 (git-kick)
 * Wording (de): now "DC-DC-Wandler" instead of "DC-DC-Konverter"
-* Migrated to ESLint 9 and @iobroker/eslint-config [Issue #246](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/246)
+* Migrated to ESLint 9 and @iobroker/eslint-config - [Issue #246](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/246)
 * fixed errors reported by the ioBroker Check and Service Bot:
   * \[W028\] now "node": ">=20" at package.json
   * \[W037\] now "@iobroker/adapter-dev": "^1.4.0" at package.json
@@ -576,7 +577,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 ### 1.4.3
 
 (db3wf)
-* Added DCDC namespace [Issue #273](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/273)
+* Added DCDC namespace - [Issue #273](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/273)
 
 (git-kick)
 * Added dynamic power prices tags `EMS.DPP...` - [Issue #247](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/247)

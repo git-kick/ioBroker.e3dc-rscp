@@ -31,7 +31,15 @@ const rscpBool = {
     1: 'YES',
 };
 
+/**
+ * Wallbox class
+ */
 class wallbox {
+    /**
+     * @param {object} settings - unused
+     * @param {object} adapter - parent adapter
+     * @param {object} systemDictionary - dictionary
+     */
     constructor(settings, adapter, systemDictionary) {
         this.settings = settings || {};
         this.adapter = adapter;
@@ -39,6 +47,9 @@ class wallbox {
         this.rscpTag = require('./lib/RscpTags.json');
     }
 
+    /**
+     * @param {string} sml - S, M, L, or N
+     */
     queueWbRequestData(sml) {
         this.adapter.clearFrame();
         this.adapter.addTagtoFrame('TAG_WB_REQ_CONNECTED_DEVICES', sml);
@@ -86,6 +97,9 @@ class wallbox {
         this.adapter.pushFrame();
     }
 
+    /**
+     * @param {string} sml - S, M, L, or X
+     */
     queueWbRequestExternData(sml) {
         this.adapter.clearFrame();
         this.adapter.addTagtoFrame('TAG_WB_REQ_CONNECTED_DEVICES', sml);
@@ -101,6 +115,9 @@ class wallbox {
         this.adapter.pushFrame();
     }
 
+    /**
+     * @param {string} id - id of changed state
+     */
     queueWbSetData(id) {
         const lp = '[queueWbSetData] ';
         this.adapter.log.debug(`${lp}State changed: ${id}`);
@@ -191,6 +208,9 @@ class wallbox {
         this.queueWbRequestExternData('');
     }
 
+    /**
+     * @param {string} str - extern data string
+     */
     buildWbExternData(str) {
         const lp = '[buildWbExternData] ';
         this.adapter.log.debug(`${lp}Building Frame`);
@@ -207,6 +227,11 @@ class wallbox {
         this.adapter.log.silly(`${lp}End Building Frame`);
     }
 
+    /**
+     * @param {string} shortId - short id of extern data
+     * @param {object} tree - tlv subtree to store
+     * @param {string} path - path within WB.*
+     */
     storeWbExternData(shortId, tree, path) {
         const lp = '[storeWbExternData] ';
         this.adapter.log.silly(`${lp}Storing Data`);
@@ -357,6 +382,9 @@ class wallbox {
         }
     }
 
+    /**
+     * @param {string} wbPath - WB.* path
+     */
     generateStates(wbPath) {
         this.adapter.setObjectNotExists('WB', {
             type: 'device',
