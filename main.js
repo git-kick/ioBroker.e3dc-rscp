@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /**
  * ioBroker adapter for E3/DC devices.
  *
@@ -444,7 +443,7 @@ const utils = require('@iobroker/adapter-core');
 //const { type } = require('os');
 class E3dcRscp extends utils.Adapter {
     /**
-     * @param {Partial<utils.AdapterOptions>} [options]
+     * @param {Partial<utils.AdapterOptions>} [options] - adapter options
      */
     constructor(options) {
         super({
@@ -2531,18 +2530,18 @@ class E3dcRscp extends utils.Adapter {
                 },
                 native: {},
             });
-			await this.setObjectNotExistsAsync( 'EMS.DPP_PRICE_LIMIT_WB', {
-				type: 'state',
-				common: {
-					name: systemDictionary['DPP_PRICE_LIMIT_WB'][this.language],
-					type: 'number',
-					role: 'level',
-					read: false,
-					write: true,
-					unit: rscpTag[rscpTagCode['TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_WB']].Unit
-				},
-				native: {},
-			} );
+            await this.setObjectNotExistsAsync('EMS.DPP_PRICE_LIMIT_WB', {
+                type: 'state',
+                common: {
+                    name: systemDictionary['DPP_PRICE_LIMIT_WB'][this.language],
+                    type: 'number',
+                    role: 'level',
+                    read: false,
+                    write: true,
+                    unit: rscpTag[rscpTagCode['TAG_EMS_REQ_DPP_SET_PRICE_LIMIT_WB']].Unit,
+                },
+                native: {},
+            });
             await this.setObjectNotExistsAsync('EMS.DPP_PRICE_LIMIT_BATTERY', {
                 type: 'state',
                 common: {
@@ -2725,7 +2724,7 @@ class E3dcRscp extends utils.Adapter {
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
      *
-     * @param {() => void} callback
+     * @param {() => void} callback - the callback
      */
     onUnload(callback) {
         try {
@@ -2744,8 +2743,8 @@ class E3dcRscp extends utils.Adapter {
     /**
      * Is called if a subscribed state change
      *
-     * @param {string} id
-     * @param {ioBroker.State | null | undefined} state
+     * @param {string} id - id of changed state
+     * @param {ioBroker.State | null | undefined} state - changed state
      */
     onStateChange(id, state) {
         if (state) {

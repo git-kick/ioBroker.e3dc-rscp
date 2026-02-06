@@ -25,11 +25,11 @@ export default [
         // you may disable some 'jsdoc' warnings - but using jsdoc is highly recommended
         // as this improves maintainability. jsdoc warnings will not block build process.
         rules: {
-            'jsdoc/require-jsdoc': 'off',
-            'jsdoc/require-param': 'off',
-            'jsdoc/require-param-description': 'off',
-            'jsdoc/require-returns-description': 'off',
-            'jsdoc/require-returns-check': 'off',
+            'jsdoc/require-jsdoc': 'warn',
+            'jsdoc/require-param': 'warn',
+            'jsdoc/require-param-description': 'warn',
+            'jsdoc/require-returns-description': 'warn',
+            'jsdoc/require-returns-check': 'warn',
         },
     },
 ];
