@@ -29,6 +29,13 @@ export default [
             "jsdoc/require-param-description": "warn",
             "jsdoc/require-returns-description": "warn",
             "jsdoc/require-returns-check": "warn",
+            "jsdoc/no-types": "off",
         },
+    },
+    {
+        files: ["**/*.js", "**/*.mjs", "**/*.ts", "**/*.tsx"],
+        rules: {
+            "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }]
+        }
     },
 ];
