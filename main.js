@@ -11,8 +11,8 @@
 'use strict';
 
 // System dictionary
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 let systemDictionary = {};
 //let ad = {};
@@ -429,7 +429,7 @@ const sysSpecUnits = {
 // Encryption setup for E3/DC RSCP
 // NOTE: E3/DC uses 256 bit block-size, which ist _not_ covered by AES standard.
 // It seems that Rijndael CBC with 256 bit block-size fits.
-const Net = require('net');
+const Net = require('node:net');
 const CRC32 = require('crc-32');
 const Rijndael = require('rijndael-js');
 const BLOCK_SIZE = 32;
@@ -439,8 +439,8 @@ const KEY_SIZE = 32;
  * Created with @iobroker/create-adapter v1.31.0
  */
 const utils = require('@iobroker/adapter-core');
-//const { resourceLimits, threadId } = require('worker_threads');
-//const { type } = require('os');
+//const { resourceLimits, threadId } = require('node:worker_threads');
+//const { type } = require('node:os');
 class E3dcRscp extends utils.Adapter {
     /**
      * @param {Partial<utils.AdapterOptions>} [options] - adapter options
