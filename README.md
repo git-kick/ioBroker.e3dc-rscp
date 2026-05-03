@@ -609,6 +609,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * removed duplicate queueWbRequestData() definition from main.js - the relevant one is in wallbox.js
 * removed obsolete initialisation of maxIndex for BAT and PVI from constructor(). Both values are now initialized from config during initChannel().
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License  
 Copyright (c) 2026 Ulrich Kick <iobroker@kick-web.de>  
 ```
