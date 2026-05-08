@@ -541,8 +541,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 1.4.5 (2026-05-08)
 - (copilot) Adapter requires node.js >= 22 now
 
 (git-kick)
@@ -613,20 +612,6 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * \[W444\] added schema for JSON5 config files in settings.json
   * \[S532\] removed unused lib/tools.js
   * \[S906\] added ".commitinfo§ to .gitignore
-
-### 1.4.2
-
-(git-kick)
-* introduced config value maxindex_wb - before, maxIndex["WB"] remained undefined in some cases - [Issue #262](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/262)
-* restored EP_RESERVE is writable - [Issue #263](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/263)
-* fixed errors reported by the ioBroker Check and Service Bot:
-  * \[E160\]\[E190\] "peerDependencies.iobroker.admin"  in package.json
-  * \[605\] updated (c) 2025.
-  * \[254\] removed v1.3.2 which was never released.
-* removed duplicate queueWbRequestData() definition from main.js - the relevant one is in wallbox.js
-* removed obsolete initialisation of maxIndex for BAT and PVI from constructor(). Both values are now initialized from config during initChannel().
-
-[Older changelogs can be found there](CHANGELOG_OLD.md)
 
 ## License  
 Copyright (c) 2026 Ulrich Kick <iobroker@kick-web.de>  
