@@ -547,6 +547,17 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * Added JSDoc - [Issue #300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)
 * Updated dependencies in package.json - [Issue #305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)
 * Updated dependencies in package.json and added dependabot.yml - [Issue #309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)
+* Merged PRs created by Check and Service Bot:
+  * Update Dependabot Configuration – Add npm Cooldown - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)
+  * Bump @iobroker/eslint-config from 0.1.7 to 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)
+  * Bump @sentry/tracing from 6.19.7 to 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)
+  * Update Node.js versions in test-and-release workflow - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)
+  * Add Dependabot Ignore Rule for @types/node Major Version Updates - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)
+  * Drop Node.js 20 support (End of Life) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)
+  * Add CHANGELOG_OLD.md to store older changelog entries - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)
+  * Bump html-to-text from 9.0.5 to 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)
+  * Bump @types/node from 25.5.0 to 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)
+  * Bump @sentry/node from 10.43.0 to 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)
 
 ### 1.4.5-alpha.1 (2026-01-26)
 
