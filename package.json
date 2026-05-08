@@ -21,7 +21,7 @@
     "url": "git+https://github.com/git-kick/ioBroker.e3dc-rscp.git"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
