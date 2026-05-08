@@ -561,6 +561,9 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * Bump html-to-text from 9.0.5 to 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)
   * Bump @types/node from 25.5.0 to 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)
   * Bump @sentry/node from 10.43.0 to 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)
+* Fixed errors reported by the ioBroker Check and Service Bot - [Issue #317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)
+  * \[E0036\] now "@iobroker/adapter-dev": "^1.5.0" at package.json
+  * \[E0036\] now "@iobroker/testing": "^5.2.2" at package.json
 
 ### 1.4.5-alpha.1 (2026-01-26)
 

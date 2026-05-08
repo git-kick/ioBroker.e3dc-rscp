@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /**
  * ioBroker adapter for E3/DC devices.
  *
