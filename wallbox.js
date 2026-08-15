@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /**
  * Wallbox setter and getter.
  *

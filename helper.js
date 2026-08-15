@@ -9,22 +9,30 @@
  */
 
 /**
- * Convert numerical value to '0xAB' hex string
+ * Converts a decimal number (taken mod 256) to a 2-digit, upper-case
+ * hexadecimal string.
  *
- * @param {number} d - decimal number (mod 256)
- * @returns {string} - 2-digit hex number
+ * @param   {number} d - Decimal number to convert (values outside 0-255
+ *                        are effectively truncated to their last byte).
+ * @returns {string} 2-character upper-case hex string, e.g. "0A".
  */
 function toHex(d) {
     return `0${Number(d).toString(16)}`.slice(-2).toUpperCase();
 }
 
 /**
- * Round numerical value for better readability.
- * If the integer part is has more digits than <s>, then just round to integer.
- * Otherwise, round so that the result has <s> digits in total: <int-digits> + <fraction-digits> = <s>.
+ * Rounds a numerical value for better readability.
  *
- * @param {number} n - numerical value
- * @returns {number} - numerical value rounded to <s> digits or to integer, resp.
+ * If the integer part of `n` already has at least `s` (4) digits, the
+ * value is rounded to the nearest integer. Otherwise it is rounded so
+ * that the result has `s` significant digits in total:
+ * <int-digits> + <fraction-digits> = <s>
+ *
+ * @param   {number} n - Value to round.
+ * @returns {number} Rounded value.
+ * @example
+ * roundForReadability(3.14159); // 3.142
+ * roundForReadability(12345.6); // 12346
  */
 function roundForReadability(n) {
     const s = 4; // number of significant digits
@@ -37,10 +45,10 @@ function roundForReadability(n) {
 }
 
 /**
- * Convert 7263 seconds => "02:01:03"
+ * Converts a number of seconds into a "HH:MM:SS" time-of-day string.
  *
- * @param {number} secs - seconds
- * @returns {string} - "hh:mm:ss" string
+ * @param   {number} secs - Number of seconds (e.g. 7263).
+ * @returns {string} Time-of-day string, zero-padded to 2 digits per component, e.g. "02:01:03".
  */
 function secondsToTimeOfDayString(secs) {
     const hrs = Math.floor(secs / 3600);
@@ -51,10 +59,12 @@ function secondsToTimeOfDayString(secs) {
 }
 
 /**
- * Convert "02:01:03" => 7263 sec
+ * Converts a "HH:MM:SS" time-of-day string into a number of seconds.
  *
- * @param {string} tod - time of day string "hh:mm:ss"
- * @returns {number} - seconds
+ * Missing parts default to 0; hours, minutes and seconds may each be given with 1 or 2 digits.
+ *
+ * @param   {string} tod - Time-of-day string, e.g. "02:01:03".
+ * @returns {number} Total number of seconds, e.g. 7263.
  */
 function timeOfDayStringToSeconds(tod) {
     const parts = tod.split(':');
@@ -73,10 +83,10 @@ function timeOfDayStringToSeconds(tod) {
 }
 
 /**
- * Convert 0b11000001 => "167"
+ * Converts a weekday bitmask into a string of weekday digits.
  *
- * @param {number} bitmask - bitmask where days of week are set
- * @returns {string} - string with digits for set days of week
+ * @param   {number} bitmask - Bitmask with one bit set per active weekday (bit 0 = Monday, ..., bit 6 = Sunday).
+ * @returns {string} Concatenated weekday digits ("1" = Monday ... "7" = Sunday), e.g. 0b11000001 => "167".
  */
 function bitmaskToWeekdayString(bitmask) {
     const days = ['1', '2', '3', '4', '5', '6', '7']; // Monday = "1", Tuesday = "2", etc.
@@ -90,10 +100,10 @@ function bitmaskToWeekdayString(bitmask) {
 }
 
 /**
- * Convert "167" => 0b11000001
+ * Converts a string of weekday digits into a weekday bitmask.
  *
- * @param {string} days - string with digits for set days of week
- * @returns {number} - bitmask where days of week are set
+ * @param   {string} days - Weekday digits ("1" = Monday ... "7" = Sunday), e.g. "167".
+ * @returns {number} Bitmask with one bit set per weekday contained in `days` (bit 0 = Monday, ..., bit 6 = Sunday).
  */
 function weekdayStringToBitmask(days) {
     let result = 0;
@@ -104,10 +114,17 @@ function weekdayStringToBitmask(days) {
 }
 
 /**
- * Convert 0b000011110000 => "jfmaMJJAsond"
+ * Converts a 12-bit month bitmask into a month-initials string.
  *
- * @param {number} bitmask - bitmask where months are set
- * @returns {string} - string with upper case letters for set months
+ * Bit 0 = January, bit 1 = February, ..., bit 11 = December. Months that
+ * are set in the bitmask are represented by their upper-case initial,
+ * months that are not set by their lower-case initial.
+ *
+ * @param   {number} bitmask - Bitmask with one bit set per active month;
+ *                   must be < 4096, i.e. use at most 12 lower bits.
+ * @returns {string} 12-character month-initials string;
+ *                   e.g. 0b000011110000 => "jfmaMJJAsond";
+ *                   returns an empty string if `bitmask` is out of range.
  */
 function bitmaskToMonthString(bitmask) {
     if (bitmask < 4096) {
@@ -126,10 +143,15 @@ function bitmaskToMonthString(bitmask) {
 }
 
 /**
- * Convert "jfmaMJJAsond" => 0b000011110000"
+ * Converts a month-initials string into a 12-bit month bitmask.
  *
- * @param {string} months - string with upper case letters for set months
- * @returns {number} - bitmask where months are set
+ * Only valid if `months` matches "jfmamjjasond" case-insensitively;
+ * upper-case letters mark active months.
+ *
+ * @param   {string} months - 12-character month-initials string, e.g. "jfmaMJJAsond".
+ * @returns {number} Bitmask with one bit set per active month;
+ *                  (bit 0 = January, ..., bit 11 = December);
+ *                  returns 0 if `months` does not match the expected pattern.
  */
 function monthStringToBitmask(months) {
     let result = 0;
@@ -145,10 +167,10 @@ function monthStringToBitmask(months) {
 }
 
 /**
- * Timestamps are stringified like "2022-01-30 12:00:00.000"
+ * Formats a Date object as a "YYYY-MM-DD HH:MM:SS.mmm" timestamp string.
  *
- * @param {Date} date - date to stringify
- * @returns {string} - date string "yyyy-mm-dd hh:mm:ss.ttt"
+ * @param   {Date}   date - Date object to format.
+ * @returns {string} Formatted timestamp, e.g. "2022-01-30 12:00:00.000".
  */
 function dateToString(date) {
     const year = date.getFullYear().toString().padStart(4, '0');
@@ -162,12 +184,14 @@ function dateToString(date) {
 }
 
 /**
- * Convert date string into Date.
- * Missing seconds/milliseconds will be set to zero - minimal valid string is like "2021-1-1 0:0"
- * If no match is found, return "today midnight".
+ * Parses a timestamp string of the form "YYYY-M-D H:M[:S[.mmm]]" into a Date object.
  *
- * @param {string} string - date string "yyyy-mm-dd hh:mm:ss.ttt"
- * @returns {Date} - correspondig Date
+ * Seconds and milliseconds are optional and default to 0 when missing,
+ * so the minimal valid string is like "2021-1-1 0:0". If `string` does
+ * not match the expected pattern, today's midnight is returned instead.
+ *
+ * @param   {string} string - Timestamp string to parse, e.g. "2022-01-30 12:00:00.000".
+ * @returns {Date} Parsed Date object, or today at 00:00:00.000 if `string` could not be parsed.
  */
 function stringToDate(string) {
     const found = string.match(/(\d\d\d\d)-(\d\d?)-(\d\d?) (\d\d?):(\d\d?)(?::(\d\d?)(?:\.(\d\d?\d?))?)?/);
@@ -189,11 +213,12 @@ function stringToDate(string) {
 }
 
 /**
- * Convert Buffer to human readable string, e.g. 4 byte like "F0 12 FF 00"
- * Also used to display RSCP ByteArray/BitString types
+ * Converts a Buffer into a human-readable, space-separated hex string.
  *
- * @param {Buffer} buf - buffer to show
- * @returns {string} - hex string like "F0 12 FF 00"
+ * Also used to display RSCP ByteArray/BitString values.
+ *
+ * @param   {Buffer} buf - Buffer to convert.
+ * @returns {string} Space-separated, upper-case hex bytes, e.g. for a 4-byte buffer "F0 12 FF 00".
  */
 function bufferToString(buf) {
     let str = '';
@@ -204,10 +229,10 @@ function bufferToString(buf) {
 }
 
 /**
- * Convert Buffer from human readable string, e.g. 4 byte like "F0 12 FF 00"
+ * Converts a space-separated hex string into a Buffer.
  *
- * @param {string} str - hex string like "F0 12 FF 00"
- * @returns {Buffer} - bytes encoded in a Buffer
+ * @param   {string} str - Space-separated, upper-case hex bytes, e.g. "F0 12 FF 00".
+ * @returns {Buffer} Converted Buffer.
  */
 function stringToBuffer(str) {
     const arr = [];
