@@ -19,6 +19,21 @@ updates:
           - 'version-update:semver-major'
     cooldown:
       default-days: 7
+    # Bundle same-risk updates into one PR instead of one PR per package.
+    # Kept aligned with .github/auto-merge.yml: only the update types that
+    # are already auto-merged there (production:patch, dev:patch+minor)
+    # are grouped. Major bumps are intentionally left out of every group,
+    # so they keep arriving as separate PRs for manual review.
+    groups:
+      production-patches:
+        dependency-type: 'production'
+        update-types:
+          - 'patch'
+      development-updates:
+        dependency-type: 'development'
+        update-types:
+          - 'patch'
+          - 'minor'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
@@ -27,3 +42,10 @@ updates:
       timezone: 'Europe/Berlin'
       cronjob: '47 3 17 * *'
     open-pull-requests-limit: 15
+    # Same idea: patch/minor Action bumps land in one PR, majors (e.g. a
+    # v1 -> v2 tag change) stay separate since those aren't auto-merged.
+    groups:
+      actions-updates:
+        update-types:
+          - 'patch'
+          - 'minor'
