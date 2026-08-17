@@ -597,7 +597,7 @@ class E3dcRscp extends utils.Adapter {
 
         // Force some quick data requests for index probing and building up the object tree:
         for (let i = 0; i < 5; i++) {
-            this.probingTimeout[i] = setTimeout(
+            this.probingTimeout[i] = this.setTimeout(
                 () => {
                     this.requestAllData('');
                 },
@@ -605,16 +605,16 @@ class E3dcRscp extends utils.Adapter {
             ); // every 7 seconds
         }
 
-        this.dataPollingTimerS = setInterval(() => {
+        this.dataPollingTimerS = this.setInterval(() => {
             this.requestAllData('S');
         }, this.config.polling_interval_short * 1000); // seconds
-        this.dataPollingTimerM = setInterval(
+        this.dataPollingTimerM = this.setInterval(
             () => {
                 this.requestAllData('M');
             },
             this.config.polling_interval_medium * 1000 * 60,
         ); // minutes
-        this.dataPollingTimerL = setInterval(
+        this.dataPollingTimerL = this.setInterval(
             () => {
                 this.requestAllData('L');
             },
@@ -640,7 +640,7 @@ class E3dcRscp extends utils.Adapter {
             this.log.info('Stop communication with E3/DC and pause a minute before retry ...');
             this.tcpConnection.removeAllListeners();
             this.clearAllIntervals();
-            this.reconnectTimeout = setTimeout(() => {
+            this.reconnectTimeout = this.setTimeout(() => {
                 this.reconnectTimeout = null;
                 this.log.info('Try reconnecting to E3/DC');
                 this.initChannel();
@@ -1037,7 +1037,7 @@ class E3dcRscp extends utils.Adapter {
         this.setState('EMS.SET_POWER_VALUE', value, true);
         // E3/DC requires regular SET_POWER repetition, otherwise it will fall back to NORMAL mode:
         if (mode > 0 && this.config.setpower_interval > 0 && !this.setPowerTimer) {
-            this.setPowerTimer = setInterval(() => {
+            this.setPowerTimer = this.setInterval(() => {
                 this.getState('EMS.SET_POWER_VALUE', (err, vObj) => {
                     this.getState('EMS.SET_POWER_MODE', (err, mObj) => {
                         this.sendEmsSetPower(mObj ? mObj.val : 0, vObj ? vObj.val : 0);
@@ -1178,7 +1178,7 @@ class E3dcRscp extends utils.Adapter {
             if (this.sendTupleTimeout[prefix]) {
                 clearTimeout(this.sendTupleTimeout[prefix]);
             }
-            this.sendTupleTimeout[prefix] = setTimeout(() => {
+            this.sendTupleTimeout[prefix] = this.setTimeout(() => {
                 this.getState(`${prefix}.IDLE_PERIOD_ACTIVE`, (err, active) => {
                     this.getState(`${prefix}.START_HOUR`, (err, startHour) => {
                         this.getState(`${prefix}.START_MINUTE`, (err, startMinute) => {
@@ -1226,7 +1226,7 @@ class E3dcRscp extends utils.Adapter {
         if (this.sendTupleTimeout[prefix]) {
             clearTimeout(this.sendTupleTimeout[prefix]);
         }
-        this.sendTupleTimeout[prefix] = setTimeout(() => {
+        this.sendTupleTimeout[prefix] = this.setTimeout(() => {
             // RSCP requires to send a container with _all_ PERIODs every time something changes.
             this.getHighestSubnode(prefix, max => {
                 this.log.debug(`queueSetIdlePeriods2: maxNode = ${max}`);
@@ -1300,7 +1300,7 @@ class E3dcRscp extends utils.Adapter {
                 if (this.sendTupleTimeout[prefix]) {
                     clearTimeout(this.sendTupleTimeout[prefix]);
                 }
-                this.sendTupleTimeout[prefix] = setTimeout(() => {
+                this.sendTupleTimeout[prefix] = this.setTimeout(() => {
                     this.getState(`${nameSpace}.${shortTag}.TIME_START`, (err, timeStart) => {
                         this.getState(`${nameSpace}.${shortTag}.TIME_INTERVAL`, (err, interval) => {
                             this.getState(`${nameSpace}.${shortTag}.TIME_SPAN`, (err, span) => {
