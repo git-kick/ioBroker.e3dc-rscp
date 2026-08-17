@@ -25,12 +25,8 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.4.3",
-    "audit": "^0.0.6",
     "crc-32": "^1.2.0",
-    "html-to-text": "^10.0.0",
-    "net": "^1.0.2",
-    "rijndael-js": "^2.0.0",
-    "source-map-resolve": "^0.6.0"
+    "rijndael-js": "^2.0.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^5.2.1",
