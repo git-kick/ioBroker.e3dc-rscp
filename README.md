@@ -536,8 +536,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 1.4.5 (2026-08-17)
 
 (git-kick)
 * Fixed issues reported by the ioBroker Check and Service Bot:
@@ -577,10 +576,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * Settings: 
   * name space WB defaults to false (not everybody has an attached wallbox)
   * name space DCDC defaults to true (everybody has a DCDC converter)
-
-### 1.4.5-alpha.0 (2026-01-09)
-
-- Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)
+* Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)
 
 ### 1.4.4
 
@@ -596,6 +592,41 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * \[W037\] now "@alcalzone/release-script-plugin-license": "^4.0.0" at package.json
   * \[W037\] now "@alcalzone/release-script-plugin-manual-review": "^4.0.0" at package.json
   * \[S0064\] now "@iobroker/adapter-dev": "^1.5.0" at package.json
+
+### 1.4.3
+
+(db3wf)
+* Added DCDC namespace - [Issue #273](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/273)
+
+(git-kick)
+* Added dynamic power prices tags `EMS.DPP...` - [Issue #247](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/247)
+* Initialize DB.HISTORY_DATA_{DAY,WEEK,MONTH,YEAR}.TIME_{START,INTERVAL,SPAN} values only if not existing before  - [Issue #271](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/271)
+* Fixed warnings and suggestions reported by the ioBroker Check and Service Bot:
+  * \[W028\] now "node": ">=20" in package.json
+  * \[W034\] now "adapter-core": "^3.3.2" in package.json
+  * \[W037\] now "adapter-dev": "^1.4.0" in package.json
+  * \[W037\] now "testing": "^5.1.0" in package.json
+  * \[W050\] now "@types/html-to-text" is under "devDependencies" in package.json
+  * \[W156\] now "admin": ">=7.6.17" in io-package.json
+  * \[W156\] now "js-controller": ">=6.0.11" in io-package.json
+  * \[W442\] added schema for jsonConfig files in .vscode/settings.json
+  * \[W444\] added schema for JSON5 config files in settings.json
+  * \[S532\] removed unused lib/tools.js
+  * \[S906\] added ".commitinfo§ to .gitignore
+
+### 1.4.2
+
+(git-kick)
+* introduced config value maxindex_wb - before, maxIndex["WB"] remained undefined in some cases - [Issue #262](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/262)
+* restored EP_RESERVE is writable - [Issue #263](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/263)
+* fixed errors reported by the ioBroker Check and Service Bot:
+  * \[E160\]\[E190\] "peerDependencies.iobroker.admin"  in package.json
+  * \[605\] updated (c) 2025.
+  * \[254\] removed v1.3.2 which was never released.
+* removed duplicate queueWbRequestData() definition from main.js - the relevant one is in wallbox.js
+* removed obsolete initialisation of maxIndex for BAT and PVI from constructor(). Both values are now initialized from config during initChannel().
+
+[Older changelogs can be found there](CHANGELOG_OLD.md)
 
 ## License  
 Copyright (c) 2026 Ulrich Kick <iobroker@kick-web.de>  
