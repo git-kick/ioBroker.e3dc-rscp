@@ -25,8 +25,6 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.4.3",
-    "@sentry/node": "^10.69.0",
-    "@sentry/tracing": "^7.120.4",
     "audit": "^0.0.6",
     "crc-32": "^1.2.0",
     "html-to-text": "^10.0.0",
