@@ -554,7 +554,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * 📌 [S5005] Plain setTimeout() found in source files (main.js). Please use this.setTimeout() or adapter.setTimeout() instead.
   * 📌 [S5601] i18n directory "admin/i18n" uses long format ({lang}/translations.json). Consider migrating to short format ({lang}.json) using "npm run translate convert".
 
-### 1.4.5-alpha.2.0 (2026-08-17)
+### 1.4.5-alpha.2 (2026-08-17)
 
 (git-kick)
 * "@iobroker/testing": "^5.2.2" - [Issue #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)
