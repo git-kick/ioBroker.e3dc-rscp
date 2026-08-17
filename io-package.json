@@ -1,1056 +1,1069 @@
 {
-    "common": {
-        "name": "e3dc-rscp",
-        "version": "1.4.5-alpha.1",
-        "blockedVersions": [
-            "1.4.5.-alpha.1",
-            "1.4.5.-alpha.0",
-            "1.4.0",
-            "1.3.0",
-            "1.2.0"
-        ],
-        "news": {
-            "1.4.5-alpha.1": {
-                "en": "(git-kick)\n* Added EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Settings: \n  * name space WB defaults to false (not everybody has an attached wallbox)\n  * name space DCDC defaults to true (everybody has a DCDC converter)",
-                "de": "(git-kick)\n* EMS.DPP_PRICE_LIMIT_WALLBOX hinzugefügt [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Einstellungen:\n* Name-Raum WB standardmäßig auf false (nicht jeder hat eine beigefügte Wandbox)\n* Namensraum DCDC standardmäßig auf true (jeder hat einen DCDC-Wandler)",
-                "ru": "(гит-кик)\n* Добавлено EMS.DPP_PRICE_LIMIT_WALLBOX [Выпуск #284] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Фиксированный настройщик EMS.DPP_SOC_BATTERY [выпуск #295] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Настройки:\nНазовите пространство WB по умолчанию ложным (не у всех есть прикрепленный настенный ящик)\nНазвание пространства DCDC по умолчанию истинно (у каждого есть конвертер DCDC)",
-                "pt": "(git-kick)\n* Adicionado EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixo EMS.DPP_SOC_BATTTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Configurações:\n* espaço de nome WB padrão para false (nem todo mundo tem uma caixa de parede anexada)\n* nome espaço DCDC padrão para true (everybody tem um conversor DCDC)",
-                "nl": "(git-kick)\n* Toegevoegd EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Instellingen:\n* naamruimte WB is standaard vals (niet iedereen heeft een bijgevoegde wandkast)\n* naamruimte DCDC defaults to true (iedereen heeft een DCDC converter)",
-                "fr": "(cliquetis)\n* Ajouté EMS.DPP_PRICE_LIMIT_WALLBOX (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Setter fixe EMS.DPP_SOC_BATTERY [Numéro #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Paramètres :\n* nom de l'espace WB par défaut à false (pas tout le monde a une boîte murale attachée)\n* nom de l'espace DCDC par défaut à true (tout le monde a un convertisseur DCDC)",
-                "it": "ehi\n# Aggiunto EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rsc/issues/295)\n* Impostazioni:\n* name space WB default a false (non tutti hanno una scatola da parete attaccata)\n* name space DCDC predefinito a true (tutti hanno un convertitore DCDC)",
-                "es": "(git-kick)\n* Añadido EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Ajustes:\n* espacio de nombre WB predeterminado a falso (no todo el mundo tiene una caja de pared adjunta)\n* espacio de nombre DCDC predeterminado a verdadero (todo el mundo tiene un convertidor DCDC)",
-                "pl": "(git- kick)\n* Dodano EMS.DPP _ Price _ LIMIT _ WALLBOX [Issue # 284] (https: / / github.com / git- kick / ioBroker.e3dc- rscp / issues / 284)\n* Fixed EMS.DPP _ SOC _ BATTERY setter [Issue # 295] (https: / / github.com / git- kick / ioBroker.e3dc- rscp / issues / 295)\n* Ustawienia:\n* nazwa spacja WB domyślnie false (nie każdy ma dołączoną tapetę)\n* nazwa miejsca DCDC domyślnie true (każdy ma konwerter DCDC)",
-                "uk": "(git-kick)\nІм'я * Додано EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/products/284)\n* Фіксований EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/products/295)\n* Налаштування:\n* простір імен WB за замовчуванням до false (не всі мають прикріплену скриньку)\n* простір імен DCDC за замовчуванням true (все має конвертер DCDC)",
-                "zh-cn": "(基特语)\n* 《大会正式记录,第五十八届会议,补编第5号》(A/C.6/61/Rev.1)。 已添加 EMS.DPP_PRICE_LIMIT_WALLBOX [问题284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* 固定EMS.DPP_SOC_BATTERY设置器[问题#295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* 设置 :\n* 名称空格 WB 默认为虚假( 不是每个人都有一个附着的挂贴)\n* 名称空间 DCDC 默认为真( 每个人都有 DCDC 转换器)"
-            },
-            "1.4.5-alpha.0": {
-                "en": "Verwende [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-                "de": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-                "ru": "Включите [AlCalzone/release-script] (https://github.com/AlCalzone/release-script)",
-                "pt": "Incluir [AlCalzone/release-script] (https://github.com/AlCalzone/release-script)",
-                "nl": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-                "fr": "Inclure [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-                "it": "[AlCalzone/release-script](http://github.com/AlCalzone/release-script)",
-                "es": "Incluir [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-                "pl": "W imieniu Komisji",
-                "uk": "Включити [AlCalzone/видання](https://github.com/AlCalzone/видання)",
-                "zh-cn": "包括[AlCalzone/release-script](https://github.com/AlCalzone/release-script)"
-            },
-            "1.4.4": {
-                "en": "Software maintenance.",
-                "de": "Software-Wartung.",
-                "ru": "Обслуживание программного обеспечения.",
-                "pt": "Manutenção de software.",
-                "nl": "Software-onderhoud.",
-                "fr": "Maintenance du logiciel.",
-                "it": "Manutenzione del software.",
-                "es": "Mantenimiento de software.",
-                "pl": "Konserwacja oprogramowania.",
-                "uk": "Обслуговування програмного забезпечення.",
-                "zh-cn": "软件维护。"
-            },
-            "1.4.3": {
-                "en": "Added DCDC namespace.",
-                "de": "DCDC Namespace wird unterstützt.",
-                "ru": "Добавлено пространство имен DCDC.",
-                "pt": "Adicionado namespace DCDC.",
-                "nl": "DCDC -naamruimte toegevoegd.",
-                "fr": "Ajout de l'espace de noms DCDC.",
-                "it": "Aggiunto spazio dei nomi DCDC.",
-                "es": "Se agregó el espacio de nombres DCDC.",
-                "pl": "Dodano przestrzeń nazw DCDC.",
-                "uk": "Додано простір імен DCDC.",
-                "zh-cn": "添加了DCDC名称空间。"
-            },
-            "1.4.2": {
-                "en": "Regression fixes.",
-                "de": "Fehlerbehebungen.",
-                "ru": "Регрессия исправляет.",
-                "pt": "Correções de regressão.",
-                "nl": "Regressiefixes.",
-                "fr": "Régression fixe.",
-                "it": "Correzioni di regressione.",
-                "es": "Correcciones de regresión.",
-                "pl": "Poprawki regresji.",
-                "uk": "Регресійні виправлення.",
-                "zh-cn": "回归修复。"
-            },
-            "1.4.1": {
-                "en": "Support for version 2 idle periods.",
-                "de": "Unterstützung von Version 2 Sperrzeiten.",
-                "ru": "Поддержка периодов версии 2.",
-                "pt": "Suporte aos períodos de versão 2 ociosos.",
-                "nl": "Ondersteuning voor inactiviteit van versie 2.",
-                "fr": "Prise en charge des périodes d'inactivité de la version 2.",
-                "it": "Supporto per i periodi di inattività della versione 2.",
-                "es": "Soporte para los períodos de inactividad de la versión 2.",
-                "pl": "Obsługa wersji 2 bezczynnych okresów.",
-                "uk": "Підтримка версії 2 очікування.",
-                "zh-cn": "支持版本2空闲时期。"
-            }
-        },
-        "titleLang": {
-            "en": "E3/DC RSCP",
-            "de": "E3/DC RSCP",
-            "ru": "E3/DC RSCP",
-            "pt": "E3/DC RSCP",
-            "nl": "E3/DC RSCP",
-            "fr": "E3/DC RSCP",
-            "it": "E3/DC RSCP",
-            "es": "E3/DC RSCP",
-            "pl": "E3/DC RSCP",
-            "zh-cn": "E3/DC RSCP",
-            "uk": "E3/DC RSCP"
-        },
-        "desc": {
-            "en": "Control E3/DC power station using RSCP protocol",
-            "de": "Steuern Sie das E3/DC-Kraftwerk mithilfe des RSCP-Protokolls",
-            "ru": "Управление электростанцией E3/DC по протоколу RSCP",
-            "pt": "Controle da estação de energia E3/DC usando o protocolo RSCP",
-            "nl": "Bedien de E3/DC-krachtcentrale met behulp van het RSCP-protocol",
-            "fr": "Contrôlez la centrale électrique E3/DC en utilisant le protocole RSCP",
-            "it": "Controllare la centrale E3/DC utilizzando il protocollo RSCP",
-            "es": "Control de la central eléctrica E3/DC mediante protocolo RSCP",
-            "pl": "Sterowanie elektrownią E3/DC za pomocą protokołu RSCP",
-            "zh-cn": "使用RSCP协议控制E3/DC电站",
-            "uk": "Керуйте електростанцією E3/DC за допомогою протоколу RSCP"
-        },
-        "authors": [
-            "Ulrich Kick <iobroker@kick-web.de>"
-        ],
-        "keywords": [
-            "E3/DC",
-            "power station",
-            "energy",
-            "RSCP"
-        ],
-        "messages": [
-            {
-                "condition": {
-                    "operand": "and",
-                    "rules": [
-                        "oldVersion<1.4.0",
-                        "newVersion>=1.4.0"
-                    ]
-                },
-                "title": {
-                    "en": "Important notice!",
-                    "de": "Wichtiger Hinweis!",
-                    "ru": "Важное замечание!",
-                    "pt": "Notícia importante!",
-                    "nl": "Belangrijke mededeling!",
-                    "fr": "Avis important!",
-                    "it": "Avviso IMPORTANTE!",
-                    "es": "¡Noticia importante!",
-                    "pl": "Ważna uwaga!",
-                    "uk": "Важливе повідомлення!",
-                    "zh-cn": "重要的提醒！"
-                },
-                "text": {
-                    "en": "Version 1.4 introduces new configuration settings - do not re-use settings stored in a json-file which was created from an older version!",
-                    "de": "Version 1.4 bringt neue Konfigurationsparameter - Konfiguration nicht aus einem json-file laden, das mit einer früheren Version erzeugt wurde!",
-                    "ru": "Версия 1.4 представляет новые настройки конфигурации-не используйте настройки повторного использования, хранящиеся в файле JSON, созданного из более старой версии!",
-                    "pt": "A versão 1.4 apresenta novas configurações de configuração-não reutilize as configurações armazenadas em um arquivo JSON que foi criado a partir de uma versão mais antiga!",
-                    "nl": "Versie 1.4 introduceert nieuwe configuratie-instellingen-Gebruik niet opnieuw instellingen die zijn opgeslagen in een JSON-bestand dat is gemaakt vanuit een oudere versie!",
-                    "fr": "La version 1.4 présente de nouveaux paramètres de configuration - ne réutilisez pas les paramètres stockés dans un fichier JSON qui a été créé à partir d'une ancienne version!",
-                    "it": "La versione 1.4 introduce nuove impostazioni di configurazione: non riutilizzare le impostazioni memorizzate in un file JSON che è stato creato da una versione precedente!",
-                    "es": "La versión 1.4 presenta una nueva configuración de configuración: ¡no reutilice la configuración almacenada en un archivo JSON que se creó a partir de una versión anterior!",
-                    "pl": "Wersja 1.4 wprowadza nowe ustawienia konfiguracji-nie używaj ustawień przechowywanych w pliku JSON, który został utworzony ze starszej wersji!",
-                    "uk": "Версія 1.4 представляє нові налаштування конфігурації-не використовуйте налаштування, що зберігаються в JSON-файлі, створеному з більш старої версії!",
-                    "zh-cn": "版本1.4引入了新的配置设置 - 请勿重新使用存储在旧版本创建的JSON文件中的设置！"
-                },
-                "link": "https://github.com/git-kick/ioBroker.e3dc-rscp?tab=readme-ov-file#reuse-of-adapter-configuration",
-                "linkText": {
-                    "en": "Reuse of adapter configuration",
-                    "de": "Wiederverwendung der Adapter-Konfiguration",
-                    "ru": "Повторное использование конфигурации адаптера",
-                    "pt": "Reutilização da configuração do adaptador",
-                    "nl": "Hergebruik van adapterconfiguratie",
-                    "fr": "Réutilisation de la configuration de l'adaptateur",
-                    "it": "Riutilizzo della configurazione dell'adattatore",
-                    "es": "Reutilización de la configuración del adaptador",
-                    "pl": "Ponowne wykorzystanie konfiguracji adaptera",
-                    "uk": "Повторне використання конфігурації адаптера",
-                    "zh-cn": "重用适配器配置"
-                },
-                "level": "warn",
-                "buttons": [
-                    "ok",
-                    "cancel"
-                ]
-            }
-        ],
-        "licenseInformation": {
-            "license": "GPL-3.0-only",
-            "type": "free"
-        },
-        "tier": 3,
-        "platform": "Javascript/Node.js",
-        "icon": "e3dc-rscp.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/git-kick/ioBroker.e3dc-rscp/master/admin/e3dc-rscp.png",
-        "readme": "https://github.com/git-kick/ioBroker.e3dc-rscp/blob/master/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "energy",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "poll",
-        "adminUI": {
-            "config": "json"
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=6.0.11"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=7.6.20"
-            }
-        ],
-        "plugins": {
-            "sentry": {
-                "dsn": "https://cc70dc76ca0d4bc89be51866648d109c@o1065834.ingest.sentry.io/6058026"
-            }
-        }
-    },
-    "protectedNative": [
-        "rscp_password",
-        "portal_password"
+  "common": {
+    "name": "e3dc-rscp",
+    "version": "1.4.5-alpha.2.0",
+    "blockedVersions": [
+      "1.4.5.-alpha.1",
+      "1.4.5.-alpha.0",
+      "1.4.0",
+      "1.3.0",
+      "1.2.0"
     ],
-    "encryptedNative": [
-        "rscp_password",
-        "portal_password"
-    ],
-    "native": {
-        "e3dc_ip": "192.168.178.1",
-        "e3dc_port": 5033,
-        "rscp_password": "",
-        "portal_user": "",
-        "portal_password": "",
-        "polling_intervals": [
-            {
-                "tag": "TAG_EMS_REQ_POWER_PV",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_BAT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_HOME",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_GRID",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_ADD",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_AUTARKY",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_SELF_CONSUMPTION",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BAT_SOC",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_COUPLING_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_STORED_ERRORS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_MODE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BALANCED_PHASES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_INSTALLED_PEAK_POWER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DERATE_AT_POWER_VALUE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_WB_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_WB_SOLAR",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EXT_SRC_AVAILABLE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_STATUS",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USED_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BAT_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DCDC_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USER_CHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USED_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_USER_DISCHARGE_LIMIT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BATTERY_TO_CAR_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS_2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_POWER_SETTINGS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_MANUAL_CHARGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS",
-                "interval": "N"
-            },
-            {
-                "tag": "TAG_EMS_REQ_EMERGENCY_POWER_RETRY",
-                "interval": "N"
-            },
-            {
-                "tag": "TAG_EMS_REQ_GET_SYS_SPECS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_EMS_REQ_POWER_PV_AC_OUT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_ALIVE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_EMS_REQ_WB_DISCHARGE_BAT_UNTIL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_WB_ENFORCE_POWER_ASSIGNMENT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_WB_CHARGE_ACTIVE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ACTIVE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_PRICE_LIMIT_BATTERY",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_SOC_BATTERY",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_MONTHS_ACTIVE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_POWER_L1",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_POWER_L2",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_POWER_L3",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_ACTIVE_PHASES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_ENERGY_L1",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_ENERGY_L2",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_ENERGY_L3",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_DEVICE_ID",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PM_REQ_ERROR_CODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_FIRMWARE_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PM_REQ_VOLTAGE_L1",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_VOLTAGE_L2",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_VOLTAGE_L3",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PM_REQ_TYPE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PM_REQ_GET_PHASE_ELIMINATION",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_I_BAT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_U_BAT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_P_BAT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_I_DCL",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_U_DCL",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_P_DCL",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_FIRMWARE_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_FPGA_FIRMWARE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_SERIAL_NUMBER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_BOARD_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_STATUS_AS_STRING",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_DCDC_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_GRID_CONNECTED",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_ISLAND_GRID",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_INVALID_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_IS_POSSIBLE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_EP_REQ_EP_RESERVE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_ON_GRID",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_STATE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_LAST_ERROR",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_TYPE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_VOLTAGE_MONITORING",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_FREQUENCY_UNDER_OVER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_SYSTEM_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_POWER_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_TEMPERATURE_COUNT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_MAX_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_MIN_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_SERIAL_NUMBER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_MAX_PHASE_COUNT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_POWER",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_VOLTAGE",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_CURRENT",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_APPARENTPOWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_REACTIVEPOWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_ENERGY_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_MAX_APPARENTPOWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_AC_ENERGY_GRID_CONSUMPTION",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_VOLTAGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_CURRENT",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_PVI_REQ_DC_STRING_ENERGY_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_INFO",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_BAT_VOLTAGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_CHARGE_CURRENT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_EOD_VOLTAGE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_CHARGE_CYCLES",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TERMINAL_VOLTAGE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DEVICE_NAME",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_COUNT",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_RSOC_REAL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_ASOC",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_FCC",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_RC",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_READY_FOR_SHUTDOWN",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_INFO",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TRAINING_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_USABLE_CAPACITY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DCB_INFO",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_SPECIFICATION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_INTERNALS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TOTAL_USE_TIME",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_BAT_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_SYS_REQ_IS_SYSTEM_REBOOTING",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_CONNECTED_DEVICES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_ENERGY_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_ENERGY_SOLAR",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_SOC",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_STATUS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_ERROR_CODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_APP_SOFTWARE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_BOOTLOADER_SOFTWARE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_HW_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_FLASH_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DEVICE_ID",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_POWER_L1",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_POWER_L2",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_POWER_L3",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ACTIVE_PHASES",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_MODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ENERGY_L1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ENERGY_L2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ENERGY_L3",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_DEVICE_ID",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_ERROR_CODE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_DEVICE_STATE",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_FIRMWARE_VERSION",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_INFOS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_WARNINGS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_ERRORS",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_TEMP_1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DIAG_TEMP_2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PM_MAX_PHASE_POWER",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_DEVICE_NAME",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_SUN",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_NET",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_ALL",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_EXTERN_DATA_ALG",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PARAM_1",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_WB_REQ_PARAM_2",
-                "interval": "M"
-            },
-            {
-                "tag": "TAG_INFO_REQ_SERIAL_NUMBER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_PRODUCTION_DATE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_MODULES_SW_VERSIONS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_A35_SERIAL_NUMBER",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_IP_ADDRESS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_SUBNET_MASK",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_MAC_ADDRESS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_GATEWAY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_DNS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_DHCP_STATUS",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_TIME",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_INFO_REQ_UTC_TIME",
-                "interval": "S"
-            },
-            {
-                "tag": "TAG_INFO_REQ_TIME_ZONE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_SW_RELEASE",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_GUI_TARGET",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_GET_FACILITY",
-                "interval": "L"
-            },
-            {
-                "tag": "TAG_INFO_REQ_GET_FS_USAGE",
-                "interval": "L"
-            }
-        ],
-        "lazy_setstate": true,
-        "periods_v1": false,
-        "periods_v2": true,
-        "polling_interval_short": 30,
-        "polling_interval_medium": 5,
-        "polling_interval_long": 12,
-        "setpower_interval": 10,
-        "send_tuple_delay": 10,
-        "query_bat": true,
-        "query_ems": true,
-        "query_pm": true,
-        "query_ep": true,
-        "query_pvi": true,
-        "query_sys": true,
-        "query_dcdc": true,
-        "query_wb": false,
-        "query_info": true,
-        "query_db": true,
-        "maxindex_bat": 3,
-        "maxindex_pvi": 1,
-        "maxindex_pm": 9,
-        "maxindex_dcdc": 3,
-        "maxindex_wb": 0
+    "news": {
+      "1.4.5-alpha.2.0": {
+        "en": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [Issue #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* Added JSDoc - [Issue #300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Updated dependencies in package.json - [Issue #305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Updated dependencies in package.json and added dependabot.yml - [Issue #309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* Merged PRs created by Check and Service Bot:\n  * Update Dependabot Configuration – Add npm Cooldown - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n  * Bump @iobroker/eslint-config from 0.1.7 to 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n  * Bump @sentry/tracing from 6.19.7 to 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n  * Update Node.js versions in test-and-release workflow - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n  * Add Dependabot Ignore Rule for @types/node Major Version Updates - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n  * Drop Node.js 20 support (End of Life) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n  * Add CHANGELOG_OLD.md to store older changelog entries - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n  * Bump html-to-text from 9.0.5 to 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n  * Bump @types/node from 25.5.0 to 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n  * Bump @sentry/node from 10.43.0 to 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Fixed errors reported by the ioBroker Check and Service Bot - [Issue #317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n  * \\[E0036\\] now \"@iobroker/adapter-dev\": \"^1.5.0\" at package.json\n  * \\[E0036\\] now \"@iobroker/testing\": \"^5.2.2\" at package.json",
+        "de": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [Problem #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* JSDoc hinzugefügt - [Problem #300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Aktualisierte Abhängigkeiten in package.json - [Problem #305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Abhängigkeiten in package.json aktualisiert und dependabot.yml hinzugefügt - [Problem #309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* Zusammengeführte PRs, erstellt vom Check and Service Bot:\n* Dependabot-Konfiguration aktualisieren – npm Cooldown hinzufügen – [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* Aktualisierung von @iobroker/eslint-config von 0.1.7 auf 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* Aktualisierung von @sentry/tracing von 6.19.7 auf 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* Aktualisierung der Node.js-Versionen im Test- und Release-Workflow - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* Dependabot-Ignorierregel für Hauptversionsaktualisierungen von @types/node hinzugefügt - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* Unterstützung für Node.js 20 eingestellt (Ende des Lebenszyklus) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* CHANGELOG_OLD.md hinzugefügt, um ältere Changelog-Einträge zu speichern - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* Aktualisierung der HTML-zu-Text-Konvertierung von 9.0.5 auf 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* Aktualisierung von @types/node von 25.5.0 auf 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* Aktualisierung von @sentry/node von 10.43.0 auf 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Vom ioBroker Check and Service Bot gemeldete Fehler behoben - [Problem #317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* \\[E0036\\] now \"@iobroker/adapter-dev\": \"^1.5.0\" at package.json\n* \\[E0036\\] now \"@iobroker/testing\": \"^5.2.2\" at package.json",
+        "ru": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [Проблема #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* Добавлена JSDoc - [Проблема #300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Обновлены зависимости в package.json - [Проблема #305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Обновлены зависимости в package.json и добавлен dependabot.yml - [Issue #309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* Объединенные запросы на слияние, созданные Check и Service Bot:\n* Обновление конфигурации Dependabot – Добавление npm Cooldown - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* Обновление @iobroker/eslint-config с версии 0.1.7 до 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* Обновление @sentry/tracing с версии 6.19.7 до 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* Обновление версий Node.js в процессе тестирования и выпуска - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* Добавлено правило игнорирования Dependabot для обновлений основных версий @types/node - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* Прекращение поддержки Node.js 20 (окончание жизненного цикла) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* Добавлен файл CHANGELOG_OLD.md для хранения более старых записей журнала изменений - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* Обновление функции преобразования HTML в текст с версии 9.0.5 до 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* Обновление @types/node с версии 25.5.0 до 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* Обновление @sentry/node с версии 10.43.0 до 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Исправлены ошибки, о которых сообщал бот проверки и обслуживания ioBroker - [Проблема #317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* \\[E0036\\] теперь \"@iobroker/adapter-dev\": \"^1.5.0\" в package.json\n* \\[E0036\\] теперь \"@iobroker/testing\": \"^5.2.2\" в package.json",
+        "pt": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [Problema nº 301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* Adicionado JSDoc - [Problema nº 300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Dependências atualizadas no package.json - [Problema nº 305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Dependências atualizadas no package.json e dependabot.yml adicionado - [Issue #309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* Pull requests mesclados criados pelo Check e Service Bot:\n* Atualização da configuração do Dependabot – Adição do cooldown do npm - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* Atualizar @iobroker/eslint-config da versão 0.1.7 para a 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* Atualizar @sentry/tracing da versão 6.19.7 para a 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* Atualizar versões do Node.js no fluxo de trabalho de teste e lançamento - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* Adicionar regra de ignorar Dependabot para atualizações de versão principal de @types/node - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* Descontinuar o suporte ao Node.js 20 (Fim da vida útil) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* Adicionar CHANGELOG_OLD.md para armazenar entradas de changelog mais antigas - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* Atualizar html-to-text da versão 9.0.5 para a 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* Atualizar @types/node de 25.5.0 para 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* Atualizar @sentry/node de 10.43.0 para 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Correção de erros relatados pelo bot de verificação e serviço do ioBroker - [Problema nº 317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* \\[E0036\\] agora \"@iobroker/adapter-dev\": \"^1.5.0\" em package.json\n* \\[E0036\\] agora \"@iobroker/testing\": \"^5.2.2\" em package.json",
+        "nl": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [Probleem #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* JSDoc toegevoegd - [Probleem #300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Afhankelijkheden in package.json bijgewerkt - [Probleem #305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Afhankelijkheden in package.json bijgewerkt en dependabot.yml toegevoegd - [Issue #309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* Samengevoegde pull requests aangemaakt door Check en Service Bot:\n* Dependabot-configuratie bijwerken – npm Cooldown toevoegen - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* Update @iobroker/eslint-config van 0.1.7 naar 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* Update @sentry/tracing van 6.19.7 naar 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* Update Node.js-versies in de test- en release-workflow - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* Voeg een Dependabot-negeerregel toe voor updates van de hoofdversie van @types/node - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* Ondersteuning voor Node.js 20 stopgezet (einde levenscyclus) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* Voeg CHANGELOG_OLD.md toe om oudere changelog-items op te slaan - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* Update html-to-text van 9.0.5 naar 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* @types/node bijgewerkt van 25.5.0 naar 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* Update @sentry/node van 10.43.0 naar 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Opgeloste fouten die werden gemeld door de ioBroker Check en Service Bot - [Issue #317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* \\[E0036\\] nu \"@iobroker/adapter-dev\": \"^1.5.0\" in package.json\n* \\[E0036\\] nu \"@iobroker/testing\": \"^5.2.2\" in package.json",
+        "fr": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [Problème n° 301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* Ajout de JSDoc - [Problème n° 300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Dépendances mises à jour dans package.json - [Problème n° 305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Mise à jour des dépendances dans package.json et ajout de dependabot.yml - [Problème n° 309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* Demandes de tirage fusionnées créées par Check et Service Bot :\n* Mise à jour de la configuration de Dependabot – Ajout de npm Cooldown - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* Mise à jour de @iobroker/eslint-config de la version 0.1.7 à la version 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* Mise à jour de @sentry/tracing de la version 6.19.7 à la version 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* Mise à jour des versions de Node.js dans le flux de travail de test et de publication - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* Ajout d'une règle d'ignorance Dependabot pour les mises à jour majeures de @types/node - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* Suppression du support de Node.js 20 (Fin de vie) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* Ajout de CHANGELOG_OLD.md pour stocker les anciennes entrées du journal des modifications - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* Mise à jour de la fonction html-to-text de la version 9.0.5 à la version 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* Mise à jour de @types/node de 25.5.0 à 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* Mise à jour de @sentry/node de la version 10.43.0 à la version 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Correction des erreurs signalées par le bot de vérification et de service ioBroker - [Problème n° 317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* [E0036] maintenant \"@iobroker/adapter-dev\": \"^1.5.0\" dans package.json\n* \\[E0036\\] maintenant \"@iobroker/testing\": \"^5.2.2\" dans package.json",
+        "it": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [Problema n. 301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* Aggiunto JSDoc - [Problema n. 300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Dipendenze aggiornate in package.json - [Problema n. 305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Dipendenze aggiornate in package.json e aggiunto dependabot.yml - [Problema n. 309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* PR unite create da Check e Service Bot:\n* Aggiornamento della configurazione di Dependabot – Aggiunto cooldown npm - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* Aggiornamento di @iobroker/eslint-config dalla versione 0.1.7 alla 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* Aggiornamento di @sentry/tracing dalla versione 6.19.7 alla 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* Aggiornamento delle versioni di Node.js nel flusso di lavoro di test e rilascio - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* Aggiunta la regola di ignoramento Dependabot per gli aggiornamenti di versione principali di @types/node - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* Rimozione del supporto per Node.js 20 (Fine del ciclo di vita) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* Aggiunto CHANGELOG_OLD.md per memorizzare le voci del registro delle modifiche più vecchie - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* Aggiornamento della funzione html-to-text dalla versione 9.0.5 alla 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* Aggiornamento di @types/node dalla versione 25.5.0 alla 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* Aggiornamento di @sentry/node dalla versione 10.43.0 alla 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Risolti gli errori segnalati dal bot di controllo e assistenza di ioBroker - [Problema n. 317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* \\[E0036\\] ora \"@iobroker/adapter-dev\": \"^1.5.0\" in package.json\n* \\[E0036\\] ora \"@iobroker/testing\": \"^5.2.2\" in package.json",
+        "es": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [Problema n.° 301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* Se agregó JSDoc - [Problema n.° 300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Dependencias actualizadas en package.json - [Problema n.° 305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Se actualizaron las dependencias en package.json y se agregó dependabot.yml - [Problema n.° 309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* Solicitudes de extracción fusionadas creadas por Check y Service Bot:\n* Actualizar la configuración de Dependabot: agregar npm Cooldown - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* Actualizar @iobroker/eslint-config de 0.1.7 a 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* Actualizar @sentry/tracing de 6.19.7 a 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* Actualizar las versiones de Node.js en el flujo de trabajo de prueba y lanzamiento - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* Agregar regla de ignorar de Dependabot para actualizaciones de versiones principales de @types/node - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* Se elimina la compatibilidad con Node.js 20 (Fin de vida útil) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* Agregar CHANGELOG_OLD.md para almacenar entradas de registro de cambios más antiguas - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* Actualizar html-to-text de 9.0.5 a 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* Actualizar @types/node de 25.5.0 a 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* Actualizar @sentry/node de 10.43.0 a 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Se corrigieron los errores reportados por el bot de verificación y servicio de ioBroker - [Problema n.° 317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* \\[E0036\\] ahora \"@iobroker/adapter-dev\": \"^1.5.0\" en package.json\n* \\[E0036\\] ahora \"@iobroker/testing\": \"^5.2.2\" en package.json",
+        "pl": "(kopnięcie)\n* \"@iobroker/testing\": \"^5.2.2\" - [Problem nr 301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* Dodano JSDoc - [Wydanie nr 300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Zaktualizowano zależności w pliku package.json – [Problem nr 305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Zaktualizowano zależności w pliku package.json i dodano dependabot.yml - [Problem nr 309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* Połączone żądania PR utworzone przez Check i Service Bot:\n* Aktualizacja konfiguracji Dependabot – dodanie czasu odnowienia npm – [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* Zwiększono wersję @iobroker/eslint-config z 0.1.7 do 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* Zwiększono @sentry/tracing z wersji 6.19.7 do 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* Aktualizacja wersji Node.js w ramach przepływu pracy testowo-wydawniczego – [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* Dodano regułę ignorowania przez Dependabot w przypadku aktualizacji głównych wersji @types/node - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* Porzucenie wsparcia dla Node.js 20 (koniec wsparcia) – [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* Dodaj CHANGELOG_OLD.md w celu przechowywania starszych wpisów w dzienniku zmian - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* Przeniesienie konwersji html-to-text z wersji 9.0.5 na 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* Zwiększono @types/node z 25.5.0 do 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* Zwiększono @sentry/node z 10.43.0 do 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Naprawiono błędy zgłaszane przez bota sprawdzającego i serwisowego ioBroker – [Problem nr 317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* \\[E0036\\] teraz \"@iobroker/adapter-dev\": \"^1.5.0\" w package.json\n* \\[E0036\\] teraz \"@iobroker/testing\": \"^5.2.2\" w package.json",
+        "uk": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [Проблема №301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* Додано JSDoc - [Проблема №300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* Оновлено залежності в package.json - [Проблема №305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* Оновлено залежності в package.json та додано dependabot.yml - [Проблема №309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* Об'єднані PR-запити, створені Check and Service Bot:\n* Оновлення конфігурації Dependabot – Додати час відновлення npm - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* Оновлено @iobroker/eslint-config з версії 0.1.7 до 2.2.0 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* Підвищено @sentry/tracing з версії 6.19.7 до 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* Оновлення версій Node.js у робочому процесі тестування та випуску - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* Додано правило ігнорування Dependabot для оновлень основних версій @types/node - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* Припинення підтримки Node.js 20 (Кінець терміну служби) - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* Додано CHANGELOG_OLD.md для зберігання старіших записів журналу змін - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* Перетворено html-на-текст з версії 9.0.5 на 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* Збільшено @types/node з версії 25.5.0 до 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* Збільшено @sentry/node з 10.43.0 до 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* Виправлено помилки, про які повідомляв бот ioBroker Check and Service Bot - [Проблема №317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* \\[E0036\\] тепер \"@iobroker/adapter-dev\": \"^1.5.0\" у package.json\n* \\[E0036\\] тепер \"@iobroker/testing\": \"^5.2.2\" у package.json",
+        "zh-cn": "(git-kick)\n* \"@iobroker/testing\": \"^5.2.2\" - [问题 #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)\n* 添加了 JSDoc - [问题 #300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)\n* 更新了 package.json 中的依赖项 - [问题 #305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)\n* 更新了 package.json 中的依赖项并添加了 dependabot.yml - [问题 #309](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/309)\n* 由 Check 和 Service Bot 创建的合并 PR：\n* 更新 Dependabot 配置 – 添加 npm 冷却时间 - [PR #316](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/316)\n* 将 @iobroker/eslint-config 从 0.1.7 版本升级到 2.2.0 版本 - [PR #319](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/319)\n* 将 @sentry/tracing 的版本从 6.19.7 升级到 7.120.4 - [PR #320](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/320)\n* 更新测试和发布工作流程中的 Node.js 版本 - [PR #322](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/322)\n* 为 @types/node 主版本更新添加 Dependabot 忽略规则 - [PR #324](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/324)\n* 停止支持 Node.js 20（生命周期结束） - [PR #325](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/325)\n* 添加 CHANGELOG_OLD.md 文件以存储较旧的变更日志条目 - [PR #326](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/326)\n* 将 html-to-text 的版本从 9.0.5 提升到 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)\n* 将 @types/node 从 25.5.0 升级到 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)\n* 将 @sentry/node 从 10.43.0 升级到 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)\n* 修复了 ioBroker 检查和服务机器人报告的错误 - [问题 #317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)\n* [E0036] 现在 \"@iobroker/adapter-dev\": \"^1.5.0\" 在 package.json\n* [E0036] 现在 \"@iobroker/testing\": \"^5.2.2\" 在 package.json"
+      },
+      "1.4.5-alpha.1": {
+        "en": "(git-kick)\n* Added EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Settings: \n  * name space WB defaults to false (not everybody has an attached wallbox)\n  * name space DCDC defaults to true (everybody has a DCDC converter)",
+        "de": "(git-kick)\n* EMS.DPP_PRICE_LIMIT_WALLBOX hinzugefügt [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Einstellungen:\n* Name-Raum WB standardmäßig auf false (nicht jeder hat eine beigefügte Wandbox)\n* Namensraum DCDC standardmäßig auf true (jeder hat einen DCDC-Wandler)",
+        "ru": "(гит-кик)\n* Добавлено EMS.DPP_PRICE_LIMIT_WALLBOX [Выпуск #284] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Фиксированный настройщик EMS.DPP_SOC_BATTERY [выпуск #295] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Настройки:\nНазовите пространство WB по умолчанию ложным (не у всех есть прикрепленный настенный ящик)\nНазвание пространства DCDC по умолчанию истинно (у каждого есть конвертер DCDC)",
+        "pt": "(git-kick)\n* Adicionado EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixo EMS.DPP_SOC_BATTTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Configurações:\n* espaço de nome WB padrão para false (nem todo mundo tem uma caixa de parede anexada)\n* nome espaço DCDC padrão para true (everybody tem um conversor DCDC)",
+        "nl": "(git-kick)\n* Toegevoegd EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Instellingen:\n* naamruimte WB is standaard vals (niet iedereen heeft een bijgevoegde wandkast)\n* naamruimte DCDC defaults to true (iedereen heeft een DCDC converter)",
+        "fr": "(cliquetis)\n* Ajouté EMS.DPP_PRICE_LIMIT_WALLBOX (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Setter fixe EMS.DPP_SOC_BATTERY [Numéro #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Paramètres :\n* nom de l'espace WB par défaut à false (pas tout le monde a une boîte murale attachée)\n* nom de l'espace DCDC par défaut à true (tout le monde a un convertisseur DCDC)",
+        "it": "ehi\n# Aggiunto EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rsc/issues/295)\n* Impostazioni:\n* name space WB default a false (non tutti hanno una scatola da parete attaccata)\n* name space DCDC predefinito a true (tutti hanno un convertitore DCDC)",
+        "es": "(git-kick)\n* Añadido EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* Fixed EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* Ajustes:\n* espacio de nombre WB predeterminado a falso (no todo el mundo tiene una caja de pared adjunta)\n* espacio de nombre DCDC predeterminado a verdadero (todo el mundo tiene un convertidor DCDC)",
+        "pl": "(git- kick)\n* Dodano EMS.DPP _ Price _ LIMIT _ WALLBOX [Issue # 284] (https: / / github.com / git- kick / ioBroker.e3dc- rscp / issues / 284)\n* Fixed EMS.DPP _ SOC _ BATTERY setter [Issue # 295] (https: / / github.com / git- kick / ioBroker.e3dc- rscp / issues / 295)\n* Ustawienia:\n* nazwa spacja WB domyślnie false (nie każdy ma dołączoną tapetę)\n* nazwa miejsca DCDC domyślnie true (każdy ma konwerter DCDC)",
+        "uk": "(git-kick)\nІм'я * Додано EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/products/284)\n* Фіксований EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/products/295)\n* Налаштування:\n* простір імен WB за замовчуванням до false (не всі мають прикріплену скриньку)\n* простір імен DCDC за замовчуванням true (все має конвертер DCDC)",
+        "zh-cn": "(基特语)\n* 《大会正式记录,第五十八届会议,补编第5号》(A/C.6/61/Rev.1)。 已添加 EMS.DPP_PRICE_LIMIT_WALLBOX [问题284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* 固定EMS.DPP_SOC_BATTERY设置器[问题#295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* 设置 :\n* 名称空格 WB 默认为虚假( 不是每个人都有一个附着的挂贴)\n* 名称空间 DCDC 默认为真( 每个人都有 DCDC 转换器)"
+      },
+      "1.4.5-alpha.0": {
+        "en": "Verwende [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "de": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "ru": "Включите [AlCalzone/release-script] (https://github.com/AlCalzone/release-script)",
+        "pt": "Incluir [AlCalzone/release-script] (https://github.com/AlCalzone/release-script)",
+        "nl": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "fr": "Inclure [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "it": "[AlCalzone/release-script](http://github.com/AlCalzone/release-script)",
+        "es": "Incluir [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
+        "pl": "W imieniu Komisji",
+        "uk": "Включити [AlCalzone/видання](https://github.com/AlCalzone/видання)",
+        "zh-cn": "包括[AlCalzone/release-script](https://github.com/AlCalzone/release-script)"
+      },
+      "1.4.4": {
+        "en": "Software maintenance.",
+        "de": "Software-Wartung.",
+        "ru": "Обслуживание программного обеспечения.",
+        "pt": "Manutenção de software.",
+        "nl": "Software-onderhoud.",
+        "fr": "Maintenance du logiciel.",
+        "it": "Manutenzione del software.",
+        "es": "Mantenimiento de software.",
+        "pl": "Konserwacja oprogramowania.",
+        "uk": "Обслуговування програмного забезпечення.",
+        "zh-cn": "软件维护。"
+      },
+      "1.4.3": {
+        "en": "Added DCDC namespace.",
+        "de": "DCDC Namespace wird unterstützt.",
+        "ru": "Добавлено пространство имен DCDC.",
+        "pt": "Adicionado namespace DCDC.",
+        "nl": "DCDC -naamruimte toegevoegd.",
+        "fr": "Ajout de l'espace de noms DCDC.",
+        "it": "Aggiunto spazio dei nomi DCDC.",
+        "es": "Se agregó el espacio de nombres DCDC.",
+        "pl": "Dodano przestrzeń nazw DCDC.",
+        "uk": "Додано простір імен DCDC.",
+        "zh-cn": "添加了DCDC名称空间。"
+      },
+      "1.4.2": {
+        "en": "Regression fixes.",
+        "de": "Fehlerbehebungen.",
+        "ru": "Регрессия исправляет.",
+        "pt": "Correções de regressão.",
+        "nl": "Regressiefixes.",
+        "fr": "Régression fixe.",
+        "it": "Correzioni di regressione.",
+        "es": "Correcciones de regresión.",
+        "pl": "Poprawki regresji.",
+        "uk": "Регресійні виправлення.",
+        "zh-cn": "回归修复。"
+      },
+      "1.4.1": {
+        "en": "Support for version 2 idle periods.",
+        "de": "Unterstützung von Version 2 Sperrzeiten.",
+        "ru": "Поддержка периодов версии 2.",
+        "pt": "Suporte aos períodos de versão 2 ociosos.",
+        "nl": "Ondersteuning voor inactiviteit van versie 2.",
+        "fr": "Prise en charge des périodes d'inactivité de la version 2.",
+        "it": "Supporto per i periodi di inattività della versione 2.",
+        "es": "Soporte para los períodos de inactividad de la versión 2.",
+        "pl": "Obsługa wersji 2 bezczynnych okresów.",
+        "uk": "Підтримка версії 2 очікування.",
+        "zh-cn": "支持版本2空闲时期。"
+      }
     },
-    "objects": [],
-    "instanceObjects": []
+    "titleLang": {
+      "en": "E3/DC RSCP",
+      "de": "E3/DC RSCP",
+      "ru": "E3/DC RSCP",
+      "pt": "E3/DC RSCP",
+      "nl": "E3/DC RSCP",
+      "fr": "E3/DC RSCP",
+      "it": "E3/DC RSCP",
+      "es": "E3/DC RSCP",
+      "pl": "E3/DC RSCP",
+      "zh-cn": "E3/DC RSCP",
+      "uk": "E3/DC RSCP"
+    },
+    "desc": {
+      "en": "Control E3/DC power station using RSCP protocol",
+      "de": "Steuern Sie das E3/DC-Kraftwerk mithilfe des RSCP-Protokolls",
+      "ru": "Управление электростанцией E3/DC по протоколу RSCP",
+      "pt": "Controle da estação de energia E3/DC usando o protocolo RSCP",
+      "nl": "Bedien de E3/DC-krachtcentrale met behulp van het RSCP-protocol",
+      "fr": "Contrôlez la centrale électrique E3/DC en utilisant le protocole RSCP",
+      "it": "Controllare la centrale E3/DC utilizzando il protocollo RSCP",
+      "es": "Control de la central eléctrica E3/DC mediante protocolo RSCP",
+      "pl": "Sterowanie elektrownią E3/DC za pomocą protokołu RSCP",
+      "zh-cn": "使用RSCP协议控制E3/DC电站",
+      "uk": "Керуйте електростанцією E3/DC за допомогою протоколу RSCP"
+    },
+    "authors": [
+      "Ulrich Kick <iobroker@kick-web.de>"
+    ],
+    "keywords": [
+      "E3/DC",
+      "power station",
+      "energy",
+      "RSCP"
+    ],
+    "messages": [
+      {
+        "condition": {
+          "operand": "and",
+          "rules": [
+            "oldVersion<1.4.0",
+            "newVersion>=1.4.0"
+          ]
+        },
+        "title": {
+          "en": "Important notice!",
+          "de": "Wichtiger Hinweis!",
+          "ru": "Важное замечание!",
+          "pt": "Notícia importante!",
+          "nl": "Belangrijke mededeling!",
+          "fr": "Avis important!",
+          "it": "Avviso IMPORTANTE!",
+          "es": "¡Noticia importante!",
+          "pl": "Ważna uwaga!",
+          "uk": "Важливе повідомлення!",
+          "zh-cn": "重要的提醒！"
+        },
+        "text": {
+          "en": "Version 1.4 introduces new configuration settings - do not re-use settings stored in a json-file which was created from an older version!",
+          "de": "Version 1.4 bringt neue Konfigurationsparameter - Konfiguration nicht aus einem json-file laden, das mit einer früheren Version erzeugt wurde!",
+          "ru": "Версия 1.4 представляет новые настройки конфигурации-не используйте настройки повторного использования, хранящиеся в файле JSON, созданного из более старой версии!",
+          "pt": "A versão 1.4 apresenta novas configurações de configuração-não reutilize as configurações armazenadas em um arquivo JSON que foi criado a partir de uma versão mais antiga!",
+          "nl": "Versie 1.4 introduceert nieuwe configuratie-instellingen-Gebruik niet opnieuw instellingen die zijn opgeslagen in een JSON-bestand dat is gemaakt vanuit een oudere versie!",
+          "fr": "La version 1.4 présente de nouveaux paramètres de configuration - ne réutilisez pas les paramètres stockés dans un fichier JSON qui a été créé à partir d'une ancienne version!",
+          "it": "La versione 1.4 introduce nuove impostazioni di configurazione: non riutilizzare le impostazioni memorizzate in un file JSON che è stato creato da una versione precedente!",
+          "es": "La versión 1.4 presenta una nueva configuración de configuración: ¡no reutilice la configuración almacenada en un archivo JSON que se creó a partir de una versión anterior!",
+          "pl": "Wersja 1.4 wprowadza nowe ustawienia konfiguracji-nie używaj ustawień przechowywanych w pliku JSON, który został utworzony ze starszej wersji!",
+          "uk": "Версія 1.4 представляє нові налаштування конфігурації-не використовуйте налаштування, що зберігаються в JSON-файлі, створеному з більш старої версії!",
+          "zh-cn": "版本1.4引入了新的配置设置 - 请勿重新使用存储在旧版本创建的JSON文件中的设置！"
+        },
+        "link": "https://github.com/git-kick/ioBroker.e3dc-rscp?tab=readme-ov-file#reuse-of-adapter-configuration",
+        "linkText": {
+          "en": "Reuse of adapter configuration",
+          "de": "Wiederverwendung der Adapter-Konfiguration",
+          "ru": "Повторное использование конфигурации адаптера",
+          "pt": "Reutilização da configuração do adaptador",
+          "nl": "Hergebruik van adapterconfiguratie",
+          "fr": "Réutilisation de la configuration de l'adaptateur",
+          "it": "Riutilizzo della configurazione dell'adattatore",
+          "es": "Reutilización de la configuración del adaptador",
+          "pl": "Ponowne wykorzystanie konfiguracji adaptera",
+          "uk": "Повторне використання конфігурації адаптера",
+          "zh-cn": "重用适配器配置"
+        },
+        "level": "warn",
+        "buttons": [
+          "ok",
+          "cancel"
+        ]
+      }
+    ],
+    "licenseInformation": {
+      "license": "GPL-3.0-only",
+      "type": "free"
+    },
+    "tier": 3,
+    "platform": "Javascript/Node.js",
+    "icon": "e3dc-rscp.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/git-kick/ioBroker.e3dc-rscp/master/admin/e3dc-rscp.png",
+    "readme": "https://github.com/git-kick/ioBroker.e3dc-rscp/blob/master/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "energy",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=7.6.20"
+      }
+    ],
+    "plugins": {
+      "sentry": {
+        "dsn": "https://cc70dc76ca0d4bc89be51866648d109c@o1065834.ingest.sentry.io/6058026"
+      }
+    }
+  },
+  "protectedNative": [
+    "rscp_password",
+    "portal_password"
+  ],
+  "encryptedNative": [
+    "rscp_password",
+    "portal_password"
+  ],
+  "native": {
+    "e3dc_ip": "192.168.178.1",
+    "e3dc_port": 5033,
+    "rscp_password": "",
+    "portal_user": "",
+    "portal_password": "",
+    "polling_intervals": [
+      {
+        "tag": "TAG_EMS_REQ_POWER_PV",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_BAT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_HOME",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_GRID",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_ADD",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_AUTARKY",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_SELF_CONSUMPTION",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BAT_SOC",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_COUPLING_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_STORED_ERRORS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_MODE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BALANCED_PHASES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_INSTALLED_PEAK_POWER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DERATE_AT_PERCENT_VALUE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DERATE_AT_POWER_VALUE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_WB_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_WB_SOLAR",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EXT_SRC_AVAILABLE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_STATUS",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USED_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BAT_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DCDC_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USER_CHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USED_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BAT_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DCDC_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_USER_DISCHARGE_LIMIT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_REMAINING_BAT_CHARGE_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_REMAINING_BAT_DISCHARGE_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BATTERY_TO_CAR_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_BATTERY_BEFORE_CAR_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_IDLE_PERIODS_2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_POWER_SETTINGS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_MANUAL_CHARGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCY_POWER_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCY_POWER_TEST_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCY_POWER_OVERLOAD_STATUS",
+        "interval": "N"
+      },
+      {
+        "tag": "TAG_EMS_REQ_EMERGENCY_POWER_RETRY",
+        "interval": "N"
+      },
+      {
+        "tag": "TAG_EMS_REQ_GET_SYS_SPECS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_EMS_REQ_POWER_PV_AC_OUT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_ALIVE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_EMS_REQ_WB_DISCHARGE_BAT_UNTIL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_WB_ENFORCE_POWER_ASSIGNMENT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_WB_CHARGE_ACTIVE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ACTIVE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_PRICE_LIMIT_BATTERY",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_SOC_BATTERY",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_MONTHS_ACTIVE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EMS_REQ_DPP_PRICE_BASED_BATTERY_CHARGE_ENABLED",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_POWER_L1",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_POWER_L2",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_POWER_L3",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_ACTIVE_PHASES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_ENERGY_L1",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_ENERGY_L2",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_ENERGY_L3",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_DEVICE_ID",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PM_REQ_ERROR_CODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_FIRMWARE_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PM_REQ_VOLTAGE_L1",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_VOLTAGE_L2",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_VOLTAGE_L3",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PM_REQ_TYPE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PM_REQ_GET_PHASE_ELIMINATION",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_I_BAT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_U_BAT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_P_BAT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_I_DCL",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_U_DCL",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_P_DCL",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_FIRMWARE_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_FPGA_FIRMWARE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_SERIAL_NUMBER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_BOARD_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_STATUS_AS_STRING",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_DCDC_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_READY_FOR_SWITCH",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_GRID_CONNECTED",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_ISLAND_GRID",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_INVALID_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_IS_POSSIBLE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_EP_REQ_EP_RESERVE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_ON_GRID",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_STATE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_LAST_ERROR",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_TYPE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_VOLTAGE_MONITORING",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_FREQUENCY_UNDER_OVER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_SYSTEM_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_POWER_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_TEMPERATURE_COUNT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_MAX_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_MIN_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_SERIAL_NUMBER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_MAX_PHASE_COUNT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_POWER",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_VOLTAGE",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_CURRENT",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_APPARENTPOWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_REACTIVEPOWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_ENERGY_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_MAX_APPARENTPOWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_AC_ENERGY_GRID_CONSUMPTION",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_VOLTAGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_CURRENT",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_PVI_REQ_DC_STRING_ENERGY_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_INFO",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_BAT_VOLTAGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_CHARGE_CURRENT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_EOD_VOLTAGE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_DISCHARGE_CURRENT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_CHARGE_CYCLES",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TERMINAL_VOLTAGE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DEVICE_NAME",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_COUNT",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_RSOC_REAL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_ASOC",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_FCC",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_RC",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MAX_DCB_CELL_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_MIN_DCB_CELL_TEMPERATURE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_ALL_CELL_TEMPERATURES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_ALL_CELL_VOLTAGES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_READY_FOR_SHUTDOWN",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_INFO",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TRAINING_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_USABLE_CAPACITY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_USABLE_REMAINING_CAPACITY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DCB_INFO",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_SPECIFICATION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_INTERNALS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TOTAL_USE_TIME",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_TOTAL_DISCHARGE_TIME",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_BAT_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_SYS_REQ_IS_SYSTEM_REBOOTING",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_CONNECTED_DEVICES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_ENERGY_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_ENERGY_SOLAR",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_SOC",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_STATUS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_ERROR_CODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_APP_SOFTWARE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_BOOTLOADER_SOFTWARE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_HW_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_FLASH_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_DEVICE_ID",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_POWER_L1",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_POWER_L2",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_POWER_L3",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ACTIVE_PHASES",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_MODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ENERGY_L1",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ENERGY_L2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ENERGY_L3",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_DEVICE_ID",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_ERROR_CODE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_DEVICE_STATE",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_FIRMWARE_VERSION",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_INFOS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_WARNINGS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_ERRORS",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_TEMP_1",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DIAG_TEMP_2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PM_MAX_PHASE_POWER",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_DEVICE_NAME",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_SUN",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_NET",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_ALL",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_EXTERN_DATA_ALG",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PARAM_1",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_WB_REQ_PARAM_2",
+        "interval": "M"
+      },
+      {
+        "tag": "TAG_INFO_REQ_SERIAL_NUMBER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_PRODUCTION_DATE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_MODULES_SW_VERSIONS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_A35_SERIAL_NUMBER",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_IP_ADDRESS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_SUBNET_MASK",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_MAC_ADDRESS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_GATEWAY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_DNS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_DHCP_STATUS",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_TIME",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_INFO_REQ_UTC_TIME",
+        "interval": "S"
+      },
+      {
+        "tag": "TAG_INFO_REQ_TIME_ZONE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_SW_RELEASE",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_GUI_TARGET",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_GET_FACILITY",
+        "interval": "L"
+      },
+      {
+        "tag": "TAG_INFO_REQ_GET_FS_USAGE",
+        "interval": "L"
+      }
+    ],
+    "lazy_setstate": true,
+    "periods_v1": false,
+    "periods_v2": true,
+    "polling_interval_short": 30,
+    "polling_interval_medium": 5,
+    "polling_interval_long": 12,
+    "setpower_interval": 10,
+    "send_tuple_delay": 10,
+    "query_bat": true,
+    "query_ems": true,
+    "query_pm": true,
+    "query_ep": true,
+    "query_pvi": true,
+    "query_sys": true,
+    "query_dcdc": true,
+    "query_wb": false,
+    "query_info": true,
+    "query_db": true,
+    "maxindex_bat": 3,
+    "maxindex_pvi": 1,
+    "maxindex_pm": 9,
+    "maxindex_dcdc": 3,
+    "maxindex_wb": 0
+  },
+  "objects": [],
+  "instanceObjects": []
 }
