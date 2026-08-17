@@ -536,7 +536,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-### 1.4.5-alpha.3 (2026-08-17)
+
+### **WORK IN PROGRESS**
 
 (git-kick)
 * Fixed issues reported by the ioBroker Check and Service Bot:
@@ -552,10 +553,6 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   *  📌 [S5004] Plain setInterval() found in source files (main.js). Please use this.setInterval() or adapter.setInterval() instead.
   * 📌 [S5005] Plain setTimeout() found in source files (main.js). Please use this.setTimeout() or adapter.setTimeout() instead.
   * 📌 [S5601] i18n directory "admin/i18n" uses long format ({lang}/translations.json). Consider migrating to short format ({lang}.json) using "npm run translate convert".
-
-### 1.4.5-alpha.2 (2026-08-17)
-
-(git-kick)
 * "@iobroker/testing": "^5.2.2" - [Issue #301](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/301)
 * Added JSDoc - [Issue #300](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/300)
 * Updated dependencies in package.json - [Issue #305](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/305)
@@ -571,13 +568,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * Bump html-to-text from 9.0.5 to 10.0.0 - [PR #327](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/327)
   * Bump @types/node from 25.5.0 to 25.6.0 - [PR #328](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/328)
   * Bump @sentry/node from 10.43.0 to 10.51.0 - [PR #329](https://github.com/git-kick/ioBroker.e3dc-rscp/pull/329)
+  * ... and some more created in 1H2026
 * Fixed errors reported by the ioBroker Check and Service Bot - [Issue #317](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/317)
   * \[E0036\] now "@iobroker/adapter-dev": "^1.5.0" at package.json
   * \[E0036\] now "@iobroker/testing": "^5.2.2" at package.json
-
-### 1.4.5-alpha.1 (2026-01-26)
-
-(git-kick)
 * Added EMS.DPP_PRICE_LIMIT_WALLBOX - [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)
 * Fixed EMS.DPP_SOC_BATTERY setter - [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)
 * Settings: 
