@@ -537,10 +537,23 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
-<!--
-  Placeholder for the next version (at the beginning of the line):
-  ### **WORK IN PROGRESS**
--->
+### **WORK IN PROGRESS**
+
+(git-kick)
+* Fixed issues reported by the ioBroker Check and Service Bot:
+  * 👀 [W0066] "@types/node":"^25.9.5" at package.json allows major version greater than 22. Downgrade to node.js 22.x.x to avoid wrong typing is recommended.
+  * 👀 [W1116] Sentry plugin is configured in io-package.json but "@sentry/" packages (@sentry/node, @sentry/tracing) are listed as dependencies in package.json. When using the sentry plugin, explicit @sentry/ dependencies should not be added.
+  * 👀 [W5060] Package "@sentry/node" is listed in dependencies of package.json but not imported or required by any scanned source file. Dependency might be unused.
+  * 👀 [W5060] Package "@sentry/tracing" is listed in dependencies of package.json but not imported or required by any scanned source file. Dependency might be unused.
+  * 👀 [W5060] Package "audit" is listed in dependencies of package.json but not imported or required by any scanned source file. Dependency might be unused.
+  * 👀 [W5060] Package "html-to-text" is listed in dependencies of package.json but not imported or required by any scanned source file. Dependency might be unused.
+  * 👀 [W5060] Package "net" is listed in dependencies of package.json but not imported or required by any scanned source file. Dependency might be unused.
+  * 👀 [W5060] Package "source-map-resolve" is listed in dependencies of package.json but not imported or required by any scanned source file. Dependency might be unused.
+  * 👀 [W9008] file lib/RscpTagsRefreshPeriod.ps1 is tracked but covered by .gitignore. Remove from git if generated, or remove the ignore rule if intentionally tracked.
+  *  📌 [S5004] Plain setInterval() found in source files (main.js). Please use this.setInterval() or adapter.setInterval() instead.
+  * 📌 [S5005] Plain setTimeout() found in source files (main.js). Please use this.setTimeout() or adapter.setTimeout() instead.
+  * 📌 [S5601] i18n directory "admin/i18n" uses long format ({lang}/translations.json). Consider migrating to short format ({lang}.json) using "npm run translate convert".
+
 ### 1.4.5-alpha.2.0 (2026-08-17)
 
 (git-kick)
