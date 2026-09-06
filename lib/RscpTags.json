@@ -9036,7 +9036,7 @@
 	},
 	"58721024": {
 		"TagHex": "0x03800300",
-		"TagName": "DCB_Nx06",R_SERIES_CELL",
+		"TagName": "DCB_NR_SERIES_CELL",
 		"TagNameGlobal": "TAG_BAT_DCB_NR_SERIES_CELL",
 		"DataTagHex": "0x800300",
 		"NameSpace": "BAT",
@@ -10732,7 +10732,7 @@
 		"NameSpace": "DB",
 		"NameSpaceHex": "0x06",
 		"DataType": "Timestamp",
-		"DataTypeHex": "0x0F",/
+		"DataTypeHex": "0x0F",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": ""
