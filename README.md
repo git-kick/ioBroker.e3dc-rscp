@@ -540,6 +540,9 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 (smuenzel)
 * Add MYPV tags and fix datatypes of existing tags - [Issue #354](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/354)
 
+(git-kick)
+* Bump @tsconfig/node22 from 22.0.5 to 22.0.6 in the development-updates group  - [Issue #355](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/355)
+
 ### 1.4.5 (2026-08-17)
 
 (git-kick)
