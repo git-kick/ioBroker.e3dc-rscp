@@ -536,8 +536,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 1.4.6-alpha.0 (2026-09-07)
 
 (smuenzel)
 * Add MYPV tags and fix datatypes of existing tags - [Issue #354](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/354)
@@ -637,6 +636,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
   * \[254\] removed v1.3.2 which was never released.
 * removed duplicate queueWbRequestData() definition from main.js - the relevant one is in wallbox.js
 * removed obsolete initialisation of maxIndex for BAT and PVI from constructor(). Both values are now initialized from config during initChannel().
+
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
