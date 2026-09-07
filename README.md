@@ -537,6 +537,8 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 
 ## Changelog
 
+### **WORK IN PROGRESS**
+
 (smuenzel)
 * Add MYPV tags and fix datatypes of existing tags - [Issue #354](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/354)
 
