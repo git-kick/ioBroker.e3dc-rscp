@@ -45,7 +45,8 @@ class wallbox {
         this.settings = settings || {};
         this.adapter = adapter;
         this.systemDictionary = systemDictionary;
-        this.rscpTag = require('./lib/RscpTags.json');
+        this.rscpTagHex = require('./lib/RscpTags.json');
+        this.rscpTag = Object.fromEntries(Object.entries(this.rscpTagHex).map(([key, value]) => [String(parseInt(key, 16)), value]));
     }
 
     /**

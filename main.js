@@ -26,10 +26,14 @@ const wallbox = require(path.join(__dirname, '/wallbox.js'));
 const dayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 // RSCP constants & lookup tables
-const rscpTag = require(path.join(__dirname, '/lib/RscpTags.json'));
-const rscpTagCode = {}; // maps string to code
-for (const i in rscpTag) {
-    rscpTagCode[rscpTag[i].TagNameGlobal] = i;
+const rscpTagHex = require(path.join(__dirname, '/lib/RscpTags.json'));
+// Use decimal (string) keys internally; note that js Object keys are always of type String
+const rscpTag = Object.fromEntries(Object.entries(rscpTagHex).map(([key, value]) => [String(parseInt(key, 16)), value]));
+
+// Map global tag name to decimal (string) key
+const rscpTagCode = {}; 
+for (const key in rscpTag) {
+    rscpTagCode[rscpTag[key].TagNameGlobal] = key;
 }
 
 const rscpType = {
@@ -673,7 +677,7 @@ class E3dcRscp extends utils.Adapter {
             this.pollingInterval[tagCode] = 'M';
         }
         if (this.pollingInterval[tagCode] != 'N' && (sml == '' || sml == this.pollingInterval[tagCode])) {
-            const typeCode = parseInt(rscpTag[tagCode].DataTypeHex, 16);
+            const typeCode = rscpTypeCode[rscpTag[tagCode].DataType];
             const buf1 = Buffer.alloc(1);
             const buf2 = Buffer.alloc(2);
             const buf4 = Buffer.alloc(4);
@@ -812,7 +816,7 @@ class E3dcRscp extends utils.Adapter {
         }
         const tagCode = rscpTagCode[tag];
         if (sml == '' || !Object.keys(this.pollingInterval).includes(tagCode) || this.pollingInterval[tagCode] == sml) {
-            const typeCode = parseInt(rscpTag[tagCode].DataTypeHex, 16);
+            const typeCode = rscpTypeCode[rscpTag[tagCode].DataType];
             if (rscpType[typeCode] != 'Container') {
                 this.log.warn(`Non-container tag ${tag} passed to startContainer - cannot start container.`);
                 return 0;
@@ -1576,7 +1580,7 @@ class E3dcRscp extends utils.Adapter {
         for (const i in tree) {
             const token = tree[i];
             const tag = token.tag;
-            const tagName = rscpTag[tag].TagName;
+            const tagName = rscpTag[tag].TagNameGlobal.split("_").slice(2).join("_");
             let tagNameNew = tagName;
             const nameSpace = rscpTag[tag].NameSpace;
             const shortId = `${nameSpace}.${tagName}`;
@@ -2183,10 +2187,10 @@ class E3dcRscp extends utils.Adapter {
                             this.storeValue(
                                 'DB',
                                 oPath,
-                                rscpTag[t.tag].TagName,
+                                rscpTag[t.tag].TagNameGlobal.split("_").slice(2).join("_"),
                                 rscpType[t.type],
                                 t.content,
-                                rscpTag[t.tag].TagName,
+                                rscpTag[t.tag].TagNameGlobal.split("_").slice(2).join("_"),
                             );
                         });
                         this.extendObject(`DB.${oPath.slice(0, -1)}`, {
@@ -2855,7 +2859,7 @@ function parseRscpToken(buffer, pos, text) {
         return buffer.length;
     }
     text.content += `${rscpTag[tagCode].TagNameGlobal} - type: 0x${typeCode.toString(16).toUpperCase().padStart(2, '0')} - ${rscpType[typeCode]} - length: ${len} `;
-    if (['AUTHENTICATION_USER', 'AUTHENTICATION_PASSWORD'].includes(rscpTag[tagCode].TagName)) {
+    if (['TAG_RSCP_AUTHENTICATION_USER', 'TAG_RSCP_AUTHENTICATION_PASSWORD'].includes(rscpTag[tagCode].TagNameGlobal)) {
         text.content += 'value: ***hidden***'; // do not log cleartext credentials
         return 7 + len;
     }
