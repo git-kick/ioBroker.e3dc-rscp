@@ -541,6 +541,7 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 * Add MYPV tags and fix datatypes of existing tags - [Issue #354](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/354)
 
 (git-kick)
+* Reduce redundancy in RscpTags.json - [Issue #356](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/356)
 * Bump @tsconfig/node22 from 22.0.5 to 22.0.6 in the development-updates group  - [Issue #355](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/355)
 * harden: fix security issue in package.json  - [Issue #358](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/358) 
 
