@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "e3dc-rscp",
-    "version": "1.4.6-alpha.0",
+    "version": "1.4.6-alpha.1",
     "blockedVersions": [
       "1.4.5.-alpha.3",
       "1.4.5.-alpha.2.0",
@@ -12,6 +12,19 @@
       "1.2.0"
     ],
     "news": {
+      "1.4.6-alpha.1": {
+        "en": "(git-kick)\n\n* Update Node.js version range at test-and-release workflow to 22, 24 and 26 - [PR #363](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Fixed missing NameSpace translation (subsequent from #356) - [PR #366](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "de": "(Git Kick)\n\n* Aktualisierung der Version von Node.js beim Testen auf 22, 24 und 26 - [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Fehlende Namespace-Übersetzung behoben (nach #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "ru": "(подарочный удар)\n\n* Обновите диапазон версий Node.js в процессе тестирования и выпуска до 22, 24 и 26 — [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Исправлено отсутствие перевода NameSpace (после #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "pt": "(git-kick)\n\n* Atualize a faixa de versões do Node.js para 22, 24 e 26 - [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Corrigida a falta de tradução do NameSpace (após #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "nl": "(git-kick)\n\n* Update het versiebereik van Node.js tijdens de test-and-release workflow naar 22, 24 en 26 - [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Ontbrekende NameSpace-vertaling opgelost (na #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "fr": "(git-kick)\n\n* Mettre à jour la plage de versions de Node.js à 22, 24 et 26 lors des tests - [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Correction d'une traduction NameSpace manquante (suite à #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "it": "(git-kick)\n\n* Aggiorna la gamma di versioni di Node.js in fase di test a 22, 24 e 26 - [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Corretta traduzione NameSpace mancante (dopo #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "es": "(git-kick)\n\n* Actualice la gama de versiones de Node.js en el flujo de prueba y lanzamiento a 22, 24 y 26 - [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Se corrigió la traducción de Namespace que faltaba (posterior a #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "pl": "(git-kick)\n\n* Zaktualizuj zakres wersji Node.js w procesie testowania i wydania do 22, 24 i 26 - [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Naprawiono brakujące tłumaczenie przestrzeni nazw (po #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "uk": "(гіт-удар)\n\n* Оновіть діапазон версій Node.js у робочому процесі тестування та випуску до 22, 24 та 26 - [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Виправлено відсутній переклад простору імен (наступний з #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
+        "zh-cn": "（git-kick）\n\n* 将测试和发布工作流程中的 Node.js 版本范围更新到 22、24 和 26-[PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* 修复了缺失的命名空间翻译（从 #356 开始）-[PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)"
+      },
       "1.4.6-alpha.0": {
         "en": "(smuenzel)\n* Add MYPV tags and fix datatypes of existing tags - [Issue #354](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/354)\n\n(git-kick)\n* Reduce redundancy in RscpTags.json - [Issue #356](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/356)\n* Bump @tsconfig/node22 from 22.0.5 to 22.0.6 in the development-updates group  - [Issue #355](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/355)\n* Harden: fix rijndael-js security issue in package.json - [Issue #358](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/358) \n* Bump serialize-javascript and @iobroker/testing - [Issue #360](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/360)",
         "de": "(smuenzel)\n* MYPV-Tags hinzufügen und Datentypen korrigieren - [Ausgabe #354] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/354)\n\n(Git Kick)\n* Redundanz in rscpTags.json reduzieren — [Ausgabe #356] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/356)\n* Bump @tsconfig /node22 von 22.0.5 auf 22.0.6 in der Gruppe Updates — [Ausgabe #355] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/355)\n* Harden: Rijndael-JS-Problem in package.json beheben — [Ausgabe #358] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/358) \n* Bump serialize-javascript und @iobroker /testing — [Ausgabe #360] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/360)",
@@ -89,19 +102,6 @@
         "pl": "W imieniu Komisji",
         "uk": "Включити [AlCalzone/видання](https://github.com/AlCalzone/видання)",
         "zh-cn": "包括[AlCalzone/release-script](https://github.com/AlCalzone/release-script)"
-      },
-      "1.4.4": {
-        "en": "Software maintenance.",
-        "de": "Software-Wartung.",
-        "ru": "Обслуживание программного обеспечения.",
-        "pt": "Manutenção de software.",
-        "nl": "Software-onderhoud.",
-        "fr": "Maintenance du logiciel.",
-        "it": "Manutenzione del software.",
-        "es": "Mantenimiento de software.",
-        "pl": "Konserwacja oprogramowania.",
-        "uk": "Обслуговування програмного забезпечення.",
-        "zh-cn": "软件维护。"
       }
     },
     "titleLang": {
