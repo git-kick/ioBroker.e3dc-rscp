@@ -536,6 +536,14 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+
+(git-kick)
+
+* Update Node.js version range at test-and-release workflow to 22, 24 and 26 - [PR #363](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)
+* Fixed missing NameSpace translation (subsequent from #356) - [PR #366](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)
+  
 ### 1.4.6-alpha.0 (2026-09-07)
 
 (smuenzel)
