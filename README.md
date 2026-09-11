@@ -536,6 +536,13 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+
+(git-kick)
+
+* No specific version for rijndael-js - [Issue #365](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)
+
 ### 1.4.6-alpha.1 (2026-09-11)
 
 (git-kick)
