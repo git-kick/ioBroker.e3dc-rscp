@@ -82,6 +82,41 @@ const rscpTypeMap = {
     ByteArray: 'string',
     Error: 'number',
 };
+const rscpNameSpace = {
+    0x00: 'RSCP',
+    0x01: 'EMS',
+    0x02: 'PVI',
+    0x03: 'BAT',
+    0x04: 'DCDC',
+    0x05: 'PM',
+    0x06: 'DB',
+    0x07: 'FMS',
+    0x08: 'SRV',
+    0x09: 'HA',
+    0x0A: 'INFO',
+    0x0B: 'EP',
+    0x0C: 'SYS',
+    0x0D: 'UM',
+    0x0E: 'WB',
+    0x13: 'MBS',
+    0x16: 'KNX',
+    0x18: 'MYPV',
+    0x1B: "EP",
+    0x23: "NETWORK",
+    0x25: "PLAY",
+    0x26: "GDI",
+    0x27: "SCM",
+    0x28: "EEBUS",
+    0x2A: "ETH",
+    0x2B: "LCT",
+    0x2D: "OCPP",
+    0x30: "DASHBOARD",
+    0x31: "RD",
+    0x32: "SMGW",
+    0xF8: "SERVER",
+    0xF9: "SYS",
+    0xFF: "VIRTUAL",
+};
 const rscpReturnCode = {
     '-2': 'could not set, try later',
     '-1': 'value out of range',
@@ -1582,13 +1617,13 @@ class E3dcRscp extends utils.Adapter {
             const tag = token.tag;
             const tagName = rscpTag[tag].TagNameGlobal.split("_").slice(2).join("_");
             let tagNameNew = tagName;
-            const nameSpace = rscpTag[tag].NameSpace;
-            const shortId = `${nameSpace}.${tagName}`;
+            const nameSpaceName = rscpNameSpace[(tag >>> 24) & 0xFF];
+            const shortId = `${nameSpaceName}.${tagName}`;
             const typeName = rscpType[token.type];
             if (typeName == 'Error') {
                 if (shortId == 'EMS.SYS_SPEC_VALUE_INT') {
                     // Gently skip SYS_SPEC error values, just set to zero
-                    this.storeValue(nameSpace, pathNew, tagName, 'Int32', 0);
+                    this.storeValue(nameSpaceName, pathNew, tagName, 'Int32', 0);
                     continue;
                 }
                 if (shortId == 'BAT.DATA' && rscpError[token.content] == 'RSCP_ERR_NOT_AVAILABLE') {
@@ -1628,7 +1663,7 @@ class E3dcRscp extends utils.Adapter {
             if (typeName == 'Container') {
                 if (shortId == 'EMS.SYS_SPEC' && token.content.length == 3) {
                     this.storeValue(
-                        nameSpace,
+                        nameSpaceName,
                         `${pathNew}SYS_SPECS.`,
                         token.content[1].content,
                         'Int32',
@@ -1650,7 +1685,7 @@ class E3dcRscp extends utils.Adapter {
                     }
                 } else if (shortId == 'INFO.MODULE_SW_VERSION' && token.content.length == 2) {
                     this.storeValue(
-                        nameSpace,
+                        nameSpaceName,
                         `${pathNew}MODULE_SW_VERSION.`,
                         token.content[0].content,
                         'CString',
@@ -1668,7 +1703,7 @@ class E3dcRscp extends utils.Adapter {
                     this.storeHistoryData(token.content, `${pathNew}${tagName}.`);
                 } else if (ignoreIndexIds.includes(shortId) && token.content.length == 2) {
                     this.storeValue(
-                        nameSpace,
+                        nameSpaceName,
                         pathNew,
                         tagName,
                         rscpType[token.content[1].type],
@@ -1676,31 +1711,31 @@ class E3dcRscp extends utils.Adapter {
                     );
                 } else if (phaseIds.includes(shortId) && token.content.length == 2) {
                     this.storeValue(
-                        nameSpace,
+                        nameSpaceName,
                         `${pathNew}Phase_${token.content[0].content}.`,
                         tagName,
                         rscpType[token.content[1].type],
                         token.content[1].content,
                     );
-                    this.extendObject(`${nameSpace}.${pathNew}Phase_${token.content[0].content}`, {
+                    this.extendObject(`${nameSpaceName}.${pathNew}Phase_${token.content[0].content}`, {
                         type: 'channel',
                         common: { role: 'sensor.electricity' },
                     });
                 } else if (stringIds.includes(shortId) && token.content.length == 2) {
                     this.storeValue(
-                        nameSpace,
+                        nameSpaceName,
                         `${pathNew}String_${token.content[0].content}.`,
                         tagName,
                         rscpType[token.content[1].type],
                         token.content[1].content,
                     );
-                    this.extendObject(`${nameSpace}.${pathNew}String_${token.content[0].content}`, {
+                    this.extendObject(`${nameSpaceName}.${pathNew}String_${token.content[0].content}`, {
                         type: 'channel',
                         common: { role: 'sensor.electricity' },
                     });
                 } else if (shortId == 'PVI.TEMPERATURE' && token.content.length == 2) {
                     this.storeValue(
-                        nameSpace,
+                        nameSpaceName,
                         `${pathNew}TEMPERATURE.`,
                         token.content[0].content.toString().padStart(2, '0'),
                         rscpType[token.content[1].type],
@@ -1708,7 +1743,7 @@ class E3dcRscp extends utils.Adapter {
                         'TEMPERATURE',
                         '°C',
                     );
-                    this.extendObject(`${nameSpace}.${pathNew}TEMPERATURE`, {
+                    this.extendObject(`${nameSpaceName}.${pathNew}TEMPERATURE`, {
                         type: 'channel',
                         common: { role: 'sensor.temperature' },
                     });
@@ -1727,7 +1762,7 @@ class E3dcRscp extends utils.Adapter {
                         multipleValueIndex[shortId] = 0;
                     }
                     this.log.silly(
-                        `storeValue( ${nameSpace}, ${`${pathNew + tagName}.`}, ${multipleValueIndex[shortId].toString().padStart(2, '0')}, ${rscpType[token.type]}, ${token.content}, ${tagName} )`,
+                        `storeValue( ${nameSpaceName}, ${`${pathNew + tagName}.`}, ${multipleValueIndex[shortId].toString().padStart(2, '0')}, ${rscpType[token.type]}, ${token.content}, ${tagName} )`,
                     );
                     let dictionaryIndex = tagName;
                     let unit = '';
@@ -1748,7 +1783,7 @@ class E3dcRscp extends utils.Adapter {
                         v = null;
                     } // 0 means "no value", so dispaly as "(null)", not "0 °C"
                     this.storeValue(
-                        nameSpace,
+                        nameSpaceName,
                         `${pathNew + tagName}.`,
                         multipleValueIndex[shortId].toString().padStart(2, '0'),
                         t,
@@ -1762,7 +1797,7 @@ class E3dcRscp extends utils.Adapter {
                     } else if (tagName.includes('VOLTAGE')) {
                         r = 'sensor.electricity';
                     }
-                    this.extendObject(`${nameSpace}.${pathNew.slice(0, -1)}.${tagName}`, {
+                    this.extendObject(`${nameSpaceName}.${pathNew.slice(0, -1)}.${tagName}`, {
                         type: 'channel',
                         common: { role: r },
                     });
@@ -1776,13 +1811,13 @@ class E3dcRscp extends utils.Adapter {
                     if (tagName == 'INDEX') {
                         currentIndex = token.content;
                         if (tree.length <= Number(i) + 1 || rscpType[tree[Number(i) + 1].type] != 'Error') {
-                            if (nameSpace != 'PM' && currentIndex > this.maxIndex[nameSpace]) {
+                            if (nameSpaceName != 'PM' && currentIndex > this.maxIndex[nameSpaceName]) {
                                 // PM has an index _set_ and is handled separately
-                                this.maxIndex[nameSpace] = currentIndex;
-                                this.log.info(`Increased ${nameSpace} max. index to ${currentIndex}`);
+                                this.maxIndex[nameSpaceName] = currentIndex;
+                                this.log.info(`Increased ${nameSpaceName} max. index to ${currentIndex}`);
                             }
-                            pathNew = `${nameSpace}_${currentIndex}.`;
-                            this.extendObject(`${nameSpace}.${pathNew.slice(0, -1)}`, {
+                            pathNew = `${nameSpaceName}_${currentIndex}.`;
+                            this.extendObject(`${nameSpaceName}.${pathNew.slice(0, -1)}`, {
                                 type: 'channel',
                                 common: { role: 'info.module' },
                             });
@@ -1800,7 +1835,7 @@ class E3dcRscp extends utils.Adapter {
                         pathNew = path
                             ? `${pathNew.split('.').slice(0, -1).join('.')}.${name}_${token.content}.`
                             : `${name}_${token.content}.`;
-                        this.extendObject(`${nameSpace}.${pathNew.slice(0, -1)}`, {
+                        this.extendObject(`${nameSpaceName}.${pathNew.slice(0, -1)}`, {
                             type: 'channel',
                             common: { role: 'info.submodule' },
                         });
@@ -1820,7 +1855,7 @@ class E3dcRscp extends utils.Adapter {
                 if (shortId == 'EMS.STATUS') {
                     for (let bit = 0; bit < 10; bit++) {
                         this.storeValue(
-                            nameSpace,
+                            nameSpaceName,
                             pathNew,
                             `STATUS_${bit}`,
                             'Bool',
@@ -1833,7 +1868,7 @@ class E3dcRscp extends utils.Adapter {
                 // Translate bit-mapped EMS.DPP_MONTHS_ACTIVE to string
                 if (shortId == 'EMS.DPP_MONTHS_ACTIVE') {
                     this.storeValue(
-                        nameSpace,
+                        nameSpaceName,
                         pathNew,
                         'DPP_MONTHS_ACTIVE',
                         'CString',
@@ -1899,7 +1934,7 @@ class E3dcRscp extends utils.Adapter {
                 }
 
                 const [t, v] = this.adjustTypeAndValue(shortId, typeName, token.content);
-                this.storeValue(nameSpace, pathNew, tagNameNew, t, v);
+                this.storeValue(nameSpaceName, pathNew, tagNameNew, t, v);
             }
         }
     }
