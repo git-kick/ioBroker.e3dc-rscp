@@ -253,7 +253,7 @@
 	},
 	"0x01000018": {
 		"TagNameGlobal": "TAG_EMS_REQ_SET_INSTALLED_PEAK_POWER",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "INSTALLER",
 		"Unit": "",
 		"Description": ""
@@ -337,7 +337,7 @@
 	},
 	"0x01000029": {
 		"TagNameGlobal": "TAG_EMS_REQ_SET_MAX_EP_WALLBOX_POWER_W",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Set max power for wallbox charging during emergency power."
@@ -358,14 +358,14 @@
 	},
 	"0x0100002C": {
 		"TagNameGlobal": "TAG_EMS_REQ_SET_MIN_EP_WALLBOX_POWER_W",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Set min power for wallbox charging during emergency power."
 	},
 	"0x0100002D": {
 		"TagNameGlobal": "TAG_EMS_REQ_SET_EP_WALLBOX_ENERGY",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "This sets the energy in Wh that the wallbox can charge from the battery into the car during emergency power."
@@ -799,7 +799,7 @@
 	},
 	"0x0100008F": {
 		"TagNameGlobal": "TAG_EMS_REQ_START_MANUAL_CHARGE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": ""
@@ -841,7 +841,7 @@
 	},
 	"0x01000095": {
 		"TagNameGlobal": "TAG_EMS_EPTEST_START_COUNTER",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -918,7 +918,7 @@
 	},
 	"0x01000103": {
 		"TagNameGlobal": "TAG_EMS_DISCHARGE_START_POWER",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -946,7 +946,7 @@
 	},
 	"0x01000150": {
 		"TagNameGlobal": "TAG_EMS_MANUAL_CHARGE_START_COUNTER",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -960,7 +960,7 @@
 	},
 	"0x01000152": {
 		"TagNameGlobal": "TAG_EMS_MANUAL_CHARGE_ENERGY_COUNTER",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -1394,14 +1394,14 @@
 	},
 	"0x01400003": {
 		"TagNameGlobal": "TAG_EMS_PARAM_MANIPULATOR_EVENT_TIME_START",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "The start time (MS) of the manipulator is enable."
 	},
 	"0x01400004": {
 		"TagNameGlobal": "TAG_EMS_PARAM_MANIPULATOR_EVENT_TIME_END",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "The time that the manipulator is disable."
@@ -1478,14 +1478,14 @@
 	},
 	"0x01400011": {
 		"TagNameGlobal": "TAG_EMS_DPP_CONSTRAINT_START_TIMESTAMP",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "The dynamic power prices are valid since this unix timestamp."
 	},
 	"0x01400012": {
 		"TagNameGlobal": "TAG_EMS_DPP_CONSTRAINT_DURATION_MS",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "The dynamic power prices are valid for this duration (start timestamp plus this duration in milliseconds)."
@@ -1506,7 +1506,7 @@
 	},
 	"0x01400015": {
 		"TagNameGlobal": "TAG_EMS_DPP_CONSTRAINT_START_OFFSET_MS",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "The offset divides the dynamic power prices into little chunks since when these prices are valid (start timestamp plus start offset) until the next valid prices gets valid."
@@ -1681,7 +1681,7 @@
 	},
 	"0x01800010": {
 		"TagNameGlobal": "TAG_EMS_ERROR_TIMESTAMP",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Wenn das EMS im Fehlerzustand ist, wird eine Fehlermeldung übertragen!"
@@ -1702,7 +1702,7 @@
 	},
 	"0x01800013": {
 		"TagNameGlobal": "TAG_EMS_INSTALLED_PEAK_POWER",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -1772,7 +1772,7 @@
 	},
 	"0x0180001D": {
 		"TagNameGlobal": "TAG_EMS_ADJUST_BATTERY_VOLTAGE_STATUS",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -1821,42 +1821,42 @@
 	},
 	"0x01800029": {
 		"TagNameGlobal": "TAG_EMS_SET_MAX_EP_WALLBOX_POWER_W",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Set max power for wallbox charging during emergency power."
 	},
 	"0x0180002A": {
 		"TagNameGlobal": "TAG_EMS_GET_MAX_EP_WALLBOX_POWER_W",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Get max power for wallbox charging during emergency power."
 	},
 	"0x0180002B": {
 		"TagNameGlobal": "TAG_EMS_GET_MIN_EP_WALLBOX_POWER_W",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Get min power for wallbox charging during emergency power."
 	},
 	"0x0180002C": {
 		"TagNameGlobal": "TAG_EMS_SET_MIN_EP_WALLBOX_POWER_W",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Set min power for wallbox charging during emergency power."
 	},
 	"0x0180002D": {
 		"TagNameGlobal": "TAG_EMS_SET_EP_WALLBOX_ENERGY",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "This sets the energy in Wh that the wallbox can charge from the battery into the car during emergency power."
 	},
 	"0x0180002E": {
 		"TagNameGlobal": "TAG_EMS_GET_EP_WALLBOX_ENERGY",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "This gets the energy in Wh that the wallbox can charge from the battery into the car during emergency power."
@@ -2087,14 +2087,14 @@
 	},
 	"0x01800071": {
 		"TagNameGlobal": "TAG_EMS_REMAINING_BAT_CHARGE_POWER",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Noch mögliche Ladeleistung nach Abzug der momentanen Ladeleistung vom momentanen Limit."
 	},
 	"0x01800072": {
 		"TagNameGlobal": "TAG_EMS_REMAINING_BAT_DISCHARGE_POWER",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Noch mögliche Entladeleistung nach Abzug der momentanen Entladeleistung vom momentanen Limit."
@@ -2815,14 +2815,14 @@
 	},
 	"0x01800304": {
 		"TagNameGlobal": "TAG_EMS_PERIOD_START",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "The begin of the idle period in minutes since midnight (0 to 1439). If the stop has a lower value than the start, it is assumed that the end is in the morning of the next day."
 	},
 	"0x01800305": {
 		"TagNameGlobal": "TAG_EMS_PERIOD_STOP",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "The end of the idle period in minutes since midnight (0 to 1439). If the stop has a lower value than the start, it is assumed that the end is in the morning of the next day."
@@ -4229,7 +4229,7 @@
 	},
 	"0x03800008": {
 		"TagNameGlobal": "TAG_BAT_CHARGE_CYCLES",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Rückgabewert für Batterieladezyklen."
@@ -4243,14 +4243,14 @@
 	},
 	"0x0380000A": {
 		"TagNameGlobal": "TAG_BAT_STATUS_CODE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Rückgabewert für Batteriestatus."
 	},
 	"0x0380000B": {
 		"TagNameGlobal": "TAG_BAT_ERROR_CODE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Rückgabewert für Batteriefehler."
@@ -4607,7 +4607,7 @@
 	},
 	"0x03800101": {
 		"TagNameGlobal": "TAG_BAT_DCB_LAST_MESSAGE_TIMESTAMP",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -4670,7 +4670,7 @@
 	},
 	"0x03800110": {
 		"TagNameGlobal": "TAG_BAT_DCB_CYCLE_COUNT",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -4733,42 +4733,42 @@
 	},
 	"0x03800119": {
 		"TagNameGlobal": "TAG_BAT_DCB_MANUFACTURE_DATE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x03800120": {
 		"TagNameGlobal": "TAG_BAT_DCB_SERIALNO",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x03800121": {
 		"TagNameGlobal": "TAG_BAT_DCB_PROTOCOL_VERSION",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x03800122": {
 		"TagNameGlobal": "TAG_BAT_DCB_FW_VERSION",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x03800123": {
 		"TagNameGlobal": "TAG_BAT_DCB_DATA_TABLE_VERSION",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x03800124": {
 		"TagNameGlobal": "TAG_BAT_DCB_PCB_VERSION",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -4866,14 +4866,14 @@
 	},
 	"0x03800300": {
 		"TagNameGlobal": "TAG_BAT_DCB_NR_SERIES_CELL",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Anzahl der Zellen in Serie / imported from rxhan/RSCPGui"
 	},
 	"0x03800301": {
 		"TagNameGlobal": "TAG_BAT_DCB_NR_PARALLEL_CELL",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Anzahl der parallelen Zellen / imported from rxhan/RSCPGui"
@@ -5517,7 +5517,7 @@
 	},
 	"0x05800009": {
 		"TagNameGlobal": "TAG_PM_DEVICE_ID",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Geräte-ID"
@@ -5601,70 +5601,70 @@
 	},
 	"0x05800051": {
 		"TagNameGlobal": "TAG_PM_CS_START_TIME",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
 	},
 	"0x05800052": {
 		"TagNameGlobal": "TAG_PM_CS_LAST_TIME",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
 	},
 	"0x05800053": {
 		"TagNameGlobal": "TAG_PM_CS_SUCC_FRAMES_ALL",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
 	},
 	"0x05800054": {
 		"TagNameGlobal": "TAG_PM_CS_SUCC_FRAMES_100",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
 	},
 	"0x05800055": {
 		"TagNameGlobal": "TAG_PM_CS_EXP_FRAMES_ALL",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
 	},
 	"0x05800056": {
 		"TagNameGlobal": "TAG_PM_CS_EXP_FRAMES_100",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
 	},
 	"0x05800057": {
 		"TagNameGlobal": "TAG_PM_CS_ERR_FRAMES_ALL",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
 	},
 	"0x05800058": {
 		"TagNameGlobal": "TAG_PM_CS_ERR_FRAMES_100",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
 	},
 	"0x05800059": {
 		"TagNameGlobal": "TAG_PM_CS_UNK_FRAMES",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
 	},
 	"0x0580005A": {
 		"TagNameGlobal": "TAG_PM_CS_ERR_FRAME",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Kann nur innerhalb eines REQ_PM_COMM_STATE Container verwendet werden!"
@@ -5937,21 +5937,21 @@
 	},
 	"0x06400002": {
 		"TagNameGlobal": "TAG_DB_TEC_WALLBOX_ENERGYALL",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x06400003": {
 		"TagNameGlobal": "TAG_DB_TEC_WALLBOX_WB_ENERGY_SOLAR",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x06400004": {
 		"TagNameGlobal": "TAG_DB_TEC_WALLBOX_INDEX",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": ""
@@ -6042,7 +6042,7 @@
 	},
 	"0x06400011": {
 		"TagNameGlobal": "TAG_DB_TEC_EM_INDEX",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": ""
@@ -6483,14 +6483,14 @@
 	},
 	"0x06B00000": {
 		"TagNameGlobal": "TAG_DB_PAR_TIME_MIN",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x06B00001": {
 		"TagNameGlobal": "TAG_DB_PAR_TIME_MAX",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -6511,7 +6511,7 @@
 	},
 	"0x06B00004": {
 		"TagNameGlobal": "TAG_DB_PARAM_INDEX",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -6525,14 +6525,14 @@
 	},
 	"0x06B00006": {
 		"TagNameGlobal": "TAG_DB_PARAM_MAX_ROWS",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x06B00007": {
 		"TagNameGlobal": "TAG_DB_PARAM_TIME",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -6777,7 +6777,7 @@
 	},
 	"0x09800004": {
 		"TagNameGlobal": "TAG_HA_DATAPOINT_TYPE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -6840,7 +6840,7 @@
 	},
 	"0x09800013": {
 		"TagNameGlobal": "TAG_HA_DATAPOINT_STATE_TIMESTAMP",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Zeitstempel der letzten Statenachricht."
@@ -6896,7 +6896,7 @@
 	},
 	"0x09800060": {
 		"TagNameGlobal": "TAG_HA_CONFIGURATION_CHANGE_COUNTER",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": ""
@@ -8422,7 +8422,7 @@
 	},
 	"0x0E041015": {
 		"TagNameGlobal": "TAG_WB_REQ_SET_BAT_CAPACITY",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Request to configure car battery capacity (Wh) for AC wallboxes."
@@ -8562,7 +8562,7 @@
 	},
 	"0x0E041029": {
 		"TagNameGlobal": "TAG_WB_REQ_PARAMETER_LIST",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Specify parameter value to request. / 0: goal time, 1: min energy"
@@ -8772,7 +8772,7 @@
 	},
 	"0x0E04104D": {
 		"TagNameGlobal": "TAG_WB_REQ_SET_CHARGE_STOP_HYSTERESIS",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Set charge stop hysteresis (aka 'holding time') duration in minutes > 1. This represents the amount of minutes for which charging with minimal power from other sources is maintained in sun mode to not interrupt charge completely."
@@ -8786,7 +8786,7 @@
 	},
 	"0x0E04104F": {
 		"TagNameGlobal": "TAG_WB_REQ_SET_KEY_LOCK_MODE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Set current key lock mode: / LOCK = 0, / SUN = 1, / DEACTIVATED = 2"
@@ -8891,14 +8891,14 @@
 	},
 	"0x0E741025": {
 		"TagNameGlobal": "TAG_WB_SESSION_END_TIME",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns session end time as unix timestamp in milliseconds (0 if session is currently active)."
 	},
 	"0x0E741026": {
 		"TagNameGlobal": "TAG_WB_SESSION_START_TIME",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns session start time as unix timestamp in milliseconds."
@@ -8912,14 +8912,14 @@
 	},
 	"0x0E741028": {
 		"TagNameGlobal": "TAG_WB_SESSION_ACTIVE_CHARGE_TIME",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns session active charge time in milliseconds."
 	},
 	"0x0E741029": {
 		"TagNameGlobal": "TAG_WB_SESSION_INACTIVE_TIME",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns session inactive time in milliseconds."
@@ -9003,42 +9003,42 @@
 	},
 	"0x0E741036": {
 		"TagNameGlobal": "TAG_WB_BIDI_CONTINGENT_USED_KWH_YEAR",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Bidirectional charge ready electric vehicle used energy contingent this year in kWh"
 	},
 	"0x0E741037": {
 		"TagNameGlobal": "TAG_WB_BIDI_CONTINGENT_USED_HOURS_YEAR",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Bidirectional charge ready electric vehicle used contingent this year in hours."
 	},
 	"0x0E741038": {
 		"TagNameGlobal": "TAG_WB_BIDI_CONTINGENT_MAX_KWH_LIFETIME",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Max lifetime energy usage for bidirectional mode for this electric vehicle in kWh"
 	},
 	"0x0E741039": {
 		"TagNameGlobal": "TAG_WB_BIDI_CONTINGENT_MAX_HOURS_LIFETIME",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Max lifetime usage time for bidirectional mode for this electric vehicle in hours."
 	},
 	"0x0E74103A": {
 		"TagNameGlobal": "TAG_WB_BIDI_CONTINGENT_MAX_HOURS_YEAR",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Max usage time per year for bidirectional mode for this electric vehicle in hours."
 	},
 	"0x0E74103B": {
 		"TagNameGlobal": "TAG_WB_BIDI_CONTINGENT_MAX_KWH_YEAR",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Max energy usage per year for bidirectional mode for this electric vehicle in kWh"
@@ -9052,14 +9052,14 @@
 	},
 	"0x0E74103D": {
 		"TagNameGlobal": "TAG_WB_BIDI_CONTINGENT_CAR_LIFETIME",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Bidirectional charge ready electric vehicle lifetime in years."
 	},
 	"0x0E74103F": {
 		"TagNameGlobal": "TAG_WB_SESSION_ACTIVE_DISCHARGE_TIME",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns session active discharge time in milliseconds."
@@ -9108,14 +9108,14 @@
 	},
 	"0x0E800001": {
 		"TagNameGlobal": "TAG_WB_ENERGY_ALL",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Total energy counter value in Wh"
 	},
 	"0x0E800002": {
 		"TagNameGlobal": "TAG_WB_ENERGY_SOLAR",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Total solar energy counter value in Wh"
@@ -9241,7 +9241,7 @@
 	},
 	"0x0E800015": {
 		"TagNameGlobal": "TAG_WB_PM_DEVICE_ID",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns PowerMeter device id (E3DC wallbox only!), 0 for all other wallboxes."
@@ -9269,7 +9269,7 @@
 	},
 	"0x0E800019": {
 		"TagNameGlobal": "TAG_WB_DIAG_BAT_CAPACITY",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns configured car battery capacity (does not reflect actual car battery capacity for AC wallboxes)."
@@ -9640,7 +9640,7 @@
 	},
 	"0x0E841015": {
 		"TagNameGlobal": "TAG_WB_SET_BAT_CAPACITY",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Echoes the configured car battery capacity if successful, else returns 0"
@@ -9829,7 +9829,7 @@
 	},
 	"0x0E841036": {
 		"TagNameGlobal": "TAG_WB_WALLBOX_TYPE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Wallbox type: / 0: virtual / 1: E3DC wallbox / 2: Easy Connect wallbox / 4: wallbox RSCP group (farming) / 5: Edison Connect wallbox / 6: Multi Connect wallbox / 7: Eebus Wallbox"
@@ -9969,35 +9969,35 @@
 	},
 	"0x0E84104C": {
 		"TagNameGlobal": "TAG_WB_CHARGE_STOP_HYSTERESIS",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns charge stop hysteresis (aka 'holding time') duration in minutes. This represents the amount of minutes for which charging with minimal power from other sources is maintained in sun mode to not interrupt charge completely."
 	},
 	"0x0E84104D": {
 		"TagNameGlobal": "TAG_WB_SET_CHARGE_STOP_HYSTERESIS",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns charge stop hysteresis duration in minutes to indicate setting success."
 	},
 	"0x0E84104E": {
 		"TagNameGlobal": "TAG_WB_GET_KEY_LOCK_MODE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Return current key lock mode (always DEACTIVATED for wallboxes without a key switch) / LOCK = 0, / SUN = 1, / DEACTIVATED = 2"
 	},
 	"0x0E84104F": {
 		"TagNameGlobal": "TAG_WB_SET_KEY_LOCK_MODE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns current key lock mode to indicate setting success: / LOCK = 0, / SUN = 1, / DEACTIVATED = 2"
 	},
 	"0x0E841050": {
 		"TagNameGlobal": "TAG_WB_KEY_STATE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Returns current key switch state (0 or 1), will always return 0 for wallboxes without a key switch."
@@ -10284,7 +10284,7 @@
 	},
 	"0x16400006": {
 		"TagNameGlobal": "TAG_KNX_ERROR_TIMESTAMP",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -10305,7 +10305,7 @@
 	},
 	"0x16400009": {
 		"TagNameGlobal": "TAG_KNX_FILTER_ENUM",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -10389,7 +10389,7 @@
 	},
 	"0x18000110": {
 		"TagNameGlobal": "TAG_MYPV_DEVICE_TIMESPAN_IBOOST",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Time in seconds the instant boost will last from now on. A time of 0 means the instant boost is stopped. / Mandatory if inside container TAG_MYPV_REQ_INSTANT_BOOST"
@@ -10585,7 +10585,7 @@
 	},
 	"0x1B400003": {
 		"TagNameGlobal": "TAG_SE_PARAM_BAT_TRAINING_MODE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Mode for battery training. / Possible values:0 = none1 = WinterMode (Single Battery, charge from grid, discharge to house)2 = SummerMode (Single Battery, charge from pv, discharge to grid)3 = SharePowerMode (Multiple Batteries, this mode is automatically detected if multiple batteries are available, this value can not be set)."
@@ -10690,7 +10690,7 @@
 	},
 	"0x2340000E": {
 		"TagNameGlobal": "TAG_NETWORK_LC_PARAM_STATUS",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Contains the status of the request coming from a local configurator."
@@ -10767,7 +10767,7 @@
 	},
 	"0x27400000": {
 		"TagNameGlobal": "TAG_SCM_LC_PARAM_FALLBACK_STATIC_CURRENT",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Contains the value of the Static mode current which is applied in fallback when there is a loss of communication with the external meter."
@@ -10788,7 +10788,7 @@
 	},
 	"0x27400012": {
 		"TagNameGlobal": "TAG_SCM_LC_PARAM_FRONT_EVSE_FUSE",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Parameter contains fuse value which is placed in front of the EVSE's."
@@ -11033,14 +11033,14 @@
 	},
 	"0x2D400052": {
 		"TagNameGlobal": "TAG_OCPP_WB_WB_LC_PARAM_EVCS_DEVICE_CHARGEPOINT_ENERGY_INDEX",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x2D400054": {
 		"TagNameGlobal": "TAG_OCPP_WB_WB_LC_PARAM_EVCS_DEVICE_CHARGEPOINT_SESSION_NUMBER",
-		"DataType": "Uint64",
+		"DataType": "UInt64",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": ""
@@ -11103,7 +11103,7 @@
 	},
 	"0x30400041": {
 		"TagNameGlobal": "TAG_DASHBOARD_LC_PARAM_MAX_CURRENT_PER_PHASE_EVCS",
-		"DataType": "Uint32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_VALIDATION",
 		"Unit": "",
 		"Description": "Contains max current which can be assigned for EVCS (dynamic mode with evcs front fuse)."
