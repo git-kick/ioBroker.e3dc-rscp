@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "e3dc-rscp",
-    "version": "1.4.6-alpha.1",
+    "version": "1.4.6-alpha.2",
     "blockedVersions": [
       "1.4.5.-alpha.3",
       "1.4.5.-alpha.2.0",
@@ -12,6 +12,19 @@
       "1.2.0"
     ],
     "news": {
+      "1.4.6-alpha.2": {
+        "en": "(git-kick)\n\n* No specific version for rijndael-js - [Issue #365](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "de": "(Git Kick)\n\n* Keine Version für rijndael-js — [Ausgabe #365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "ru": "(подарочный удар)\n\n* Специальной версии для rijndael-js нет - [Выпуск #365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "pt": "(git-kick)\n\n* Sem versão específica para rijndael-js - [Edição #365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "nl": "(git-kick)\n\n* Geen specifieke versie voor Rijndael-js - [Nummer #365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "fr": "(git-kick)\n\n* Pas de version spécifique pour Rijndael-js - [Numéro #365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "it": "(git-kick)\n\n* Nessuna versione per rijndael-js - [#365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "es": "(git-kick)\n\n* No hay versión específica de rijndael-js - [Issue #365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "pl": "(git-kick)\n\n* Brak konkretnej wersji dla rijndael-js - [Wydanie #365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "uk": "(гіт-удар)\n\n* Немає конкретної версії для rijndael-js - [Випуск #365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)",
+        "zh-cn": "（git-kick）\n\n* 没有针对 rijndael-js 的特定版本-[问题 #365] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/365)"
+      },
       "1.4.6-alpha.1": {
         "en": "(git-kick)\n\n* Update Node.js version range at test-and-release workflow to 22, 24 and 26 - [PR #363](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Fixed missing NameSpace translation (subsequent from #356) - [PR #366](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
         "de": "(Git Kick)\n\n* Aktualisierung der Version von Node.js beim Testen auf 22, 24 und 26 - [PR #363] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/363)\n* Fehlende Namespace-Übersetzung behoben (nach #356) - [PR #366] (https://github.com/git-kick/ioBroker.e3dc-rscp/issues/366)",
@@ -89,19 +102,6 @@
         "pl": "(git- kick)\n* Dodano EMS.DPP _ Price _ LIMIT _ WALLBOX [Issue # 284] (https: / / github.com / git- kick / ioBroker.e3dc- rscp / issues / 284)\n* Fixed EMS.DPP _ SOC _ BATTERY setter [Issue # 295] (https: / / github.com / git- kick / ioBroker.e3dc- rscp / issues / 295)\n* Ustawienia:\n* nazwa spacja WB domyślnie false (nie każdy ma dołączoną tapetę)\n* nazwa miejsca DCDC domyślnie true (każdy ma konwerter DCDC)",
         "uk": "(git-kick)\nІм'я * Додано EMS.DPP_PRICE_LIMIT_WALLBOX [Issue #284](https://github.com/git-kick/ioBroker.e3dc-rscp/products/284)\n* Фіксований EMS.DPP_SOC_BATTERY setter [Issue #295](https://github.com/git-kick/ioBroker.e3dc-rscp/products/295)\n* Налаштування:\n* простір імен WB за замовчуванням до false (не всі мають прикріплену скриньку)\n* простір імен DCDC за замовчуванням true (все має конвертер DCDC)",
         "zh-cn": "(基特语)\n* 《大会正式记录,第五十八届会议,补编第5号》(A/C.6/61/Rev.1)。 已添加 EMS.DPP_PRICE_LIMIT_WALLBOX [问题284](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/284)\n* 固定EMS.DPP_SOC_BATTERY设置器[问题#295](https://github.com/git-kick/ioBroker.e3dc-rscp/issues/295)\n* 设置 :\n* 名称空格 WB 默认为虚假( 不是每个人都有一个附着的挂贴)\n* 名称空间 DCDC 默认为真( 每个人都有 DCDC 转换器)"
-      },
-      "1.4.5-alpha.0": {
-        "en": "Verwende [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-        "de": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-        "ru": "Включите [AlCalzone/release-script] (https://github.com/AlCalzone/release-script)",
-        "pt": "Incluir [AlCalzone/release-script] (https://github.com/AlCalzone/release-script)",
-        "nl": "Include [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-        "fr": "Inclure [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-        "it": "[AlCalzone/release-script](http://github.com/AlCalzone/release-script)",
-        "es": "Incluir [AlCalzone/release-script](https://github.com/AlCalzone/release-script)",
-        "pl": "W imieniu Komisji",
-        "uk": "Включити [AlCalzone/видання](https://github.com/AlCalzone/видання)",
-        "zh-cn": "包括[AlCalzone/release-script](https://github.com/AlCalzone/release-script)"
       }
     },
     "titleLang": {
