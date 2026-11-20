@@ -519,6 +519,12 @@ class E3dcRscp extends utils.Adapter {
         // For efficient access to polling intervals:
         this.pollingInterval = []; // [tagCode]
 
+        // Newer E3/DC firmware versions use DB.REQ_HISTORY_UTC_TIME_START for starting a DB query.
+        // Legacy firmare uses DB.REQ_HISTORY_TIME_START instead.
+        // We try the new version and fall back to legacy if we get an error response.
+        this.legacyTimeStart = false;
+
+
         // TCP connection:
         this.tcpConnection = new Net.Socket();
         this.inBuffer = null;
@@ -635,13 +641,14 @@ class E3dcRscp extends utils.Adapter {
         }
 
         // Force some quick data requests for index probing and building up the object tree:
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
             this.probingTimeout[i] = this.setTimeout(
                 () => {
                     this.requestAllData('');
+                    this.queueDbProbe();
                 },
-                i * 1000 * 7,
-            ); // every 7 seconds
+                i * 1000 * 7, // every 7 seconds
+            ); 
         }
 
         this.dataPollingTimerS = this.setInterval(() => {
@@ -874,7 +881,7 @@ class E3dcRscp extends utils.Adapter {
     // If pos > 0, then endContainer is inclusive
     pushFrame(pos = 0) {
         if (this.frame.length > 18) {
-            this.frame.writeUIntLE(Math.floor(new Date().getTime() / 1000), 4, 6); // set timestamp - bytes 7,8 remain zero (which will be wrong after 19.01.2038)
+            this.frame.writeUIntLE(helper.dateToEpochSeconds(new Date()), 4, 6); // set timestamp - bytes 7,8 remain zero (which will be wrong after 19.01.2038)
             this.frame.writeUInt16LE(this.frame.length - 18, 16); // set total length
             if (pos > 0) {
                 this.endContainer(pos);
@@ -1166,12 +1173,17 @@ class E3dcRscp extends utils.Adapter {
     }
 
     // Only used for interface exploration:
-    queueDbRequestData() {
+    queueDbProbe() {
         this.clearFrame();
+        // Yesterday at 00:00 local time, as Unix epoch seconds
+        const d = new Date();
+        d.setDate(d.getDate() - 1);   // go back one day (handles month/year rollover)
+        d.setHours(0, 0, 0, 0);       // reset to local midnight
+        const epochSec = helper.dateToEpochSeconds(d);
         const pos = this.startContainer('TAG_DB_REQ_HISTORY_DATA_DAY');
-        this.addTagtoFrame('TAG_DB_REQ_HISTORY_TIME_START', '', 1639609200);
-        this.addTagtoFrame('TAG_DB_REQ_HISTORY_TIME_INTERVAL', '', 1800);
-        this.addTagtoFrame('TAG_DB_REQ_HISTORY_TIME_SPAN', '', 86400);
+        this.addTagtoFrame(this.legacyTimeStart ? 'TAG_DB_REQ_HISTORY_TIME_START' : 'TAG_DB_REQ_HISTORY_UTC_TIME_START', '', epochSec);
+        this.addTagtoFrame('TAG_DB_REQ_HISTORY_TIME_INTERVAL', '', 3600);   // 1 hour
+        this.addTagtoFrame('TAG_DB_REQ_HISTORY_TIME_SPAN', '', 86400);      // 24 hours
         this.endContainer(pos);
         this.pushFrame();
     }
@@ -1361,13 +1373,13 @@ class E3dcRscp extends utils.Adapter {
                                 }
                                 this.clearFrame();
                                 const pos = this.startContainer(`TAG_DB_REQ_${shortTag}`);
-                                this.addTagtoFrame('TAG_DB_REQ_HISTORY_TIME_START', '', d.getTime() / 1000);
+                                this.addTagtoFrame(this.legacyTimeStart ? 'TAG_DB_REQ_HISTORY_TIME_START' : 'TAG_DB_REQ_HISTORY_UTC_TIME_START', '', helper.dateToEpochSeconds(d));
                                 this.addTagtoFrame('TAG_DB_REQ_HISTORY_TIME_INTERVAL', '', i);
                                 this.addTagtoFrame('TAG_DB_REQ_HISTORY_TIME_SPAN', '', s);
                                 this.endContainer(pos);
                                 this.pushFrame();
                                 this.log.debug(
-                                    `TAG_DB_REQ_${shortTag} - START=${d.getTime() / 1000} INTERVAL=${i} SPAN=${s}`,
+                                    `TAG_DB_REQ_${shortTag} - START=${helper.dateToEpochSeconds(d)} INTERVAL=${i} SPAN=${s}`,
                                 );
                             });
                         });
@@ -1651,6 +1663,11 @@ class E3dcRscp extends utils.Adapter {
                 if (stopPollingIds.includes(shortId) && rscpError[token.content] == 'RSCP_ERR_NOT_AVAILABLE') {
                     this.pollingInterval[tag] = 'N';
                     this.log.info(`Device reports that ${shortId} is not available - setting polling interval to 'N'`);
+                    continue;
+                }
+                if (shortId == 'DB.REQ_HISTORY_UTC_TIME_START' && rscpError[token.content] == 'RSCP_ERR_NOT_AVAILABLE') {
+                    this.legacyTimeStart = true;
+                    this.log.info(`Device reports that TAG_DB_REQ_HISTORY_UTC_TIME_START is not available - fall back to legacy TAG_DB_REQ_HISTORY_TIME_START`);
                     continue;
                 }
                 if (!ignoreIds.includes(shortId)) {
@@ -2180,7 +2197,7 @@ class E3dcRscp extends utils.Adapter {
                 this.getState(`DB.${path}TIME_SPAN`, (_err, _spanObj) => {
                     let timeStart = 0;
                     if (timeStartObj && timeStartObj.val) {
-                        timeStart = helper.stringToDate(timeStartObj.val.toString()).getTime() / 1000;
+                        timeStart = helper.dateToEpochSeconds(helper.stringToDate(timeStartObj.val.toString()));
                     } // epoch seconds
                     let interval = 0;
                     if (intervalObj && intervalObj.val) {

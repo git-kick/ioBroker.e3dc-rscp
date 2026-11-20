@@ -5774,12 +5774,19 @@
 		"Unit": "",
 		"Description": "Muss die TAGs DB_REQ_HISTORY_TIME_START, DB_REQ_HISTORY_TIME_INTERVAL, DB_REQ_HISTORY_TIME_SPAN enthalten."
 	},
+	"0x06000101": {
+		"TagNameGlobal": "TAG_DB_REQ_HISTORY_TIME_START",
+		"DataType": "Timestamp",
+		"UserLevel": "USER",
+		"Unit": "",
+		"Description": "Veraltet seit ca. Sommer 2026."
+	},
 	"0x06000104": {
 		"TagNameGlobal": "TAG_DB_REQ_HISTORY_UTC_TIME_START",
 		"DataType": "Timestamp",
 		"UserLevel": "USER",
 		"Unit": "",
-		"Description": ""
+		"Description": "Löst das frühere DB_REQ_HISTORY_TIME_START ab."
 	},
 	"0x06000102": {
 		"TagNameGlobal": "TAG_DB_REQ_HISTORY_TIME_INTERVAL",
