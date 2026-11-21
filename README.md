@@ -536,6 +536,10 @@ Here is a sample script for charge limit control - it is not meant for as-is usa
 <a name="log"></a>
 
 ## Changelog
+### **WORK IN PROGRESS**
+(git-kick)
+* Display RSCP.AUTHENTICATION state (used to show only number)
+
 ### 1.4.6 (2026-10-02)
 
 (smuenzel)

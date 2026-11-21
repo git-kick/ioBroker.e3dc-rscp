@@ -2369,6 +2369,7 @@ class E3dcRscp extends utils.Adapter {
                 role: 'value',
                 read: true,
                 write: false,
+                states: rscpAuthLevel,
                 unit: rscpTag[rscpTagCode['TAG_RSCP_AUTHENTICATION']].Unit,
             },
             native: {},

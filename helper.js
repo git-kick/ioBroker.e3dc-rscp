@@ -184,7 +184,8 @@ function dateToString(date) {
 }
 
 /**
- * Parses a timestamp string of the form "YYYY-M-D H:M[:S[.mmm]]" into a Date object.
+ * Parses a _local_ timestamp string of the form "YYYY-M-D H:M[:S[.mmm]]"
+ * into a Date object (UTC neutralized).
  *
  * Seconds and milliseconds are optional and default to 0 when missing,
  * so the minimal valid string is like "2021-1-1 0:0". If `string` does
@@ -210,6 +211,15 @@ function stringToDate(string) {
     }
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+}
+/**
+ * Converts a date object into epoch seconds (Unix timestamp), which implies UTC.
+ *
+ * @param   {Date} d - Date object to convert.
+ * @returns {number} Epoch seconds (Unix timestamp).
+ */
+function dateToEpochSeconds(d) {
+    return Math.floor(d.getTime() / 1000);
 }
 
 /**
@@ -253,6 +263,7 @@ module.exports = {
     bitmaskToMonthString,
     monthStringToBitmask,
     dateToString,
+    dateToEpochSeconds,
     stringToDate,
     bufferToString,
     stringToBuffer,
