@@ -904,17 +904,17 @@
 	},
 	"0x01000101": {
 		"TagNameGlobal": "TAG_EMS_MAX_CHARGE_POWER",
-		"DataType": "Int32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
-		"Unit": "",
-		"Description": ""
+		"Unit": "W",
+		"Description": "Maximale Leistung, mit der die E3/DC Batterie geladen wird."
 	},
 	"0x01000102": {
 		"TagNameGlobal": "TAG_EMS_MAX_DISCHARGE_POWER",
-		"DataType": "Int32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": ""
+		"Description": "Maximale Leistung, mit der die E3/DC Batterie entladen wird."
 	},
 	"0x01000103": {
 		"TagNameGlobal": "TAG_EMS_DISCHARGE_START_POWER",
@@ -925,24 +925,24 @@
 	},
 	"0x01000104": {
 		"TagNameGlobal": "TAG_EMS_POWERSAVE_ENABLED",
-		"DataType": "Bool",
+		"DataType": "UChar8",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "0xFF if powersave is not supported."
 	},
 	"0x01000105": {
 		"TagNameGlobal": "TAG_EMS_WEATHER_REGULATED_CHARGE_ENABLED",
-		"DataType": "Bool",
+		"DataType": "UChar8",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
 	},
 	"0x01000106": {
 		"TagNameGlobal": "TAG_EMS_UNDEFINED_POWER_SETTING",
-		"DataType": "Int32",
+		"DataType": "UInt32",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": "nicht dokumentiert; kommt in TAG_EMS_GET_POWER_SETTINGS / detected by git-kick"
+		"Description": "nicht dokumentiert; kommt in TAG_EMS_GET_POWER_SETTINGS vor / detected by git-kick"
 	},
 	"0x01000150": {
 		"TagNameGlobal": "TAG_EMS_MANUAL_CHARGE_START_COUNTER",
@@ -1688,10 +1688,10 @@
 	},
 	"0x01800011": {
 		"TagNameGlobal": "TAG_EMS_MODE",
-		"DataType": "Char8",
+		"DataType": "UChar8",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
-		"Description": ""
+		"Description": "Betriebszustand des EMS."
 	},
 	"0x01800012": {
 		"TagNameGlobal": "TAG_EMS_BALANCED_PHASES",
@@ -4243,14 +4243,14 @@
 	},
 	"0x0380000A": {
 		"TagNameGlobal": "TAG_BAT_STATUS_CODE",
-		"DataType": "UInt32",
+		"DataType": "Bitfield",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Rückgabewert für Batteriestatus."
 	},
 	"0x0380000B": {
 		"TagNameGlobal": "TAG_BAT_ERROR_CODE",
-		"DataType": "UInt32",
+		"DataType": "Bitfield",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": "Rückgabewert für Batteriefehler."
@@ -4600,7 +4600,7 @@
 	},
 	"0x03800100": {
 		"TagNameGlobal": "TAG_BAT_DCB_INDEX",
-		"DataType": "Int32",
+		"DataType": "UInt16",
 		"UserLevel": "NO_AUTH",
 		"Unit": "",
 		"Description": ""
@@ -4908,28 +4908,28 @@
 	},
 	"0x03800306": {
 		"TagNameGlobal": "TAG_BAT_DCB_STATUS",
-		"DataType": "UInt16",
+		"DataType": "Bitfield",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Status / imported from rxhan/RSCPGui"
 	},
 	"0x03800307": {
 		"TagNameGlobal": "TAG_BAT_DCB_WARNING",
-		"DataType": "UInt16",
+		"DataType": "Bitfield",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Warnung / imported from rxhan/RSCPGui"
 	},
 	"0x03800308": {
 		"TagNameGlobal": "TAG_BAT_DCB_ALARM",
-		"DataType": "UInt16",
+		"DataType": "Bitfield",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Alarm / imported from rxhan/RSCPGui"
 	},
 	"0x03800309": {
 		"TagNameGlobal": "TAG_BAT_DCB_ERROR",
-		"DataType": "UInt16",
+		"DataType": "Bitfield",
 		"UserLevel": "USER",
 		"Unit": "",
 		"Description": "Fehler / imported from rxhan/RSCPGui"
