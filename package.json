@@ -67,5 +67,11 @@
   "bugs": {
     "url": "https://github.com/git-kick/ioBroker.e3dc-rscp/issues"
   },
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "allowScripts": {
+    "diskusage@1.2.0": true,
+    "protobufjs@7.6.5": true,
+    "unix-dgram@2.0.6": true,
+    "esbuild@0.25.12": true
+  }
 }
